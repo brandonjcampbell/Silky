@@ -8,8 +8,6 @@ import TextEditor from './TextEditor';
 import { BrowserRouter, Route, Link } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import Characters from "./Characters"
-import Settings from "./Settings"
 import Tray from "./Tray"
 
 import { StateProvider } from './MyContext';
@@ -50,8 +48,8 @@ ReactDOM.render(
                 <Route path="/" exact component={App} />
                 <Route path="/Graph" exact component={Graph} />
                 <Route path="/Editor" exact component={TextEditor} />
-                <Route path="/Characters" exact render={()=><Tray type="characters"></Tray>} />
-                <Route path="/Settings" exact render={()=><Tray type="settings"></Tray>} />
+                <Route path="/Characters" exact render={()=><Tray type="character"></Tray>} />
+                <Route path="/Settings" exact render={()=><Tray type="setting"></Tray>} />
                 <Route path="/Links" exact render={()=><Tray type="link"></Tray>} />
                 <Route path="/Facts" exact render={()=><Tray type="fact"></Tray>} />
                 <Route path="/Transformations" exact render={()=><Tray type="transformation"></Tray>} />
