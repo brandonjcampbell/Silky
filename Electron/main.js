@@ -19,4 +19,5 @@ function createWindow() {
         mainWindow = null;
     });
 }
+console.log("lets see")
 app.on('ready', createWindow);

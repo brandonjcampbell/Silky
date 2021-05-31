@@ -1,8 +1,11 @@
 import React from 'react';
-import ReactFlow from 'react-flow-renderer';
-import { Link } from "react-router-dom";
+import Cytoscape from 'cytoscape';
+import { store } from './MyContext';
+import CytoscapeComponent from 'react-cytoscapejs'
+import COSEBilkent from 'cytoscape-cose-bilkent';
+import actorToCyto from './utils/graphUtils'
 
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -12,50 +15,74 @@ function getWindowDimensions() {
   };
 }
 
-const elements = [
-  {
-    id: '1',
-    type: 'input', // input node
-    data: { label: 'Input Node' },
-    position: { x: 250, y: 25 },
-  },
-  // default node
-  {
-    id: '2',
-    // you can also pass a React component as a label
-    data: { label: <div>Default Node</div> },
-    position: { x: 100, y: 125 },
-  },
-  {
-    id: '3',
-    type: 'output', // output node
-    data: { label: 'Output Node' },
-    position: { x: 250, y: 250 },
-  },
-  // animated edge
-  { id: 'e1-2', source: '1', target: '2', animated: true },
-  { id: 'e2-3', source: '2', target: '3' },
-];
-
-export default class Graph extends React.Component{ 
-    // const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
-
-    // useEffect(() => {
-    //   function handleResize() {
-    //     setWindowDimensions(getWindowDimensions());
-    //   }
+const Graph = ({type})=>{ 
   
-    //   window.addEventListener('resize', handleResize);
-    //   return () => window.removeEventListener('resize', handleResize);
-    // }, []);
+    const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+    Cytoscape.use(COSEBilkent);
+    const layout = { name: 'cose-bilkent' };
 
+    useEffect(() => {
+      function handleResize() {
+        setWindowDimensions(getWindowDimensions());
+      }
+  
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }, []);
+    
 
-    render(){
+    const globalState = useContext(store);
+    const axioms = []
+    const content = actorToCyto(globalState.state.actors)
+  
         return(
-        <div style={{ height: 500, width:700}}>
-            <ReactFlow elements={elements} />
+        <div style={{ height: windowDimensions.height, width:windowDimensions.width-200}}>
+            {/* <ReactFlow elements={[...content,...axioms]} /> */}
+            <CytoscapeComponent layout={layout} elements={[...content,...axioms]} style={ {height: windowDimensions.height, width:windowDimensions.width-200} } 
+            
+            stylesheet={[
+              {
+                selector: 'node',
+                style: {
+                 height:50,
+                 width:50,
+                  shape: 'circle',
+                  label: "data(label)",
+                  "text-halign":"center",
+                  "text-valign": "center",
+                  "color": "#fff",
+      "text-outline-color": "#888",
+      "text-outline-width": 3
+                  
+                }
+              },
+              {
+                selector: 'edge',
+                style: {
+                  'width': 2,
+                  'line-color': '#ccc',
+                  'target-arrow-color': '#ccc',
+                  'target-arrow-shape': "data(arrow)",
+                  'curve-style': 'bezier'
+                }
+              },
+              {
+               selector: 'node[hyper>0]',
+               style:{
+                 color:"black",
+                 width: 25,
+                 height: 25,
+                 backgroundColor:"white",
+                 "text-outline-color" : "white",
+                 "text-outline-width": 2
+               }
+              }
+            ]}
+            />
         </div>
         )
-    } 
-}
+      }
+
+    export default Graph;
+
 
