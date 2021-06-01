@@ -6,9 +6,11 @@ import Graph from './Graph';
 import logo from './images/logo.svg'
 import TextEditor from './TextEditor';
 import { BrowserRouter, Route, Link } from "react-router-dom";
-import { ProSidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { ProSidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
-import Tray from "./Tray"
+import ActorList from "./ActorList";
+import AxiomList from "./AxiomList";
+import Web from "./Web"
 
 import { StateProvider } from './MyContext';
  
@@ -22,12 +24,18 @@ ReactDOM.render(
               onToggle={(tog)=>{ alert("sup")}}
               >
                 <Menu iconShape="circle">
-                  <MenuItem><img src={logo} style={{height:"60%",width:"60%"}}/></MenuItem>
+                  <MenuItem><img src={logo} alt="silky" style={{height:"60%",width:"60%"}}/></MenuItem>
                   <MenuItem> 
-                      <Link to="/links">Links</Link>
+                      <Link to="/elements">Elements</Link>
                   </MenuItem>
                   <MenuItem> 
-                      <Link to="/characters">Characters</Link>
+                      <Link to="/facts">Facts</Link>
+                  </MenuItem>
+                  <MenuItem> 
+                      <Link to="/tags">Tags</Link>
+                  </MenuItem>
+                  {/* <MenuItem> 
+                      <Link to="/objects">Objects</Link>
                   </MenuItem>
                     <MenuItem> 
                       <Link to="/settings">Settings</Link>
@@ -36,10 +44,22 @@ ReactDOM.render(
                       <Link to="/facts">Facts</Link>
                     </MenuItem>
                     <MenuItem> 
-                      <Link to="/transformations">Transformations</Link>
+                      <Link to="/scenes">Scenes</Link>
                     </MenuItem>
+                    <MenuItem> 
+                      <Link to="/events">Events</Link>
+                    </MenuItem>
+                    <MenuItem> 
+                      <Link to="/states">States</Link>
+                    </MenuItem>
+                    <MenuItem> 
+                      <Link to="/transformations">Transformations</Link>
+                    </MenuItem> */}
                   <MenuItem> 
                     <Link to="/editor">Threads</Link>
+                  </MenuItem>
+                  <MenuItem> 
+                    <Link to="/web">Web</Link>
                   </MenuItem>
                 </Menu>
               </ProSidebar>
@@ -48,11 +68,17 @@ ReactDOM.render(
                 <Route path="/" exact component={App} />
                 <Route path="/Graph" exact component={Graph} />
                 <Route path="/Editor" exact component={TextEditor} />
-                <Route path="/Characters" exact render={()=><Tray type="character"></Tray>} />
-                <Route path="/Settings" exact render={()=><Tray type="setting"></Tray>} />
-                <Route path="/Links" exact render={()=><Tray type="link"></Tray>} />
-                <Route path="/Facts" exact render={()=><Tray type="fact"></Tray>} />
-                <Route path="/Transformations" exact render={()=><Tray type="transformation"></Tray>} />
+                <Route path="/Elements" exact render={()=><ActorList type="element"></ActorList>} />
+                <Route path="/Tags" exact render={()=><ActorList type="tag"></ActorList>} />
+                {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
+                <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}
+                <Route path="/Facts" exact render={()=><AxiomList type="fact"></AxiomList>} />
+                {/* <Route path="/Facts" exact render={()=><ActorList type="fact"></ActorList>} />
+                <Route path="/Events" exact render={()=><ActorList type="event"></ActorList>} />
+                <Route path="/Scenes" exact render={()=><ActorList type="scene"></ActorList>} />
+                <Route path="/States" exact render={()=><ActorList type="state"></ActorList>} /> */}
+                {/* <Route path="/Transformations" exact render={()=><ActorList type="transformation"></ActorList>} /> */}
+                <Route path="/Web" exact render={()=><Web></Web>} />
               </div>
         </div>
       </BrowserRouter>
