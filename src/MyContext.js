@@ -22,7 +22,8 @@ let initialState = {
 // , {name: "the dark", uuid: "b5c66a5a-1fc7-407a-bb1d-0094ce52faeb", type: "fact", class: "actor"}
 // , {name: "Hathaway", uuid: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", type: "character", class: "actor"}
 // , {name: "Cameron", uuid: 1, type: "character", class: "actor"}
- ]
+ ],
+ content:[]
 
 };
 
@@ -81,6 +82,14 @@ const getDisplayName = (state,payload)=>{
 }
 
 
+const saveContent = (state,action) =>{
+  let newState = _.cloneDeep(state)
+  newState.content = [{ uuid:action.payload.uuid,data:action.payload.content},...state.content.filter(x=>x.uuid!==action.payload.uuid)]
+  saveProject(newState)
+  return newState;
+}
+
+
 const StateProvider = ( { children } ) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch(action.action) {
@@ -90,6 +99,8 @@ const StateProvider = ( { children } ) => {
             return remove(state,action);
       case 'setProject':
             return setProject(state,action);
+      case 'saveContent':
+              return saveContent(state,action);
       default:
         throw new Error();
     };

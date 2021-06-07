@@ -73,7 +73,7 @@ ReactDOM.render(
               <div style={{backgroundColor:"#232323",height:"100vh",width:"100vw"}}>
                 <Route path="/" exact component={App} />
                 <Route path="/Graph" exact component={Graph} />
-                <Route path="/Editor" exact component={TextEditor} />
+                <Route path="/Editor" exact  render={()=><ActorList type="element"></ActorList>} />
                 <Route path="/Elements" exact render={()=><ActorList type="element"></ActorList>} />
                 <Route path="/Tags" exact render={()=><ActorList type="tag"></ActorList>} />
                 {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />

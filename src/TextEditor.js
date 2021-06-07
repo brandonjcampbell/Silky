@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
-import loadFile from "./utils/loadFile"
-import saveFile from "./utils/saveFile"
 
-const TextEditor = () => {
+const TextEditor = ({data,save}) => {
+  
 
+    useEffect(() => {
 
-      
-      const content =   loadFile('C:\\Users\\KelLynn\\Desktop\\Silky\\silky.json')
+        setEditorState(EditorState.createWithContent(contentState))
+        
+      }, [data]);
 
+    const empty={"entityMap":{},"blocks":[{"key":"637gr","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]}
+    console.log("rerender the text editor", !!data)
+    const contentState = convertFromRaw(data?data.data:empty)
 
-    const [contentState, setContentState] = useState(convertFromRaw(content))
     const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
     const onEditorStateChange = (editorState) => {
         setEditorState(editorState);
-        console.log(editorState, "yaya")
-        saveFile('C:\\Users\\KelLynn\\Desktop\\Silky\\silky.json',convertToRaw(editorState._immutable.currentContent))
+       //save(convertToRaw(editorState._immutable.currentContent))
     };
-
 
     return(
         <div style={{display:"flex"}}>
