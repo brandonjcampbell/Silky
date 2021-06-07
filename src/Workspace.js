@@ -28,6 +28,7 @@ const Workspace = ({actor})=>{
 
         return(
         <div style={{ height: windowDimensions.height-10, width:windowDimensions.width-500}}>
+          {actor.name}
         </div>
         )
       }

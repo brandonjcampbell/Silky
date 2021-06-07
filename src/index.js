@@ -11,8 +11,13 @@ import 'react-pro-sidebar/dist/css/styles.css';
 import ActorList from "./ActorList";
 import AxiomList from "./AxiomList";
 import Web from "./Web"
+import CurrentProjectLink from './CurrentProjectLink'
+
+
 
 import { StateProvider } from './MyContext';
+
+
  
 ReactDOM.render(
   <React.StrictMode>
@@ -24,7 +29,8 @@ ReactDOM.render(
               onToggle={(tog)=>{ alert("sup")}}
               >
                 <Menu iconShape="circle">
-                  <MenuItem><img src={logo} alt="silky" style={{height:"60%",width:"60%"}}/></MenuItem>
+                  <MenuItem><Link to="/"><img src={logo} alt="silky" style={{height:"60%",width:"60%"}}/></Link></MenuItem>
+                  <MenuItem> <CurrentProjectLink></CurrentProjectLink></MenuItem>
                   <MenuItem> 
                       <Link to="/elements">Elements</Link>
                   </MenuItem>

@@ -1,8 +1,12 @@
 import React, {createContext, useReducer} from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash'
+import _ from 'lodash';
+import loadFile from './utils/loadFile';
+import saveFile from './utils/saveFile'
+const homedir = window.require('os').homedir()
 
 let initialState = {
+  project:"unset",
     actors:[ 
 
 // {name: "that", subject: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", target: "2011aa60-548e-4d26-a7be-d9c22f96b081", uuid: "b5877f82-0e2e-4934-b51f-fd708449ab1c", type: "link",  class: "axiom"}
@@ -25,18 +29,36 @@ let initialState = {
 const store = createContext(initialState);
 const { Provider } = store;
 
+const setProject= (state,action) =>{
+  const results = loadFile(`${homedir}\\.silky\\${action.payload.name}\\silky.json`)
+  if(results){
+    return results
+  }
+  else {
+    let newState = _.cloneDeep(initialState)
+    newState.project =  action.payload.name
+    return newState
+  }
+}
+
+const saveProject = (state) =>{
+  const results = saveFile(`${homedir}\\.silky\\${state.project}\\silky.json`,state)
+}
+
 const add = (state,action) =>{
     let newState = _.cloneDeep(state)
     action.payload.uuid = uuidv4()
     action.payload.type = action.for
     action.payload.class = action.class
     newState.actors = [action.payload,...state.actors]
+    saveProject(newState)
     return newState;
 }
 
 const remove = (state,action)=>{
     let newState = _.cloneDeep(state)
     newState.actors = [...state.actors.filter(x=>x.uuid!==action.payload)]
+    saveProject(newState)
    return newState;
 }
 
@@ -66,6 +88,8 @@ const StateProvider = ( { children } ) => {
             return add(state,action);
       case 'remove':
             return remove(state,action);
+      case 'setProject':
+            return setProject(state,action);
       default:
         throw new Error();
     };

@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import { EditorState, convertFromRaw } from 'draft-js';
+import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
 import loadFile from "./utils/loadFile"
+import saveFile from "./utils/saveFile"
 
 const TextEditor = () => {
 
- loadFile()
+
       
-      const content =  {"entityMap":{},"blocks":[{"key":"637gr","text":"bugbear.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
+      const content =   loadFile('C:\\Users\\KelLynn\\Desktop\\Silky\\silky.json')
 
 
     const [contentState, setContentState] = useState(convertFromRaw(content))
     const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
     const onEditorStateChange = (editorState) => {
         setEditorState(editorState);
+        console.log(editorState, "yaya")
+        saveFile('C:\\Users\\KelLynn\\Desktop\\Silky\\silky.json',convertToRaw(editorState._immutable.currentContent))
     };
 
 
