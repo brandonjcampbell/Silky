@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { EditorState, convertFromRaw } from 'draft-js';
-// import loadFile from "./utils/loadFile"
+import loadFile from "./utils/loadFile"
 
 const TextEditor = () => {
 
-// loadFile()
+ loadFile()
       
       const content =  {"entityMap":{},"blocks":[{"key":"637gr","text":"bugbear.","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]};
 

@@ -1,7 +1,9 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const isDev = require('electron-is-dev');   
 const path = require('path')
+const fs = require('fs')
+console.log(JSON.stringify(fs),"fresh bunnysnubs")
 
 function createWindow () {
   // Create the browser window.
@@ -9,13 +11,15 @@ function createWindow () {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration:true
     }
   })
   const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
   // and load the index.html of the app.
  //mainWindow.loadFile('index.html')
   mainWindow.loadURL(startURL);
+    
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -40,6 +44,18 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+
+ipcMain.on('load-file', (event, arg) => {
+  // Displays the object sent from the renderer process:
+  //{
+  //    message: "Hi",
+  //    someData: "Let's go"
+  //}
+  console.log(
+      arg
+  );
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
