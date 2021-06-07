@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Editor } from 'react-draft-wysiwyg';
 import '../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { EditorState, convertFromRaw, convertToRaw } from 'draft-js';
+function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
 
 const TextEditor = ({data,save}) => {
-  
-
+   
+    const prevAmount = usePrevious({data});
+   // console.log("CHEIT",prevAmount.data.uuid)
     useEffect(() => {
+        
 
+     if(!prevAmount || prevAmount.data.uuid!==data.uuid)
         setEditorState(EditorState.createWithContent(contentState))
         
       }, [data]);
@@ -19,7 +29,7 @@ const TextEditor = ({data,save}) => {
     const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
     const onEditorStateChange = (editorState) => {
         setEditorState(editorState);
-       //save(convertToRaw(editorState._immutable.currentContent))
+       save(convertToRaw(editorState._immutable.currentContent))
     };
 
     return(
