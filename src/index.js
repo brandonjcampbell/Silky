@@ -25,7 +25,7 @@ ReactDOM.render(
       <BrowserRouter>
         <div className="App" style={{display:"flex", backgroundColor:"green"}}>
               <div style={{backgroundColor:"red"}}>
-              <ProSidebar collapsed={false}
+              <ProSidebar collapsed={false} width="140px"
               onToggle={(tog)=>{ alert("sup")}}
               >
                 <Menu iconShape="circle">
@@ -34,9 +34,9 @@ ReactDOM.render(
                   <MenuItem> 
                       <Link to="/elements">Elements</Link>
                   </MenuItem>
-                  <MenuItem> 
+                  {/* <MenuItem> 
                       <Link to="/facts">Facts</Link>
-                  </MenuItem>
+                  </MenuItem> */}
                   <MenuItem> 
                       <Link to="/tags">Tags</Link>
                   </MenuItem>
@@ -62,7 +62,7 @@ ReactDOM.render(
                       <Link to="/transformations">Transformations</Link>
                     </MenuItem> */}
                   <MenuItem> 
-                    <Link to="/editor">Threads</Link>
+                    <Link to="/threads">Threads</Link>
                   </MenuItem>
                   <MenuItem> 
                     <Link to="/web">Web</Link>
@@ -75,6 +75,7 @@ ReactDOM.render(
                 <Route path="/Graph" exact component={Graph} />
                 <Route path="/Editor" exact  render={()=><ActorList type="element"></ActorList>} />
                 <Route path="/Elements" exact render={()=><ActorList type="element"></ActorList>} />
+                <Route path="/Threads" exact render={()=><ActorList type="thread"></ActorList>} />
                 <Route path="/Tags" exact render={()=><ActorList type="tag"></ActorList>} />
                 {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
                 <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}

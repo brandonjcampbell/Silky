@@ -5,9 +5,6 @@ const AxiomTray = ({type}) => {
     return(
         <div style={{display:"flex"}}>
                <AxiomList type={type}></AxiomList>
-               <div>
-                   {type} WORKSPACE
-               </div>
         </div>
     )
 }

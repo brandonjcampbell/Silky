@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import TextEditor from './TextEditor'
 import { store } from './MyContext';
+import Thread from './Thread'
 
 
 function getWindowDimensions() {
@@ -12,7 +13,6 @@ function getWindowDimensions() {
 }
 
 const Workspace = ({actor})=>{ 
-console.log("rerender babeh")
   
   const globalState = useContext(store);
   const { dispatch } = globalState;
@@ -36,15 +36,15 @@ console.log("rerender babeh")
     const save=(newContent)=>{
 
       dispatch({ action: 'saveContent' ,  payload:{uuid:actor.uuid,content:newContent}})
-      console.log("savvvvy!")
     }
 
 
 
         return(
         <div style={{ height: windowDimensions.height-10, width:windowDimensions.width-500}}>
-          {actor.name}
-          <TextEditor save={save} data={globalState.state.content.find(x=>x.uuid===actor.uuid)}></TextEditor>
+          {actor.name} {actor.uuid}
+          {actor.type=="element" && <TextEditor save={save} data={globalState.state.content.find(x=>x.uuid===actor.uuid)}></TextEditor>}
+          {actor.type=="thread" && <Thread data={actor}></Thread>}
         </div>
         )
       }

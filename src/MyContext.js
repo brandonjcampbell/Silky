@@ -27,6 +27,8 @@ let initialState = {
 
 };
 
+
+
 const store = createContext(initialState);
 const { Provider } = store;
 
@@ -65,12 +67,10 @@ const remove = (state,action)=>{
 
 const find = (state,id) =>{
    let result = state.state.actors.filter(x=>x.uuid===id)[0]
-   console.log(result)
     return result
  }
 
 const getDisplayName = (state,payload)=>{ 
-    console.log("payloooad stately",state) 
     if(payload.class==="actor"){
         return payload.name
     }
@@ -106,7 +106,7 @@ const StateProvider = ( { children } ) => {
     };
   }, initialState);
 
-  return <Provider value={{ state, dispatch, getDisplayName }}>{children}</Provider>;
+  return <Provider value={{ state, dispatch, getDisplayName, find }}>{children}</Provider>;
 };
 
 export { store, StateProvider}

@@ -12,7 +12,6 @@ const ActorList = ({type}) => {
 
    const keyPress = (e)=>{
         if(e.keyCode === 13){
-           console.log('value', e.target.value);
            dispatch({ action: 'add' , for:type, payload:{name:name}, class:"actor"})
            setName("")
         }
@@ -24,7 +23,7 @@ const ActorList = ({type}) => {
 
     return(
         <div style={{display:"flex"}}>
-            <div style={{height:"100vh",width:"200px",color:"white",padding:"30px;"}}>
+            <div style={{height:"100vh",width:"500px",color:"white",padding:"30px;"}}>
       
                 <div> {type}
                     <TextField style={{color:"white"}} id="outlined-basic" variant="outlined" value={name} onKeyDown={keyPress} onChange={(e)=>setName(e.target.value)}/> 

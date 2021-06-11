@@ -11,20 +11,23 @@ function usePrevious(value) {
   }
 
 const TextEditor = ({data,save}) => {
-   
+ 
     const prevAmount = usePrevious({data});
-   // console.log("CHEIT",prevAmount.data.uuid)
-    useEffect(() => {
-        
 
-     if(!prevAmount || prevAmount.data.uuid!==data.uuid)
+    //console.log("rerender textEditor","data:",data, "prev:",prevAmount)
+
+    useEffect(() => {
+      // console.log("useeffect","data:",data, "prev:",prevAmount, "bools:",!data,!prevAmount,(prevAmount && !prevAmount.data), (data && prevAmount && prevAmount.data && prevAmount.data.uuid!==data.uuid))
+ 
+//if there was no prior value or if the current uuid does not match the previous uuid, reload
+     if((!data) || (!prevAmount)|| (prevAmount && !prevAmount.data) || (data && prevAmount.data && prevAmount.data.uuid!==data.uuid))
         setEditorState(EditorState.createWithContent(contentState))
         
       }, [data]);
 
     const empty={"entityMap":{},"blocks":[{"key":"637gr","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]}
-    console.log("rerender the text editor", !!data)
-    const contentState = convertFromRaw(data?data.data:empty)
+
+    const contentState = convertFromRaw(data && data.uuid ?data.data:empty)
 
     const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
     const onEditorStateChange = (editorState) => {
@@ -35,7 +38,6 @@ const TextEditor = ({data,save}) => {
     return(
         <div style={{display:"flex"}}>
             <div style={{margin:"20px", padding:"20px", minHeight:"300px", backgroundColor:"#343434", width:"8in", textAlign:"center", color:"white"}}>
-            test
                 <Editor  height="100vh" editorState={editorState} onEditorStateChange={(e)=>{ 
                     onEditorStateChange(e)
                 }}>

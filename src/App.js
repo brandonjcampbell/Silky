@@ -38,7 +38,6 @@ const App = ()=>{
 
   const keyPress = (e)=>{
     if(e.keyCode === 13){
-       console.log('value', e.target.value);
        makeDir(e.target.value)
        setName("")
     }
@@ -49,7 +48,6 @@ const App = ()=>{
   // .filter(dirent => dirent.isDirectory())
   // .map(dirent => dirent.name)
   const dirs = loadDir()
-  console.log(dirs,"ya")
  
     return (
       <div style={{display:"flex",flexWrap:"wrap"}}>
