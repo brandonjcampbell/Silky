@@ -36,6 +36,15 @@ const Workspace = ({ actorUuid }) => {
     });
   };
 
+  
+  function getDisplayName(uuid) {
+    return globalState.getDisplayName(
+      globalState,
+      globalState.find(globalState, uuid)
+    );
+  }
+
+
   return (
     <div
       style={{
@@ -44,10 +53,14 @@ const Workspace = ({ actorUuid }) => {
       }}
     >
       {actor.type == "element" && (
-        <TextEditor
-          save={save}
-          data={globalState.state.content.find((x) => x.uuid === actorUuid)}
-        ></TextEditor>
+        <div>
+                <h1 style={{ color: "white" }}>Element: {getDisplayName(actorUuid)}</h1>
+                <TextEditor
+                  save={save}
+                  data={globalState.state.content.find((x) => x.uuid === actorUuid)}
+                ></TextEditor>
+          </div>
+
       )}
       {actor.type == "thread" && <Thread data={actor}></Thread>}
     </div>

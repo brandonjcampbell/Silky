@@ -104,6 +104,40 @@ const saveActor = (state, action) => {
   return newState;
 };
 
+const reorderActors = (state, action) => {
+  let newState = _.cloneDeep(state);
+  console.log("the UUIDS of the updated actors",action.payload.actors.map(y=>y.uuid))
+  newState.actors = state.actors.filter((x) => !(action.payload.actors.map(y=>y.uuid).includes(x.uuid)))
+  console.log("all the UNRELATED actors", newState.actors)
+  console.log("all the UPDATED actors",action.payload.actors)
+  newState.actors = [
+    ...action.payload.actors,
+    ...newState.actors
+  ];
+  saveProject(newState);
+  return newState;
+};
+
+const saveActors = (state, action) => {
+  let newState = _.cloneDeep(state);
+  //do not effect any actors that aren't of the designated type
+  newState.actors = state.actors.filter(x=>x.type!==action.for)
+  newState.actors = [
+    ...action.payload.actors,
+    ...newState.actors
+  ];
+  saveProject(newState);
+  return newState;
+};
+
+
+const removeActor= (state, action) => {
+  let newState = _.cloneDeep(state);
+  newState.actors = state.actors.filter(x=>x.uuid!=action.payload.uuid)
+  saveProject(newState);
+  return newState;
+};
+
 const StateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
     switch (action.action) {
@@ -117,6 +151,12 @@ const StateProvider = ({ children }) => {
         return saveContent(state, action);
       case "saveActor":
         return saveActor(state, action);
+      case "removeActor":
+          return saveActor(state, action);
+      case "saveActors":
+        return saveActors(state, action);
+      case "reorderActors":
+        return reorderActors(state, action);
       default:
         throw new Error();
     }
