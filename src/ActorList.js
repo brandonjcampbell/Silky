@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect} from 'react';
 import { store } from './MyContext';
 import TextField from '@material-ui/core/TextField';
 import Workspace from './Workspace';
@@ -9,6 +9,7 @@ const ActorList = ({type}) => {
     const content = globalState.state.actors
     const [name, setName] = useState("");
     const [active,setActive]= useState(null)
+    const [count,setCount] = useState(1)
 
    const keyPress = (e)=>{
         if(e.keyCode === 13){
@@ -20,6 +21,14 @@ const ActorList = ({type}) => {
      const handleRowClick = (row)=>{
         setActive(row)
     }
+
+    // useEffect(() => {
+    //     console.log(count)
+    //     setCount(count+1)
+    
+           
+    //      }, [active]);
+
 
     return(
         <div style={{display:"flex"}}>
@@ -42,7 +51,7 @@ const ActorList = ({type}) => {
             </div>
                 
             <div>
-                {active && <Workspace actor={active}></Workspace>}
+                {active && <Workspace actorUuid={active.uuid}></Workspace>}
             </div>
         </div>
 
