@@ -70,6 +70,7 @@ const ActorList = ({ type }) => {
               payload: { actors: e },
             });
           }}
+          onDrop={()=>console.log("not necessary")}
           reorderList={(e) => {
             dispatch({
               action: "reorderActors",
