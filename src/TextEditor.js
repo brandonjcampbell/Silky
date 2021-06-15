@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
+
 function usePrevious(value) {
   const ref = useRef();
   useEffect(() => {
@@ -10,50 +11,15 @@ function usePrevious(value) {
   return ref.current;
 }
 
-const TextEditor = ({ data, save }) => {
-  const prevAmount = usePrevious({ data });
-
-
-
-//   useEffect(() => {
-//     // console.log("useeffect","data:",data, "prev:",prevAmount, "bools:",!data,!prevAmount,(prevAmount && !prevAmount.data), (data && prevAmount && prevAmount.data && prevAmount.data.uuid!==data.uuid))
-// console.log("use effect",data,prevAmount)
-//     //if there was no prior value or if the current uuid does not match the previous uuid, reload
-//     if (
-//       !data ||
-//       !prevAmount ||
-//       (prevAmount && !prevAmount.data) ||
-//       (data && prevAmount.data && prevAmount.data.uuid !== data.uuid)
-//     ){
-  
-//         setEditorState(EditorState.createWithContent(contentState))
-        
-
-//     }
-//   }, [data]);
-  
+const TextEditor = ({ data, save, actorUuid }) => {
+  const prevAmount = usePrevious({ actorUuid, data });
 
   useEffect(() => {
-    // console.log("useeffect","data:",data, "prev:",prevAmount, "bools:",!data,!prevAmount,(prevAmount && !prevAmount.data), (data && prevAmount && prevAmount.data && prevAmount.data.uuid!==data.uuid))
-
-//if there was no prior value or if the current uuid does not match the previous uuid, reload
-   if((!data) || (!prevAmount)|| (prevAmount && !prevAmount.data) || (data && prevAmount.data && prevAmount.data.uuid!==data.uuid ) || (data && data.uuid==="thread")){
-      setEditorState(EditorState.createWithContent(contentState))
-   }
-      
-    }, [data]);
-
-//   const empty={"entityMap":{},"blocks":[{"key":"637gr","text":"","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}]}
-
-//   const contentState = convertFromRaw(data && data.uuid ?data.data:empty)
-
-//   const [editorState, setEditorState] = useState(EditorState.createWithContent(contentState))
-//   const onEditorStateChange = (editorState) => {
-//       setEditorState(editorState);
-//      save(convertToRaw(editorState._immutable.currentContent))
-//   };
-
-// }   , [data]);
+    console.log("text editor useeffect fired");
+    if (!prevAmount || (prevAmount && prevAmount.actorUuid !== actorUuid)) {
+      setEditorState(EditorState.createWithContent(contentState));
+    }
+  }, [actorUuid, data]);
 
   const empty = {
     entityMap: {},
@@ -70,17 +36,40 @@ const TextEditor = ({ data, save }) => {
     ],
   };
 
-
-
-  const contentState = convertFromRaw(data && data.uuid ? data.data : empty);
+  const contentState = convertFromRaw(data && data.blocks ? data : empty);
 
   const [editorState, setEditorState] = useState(
     EditorState.createWithContent(contentState)
   );
 
   const onEditorStateChange = (editorState) => {
+    let currentBlock = editorState.getSelection()
+    let currentBlockKey = editorState.getSelection().getStartKey();
+
+    const newContent =  convertToRaw(editorState._immutable.currentContent)
+
+    if (data && data.blocks) {
+
+  
+    if (currentBlockKey && !currentBlockKey.includes(":")) {
+  
+      const previousKey = editorState.getCurrentContent().getKeyBefore(currentBlockKey)
+     
+      const owner = previousKey.split(":")[0]
+      const index = parseInt(previousKey.split(":")[1])
+     //currentBlock.key = owner + ":"+(index+1)
+     currentBlockKey =owner + ":"+(index+1)
+     newContent.key = currentBlockKey
+     console.log("try it",previousKey,currentBlockKey)
+    }
+  }
     setEditorState(editorState);
-    save(convertToRaw(editorState._immutable.currentContent));
+
+    save(
+    newContent ,
+      currentBlockKey,
+      data
+    );
   };
 
   return (

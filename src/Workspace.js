@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import TextEditor from "./TextEditor";
 import { store } from "./MyContext";
 import Thread from "./Thread";
+import _ from "lodash"
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -30,13 +31,28 @@ const Workspace = ({ actorUuid }) => {
 
   const actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
 
-  const save = (newContent) => {
+  const save = (newContent, key) => {
+
+    const actor = _.cloneDeep(
+      globalState.state.actors.find((x) => x.uuid === actorUuid)
+    );
+
+    //if(actor && actor.content){
+    newContent.blocks = newContent.blocks.map((x,index)=>{
+      x.key = actorUuid+":"+index
+      return x
+    })
+  //}
+  actor.content = newContent
+
+   // actor.content = newContent
     dispatch({
-      action: "saveContent",
-      payload: { uuid: actorUuid, content: newContent },
+      action: "saveActor",
+      payload: { actor: actor },
     });
   };
 
+  
   
   function getDisplayName(uuid) {
     return globalState.getDisplayName(
@@ -58,7 +74,8 @@ const Workspace = ({ actorUuid }) => {
                 <h1 style={{ color: "white" }}>Element: {getDisplayName(actorUuid)}</h1>
                 <TextEditor
                   save={save}
-                  data={globalState.state.content.find((x) => x.uuid === actorUuid)}
+                  data={globalState.state.actors.find((x) => x.uuid === actorUuid).content}
+                  actorUuid={actorUuid}
                 ></TextEditor>
           </div>
 

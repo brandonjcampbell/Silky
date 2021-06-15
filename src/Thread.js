@@ -14,16 +14,18 @@ const Thread = ({ data }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
 
+  const [cursor, setCursor] = useState();
+
   function determineOutput() {
     let output = [];
     if (data.sequence) {
       data.sequence.forEach((x, index) => {
-        const result = globalState.state.content.find((y) => y.uuid === x.uuid);
+        const result = globalState.state.actors.find((y) => y.uuid === x.uuid);
         const xz = result
-          ? result.data
-            ? result.data.blocks
-              ? result.data.blocks.map((z,zindex) => {
-                  z.key = x.uuid + index + zindex;
+          ? result.content
+            ? result.content.blocks
+              ? result.content.blocks.map((z, zindex) => {
+                  z.key = x.uuid + ":" + zindex;
                   return z;
                 })
               : []
@@ -38,7 +40,7 @@ const Thread = ({ data }) => {
   }
 
   const [next, setNext] = useState();
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(true);
   const [threadContent, setThreadContent] = useState(null);
 
   function addToThread(next) {
@@ -77,9 +79,34 @@ const Thread = ({ data }) => {
   };
 
   useEffect(() => {
-    console.log("what see?", toggle);
     setThreadContent(determineOutput());
   }, [data]);
+
+  const save = (newContent, key) => {
+    const actorKey = key.split(":")[0];
+    const actor = _.cloneDeep(
+      globalState.state.actors.find((x) => x.uuid === actorKey)
+    );
+    const actorContent = newContent.blocks.filter(
+      (x) => x.key.split(":")[0] === actorKey || !x.key.includes(":")
+    );
+    console.log("what is the actor content", actorContent, newContent.blocks);
+    if (actor && actor.content) {
+      actor.content.blocks = actorContent;
+      console.log("fire away", actor);
+      dispatch({
+        action: "saveActor",
+        payload: { actor: actor },
+      });
+    }
+  };
+
+  const redrawText = () => {
+    setToggle(false);
+    setTimeout((x) => {
+      setToggle(true);
+    }, 10);
+  };
 
   return (
     <div>
@@ -94,11 +121,15 @@ const Thread = ({ data }) => {
             for: "thread",
             payload: { actor: clone },
           });
+          redrawText()
         }}
         handleClick={(e) => {
           console.log("handled Click", e);
         }}
         getDisplayName={getDisplayName}
+        onDrop={() => {
+          redrawText();
+        }}
       ></DraggableList>
 
       <FormControl variant="outlined">
@@ -109,6 +140,7 @@ const Thread = ({ data }) => {
           value={next}
           onChange={(e) => {
             addToThread(e.target.value);
+            redrawText()
           }}
           label="Subject"
         >
@@ -131,16 +163,14 @@ const Thread = ({ data }) => {
       </FormControl>
 
       <div>
-
-        {threadContent !== null && (
-          <TextEditor
-            save={() => console.log("not sure..")}
-            data={{
-              data: { blocks: determineOutput(),   entityMap: {} },
-            
-              uuid: "thread",
-            }}
-          ></TextEditor>
+        {threadContent !== null && toggle === true && (
+          <div>
+            <TextEditor
+              save={save}
+              data={{ blocks: determineOutput(), entityMap: {} }}
+              actorUuid={"thread"}
+            ></TextEditor>
+          </div>
         )}
       </div>
     </div>

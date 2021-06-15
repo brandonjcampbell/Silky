@@ -7,12 +7,14 @@ const Thread = ({
   saveList,
   handleClick,
   getDisplayName,
+  onDrop,
 }) => {
   function handleOnDragEnd(result) {
     let clone = _.cloneDeep(list);
     const [reorderedItem] = clone.splice(result.source.index, 1);
     clone.splice(result.destination.index, 0, reorderedItem);
     saveList(clone);
+    onDrop()
   }
 
   function remove(uuid) {
@@ -36,13 +38,20 @@ const Thread = ({
                   style={{
                     backgroundColor: "white",
                     margin: "10px",
-                    padding: "10px",
+                   
                     maxWidth: "500px",
                     display:"flex"
                   }}
                 >
                   <button onClick={() => remove(x.uuid)}>X</button>
                   <div
+                      style={{
+                        padding: "10px",
+                        width: "500px",
+    
+                    
+                      }}
+
                     onClick={() => {
                       handleClick(x);
                     }}

@@ -7,6 +7,7 @@ const homedir = window.require("os").homedir();
 
 let initialState = {
   project: "unset",
+  cursor:null,
   actors: [
     // {name: "that", subject: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", target: "2011aa60-548e-4d26-a7be-d9c22f96b081", uuid: "b5877f82-0e2e-4934-b51f-fd708449ab1c", type: "link",  class: "axiom"}
     // ,{name: "is", subject: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", target: "c0f92045-5a06-4a6e-8224-eeef504ed9ee", uuid: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", type: "link",  class: "axiom"}
@@ -86,15 +87,18 @@ const getDisplayName = (state, payload) => {
 
 const saveContent = (state, action) => {
   let newState = _.cloneDeep(state);
+
   newState.content = [
-    { uuid: action.payload.uuid, data: action.payload.content },
+    { uuid: action.payload.uuid, data: action.payload.content},
     ...state.content.filter((x) => x.uuid !== action.payload.uuid),
   ];
+
   saveProject(newState);
   return newState;
 };
 
 const saveActor = (state, action) => {
+  console.log("Save actor!")
   let newState = _.cloneDeep(state);
   newState.actors = [
     action.payload.actor,
