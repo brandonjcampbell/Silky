@@ -107,7 +107,7 @@ const Thread = ({ data }) => {
       setToggle(true);
     }, 10);
   };
-
+ 
   return (
     <div>
       <h1 style={{ color: "white" }}>Thread: {getDisplayName(data.uuid)}</h1>
@@ -168,7 +168,7 @@ const Thread = ({ data }) => {
             <TextEditor
               save={save}
               data={{ blocks: determineOutput(), entityMap: {} }}
-              actorUuid={"thread"}
+              actorUuid={"thread" + data.uuid}
             ></TextEditor>
           </div>
         )}
