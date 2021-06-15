@@ -65,7 +65,7 @@ ReactDOM.render(
                     <Link to="/threads">Threads</Link>
                   </MenuItem>
                   <MenuItem> 
-                    <Link to="/web">Web</Link>
+                    <Link to="/webs">Webs</Link>
                   </MenuItem>
                 </Menu>
               </ProSidebar>
@@ -85,7 +85,7 @@ ReactDOM.render(
                 <Route path="/Scenes" exact render={()=><ActorList type="scene"></ActorList>} />
                 <Route path="/States" exact render={()=><ActorList type="state"></ActorList>} /> */}
                 {/* <Route path="/Transformations" exact render={()=><ActorList type="transformation"></ActorList>} /> */}
-                <Route path="/Web" exact render={()=><Web></Web>} />
+                <Route path="/Webs" exact render={()=><Web></Web>} />
               </div>
         </div>
       </BrowserRouter>

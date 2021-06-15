@@ -19,6 +19,7 @@ const Workspace = ({ actorUuid }) => {
   );
 
   useEffect(() => {
+    console.log("workspace useeffect")
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
     }

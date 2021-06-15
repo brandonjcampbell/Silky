@@ -8,12 +8,38 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import DraggableList from "./DraggableList";
+import TextEditor from "./TextEditor";
 
 const Thread = ({ data }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
 
+  function determineOutput() {
+    let output = [];
+    if (data.sequence) {
+      data.sequence.forEach((x, index) => {
+        const result = globalState.state.content.find((y) => y.uuid === x.uuid);
+        const xz = result
+          ? result.data
+            ? result.data.blocks
+              ? result.data.blocks.map((z,zindex) => {
+                  z.key = x.uuid + index + zindex;
+                  return z;
+                })
+              : []
+            : []
+          : [];
+
+        output = [...output, ...xz];
+      });
+      return output;
+    }
+    return [];
+  }
+
   const [next, setNext] = useState();
+  const [toggle, setToggle] = useState(false);
+  const [threadContent, setThreadContent] = useState(null);
 
   function addToThread(next) {
     let clone = _.cloneDeep(data);
@@ -35,6 +61,26 @@ const Thread = ({ data }) => {
     );
   }
 
+  const empty = {
+    entityMap: {},
+    blocks: [
+      {
+        key: "637gr",
+        text: "",
+        type: "unstyled",
+        depth: 0,
+        inlineStyleRanges: [],
+        entityRanges: [],
+        data: {},
+      },
+    ],
+  };
+
+  useEffect(() => {
+    console.log("what see?", toggle);
+    setThreadContent(determineOutput());
+  }, [data]);
+
   return (
     <div>
       <h1 style={{ color: "white" }}>Thread: {getDisplayName(data.uuid)}</h1>
@@ -49,8 +95,6 @@ const Thread = ({ data }) => {
             payload: { actor: clone },
           });
         }}
-
-  
         handleClick={(e) => {
           console.log("handled Click", e);
         }}
@@ -75,7 +119,8 @@ const Thread = ({ data }) => {
             .filter(
               (x) =>
                 x.uuid !== data.uuid &&
-                (!data.sequence || !data.sequence.map(y=>y.uuid).includes(x.uuid))
+                (!data.sequence ||
+                  !data.sequence.map((y) => y.uuid).includes(x.uuid))
             )
             .map((x) => {
               return (
@@ -84,6 +129,20 @@ const Thread = ({ data }) => {
             })}
         </Select>
       </FormControl>
+
+      <div>
+
+        {threadContent !== null && (
+          <TextEditor
+            save={() => console.log("not sure..")}
+            data={{
+              data: { blocks: determineOutput(),   entityMap: {} },
+            
+              uuid: "thread",
+            }}
+          ></TextEditor>
+        )}
+      </div>
     </div>
   );
 };
