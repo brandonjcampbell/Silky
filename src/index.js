@@ -11,6 +11,7 @@ import 'react-pro-sidebar/dist/css/styles.css';
 import ActorList from "./ActorList";
 import AxiomList from "./AxiomList";
 import Web from "./Web"
+import Tags from "./Tags"
 import CurrentProjectLink from './CurrentProjectLink'
 
 
@@ -76,7 +77,7 @@ ReactDOM.render(
                 <Route path="/Editor" exact  render={()=><ActorList type="element"></ActorList>} />
                 <Route path="/Elements" exact render={()=><ActorList type="element"></ActorList>} />
                 <Route path="/Threads" exact render={()=><ActorList type="thread"></ActorList>} />
-                <Route path="/Tags" exact render={()=><ActorList type="tag"></ActorList>} />
+                <Route path="/Tags" exact render={()=><Tags></Tags>} />
                 {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
                 <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}
                 <Route path="/Facts" exact render={()=><AxiomList type="fact"></AxiomList>} />

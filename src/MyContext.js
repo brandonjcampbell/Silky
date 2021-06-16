@@ -28,6 +28,20 @@ let initialState = {
 
 const store = createContext(initialState);
 const { Provider } = store;
+const empty = {
+  entityMap: {},
+  blocks: [
+    {
+      key: "637gr",
+      text: "",
+      type: "unstyled",
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+      data: {},
+    },
+  ],
+};
 
 const setProject = (state, action) => {
   const results = loadFile(
@@ -54,6 +68,14 @@ const add = (state, action) => {
   action.payload.uuid = uuidv4();
   action.payload.type = action.for;
   action.payload.class = action.class;
+  console.log("Let's see", action.for)
+  if(action.for === "element"){
+
+      action.payload.content = _.cloneDeep(empty);
+      action.payload.content.blocks[0].text = `[${action.payload.name}]`
+      console.log(action.payload)
+    
+  }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
   return newState;
@@ -100,6 +122,7 @@ const saveContent = (state, action) => {
 const saveActor = (state, action) => {
   console.log("Save actor!")
   let newState = _.cloneDeep(state);
+
   newState.actors = [
     action.payload.actor,
     ...state.actors.filter((x) => x.uuid !== action.payload.actor.uuid),

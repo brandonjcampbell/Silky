@@ -150,7 +150,7 @@ const Thread = ({ data }) => {
           {globalState.state.actors
             .filter(
               (x) =>
-                x.uuid !== data.uuid &&
+                x.type!=="thread" && x.uuid !== data.uuid &&
                 (!data.sequence ||
                   !data.sequence.map((y) => y.uuid).includes(x.uuid))
             )

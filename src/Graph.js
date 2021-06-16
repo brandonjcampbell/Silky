@@ -32,8 +32,23 @@ const Graph = ({type})=>{
     
 
     const globalState = useContext(store);
-    const axioms = []
-    const content = actorToCyto(globalState.state.actors)
+    let axioms = []
+    const content = actorToCyto(globalState.state.actors.filter(x=> x.type!=="thread" && x.type!="web"))
+    globalState.state.actors.filter(x=> x.type==="thread").map(thread=>{
+      console.log(thread.name)
+      if(thread.sequence){
+        for (let i = 1; i < thread.sequence.length;i++){
+          const source = thread.sequence[i-1]
+          const target = thread.sequence[i]
+          const res = {data:{uuid:source.uuid+target.uuid+i,source:source.uuid,target:target.uuid,
+            label:thread.name,arrow:"circle"}}
+            console.log(res)
+          axioms.push(res)
+        }
+        
+      }
+    })
+     console.log("hmmm",axioms)
   
         return(
         <div style={{ height: windowDimensions.height, width:windowDimensions.width-200}}>
@@ -63,7 +78,8 @@ const Graph = ({type})=>{
                   'line-color': '#ccc',
                   'target-arrow-color': '#ccc',
                   'target-arrow-shape': "data(arrow)",
-                  'curve-style': 'bezier'
+                  'curve-style': 'bezier',
+                  label: "data(label)",
                 }
               },
               {

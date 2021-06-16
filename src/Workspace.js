@@ -2,7 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import TextEditor from "./TextEditor";
 import { store } from "./MyContext";
 import Thread from "./Thread";
-import _ from "lodash"
+import _ from "lodash";
+import TextField from "@material-ui/core/TextField";
+
+import Chip from "@material-ui/core/Chip";
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -19,8 +22,12 @@ const Workspace = ({ actorUuid }) => {
     getWindowDimensions()
   );
 
+  // const actor = _.cloneDeep(
+  //   globalState.state.actors.find((x) => x.uuid === actorUuid)
+  // );
+
   useEffect(() => {
-    console.log("workspace useeffect")
+    console.log("workspace useeffect");
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
     }
@@ -29,38 +36,48 @@ const Workspace = ({ actorUuid }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
+  useEffect(() => {
+    setTags(actor && actor.tags ? actor.tags : "");
+  }, [actorUuid]);
+
+  let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
+  const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
   const save = (newContent, key) => {
-
-    const actor = _.cloneDeep(
-      globalState.state.actors.find((x) => x.uuid === actorUuid)
-    );
-
     //if(actor && actor.content){
-    newContent.blocks = newContent.blocks.map((x,index)=>{
-      x.key = actorUuid+":"+index
-      return x
-    })
-  //}
-  actor.content = newContent
+    newContent.blocks = newContent.blocks.map((x, index) => {
+      x.key = actorUuid + ":" + index;
+      return x;
+    });
+    //}
+    actor.content = newContent;
+    if (tags) {
+      actor.tags = tags;
+    }
 
-   // actor.content = newContent
+    // actor.content = newContent
     dispatch({
       action: "saveActor",
       payload: { actor: actor },
     });
   };
 
-  
-  
+  const tagSave = (newTags) => {
+    actor.tags = newTags
+    setTags(newTags)
+
+    dispatch({
+      action: "saveActor",
+      payload: { actor: actor },
+    });
+  };
+
   function getDisplayName(uuid) {
     return globalState.getDisplayName(
       globalState,
       globalState.find(globalState, uuid)
     );
   }
-
 
   return (
     <div
@@ -71,14 +88,33 @@ const Workspace = ({ actorUuid }) => {
     >
       {actor.type == "element" && (
         <div>
-                <h1 style={{ color: "white" }}>Element: {getDisplayName(actorUuid)}</h1>
-                <TextEditor
-                  save={save}
-                  data={globalState.state.actors.find((x) => x.uuid === actorUuid).content}
-                  actorUuid={actorUuid}
-                ></TextEditor>
+          <h1 style={{ color: "white" }}>
+            Element: {getDisplayName(actorUuid)}
+          </h1>
+          <TextEditor
+            save={save}
+            data={
+              globalState.state.actors.find((x) => x.uuid === actorUuid).content
+            }
+            actorUuid={actorUuid}
+          ></TextEditor>
+          <div>
+            {tags.split(",").map((tag) => {
+              if (tag) {
+                return <Chip label={tag} />;
+              }
+            })}
           </div>
 
+          <TextField
+            aria-label="empty textarea"
+            placeholder="Empty"
+            value={tags}
+            onChange={(e) => {
+              tagSave(e.target.value);
+            }}
+          />
+        </div>
       )}
       {actor.type == "thread" && <Thread data={actor}></Thread>}
     </div>
