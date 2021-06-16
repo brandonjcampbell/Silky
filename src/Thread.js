@@ -109,7 +109,8 @@ const Thread = ({ data }) => {
   };
  
   return (
-    <div>
+    <div style={{display:"flex"}}>
+      <div>
       <h1 style={{ color: "white" }}>Thread: {getDisplayName(data.uuid)}</h1>
       <DraggableList
         list={data.sequence}
@@ -162,6 +163,9 @@ const Thread = ({ data }) => {
         </Select>
       </FormControl>
 
+
+      </div>
+     
       <div>
         {threadContent !== null && toggle === true && (
           <div>

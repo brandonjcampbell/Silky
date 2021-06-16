@@ -6,7 +6,7 @@ import saveFile from "./utils/saveFile";
 const homedir = window.require("os").homedir();
 
 let initialState = {
-  project: "unset",
+  project: "Silky",
   cursor:null,
   actors: [
     // {name: "that", subject: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", target: "2011aa60-548e-4d26-a7be-d9c22f96b081", uuid: "b5877f82-0e2e-4934-b51f-fd708449ab1c", type: "link",  class: "axiom"}

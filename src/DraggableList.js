@@ -36,18 +36,17 @@ const Thread = ({
               >
                 <div
                   style={{
-                    backgroundColor: "white",
-                    margin: "10px",
-                   
-                    maxWidth: "500px",
+
+                    margin: "2px",
+                
                     display:"flex"
                   }}
                 >
                   <button onClick={() => remove(x.uuid)}>X</button>
                   <div
                       style={{
-                        padding: "10px",
-                        width: "500px",
+                        padding: "2px",
+                   color:"white"
     
                     
                       }}

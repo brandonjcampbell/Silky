@@ -41,8 +41,8 @@ const ActorList = ({ type }) => {
     <div style={{ display: "flex" }}>
       <div
         style={{
-          height: "100vh",
-          width: "500px",
+          height: "200px",
+          width: "250px",
           padding: "30px;",
         }}
       >
