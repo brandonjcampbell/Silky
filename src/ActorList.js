@@ -5,13 +5,19 @@ import Workspace from "./Workspace";
 import DraggableList from "./DraggableList";
 import _ from 'lodash'
 
-const ActorList = ({ type }) => {
+const ActorList = ({ match, type }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const content = globalState.state.actors;
   const [name, setName] = useState("");
-  const [active, setActive] = useState(null);
+  const [active, setActive] = useState(match && match.params && match.params.uuid?{uuid:match.params.uuid}:null);
   const [count, setCount] = useState(1);
+
+
+  const {
+    params: { userId }
+  } = match;
+  console.log("match??", match.params.uuid)
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
@@ -69,6 +75,9 @@ const ActorList = ({ type }) => {
               for: type,
               payload: { actors: e },
             });
+          }}
+          getType={(x)=>{
+            return globalState.state.actors.find(y=>y.uuid === active.uuid).type+"s"
           }}
           onDrop={()=>console.log("not necessary")}
           reorderList={(e) => {

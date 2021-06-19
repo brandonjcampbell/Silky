@@ -15,7 +15,7 @@ import Tags from "./Tags";
 import CurrentProjectLink from "./CurrentProjectLink";
 import ExtensionIcon from "@material-ui/icons/Extension";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import LabelIcon from "@material-ui/icons/Label";
+import LabelIcon from "@material-ui/icons/LocalOffer";
 import LanguageIcon from "@material-ui/icons/Language";
 
 import { StateProvider } from "./MyContext";
@@ -25,7 +25,7 @@ ReactDOM.render(
     <StateProvider>
       <BrowserRouter>
         <div style={{ padding: "10px", backgroundColor: "#121212" }}>
-          <Link to="/" style={{"textDecoration":"none"}}>
+          <Link to="/" style={{ textDecoration: "none" }}>
             {" "}
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
@@ -47,8 +47,6 @@ ReactDOM.render(
           className="App"
           style={{ display: "flex", backgroundColor: "green" }}
         >
-
-
           <div style={{ backgroundColor: "red" }}>
             <ProSidebar
               collapsed={false}
@@ -90,13 +88,33 @@ ReactDOM.render(
             <Route
               path="/Elements"
               exact
-              render={() => <ActorList type="element"></ActorList>}
+              render={(props) => (
+                <ActorList {...props} type="element"></ActorList>
+              )}
             />
+                         <Route
+              path="/Elements/:uuid"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="thread"></ActorList>
+              )}
+            />
+
             <Route
               path="/Threads"
               exact
-              render={() => <ActorList type="thread"></ActorList>}
+              render={(props) => (
+                <ActorList {...props} type="thread"></ActorList>
+              )}
             />
+                <Route
+              path="/Threads/:uuid"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="thread"></ActorList>
+              )}
+            />
+ 
             <Route path="/Tags" exact render={() => <Tags></Tags>} />
             {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
                 <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}

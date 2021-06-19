@@ -4,6 +4,11 @@ import { store } from "./MyContext";
 import Thread from "./Thread";
 import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
+import LocalOfferIcon from "@material-ui/icons/LocalOffer";
+import { makeStyles } from "@material-ui/core/styles";
+import ExtensionIcon from "@material-ui/icons/Extension";
+import { Link } from "react-router-dom";
+import LinearScaleIcon from "@material-ui/icons/LinearScale";
 
 import Chip from "@material-ui/core/Chip";
 
@@ -15,6 +20,26 @@ function getWindowDimensions() {
   };
 }
 
+const useStyles = makeStyles({
+  root: {
+    background: "#333",
+    color: "white",
+    width: "500px",
+    padding: "5px",
+    margin: "5px",
+  },
+  subSection: {
+    color: "white",
+  },
+  p: {
+    color: "#777",
+  },
+  link: {
+    "text-decoration": "none",
+    color: "#777",
+  },
+});
+
 const Workspace = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
@@ -22,6 +47,7 @@ const Workspace = ({ actorUuid }) => {
     getWindowDimensions()
   );
 
+  const classes = useStyles();
   // const actor = _.cloneDeep(
   //   globalState.state.actors.find((x) => x.uuid === actorUuid)
   // );
@@ -63,8 +89,8 @@ const Workspace = ({ actorUuid }) => {
   };
 
   const tagSave = (newTags) => {
-    actor.tags = newTags
-    setTags(newTags)
+    actor.tags = newTags;
+    setTags(newTags);
 
     dispatch({
       action: "saveActor",
@@ -82,41 +108,84 @@ const Workspace = ({ actorUuid }) => {
   return (
     <div
       style={{
-        height: windowDimensions.height - 40,
         width: windowDimensions.width - 800,
       }}
     >
-      {actor.type == "element" && (
+      {actor && actor.type === "element" && (
         <div>
-          <h1 style={{ color: "white" }}>
-            Element: {getDisplayName(actorUuid)}
+          <h1 style={{ color: "white", "margin-bottom": "-15px" }}>
+            <ExtensionIcon /> {getDisplayName(actorUuid)}
           </h1>
-          <TextEditor
-            save={save}
-            data={
-              globalState.state.actors.find((x) => x.uuid === actorUuid).content
-            }
-            actorUuid={actorUuid}
-          ></TextEditor>
-          <div>
-            {tags.split(",").map((tag) => {
-              if (tag) {
-                return <Chip label={tag} />;
-              }
-            })}
-          </div>
 
-          <TextField
-            aria-label="empty textarea"
-            placeholder="Empty"
-            value={tags}
-            onChange={(e) => {
-              tagSave(e.target.value);
+          <div
+            style={{
+              display: "flex",
             }}
-          />
+          >
+            <TextEditor
+              save={save}
+              data={
+                globalState.state.actors.find((x) => x.uuid === actorUuid)
+                  .content
+              }
+              actorUuid={actorUuid}
+            ></TextEditor>
+            <div>
+              <h2 className={classes.subSection}>Tags</h2>
+              <p className={classes.p}>Enter tags as a comma separated list</p>
+              <TextField
+                aria-label="empty textarea"
+                placeholder="Empty"
+                className={classes.root}
+                value={tags}
+                onChange={(e) => {
+                  tagSave(e.target.value);
+                }}
+              />
+              <div>
+                {tags.split(",").map((tag) => {
+                  if (tag) {
+                    return (
+                      <Chip
+                        label={tag}
+                        icon={<LocalOfferIcon />}
+                        style={{ margin: "2px" }}
+                      />
+                    );
+                  }
+                })}
+              </div>
+              <h2 className={classes.subSection}>Threads</h2>
+              <div>
+                {globalState.state.actors
+                  .filter(
+                    (actor) =>
+                      actor.type === "thread" &&
+                      actor.sequence &&
+                      actor.sequence
+                        .map((y) => {
+                          return y.uuid;
+                        })
+                        .includes(actorUuid)
+                  )
+                  .map((x) => {
+                    return (
+                      <div>
+                        <Link to={`/threads/${x.uuid}`} className={classes.link}>
+                          <LinearScaleIcon
+                            style={{ position: "relative", top: "7px" }}
+                          />
+                          {x.name}
+                        </Link>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          </div>
         </div>
       )}
-      {actor.type == "thread" && <Thread data={actor}></Thread>}
+      {actor && actor.type === "thread" && <Thread data={actor}></Thread>}
     </div>
   );
 };

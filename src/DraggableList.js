@@ -1,12 +1,14 @@
 import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
+import { Link } from "react-router-dom";
 
 const Thread = ({
   list,
   saveList,
   handleClick,
   getDisplayName,
+  getType,
   onDrop,
 }) => {
   function handleOnDragEnd(result) {
@@ -54,8 +56,10 @@ const Thread = ({
                     onClick={() => {
                       handleClick(x);
                     }}
-                  >
-                    {getDisplayName(x.uuid)}
+                  > 
+                  {getDisplayName(x.uuid)}
+            
+                    
                   </div>
                 </div>
               </div>

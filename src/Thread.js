@@ -9,9 +9,12 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import DraggableList from "./DraggableList";
 import TextEditor from "./TextEditor";
+import { Link , useHistory} from "react-router-dom";
+
 
 const Thread = ({ data }) => {
   const globalState = useContext(store);
+  
   const { dispatch } = globalState;
 
   const [cursor, setCursor] = useState();
@@ -107,75 +110,81 @@ const Thread = ({ data }) => {
       setToggle(true);
     }, 10);
   };
- 
+
   return (
-    <div style={{display:"flex"}}>
-      <div>
+    <div>
       <h1 style={{ color: "white" }}>Thread: {getDisplayName(data.uuid)}</h1>
-      <DraggableList
-        list={data.sequence}
-        saveList={(e) => {
-          let clone = _.cloneDeep(data);
-          clone.sequence = e;
-          dispatch({
-            action: "saveActor",
-            for: "thread",
-            payload: { actor: clone },
-          });
-          redrawText()
-        }}
-        handleClick={(e) => {
-          console.log("handled Click", e);
-        }}
-        getDisplayName={getDisplayName}
-        onDrop={() => {
-          redrawText();
-        }}
-      ></DraggableList>
 
-      <FormControl variant="outlined">
-        <InputLabel id="demo-simple-select-outlined-label">THEN</InputLabel>
-        <Select
-          labelId="demo-simple-select-outlined-label"
-          id="demo-simple-select-outlined"
-          value={next}
-          onChange={(e) => {
-            addToThread(e.target.value);
-            redrawText()
-          }}
-          label="Subject"
-        >
-          <MenuItem value="">
-            <em>Select</em>
-          </MenuItem>
-          {globalState.state.actors
-            .filter(
-              (x) =>
-                x.type!=="thread" && x.uuid !== data.uuid &&
-                (!data.sequence ||
-                  !data.sequence.map((y) => y.uuid).includes(x.uuid))
-            )
-            .map((x) => {
-              return (
-                <MenuItem value={x.uuid}>{getDisplayName(x.uuid)}</MenuItem>
-              );
-            })}
-        </Select>
-      </FormControl>
+      <div style={{ display: "flex" }}>
+        <div>
+          {threadContent !== null && toggle === true && (
+            <div>
+              <TextEditor
+                save={save}
+                data={{ blocks: determineOutput(), entityMap: {} }}
+                actorUuid={"thread" + data.uuid}
+              ></TextEditor>
+            </div>
+          )}
+        </div>
 
+        <div>
+          <DraggableList
+            list={data.sequence}
+            saveList={(e) => {
+              let clone = _.cloneDeep(data);
+              clone.sequence = e;
+              dispatch({
+                action: "saveActor",
+                for: "thread",
+                payload: { actor: clone },
+              });
+              redrawText();
+            }}
+            handleClick={(e) => {
+              console.log("handled Click", e);
+              //history.push("/elements/"+e.target.value.uuid);
+            }}
+            getDisplayName={getDisplayName}
+            getType={(x)=>{
+              return globalState.state.actors.find(y=>x.uuid === y.uuid).type+"s"
+            }}
+            onDrop={() => {
+              redrawText();
+            }}
+          ></DraggableList>
 
-      </div>
-     
-      <div>
-        {threadContent !== null && toggle === true && (
-          <div>
-            <TextEditor
-              save={save}
-              data={{ blocks: determineOutput(), entityMap: {} }}
-              actorUuid={"thread" + data.uuid}
-            ></TextEditor>
-          </div>
-        )}
+          <FormControl variant="outlined">
+            <InputLabel id="demo-simple-select-outlined-label">THEN</InputLabel>
+            <Select
+              labelId="demo-simple-select-outlined-label"
+              id="demo-simple-select-outlined"
+              value={next}
+              onChange={(e) => {
+                addToThread(e.target.value);
+                redrawText();
+              }}
+              label="Subject"
+            >
+              <MenuItem value="">
+                <em>Select</em>
+              </MenuItem>
+              {globalState.state.actors
+                .filter(
+                  (x) =>
+                    x.type !== "thread" &&
+                    x.uuid !== data.uuid &&
+                    (!data.sequence ||
+                      !data.sequence.map((y) => y.uuid).includes(x.uuid))
+                )
+                .map((x) => {
+                  return (
+                    <MenuItem value={x.uuid}>{getDisplayName(x.uuid)}</MenuItem>
+                  );
+                })}
+            </Select>
+          </FormControl>
+        </div>
       </div>
     </div>
   );
