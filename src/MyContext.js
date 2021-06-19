@@ -83,7 +83,7 @@ const add = (state, action) => {
 
 const remove = (state, action) => {
   let newState = _.cloneDeep(state);
-  newState.actors = [...state.actors.filter((x) => x.uuid !== action.payload)];
+  newState.actors = [...state.actors.filter((x) => x.uuid !== action.payload.uuid)];
   saveProject(newState);
   return newState;
 };
@@ -160,7 +160,13 @@ const saveActors = (state, action) => {
 
 const removeActor= (state, action) => {
   let newState = _.cloneDeep(state);
-  newState.actors = state.actors.filter(x=>x.uuid!=action.payload.uuid)
+  newState.actors = state.actors.filter(x=>x.uuid!==action.payload.uuid).map(actorx=>{
+    let actory = _.cloneDeep(actorx)
+    if(actory.sequence){
+    actory.sequence = [...actorx.sequence.filter(y=>y.uuid!==action.payload.uuid)]
+    }
+    return actory
+  })
   saveProject(newState);
   return newState;
 };
@@ -179,7 +185,7 @@ const StateProvider = ({ children }) => {
       case "saveActor":
         return saveActor(state, action);
       case "removeActor":
-          return saveActor(state, action);
+          return removeActor(state, action);
       case "saveActors":
         return saveActors(state, action);
       case "reorderActors":

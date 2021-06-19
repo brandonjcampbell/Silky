@@ -9,12 +9,13 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import DraggableList from "./DraggableList";
 import TextEditor from "./TextEditor";
-import { Link , useHistory} from "react-router-dom";
-
+import { Link, useHistory } from "react-router-dom";
+import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 const Thread = ({ data }) => {
   const globalState = useContext(store);
-  
+
   const { dispatch } = globalState;
 
   const [cursor, setCursor] = useState();
@@ -58,6 +59,13 @@ const Thread = ({ data }) => {
       payload: { actor: clone },
     });
   }
+
+  const remove = () => {
+    dispatch({
+      action: "removeActor",
+      payload: { uuid: data.uuid },
+    });
+  };
 
   function getDisplayName(uuid) {
     return globalState.getDisplayName(
@@ -108,27 +116,38 @@ const Thread = ({ data }) => {
     setToggle(false);
     setTimeout((x) => {
       setToggle(true);
-    }, 10);
+    }, 0.1);
   };
 
   return (
     <div>
-      <h1 style={{ color: "white" }}>Thread: {getDisplayName(data.uuid)}</h1>
+      <h1 style={{ color: "white" }}></h1>
+      <h1 style={{ color: "white", width: "820px" }}>
+        <LinearScaleIcon />
+        {getDisplayName(data.uuid)}
+        <DeleteIcon style={{ float: "right" }} onClick={remove} />
+      </h1>
 
       <div style={{ display: "flex" }}>
         <div>
           {threadContent !== null && toggle === true && (
-            <div>
-              <TextEditor
-                save={save}
-                data={{ blocks: determineOutput(), entityMap: {} }}
-                actorUuid={"thread" + data.uuid}
-              ></TextEditor>
-            </div>
+            <TextEditor
+              save={save}
+              data={{ blocks: determineOutput(), entityMap: {} }}
+              actorUuid={"thread" + data.uuid}
+            ></TextEditor>
+          )}
+          {threadContent !== null && toggle === false && (
+            <TextEditor
+              save={save}
+              data={{ blocks: [], entityMap: {} }}
+              actorUuid={"thread" + data.uuid}
+            ></TextEditor>
           )}
         </div>
 
         <div>
+          <h2 style={{ color: "white" }}>Sequence</h2>
           <DraggableList
             list={data.sequence}
             saveList={(e) => {
@@ -141,28 +160,37 @@ const Thread = ({ data }) => {
               });
               redrawText();
             }}
+            action="remove"
             handleClick={(e) => {
               console.log("handled Click", e);
               //history.push("/elements/"+e.target.value.uuid);
             }}
             getDisplayName={getDisplayName}
-            getType={(x)=>{
-              return globalState.state.actors.find(y=>x.uuid === y.uuid).type+"s"
+            getType={(x) => {
+              return (
+                globalState.state.actors.find((y) => x.uuid === y.uuid).type +
+                "s"
+              );
             }}
             onDrop={() => {
               redrawText();
             }}
           ></DraggableList>
-
-          <FormControl variant="outlined">
-            <InputLabel id="demo-simple-select-outlined-label">THEN</InputLabel>
+          <br />
+          <FormControl variant="filled">
+            <InputLabel id="demo-simple-select-outlined-label">
+              Then...
+            </InputLabel>
             <Select
+              style={{ width: "200px", color: "white", outlineColor: "white" }}
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
               value={next}
               onChange={(e) => {
-                addToThread(e.target.value);
-                redrawText();
+                if (e.target.value && e.target.value !== "Select") {
+                  addToThread(e.target.value);
+                  redrawText();
+                }
               }}
               label="Subject"
             >

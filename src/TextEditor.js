@@ -73,7 +73,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex" ,position:"relative",top:"-15px"}}>
       <div
         style={{
           margin: "20px",
@@ -86,7 +86,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
         }}
       >
         <Editor
-          height="100vh"
+        editorStyle={{height:"calc(100vh - 350px)",paddingRight:"15px"}}
           editorState={editorState}
           onEditorStateChange={(e) => {
             onEditorStateChange(e);

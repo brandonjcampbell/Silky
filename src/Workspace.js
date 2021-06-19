@@ -9,6 +9,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import ExtensionIcon from "@material-ui/icons/Extension";
 import { Link } from "react-router-dom";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import DeleteIcon from "@material-ui/icons/Delete";
+
 
 import Chip from "@material-ui/core/Chip";
 
@@ -105,6 +107,13 @@ const Workspace = ({ actorUuid }) => {
     );
   }
 
+  const remove = () => {
+      dispatch({
+        action: "removeActor",
+        payload: { uuid: actorUuid },
+      });
+  };
+
   return (
     <div
       style={{
@@ -113,8 +122,9 @@ const Workspace = ({ actorUuid }) => {
     >
       {actor && actor.type === "element" && (
         <div>
-          <h1 style={{ color: "white", "margin-bottom": "-15px" }}>
-            <ExtensionIcon /> {getDisplayName(actorUuid)}
+          <h1 style={{ color: "white", width: "820px" }}>
+            <ExtensionIcon /> {getDisplayName(actorUuid)}{" "}
+            <DeleteIcon style={{ float: "right" }} onClick={remove} />
           </h1>
 
           <div
@@ -171,7 +181,10 @@ const Workspace = ({ actorUuid }) => {
                   .map((x) => {
                     return (
                       <div>
-                        <Link to={`/threads/${x.uuid}`} className={classes.link}>
+                        <Link
+                          to={`/threads/${x.uuid}`}
+                          className={classes.link}
+                        >
                           <LinearScaleIcon
                             style={{ position: "relative", top: "7px" }}
                           />

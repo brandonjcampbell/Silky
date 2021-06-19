@@ -53,12 +53,10 @@ const ActorList = ({ match, type }) => {
         }}
       >
         <div>
-          {" "}
-          <h2>{type}</h2>
+  
           <TextField
             style={{ color: "white" }}
             id="outlined-basic"
-            variant="outlined"
             value={name}
             onKeyDown={keyPress}
             onChange={(e) => setName(e.target.value)}

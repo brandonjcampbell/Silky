@@ -92,11 +92,11 @@ ReactDOM.render(
                 <ActorList {...props} type="element"></ActorList>
               )}
             />
-                         <Route
+            <Route
               path="/Elements/:uuid"
               exact
               render={(props) => (
-                <ActorList {...props} type="thread"></ActorList>
+                <ActorList {...props} type="element"></ActorList>
               )}
             />
 
@@ -107,14 +107,14 @@ ReactDOM.render(
                 <ActorList {...props} type="thread"></ActorList>
               )}
             />
-                <Route
+            <Route
               path="/Threads/:uuid"
               exact
               render={(props) => (
                 <ActorList {...props} type="thread"></ActorList>
               )}
             />
- 
+
             <Route path="/Tags" exact render={() => <Tags></Tags>} />
             {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
                 <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}
