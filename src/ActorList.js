@@ -89,6 +89,19 @@ const ActorList = ({ match, type }) => {
       </div>
 
       <div>{active && <Workspace actorUuid={active.uuid}></Workspace>}</div>
+
+      {!(active) && type==="snippet" && <div>
+        What is a snippet??
+        </div>}
+
+        {!(active) && type==="thread" && <div>
+        What is a thread??
+        </div>}
+
+        {!(active) && type==="element" && <div>
+        What is an element??
+        </div>}
+
     </div>
   );
 };

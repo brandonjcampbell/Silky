@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import CreateIcon from "@material-ui/icons/Create";
 import ExtensionIcon from "@material-ui/icons/Extension";
 
 const Thread = ({
@@ -54,9 +55,11 @@ const Thread = ({
             }}
           >
               
-{(x.type ? x.type:"element")==="element" && <ExtensionIcon/>}
-{(x.type ? x.type:"element")==="thread" && <LinearScaleIcon/>}
-              <Link style={{color:"white",textDecoration:"none",position:"relative",top:"-5px",margin:"5px"}} to={"/"+(x.type ? x.type:"element")+"s/"+x.uuid}>
+{(x.type ? x.type:"snippet")==="snippet" && <CreateIcon/>}
+{(x.type ? x.type:"snippet")==="thread" && <LinearScaleIcon/>}
+{(x.type ? x.type:"snippet")==="element" && <ExtensionIcon/>}
+
+              <Link style={{color:"white",textDecoration:"none",position:"relative",top:"-5px",margin:"5px"}} to={"/"+(x.type ? x.type:"snippet")+"s/"+x.uuid}>
               {getDisplayName(x.uuid)}
               </Link>
               {action==="remove" && <CloseIcon onClick={()=>{remove(x.uuid)}}/>}
@@ -90,10 +93,10 @@ const Thread = ({
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="elements">
+      <Droppable droppableId="snippets">
         {(provided) => (
           <div
-            className="elements"
+            className="snippets"
             {...provided.droppableProps}
             ref={provided.innerRef}
           >

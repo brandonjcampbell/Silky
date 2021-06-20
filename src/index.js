@@ -13,10 +13,12 @@ import AxiomList from "./AxiomList";
 import Web from "./Web";
 import Tags from "./Tags";
 import CurrentProjectLink from "./CurrentProjectLink";
-import ExtensionIcon from "@material-ui/icons/Extension";
+import CreateIcon from "@material-ui/icons/Create";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import LabelIcon from "@material-ui/icons/LocalOffer";
 import LanguageIcon from "@material-ui/icons/Language";
+import ExtensionIcon from "@material-ui/icons/Extension";
+
 
 import { StateProvider } from "./MyContext";
 
@@ -56,8 +58,11 @@ ReactDOM.render(
               }}
             >
               <Menu iconShape="circle">
-                <MenuItem icon={<ExtensionIcon />}>
+              <MenuItem icon={<ExtensionIcon />}>
                   <Link to="/elements">Elements</Link>
+                </MenuItem>
+                <MenuItem icon={<CreateIcon />}>
+                  <Link to="/snippets">Snippets</Link>
                 </MenuItem>
                 <MenuItem icon={<LabelIcon />}>
                   <Link to="/tags">Tags</Link>
@@ -83,7 +88,7 @@ ReactDOM.render(
             <Route
               path="/Editor"
               exact
-              render={() => <ActorList type="element"></ActorList>}
+              render={() => <ActorList type="snippet"></ActorList>}
             />
             <Route
               path="/Elements"
@@ -97,6 +102,21 @@ ReactDOM.render(
               exact
               render={(props) => (
                 <ActorList {...props} type="element"></ActorList>
+              )}
+            />
+
+            <Route
+              path="/Snippets"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="snippet"></ActorList>
+              )}
+            />
+            <Route
+              path="/Snippets/:uuid"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="snippet"></ActorList>
               )}
             />
 

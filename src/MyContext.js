@@ -7,7 +7,7 @@ const homedir = window.require("os").homedir();
 
 let initialState = {
   project: "Silky",
-  cursor:null,
+  cursor: null,
   actors: [
     // {name: "that", subject: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", target: "2011aa60-548e-4d26-a7be-d9c22f96b081", uuid: "b5877f82-0e2e-4934-b51f-fd708449ab1c", type: "link",  class: "axiom"}
     // ,{name: "is", subject: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", target: "c0f92045-5a06-4a6e-8224-eeef504ed9ee", uuid: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", type: "link",  class: "axiom"}
@@ -68,13 +68,11 @@ const add = (state, action) => {
   action.payload.uuid = uuidv4();
   action.payload.type = action.for;
   action.payload.class = action.class;
-  console.log("Let's see", action.for)
-  if(action.for === "element"){
-
-      action.payload.content = _.cloneDeep(empty);
-      action.payload.content.blocks[0].text = `[${action.payload.name}]`
-      console.log(action.payload)
-    
+  console.log("Let's see", action.for);
+  if (action.for === "snippet") {
+    action.payload.content = _.cloneDeep(empty);
+    action.payload.content.blocks[0].text = `[${action.payload.name}]`;
+    console.log(action.payload);
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
@@ -83,7 +81,9 @@ const add = (state, action) => {
 
 const remove = (state, action) => {
   let newState = _.cloneDeep(state);
-  newState.actors = [...state.actors.filter((x) => x.uuid !== action.payload.uuid)];
+  newState.actors = [
+    ...state.actors.filter((x) => x.uuid !== action.payload.uuid),
+  ];
   saveProject(newState);
   return newState;
 };
@@ -111,7 +111,7 @@ const saveContent = (state, action) => {
   let newState = _.cloneDeep(state);
 
   newState.content = [
-    { uuid: action.payload.uuid, data: action.payload.content},
+    { uuid: action.payload.uuid, data: action.payload.content },
     ...state.content.filter((x) => x.uuid !== action.payload.uuid),
   ];
 
@@ -120,7 +120,7 @@ const saveContent = (state, action) => {
 };
 
 const saveActor = (state, action) => {
-  console.log("Save actor!")
+  console.log("Save actor!");
   let newState = _.cloneDeep(state);
 
   newState.actors = [
@@ -133,14 +133,16 @@ const saveActor = (state, action) => {
 
 const reorderActors = (state, action) => {
   let newState = _.cloneDeep(state);
-  console.log("the UUIDS of the updated actors",action.payload.actors.map(y=>y.uuid))
-  newState.actors = state.actors.filter((x) => !(action.payload.actors.map(y=>y.uuid).includes(x.uuid)))
-  console.log("all the UNRELATED actors", newState.actors)
-  console.log("all the UPDATED actors",action.payload.actors)
-  newState.actors = [
-    ...action.payload.actors,
-    ...newState.actors
-  ];
+  console.log(
+    "the UUIDS of the updated actors",
+    action.payload.actors.map((y) => y.uuid)
+  );
+  newState.actors = state.actors.filter(
+    (x) => !action.payload.actors.map((y) => y.uuid).includes(x.uuid)
+  );
+  console.log("all the UNRELATED actors", newState.actors);
+  console.log("all the UPDATED actors", action.payload.actors);
+  newState.actors = [...action.payload.actors, ...newState.actors];
   saveProject(newState);
   return newState;
 };
@@ -148,25 +150,30 @@ const reorderActors = (state, action) => {
 const saveActors = (state, action) => {
   let newState = _.cloneDeep(state);
   //do not effect any actors that aren't of the designated type
-  newState.actors = state.actors.filter(x=>x.type!==action.for)
-  newState.actors = [
-    ...action.payload.actors,
-    ...newState.actors
-  ];
+  newState.actors = state.actors.filter((x) => x.type !== action.for);
+  newState.actors = [...action.payload.actors, ...newState.actors];
   saveProject(newState);
   return newState;
 };
 
-
-const removeActor= (state, action) => {
+const removeActor = (state, action) => {
   let newState = _.cloneDeep(state);
-  newState.actors = state.actors.filter(x=>x.uuid!==action.payload.uuid).map(actorx=>{
-    let actory = _.cloneDeep(actorx)
-    if(actory.sequence){
-    actory.sequence = [...actorx.sequence.filter(y=>y.uuid!==action.payload.uuid)]
-    }
-    return actory
-  })
+  newState.actors = state.actors
+    .filter((x) => x.uuid !== action.payload.uuid)
+    .map((actorx) => {
+      let actory = _.cloneDeep(actorx);
+      if (actory.sequence) {
+        actory.sequence = [
+          ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      if (actory.elements) {
+        actory.elements = [
+          ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      return actory;
+    });
   saveProject(newState);
   return newState;
 };
@@ -185,7 +192,7 @@ const StateProvider = ({ children }) => {
       case "saveActor":
         return saveActor(state, action);
       case "removeActor":
-          return removeActor(state, action);
+        return removeActor(state, action);
       case "saveActors":
         return saveActors(state, action);
       case "reorderActors":

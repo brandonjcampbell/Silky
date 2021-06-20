@@ -54,13 +54,14 @@ const TextEditor = ({ data, save, actorUuid }) => {
     if (currentBlockKey && !currentBlockKey.includes(":")) {
   
       const previousKey = editorState.getCurrentContent().getKeyBefore(currentBlockKey)
-     
+     if(previousKey){
       const owner = previousKey.split(":")[0]
       const index = parseInt(previousKey.split(":")[1])
      //currentBlock.key = owner + ":"+(index+1)
      currentBlockKey =owner + ":"+(index+1)
      newContent.key = currentBlockKey
      console.log("try it",previousKey,currentBlockKey)
+     }
     }
   }
     setEditorState(editorState);

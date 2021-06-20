@@ -163,7 +163,7 @@ const Thread = ({ data }) => {
             action="remove"
             handleClick={(e) => {
               console.log("handled Click", e);
-              //history.push("/elements/"+e.target.value.uuid);
+              //history.push("/snippets/"+e.target.value.uuid);
             }}
             getDisplayName={getDisplayName}
             getType={(x) => {
@@ -200,7 +200,7 @@ const Thread = ({ data }) => {
               {globalState.state.actors
                 .filter(
                   (x) =>
-                    x.type !== "thread" &&
+                    x.type === "snippet" &&
                     x.uuid !== data.uuid &&
                     (!data.sequence ||
                       !data.sequence.map((y) => y.uuid).includes(x.uuid))
