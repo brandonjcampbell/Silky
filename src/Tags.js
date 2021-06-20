@@ -21,40 +21,75 @@ const Tags = ({ actorUuid }) => {
     });
   }
 
-  const taggedSnippets = globalState.state.actors.filter(x=>x.type==="snippet" && x.tags && x.tags.split(",").find(x=>x===active))
-  const taggedElements = globalState.state.actors.filter(x=>x.type==="element" && x.tags && x.tags.split(",").find(x=>x===active))
+  const taggedSnippets = globalState.state.actors.filter(
+    (x) =>
+      x.type === "snippet" &&
+      x.tags &&
+      x.tags.split(",").find((x) => x === active)
+  );
+  const taggedElements = globalState.state.actors.filter(
+    (x) =>
+      x.type === "element" &&
+      x.tags &&
+      x.tags.split(",").find((x) => x === active)
+  );
 
   return (
-    <div div style={{padding:"10px"}}>
-      <div style={{padding:"10px"}}>
+    <div div style={{ padding: "10px" }}>
+      <div style={{ padding: "10px" }}>
         {tags.map((x) => (
-          <Chip label={x} icon={<LocalOfferIcon/>} onClick={() => setActive(x)} style={{ margin: "2px" }}></Chip>
+          <Chip
+            label={x}
+            icon={<LocalOfferIcon />}
+            onClick={() => setActive(x)}
+            style={{ margin: "2px" }}
+          ></Chip>
         ))}
       </div>
-      <div>
-        <h1 style={{color:"white",padding:"10px"}}><LocalOfferIcon/> {active}</h1>
-        <div style={{display:"flex"}}>
+      {active && <div>
+        <h1 style={{ color: "white", padding: "10px" }}>
+          <LocalOfferIcon /> {active}
+        </h1>
+        <div style={{ display: "flex" }}>
+          <div style={{ color: "white" }}>
+            <h2 style={{ padding: "10px" }}>
+              <ExtensionIcon /> Elements
+            </h2>
+            {taggedElements.map((x) => (
+              <div> {x.name}</div>
+            ))}
+          </div>
 
-            
-        <div style={{color:"white"}}>
-            <h2 style={{padding:"10px"}}><ExtensionIcon/> Elements</h2>
-            {taggedElements.map(x=><div> {x.name}</div>)}
+          <div style={{ color: "white" }}>
+            <h2 style={{ padding: "10px" }}>
+              <CreateIcon /> Snippets
+            </h2>
+            {taggedSnippets.map((x) => (
+              <div> {x.name}</div>
+            ))}
+          </div>
+
+          <div style={{ color: "white" }}>
+            <h2 style={{ padding: "10px" }}>
+              <LinearScaleIcon /> Threads
+            </h2>
+            {globalState.state.actors
+              .filter(
+                (x) =>
+                  x.type === "thread" &&
+                  x.sequence &&
+                  x.sequence.find((y) =>
+                    [...taggedSnippets, ...taggedElements]
+                      .map((z) => z.uuid)
+                      .includes(y.uuid)
+                  )
+              )
+              .map((x) => (
+                <div> {x.name}</div>
+              ))}
+          </div>
         </div>
-
-        <div style={{color:"white"}}>
-            <h2 style={{padding:"10px"}}><CreateIcon/> Snippets</h2>
-            {taggedSnippets.map(x=><div> {x.name}</div>)}
-        </div>
-
-
-        <div style={{color:"white"}}>
-            <h2 style={{padding:"10px"}}><LinearScaleIcon/> Threads</h2>
-            {globalState.state.actors.filter(x=>x.type==="thread" && x.sequence && x.sequence.find(y=>[...taggedSnippets,...taggedElements].map(z=>z.uuid).includes(y.uuid))).map(x=><div> {x.name}</div>)}
-        </div>
-
-        </div>
-
-      </div>
+      </div>}
     </div>
   );
 };
