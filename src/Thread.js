@@ -12,6 +12,7 @@ import TextEditor from "./TextEditor";
 import { Link, useHistory } from "react-router-dom";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { ColorPicker } from 'material-ui-color';
 
 const Thread = ({ data }) => {
   const globalState = useContext(store);
@@ -44,6 +45,8 @@ const Thread = ({ data }) => {
   }
 
   const [next, setNext] = useState();
+  const [editTitle,setEditTitle]=useState(false)
+  const [title,setTitle]=useState("")
   const [toggle, setToggle] = useState(true);
   const [threadContent, setThreadContent] = useState(null);
 
@@ -53,6 +56,19 @@ const Thread = ({ data }) => {
       clone.sequence = [];
     }
     clone.sequence.push({ uuid: next });
+    dispatch({
+      action: "saveActor",
+      for: "thread",
+      payload: { actor: clone },
+    });
+  }
+
+
+  function updateColor(color) {
+    
+    console.log("doin update4color",color)
+    let clone = _.cloneDeep(data);
+    clone.color= "#"+color.hex;
     dispatch({
       action: "saveActor",
       for: "thread",
@@ -119,16 +135,55 @@ const Thread = ({ data }) => {
     }, 0.1);
   };
 
+
+  const keyPress = (e) => {
+    if (e.keyCode === 13) {
+      setEditTitle(false);
+      let clone = _.cloneDeep(data);
+      clone.name= title;
+      dispatch({
+        action: "saveActor",
+        for: "thread",
+        payload: { actor: clone },
+      });
+
+
+    }
+    if(e.keyCode===27){
+      setEditTitle(false);
+    }
+  };
+
   return (
     <div>
-      <h1 style={{ color: "white" }}></h1>
+
       <h1 style={{ color: "white", width: "820px" }}>
         <LinearScaleIcon />
-        {getDisplayName(data.uuid)}
+        <span onClick={()=>{setEditTitle(!editTitle);
+        setTitle(getDisplayName(data.uuid))}}>
+        {!editTitle && getDisplayName(data.uuid)}
+        </span>
+
+        {editTitle &&
+        <TextField
+        autoFocus
+              style={{ color: "white" }}
+              id="outlined-basic"
+              value={title}
+              onKeyDown={keyPress}
+              onChange={(e) => setTitle(e.target.value)}
+            />}
+
+
+ 
+
+       { <div style={{display:"inline-block"}}><ColorPicker style={{display:"inline-block"}} value={data.color?data.color:"transparent"} hideTextfield  onChange={(e)=>updateColor(e)}/></div>}
+
+
         <DeleteIcon style={{ float: "right" }} onClick={remove} />
       </h1>
 
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex"}}>
         <div>
           {threadContent !== null && toggle === true && (
             <TextEditor
@@ -146,8 +201,11 @@ const Thread = ({ data }) => {
           )}
         </div>
 
-        <div>
+        <div >
           <h2 style={{ color: "white" }}>Sequence</h2>
+          <div style={{minWidth:"600px",overflowY:"scroll", height:"calc(100vh - 350px)"}}>
+
+   
           <DraggableList
             list={data.sequence}
             saveList={(e) => {
@@ -176,6 +234,7 @@ const Thread = ({ data }) => {
               redrawText();
             }}
           ></DraggableList>
+                 </div>
           <br />
           <FormControl variant="filled">
             <InputLabel id="demo-simple-select-outlined-label">

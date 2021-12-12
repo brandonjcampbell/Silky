@@ -13,7 +13,7 @@ const actorToCyto = (actors)=>{
     
         else if(x.class==="axiom"){
           result ={
-              data: {  id:`${x.uuid}`, label: x.name ,hyper:1} //globalState.getDisplayName(globalState,x) }
+              data: {  id:`${x.uuid}`, label: x.name ,hyper:1, color:x.color} //globalState.getDisplayName(globalState,x) }
           }
           axioms.push({data:
            {

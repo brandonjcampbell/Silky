@@ -1,11 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
 import "./index.css";
 import App from "./App";
 import Graph from "./Graph";
 import logo from "./images/logo.svg";
 import TextEditor from "./TextEditor";
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import ActorList from "./ActorList";
@@ -28,7 +29,6 @@ ReactDOM.render(
       <BrowserRouter>
         <div style={{ padding: "10px", backgroundColor: "#121212" }}>
           <Link to="/" style={{ textDecoration: "none" }}>
-            {" "}
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
 
@@ -64,14 +64,14 @@ ReactDOM.render(
                 <MenuItem icon={<CreateIcon />}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
-                <MenuItem icon={<LabelIcon />}>
-                  <Link to="/tags">Tags</Link>
-                </MenuItem>
                 <MenuItem icon={<LinearScaleIcon />}>
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
                 <MenuItem icon={<LanguageIcon />}>
                   <Link to="/webs">Webs</Link>
+                </MenuItem>
+                <MenuItem icon={<LabelIcon />}>
+                  <Link to="/tags">Tags</Link>
                 </MenuItem>
               </Menu>
             </ProSidebar>

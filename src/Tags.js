@@ -5,6 +5,9 @@ import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import CreateIcon from "@material-ui/icons/Create";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import ExtensionIcon from "@material-ui/icons/Extension";
+import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
+
+
 
 import Chip from "@material-ui/core/Chip";
 
@@ -36,6 +39,8 @@ const Tags = ({ actorUuid }) => {
 
   return (
     <div div style={{ padding: "10px" }}>
+                  {globalState.state.project==="Silky" && <Redirect to="/" />}
+
       <div style={{ padding: "10px" }}>
         {tags.map((x) => (
           <Chip
@@ -51,7 +56,7 @@ const Tags = ({ actorUuid }) => {
           <LocalOfferIcon /> {active}
         </h1>
         <div style={{ display: "flex" }}>
-          <div style={{ color: "white" }}>
+          <div style={{ color: "white", padding: "10px" }}>
             <h2 style={{ padding: "10px" }}>
               <ExtensionIcon /> Elements
             </h2>
