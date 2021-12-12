@@ -37,6 +37,7 @@ export default function FormDialog({ type }) {
     if (e.keyCode === 13) {
       handleAdd();
       setName("");
+      handleClose();
     }
   };
 

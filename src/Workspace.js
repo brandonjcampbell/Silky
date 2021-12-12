@@ -55,6 +55,9 @@ const Workspace = ({ actorUuid }) => {
     getWindowDimensions()
   );
 
+  const [editTitle,setEditTitle]=useState(false)
+  const [title,setTitle]=useState("")
+
   const classes = useStyles();
   // const actor = _.cloneDeep(
   //   globalState.state.actors.find((x) => x.uuid === actorUuid)
@@ -146,6 +149,24 @@ const Workspace = ({ actorUuid }) => {
     });
   }
 
+  const keyPress = (e) => {
+    if (e.keyCode === 13) {
+      setEditTitle(false);
+      let clone = _.cloneDeep(actor);
+      clone.name= title;
+      dispatch({
+        action: "saveActor",
+        for: "thread",
+        payload: { actor: clone },
+      });
+
+
+    }
+    if(e.keyCode===27){
+      setEditTitle(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -154,10 +175,28 @@ const Workspace = ({ actorUuid }) => {
     >
       {actor && actor.type === "snippet" && (
         <div>
-          <h1 style={{ color: "white", width: "820px" }}>
-            <CreateIcon /> {getDisplayName(actorUuid)}{" "}
+          <h2 style={{ color: "white", width: "820px" }}>
+            <CreateIcon /> 
+            &nbsp;
+            
+            <span onClick={()=>{setEditTitle(!editTitle);
+        setTitle(getDisplayName(actorUuid))}}>
+        {!editTitle && getDisplayName(actorUuid)}
+        </span>
+
+        {editTitle &&
+        <TextField
+        autoFocus
+              style={{ color: "white" }}
+              id="outlined-basic"
+              value={title}
+              onKeyDown={keyPress}
+              onChange={(e) => setTitle(e.target.value)}
+            />}
+
+
             <DeleteIcon style={{ float: "right" }} onClick={remove} />
-          </h1>
+          </h2>
 
           <div
             style={{
@@ -298,10 +337,27 @@ const Workspace = ({ actorUuid }) => {
 
       {actor && actor.type === "element" && (
         <div>
-          <h1 style={{ color: "white", width: "820px" }}>
-            <ExtensionIcon /> {getDisplayName(actorUuid)}{" "}
+          <h2 style={{ color: "white", width: "820px" }}>
+            <ExtensionIcon /> 
+&nbsp;
+            <span onClick={()=>{setEditTitle(!editTitle);
+        setTitle(getDisplayName(actorUuid))}}>
+        {!editTitle && getDisplayName(actorUuid)}
+        </span>
+
+        {editTitle &&
+        <TextField
+        autoFocus
+              style={{ color: "white" }}
+              id="outlined-basic"
+              value={title}
+              onKeyDown={keyPress}
+              onChange={(e) => setTitle(e.target.value)}
+            />}
+
+
             <DeleteIcon style={{ float: "right" }} onClick={remove} />
-          </h1>
+          </h2>
 
           <div
             style={{

@@ -157,7 +157,7 @@ const Thread = ({ data }) => {
   return (
     <div>
 
-      <h1 style={{ color: "white", width: "820px" }}>
+      <h2 style={{ color: "white", width: "820px" }}>
         <LinearScaleIcon />
         <span onClick={()=>{setEditTitle(!editTitle);
         setTitle(getDisplayName(data.uuid))}}>
@@ -181,7 +181,7 @@ const Thread = ({ data }) => {
 
 
         <DeleteIcon style={{ float: "right" }} onClick={remove} />
-      </h1>
+      </h2>
 
       <div style={{ display: "flex"}}>
         <div>
