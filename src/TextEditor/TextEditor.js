@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Editor } from "react-draft-wysiwyg";
-import "../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import "../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 
 function usePrevious(value) {

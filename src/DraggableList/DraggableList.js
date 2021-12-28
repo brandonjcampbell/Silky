@@ -9,7 +9,7 @@ import CreateIcon from "@material-ui/icons/Create";
 import ExtensionIcon from "@material-ui/icons/Extension";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@mui/material/Avatar";
-import { store } from "./MyContext";
+import { store } from "../MyContext";
 const homedir = window.require("os").homedir();
 
 const Thread = ({

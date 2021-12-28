@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { store } from "./MyContext";
+import { store } from "../MyContext";
 import _ from "lodash";
 
 const Timeline = ({ unit, fontSize, active }) => {

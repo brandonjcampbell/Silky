@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "./MyContext";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { store } from "../MyContext";
 import { BsTreeFill, BsEraserFill } from "react-icons/bs";
 import { FaBuilding, FaMountain, FaStamp } from "react-icons/fa";
 import { MdCottage, MdClose } from "react-icons/md";
@@ -8,7 +7,7 @@ import { BiWater } from "react-icons/bi";
 import { GiGrass, GiGrassMushroom, GiBrickWall } from "react-icons/gi";
 import { AiFillFire } from "react-icons/ai";
 import { IoThunderstorm } from "react-icons/io5";
-import { useMousePosition } from "./utils/useMousePosition";
+import { useMousePosition } from "../utils/";
 import { ColorPicker } from "material-ui-color";
 
 import "./map.css";
@@ -61,14 +60,12 @@ const Map = ({ data }) => {
   };
   return (
     <div className="grid">
-      <div>
-
-      </div>
+      <div></div>
       <div style={{ display: "flex" }}>
         <div style={{ border: "1px solid #333" }}>
           <h3>Tool</h3>
           <FaStamp color="white" />
-        <BsEraserFill color="white" />
+          <BsEraserFill color="white" />
         </div>
 
         <div style={{ border: "1px solid #333" }}>

@@ -1,20 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "./MyContext";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import _, { remove } from "lodash";
-// import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
+import { store } from "../MyContext";
+import _ from "lodash";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Avatar from "@mui/material/Avatar";
-import FormDialog from "./FormDialog";
-
-import DraggableList from "./DraggableList";
-import TextEditor from "./TextEditor";
-import { Link, useHistory } from "react-router-dom";
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import FormDialog from "../FormDialog";
+import DraggableList from "../DraggableList";
+import TextEditor from "../TextEditor";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { ColorPicker } from "material-ui-color";
 

@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "./MyContext";
+import { store } from "../MyContext";
 import _ from "lodash";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import CreateIcon from "@material-ui/icons/Create";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import ExtensionIcon from "@material-ui/icons/Extension";
-import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
+import {Redirect } from "react-router-dom";
 
 
 

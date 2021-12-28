@@ -1,6 +1,6 @@
 import React from "react";
 import Cytoscape from "cytoscape";
-import { store } from "./MyContext";
+import { store } from "../MyContext";
 import CytoscapeComponent from "react-cytoscapejs";
 import COSEBilkent from "cytoscape-cose-bilkent";
 import cola from "cytoscape-cola";
@@ -8,26 +8,27 @@ import dagre from "cytoscape-dagre";
 import fcose from "cytoscape-fcose";
 import klay from "cytoscape-klay";
 import spread from "cytoscape-spread";
-import cise from "cytoscape-cise"
-import avsdf from "cytoscape-avsdf"
-import actorToCyto from "./utils/graphUtils";
-import Button from "@material-ui/core/Button"
+import cise from "cytoscape-cise";
+import avsdf from "cytoscape-avsdf";
+import { actorToCyto } from "../utils/";
+import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import _ from "lodash";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 
-
 import { useState, useContext, useEffect } from "react";
 
 function getWindowDimensions() {
   let { innerWidth: width, innerHeight: height } = window;
 
-  let returnHeight = height-70
-  let returnWidth = width
+  let returnHeight = height - 70;
+  let returnWidth = width;
   return {
-   width:returnWidth,height:returnHeight};
+    width: returnWidth,
+    height: returnHeight,
+  };
 }
 
 const Graph = ({ type }) => {
@@ -38,7 +39,6 @@ const Graph = ({ type }) => {
     nodeDimensionsIncludeLabels: true,
     refresh: 1,
   };
-
 
   Cytoscape.use(COSEBilkent);
   Cytoscape.use(cola);
@@ -51,38 +51,34 @@ const Graph = ({ type }) => {
 
   const [hide, setHide] = useState([]);
   const [hideDisconnctedNodes, setHideDisconnectedNodes] = useState(true);
-  const [repositionNodes,setRepositionNodes]= useState(true);
-  const [showNodeText,setShowNodeText]= useState(true);
-  const [showEdgeText,setShowEdgeText]= useState(true);
+  const [repositionNodes, setRepositionNodes] = useState(true);
+  const [showNodeText, setShowNodeText] = useState(true);
+  const [showEdgeText, setShowEdgeText] = useState(true);
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
   const [layout, setLayout] = useState(defaultLayout);
   const [cy, setCy] = useState(null);
 
-
-
   useEffect(() => {
-    if(cy){
-      if(repositionNodes){
-        cy.layout(layout).run()}
+    if (cy) {
+      if (repositionNodes) {
+        cy.layout(layout).run();
       }
+    }
   }, [hide]);
 
   useEffect(() => {
-
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
     }
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-
-    
   }, []);
 
   const handleCy = (cy) => {
-    setCy(cy)
+    setCy(cy);
   };
 
   const globalState = useContext(store);
@@ -110,7 +106,6 @@ const Graph = ({ type }) => {
       }
     });
 
-
   const content = actorToCyto(
     globalState.state.actors.filter(
       (x) =>
@@ -125,14 +120,13 @@ const Graph = ({ type }) => {
     <div>
       <div>
         <div>
-
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={layout.name}
             onChange={(e) => {
-              let tempLayout = _.cloneDeep(layout)
-              tempLayout.name = e.target.value
+              let tempLayout = _.cloneDeep(layout);
+              tempLayout.name = e.target.value;
               setLayout(tempLayout);
             }}
           >
@@ -186,11 +180,22 @@ const Graph = ({ type }) => {
             Show Thread Text
           </div>
 
-          <Button variant="contained" onClick={()=>{cy.center()}}>Center</Button> 
-          <Button variant="contained" onClick={()=>cy.layout(layout).run()}>Reposition</Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              cy.center();
+            }}
+          >
+            Center
+          </Button>
+          <Button variant="contained" onClick={() => cy.layout(layout).run()}>
+            Reposition
+          </Button>
 
-          <h2> <LinearScaleIcon/> Threads</h2>
-          
+          <h2>
+            {" "}
+            <LinearScaleIcon /> Threads
+          </h2>
 
           {globalState.state.actors.map((x) => {
             if (x.type === "thread") {
@@ -245,11 +250,11 @@ const Graph = ({ type }) => {
               {
                 selector: "node",
                 style: {
-                  height: showNodeText?100:15,
-                  width: showNodeText?100:15,
+                  height: showNodeText ? 100 : 15,
+                  width: showNodeText ? 100 : 15,
                   shape: "circle",
                   backgroundColor: "#333",
-                  label: showNodeText?"data(label)":"",
+                  label: showNodeText ? "data(label)" : "",
                   "text-wrap": "wrap",
                   "text-max-width": 100,
                   "font-size": "12px",
@@ -273,7 +278,7 @@ const Graph = ({ type }) => {
                   "text-outline-width": 2,
                   "font-size": "12px",
                   "edge-text-rotation": "autorotate",
-                  label: showEdgeText?"data(label)":"",
+                  label: showEdgeText ? "data(label)" : "",
                 },
               },
               {

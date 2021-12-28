@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "./MyContext";
+import { store } from "../MyContext";
 import { styled, alpha } from "@mui/material/styles";
 import TextField from "@material-ui/core/TextField";
-import Workspace from "./Workspace";
-import DraggableList from "./DraggableList";
+import Workspace from "../Workspace";
+import DraggableList from "../DraggableList";
 import _ from "lodash";
-import FormDialog from "./FormDialog";
+import FormDialog from "../FormDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";

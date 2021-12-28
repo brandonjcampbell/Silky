@@ -1,7 +1,7 @@
-import Graph from "./Graph"
-import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
-import React, { useContext, useState, useEffect } from "react";
-import { store } from "./MyContext";
+import Graph from "../Graph"
+import {Redirect} from "react-router-dom";
+import React, { useContext} from "react";
+import { store } from "../MyContext";
 
 const Web = ({type}) => {
     const globalState = useContext(store);

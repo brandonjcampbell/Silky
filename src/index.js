@@ -12,7 +12,7 @@ import {
 } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
-import ActorList from "./ActorList";
+import ActorList from "./ActorList/";
 import Web from "./Web";
 import Tags from "./Tags";
 import CurrentProjectLink from "./CurrentProjectLink";

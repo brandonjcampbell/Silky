@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
-import TextEditor from "./TextEditor";
-import { store } from "./MyContext";
-import Thread from "./Thread";
+import TextEditor from "../TextEditor";
+import { store } from "../MyContext";
+import Thread from "../Thread";
 import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
@@ -16,7 +16,7 @@ import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
-import Map from "./Map";
+import Map from "../Map";
 import Autocomplete from "@mui/material/Autocomplete";
 
 const { dialog } = window.require("electron").remote;
