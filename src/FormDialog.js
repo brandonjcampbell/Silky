@@ -8,7 +8,7 @@ import DialogContent from "@mui/material/DialogContent";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 
-export default function FormDialog({ type }) {
+export default function FormDialog({ type, specialOp }) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
   const globalState = useContext(store);
@@ -20,6 +20,7 @@ export default function FormDialog({ type }) {
   };
 
   const handleClose = () => {
+    setName("")
     setOpen(false);
   };
 
@@ -27,9 +28,12 @@ export default function FormDialog({ type }) {
     dispatch({
       action: "add",
       for: type,
-      payload: { name: name },
+      payload: { name: name , callback:specialOp},
       class: "actor",
     });
+    if(specialOp){
+      
+    }
     handleClose();
   };
 

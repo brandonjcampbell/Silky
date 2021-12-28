@@ -115,7 +115,7 @@ const ActorList = ({ match, type }) => {
         >
           <DraggableList
             list={content.filter(
-              (x) => x.type === type && (!search || x.name.includes(search))
+              (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))
             )}
             handleClick={handleRowClick}
             getDisplayName={getDisplayName}

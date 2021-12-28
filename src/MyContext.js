@@ -70,12 +70,24 @@ const add = (state, action) => {
   action.payload.class = action.class;
   console.log("Let's see", action.for);
   if (action.for === "snippet") {
+    console.log("gloopy")
+    action.payload.elements=[]
     action.payload.content = _.cloneDeep(empty);
     action.payload.content.blocks[0].text = `[${action.payload.name}]`;
-    console.log(action.payload);
+    console.log("SNOOKER",[...action.payload.name.split(" ")]);
+    [...action.payload.name.split(" ")].forEach(word=>{
+      const ac = state.actors.filter(actor=>actor.name===word)[0]
+      if(ac){
+        action.payload.elements.push({uuid:ac.uuid})
+
+      }
+    })
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
+  if(action.payload.callback){
+    action.payload.callback(action.payload.uuid)
+  }
   return newState;
 };
 
@@ -104,6 +116,10 @@ const getDisplayName = (state, payload) => {
       state,
       target
     )}`;
+  }
+  if(payload.class==="edgeWeight"){
+    const result= find(state, payload.subject);
+    console.log(result,"doopus")
   }
 };
 

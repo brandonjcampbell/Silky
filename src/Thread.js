@@ -2,17 +2,23 @@ import React, { useContext, useState, useEffect } from "react";
 import { store } from "./MyContext";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _, { remove } from "lodash";
-import TextField from "@material-ui/core/TextField";
+// import TextField from "@material-ui/core/TextField";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import Avatar from "@mui/material/Avatar";
+import FormDialog from "./FormDialog"
+
 import DraggableList from "./DraggableList";
 import TextEditor from "./TextEditor";
 import { Link, useHistory } from "react-router-dom";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { ColorPicker } from 'material-ui-color';
+import { ColorPicker } from "material-ui-color";
+
+const homedir = window.require("os").homedir();
 
 const Thread = ({ data }) => {
   const globalState = useContext(store);
@@ -45,8 +51,8 @@ const Thread = ({ data }) => {
   }
 
   const [next, setNext] = useState();
-  const [editTitle,setEditTitle]=useState(false)
-  const [title,setTitle]=useState("")
+  const [editTitle, setEditTitle] = useState(false);
+  const [title, setTitle] = useState("");
   const [toggle, setToggle] = useState(true);
   const [threadContent, setThreadContent] = useState(null);
 
@@ -63,12 +69,10 @@ const Thread = ({ data }) => {
     });
   }
 
-
   function updateColor(color) {
-    
-    console.log("doin update4color",color)
+    console.log("doin update4color", color);
     let clone = _.cloneDeep(data);
-    clone.color= "#"+color.hex;
+    clone.color = "#" + color.hex;
     dispatch({
       action: "saveActor",
       for: "thread",
@@ -135,55 +139,60 @@ const Thread = ({ data }) => {
     }, 0.1);
   };
 
-
   const keyPress = (e) => {
     if (e.keyCode === 13) {
       setEditTitle(false);
       let clone = _.cloneDeep(data);
-      clone.name= title;
+      clone.name = title;
       dispatch({
         action: "saveActor",
         for: "thread",
         payload: { actor: clone },
       });
-
-
     }
-    if(e.keyCode===27){
+    if (e.keyCode === 27) {
       setEditTitle(false);
     }
   };
 
   return (
     <div>
-
       <h2 style={{ color: "white", width: "820px" }}>
-        <LinearScaleIcon />
-        <span onClick={()=>{setEditTitle(!editTitle);
-        setTitle(getDisplayName(data.uuid))}}>
-        {!editTitle && getDisplayName(data.uuid)}
+        <div style={{ display: "inline-block" }}>
+          <ColorPicker
+            style={{ display: "inline-block" }}
+            value={data.color ? data.color : "transparent"}
+            hideTextfield
+            onChange={(e) => updateColor(e)}
+          />
+        </div>
+
+        <span
+          onClick={() => {
+            setEditTitle(!editTitle);
+            setTitle(getDisplayName(data.uuid));
+          }}
+        >
+          {!editTitle && getDisplayName(data.uuid)}
         </span>
 
-        {editTitle &&
-        <TextField
-        autoFocus
-              style={{ color: "white" }}
-              id="outlined-basic"
-              value={title}
-              onKeyDown={keyPress}
-              onChange={(e) => setTitle(e.target.value)}
-            />}
+        {editTitle && (
+          <TextField
+            autoFocus
+            style={{ color: "white" }}
+            id="outlined-basic"
+            value={title}
+            onKeyDown={keyPress}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        )}
 
-
- 
-
-       { <div style={{display:"inline-block"}}><ColorPicker style={{display:"inline-block"}} value={data.color?data.color:"transparent"} hideTextfield  onChange={(e)=>updateColor(e)}/></div>}
-
+        {}
 
         <DeleteIcon style={{ float: "right" }} onClick={remove} />
       </h2>
 
-      <div style={{ display: "flex"}}>
+      <div style={{ display: "flex" }}>
         <div>
           {threadContent !== null && toggle === true && (
             <TextEditor
@@ -201,46 +210,119 @@ const Thread = ({ data }) => {
           )}
         </div>
 
-        <div >
+        <div>
           <h2 style={{ color: "white" }}>Sequence</h2>
-          <div style={{minWidth:"600px",overflowY:"scroll", height:"calc(100vh - 350px)"}}>
-
-   
-          <DraggableList
-            list={data.sequence}
-            saveList={(e) => {
-              let clone = _.cloneDeep(data);
-              clone.sequence = e;
-              dispatch({
-                action: "saveActor",
-                for: "thread",
-                payload: { actor: clone },
-              });
-              redrawText();
+          <div
+            style={{
+              minWidth: "600px",
+              overflowY: "scroll",
+              height: "calc(100vh - 350px)",
             }}
-            action="remove"
-            handleClick={(e) => {
-              console.log("handled Click", e);
-              //history.push("/snippets/"+e.target.value.uuid);
-            }}
-            getDisplayName={getDisplayName}
-            getType={(x) => {
-              return (
-                globalState.state.actors.find((y) => x.uuid === y.uuid).type +
-                "s"
-              );
-            }}
-            onDrop={() => {
-              redrawText();
-            }}
-          ></DraggableList>
-                 </div>
+          >
+            <DraggableList
+              list={data.sequence}
+              saveList={(e) => {
+                let clone = _.cloneDeep(data);
+                clone.sequence = e;
+                clone.totalSequenceLength = 0;
+                clone.sequence.forEach((x, index) => {
+                  x.consecutive = 0;
+                  if (
+                    x.incomingEdgeWeight === "0" &&
+                    clone.sequence[index - 1]
+                  ) {
+                    x.consecutive = clone.sequence[index - 1].consecutive + 1;
+                  }
+                  clone.totalSequenceLength += parseInt(
+                    (x.incomingEdgeWeight ? x.incomingEdgeWeight : 0) + ""
+                  );
+                });
+                console.log(clone.sequence, clone.totalSequenceLength, "yeah");
+                dispatch({
+                  action: "saveActor",
+                  for: "thread",
+                  payload: { actor: clone },
+                });
+                redrawText();
+              }}
+              showCharacterCount={50}
+              showEdgeWeights={true}
+              action="remove"
+              handleClick={(e) => {
+                console.log("handled Click", e);
+                //history.push("/snippets/"+e.target.value.uuid);
+              }}
+              getDisplayName={getDisplayName}
+              getType={(x) => {
+                return (
+                  globalState.state.actors.find((y) => x.uuid === y.uuid).type +
+                  "s"
+                );
+              }}
+              onDrop={() => {
+                redrawText();
+              }}
+            ></DraggableList>
+          </div>
           <br />
           <FormControl variant="filled">
-            <InputLabel id="demo-simple-select-outlined-label">
-              Then...
-            </InputLabel>
-            <Select
+            <Autocomplete
+              disablePortal
+              clearOnBlur
+              selectOnFocus
+              id="combo-box-demo"
+              getOptionLabel={(option) =>
+                option.name +
+                "@tags:" +
+                option.tags +
+                (option.elements
+                  ? option.elements
+                      .map((m) => getDisplayName(m.uuid))
+                      .toString()
+                  : "")
+              }
+              options={globalState.state.actors.filter(
+                (x) =>
+                  x.type === "snippet" &&
+                  x.uuid !== data.uuid &&
+                  (!data.sequence ||
+                    !data.sequence.map((y) => y.uuid).includes(x.uuid))
+              )}
+              sx={{ width: 600, bgcolor: "white", borderRadius: "4px" }}
+              onChange={(e, newValue) => {
+                if (newValue && newValue !== "Select") {
+                  addToThread(newValue.uuid);
+                  redrawText();
+                }
+              }}
+              renderOption={(props, option) => (
+                <div {...props}>
+                  <span>
+ 
+                    <Avatar
+                      alt=" "
+                      style={{ display: "inline-block" }}
+                      sx={{ bgcolor: option.color ? option.color : "grey" }}
+                      src={
+                        homedir +
+                        "\\.silky\\" +
+                        globalState.state.project +
+                        "\\" +
+                        option.uuid +
+                        ".png"
+                      }
+                    />
+                    {props.key.split("@tags:")[0]}
+                  </span>
+                </div>
+              )}
+              renderInput={(params) => (
+                <TextField {...params} label="Then..." />
+              )}
+            />
+            <FormDialog type={"snippet"} specialOp={addToThread} />
+
+            {/* <Autocomplete
               style={{ width: "200px", color: "white", outlineColor: "white" }}
               labelId="demo-simple-select-outlined-label"
               id="demo-simple-select-outlined"
@@ -269,7 +351,7 @@ const Thread = ({ data }) => {
                     <MenuItem value={x.uuid}>{getDisplayName(x.uuid)}</MenuItem>
                   );
                 })}
-            </Select>
+            </Autocomplete> */}
           </FormControl>
         </div>
       </div>

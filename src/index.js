@@ -4,7 +4,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import Graph from "./Graph";
-import logo from "./images/logo.svg";
 import TextEditor from "./TextEditor";
 import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
@@ -14,11 +13,15 @@ import AxiomList from "./AxiomList";
 import Web from "./Web";
 import Tags from "./Tags";
 import CurrentProjectLink from "./CurrentProjectLink";
-import CreateIcon from "@material-ui/icons/Create";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiEmptyHourglass, GiTreasureMap} from "react-icons/gi";
+
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import BarChart from "@material-ui/icons/BarChart";
 import LabelIcon from "@material-ui/icons/LocalOffer";
 import LanguageIcon from "@material-ui/icons/Language";
 import ExtensionIcon from "@material-ui/icons/Extension";
+import Reports from "./Reports"
 
 
 import { StateProvider } from "./MyContext";
@@ -32,17 +35,6 @@ ReactDOM.render(
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
 
-          <img
-            src={logo}
-            alt="silky"
-            style={{
-              height: "13%",
-              width: "13%",
-              position: "absolute",
-              bottom: "10px",
-              right: "20px",
-            }}
-          />
         </div>
 
         <div
@@ -61,18 +53,26 @@ ReactDOM.render(
               <MenuItem icon={<ExtensionIcon />}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
-                <MenuItem icon={<CreateIcon />}>
+                <MenuItem icon={<TiScissors style={{fontSize:"30px"}} />}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
-                <MenuItem icon={<LinearScaleIcon />}>
+                <MenuItem icon={<GiSewingString style={{fontSize:"30px"}}/>}>
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
-                <MenuItem icon={<LanguageIcon />}>
+                {/* <MenuItem icon={<LabelIcon />}>
+                  <Link to="/tags">Tags</Link>
+                </MenuItem> */}
+                <MenuItem icon={<GiSpiderWeb style={{fontSize:"30px"}}/>}>
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
-                <MenuItem icon={<LabelIcon />}>
-                  <Link to="/tags">Tags</Link>
+    
+                <MenuItem icon={<GiEmptyHourglass style={{fontSize:"30px"}}/>}>
+                  <Link to="/Reports">Reports</Link>
                 </MenuItem>
+                <MenuItem icon={<GiTreasureMap style={{fontSize:"30px"}} />}>
+                  <Link to="/maps">Maps</Link>
+                </MenuItem>
+
               </Menu>
             </ProSidebar>
           </div>
@@ -120,6 +120,21 @@ ReactDOM.render(
               )}
             />
 
+<Route
+              path="/Maps"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="map"></ActorList>
+              )}
+            />
+            <Route
+              path="/Maps/:uuid"
+              exact
+              render={(props) => (
+                <ActorList {...props} type="map"></ActorList>
+              )}
+            />
+
             <Route
               path="/Threads"
               exact
@@ -136,6 +151,8 @@ ReactDOM.render(
             />
 
             <Route path="/Tags" exact render={() => <Tags></Tags>} />
+
+            <Route path="/Reports" exact render={() => <Reports></Reports>} />
             {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
                 <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}
             <Route

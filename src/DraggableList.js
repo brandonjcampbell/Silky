@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext} from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
 import { Link } from "react-router-dom";
@@ -7,6 +7,11 @@ import CloseIcon from '@material-ui/icons/Close';
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import CreateIcon from "@material-ui/icons/Create";
 import ExtensionIcon from "@material-ui/icons/Extension";
+import TextField from "@material-ui/core/TextField"
+import Avatar from "@mui/material/Avatar";
+import { store } from "./MyContext";
+const homedir = window.require("os").homedir();
+
 
 const Thread = ({
   list,
@@ -16,7 +21,12 @@ const Thread = ({
   getType,
   onDrop,
   action,
+  showEdgeWeights,
+  showCharacterCount=27
 }) => {
+
+  const globalState = useContext(store);
+
   function handleOnDragEnd(result) {
     let clone = _.cloneDeep(list);
     const [reorderedItem] = clone.splice(result.source.index, 1);
@@ -25,18 +35,20 @@ const Thread = ({
     onDrop();
   }
 
+
+
   function remove(uuid) {
     let clone = _.cloneDeep(list);
     clone = clone.filter((x) => x.uuid !== uuid);
     saveList(clone);
   }
 
-  function goRenderLabel(x) {
+  function goRenderLabel(x,index) {
 
       return (
         <div
           style={{
-            margin: "2px",
+            margin: "4px",
             color: "white",
             display: "flex",
             verticalAlign:"middle"
@@ -54,13 +66,35 @@ const Thread = ({
               handleClick(x);
             }}
           >
-              
-{(x.type ? x.type:"snippet")==="snippet" && <CreateIcon/>}
-{(x.type ? x.type:"snippet")==="thread" && <LinearScaleIcon/>}
-{(x.type ? x.type:"snippet")==="element" && <ExtensionIcon/>}
+
+                            {showEdgeWeights && <TextField  value={x.incomingEdgeWeight}  onChange={(e)=>{ 
+                              let cloned =_.cloneDeep(list)
+                              cloned[index].incomingEdgeWeight = e.target.value
+                              saveList(cloned)
+
+                            }} style={{width:"55px",height:"40px",size:"6px",background:"white", borderRadius:"4px",marginRight:"10px"}}  size="small" label="" variant="outlined" />}
+
+
+<Avatar
+              alt=" "
+              style={{display:"inline-block",}}
+              sx={{  bgcolor:x.color?x.color:"grey" }}
+              src={
+                homedir +
+                "\\.silky\\" +
+                globalState.state.project +
+                "\\" +
+                x.uuid +
+                ".png"
+              }
+
+            />
+
+
 
               <Link style={{color:"white",textDecoration:"none",position:"relative",top:"-5px",margin:"5px"}} to={"/"+(x.type ? x.type:"snippet")+"s/"+x.uuid}>
-              {getDisplayName(x.uuid)}
+
+ {getDisplayName(x.uuid).slice(0,showCharacterCount)}{getDisplayName(x.uuid).length>showCharacterCount?"...":""}
               </Link>
               {action==="remove" && <CloseIcon onClick={()=>{remove(x.uuid)}}/>}
             {action==="delete" && <DeleteIcon/>}
@@ -82,7 +116,7 @@ const Thread = ({
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
               >
-                {goRenderLabel(x)}
+                {goRenderLabel(x,index)}
               </div>
             )}
           </Draggable>

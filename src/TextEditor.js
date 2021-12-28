@@ -15,7 +15,6 @@ const TextEditor = ({ data, save, actorUuid }) => {
   const prevAmount = usePrevious({ actorUuid, data });
 
   useEffect(() => {
-    console.log("text editor useeffect fired");
     if (!prevAmount || (prevAmount && prevAmount.actorUuid !== actorUuid)) {
       setEditorState(EditorState.createWithContent(contentState));
     }
@@ -57,10 +56,8 @@ const TextEditor = ({ data, save, actorUuid }) => {
      if(previousKey){
       const owner = previousKey.split(":")[0]
       const index = parseInt(previousKey.split(":")[1])
-     //currentBlock.key = owner + ":"+(index+1)
      currentBlockKey =owner + ":"+(index+1)
      newContent.key = currentBlockKey
-     console.log("try it",previousKey,currentBlockKey)
      }
     }
   }
@@ -79,6 +76,8 @@ const TextEditor = ({ data, save, actorUuid }) => {
         style={{
           margin: "20px",
           padding: "20px",
+          marginBottom:"0px",
+          paddingBottom:"0px",
           minHeight: "300px",
           backgroundColor: "#343434",
           width: "8in",
@@ -87,7 +86,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
         }}
       >
         <Editor
-        editorStyle={{height:"calc(100vh - 350px)",paddingRight:"15px"}}
+        editorStyle={{height:"calc(100vh - 300px)",paddingRight:"15px"}}
           editorState={editorState}
           onEditorStateChange={(e) => {
             onEditorStateChange(e);
