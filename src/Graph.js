@@ -11,10 +11,6 @@ import spread from "cytoscape-spread";
 import cise from "cytoscape-cise"
 import avsdf from "cytoscape-avsdf"
 import actorToCyto from "./utils/graphUtils";
-import FormLabel from "@material-ui/core/FormLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import Button from "@material-ui/core/Button"
 import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select";
@@ -87,17 +83,6 @@ const Graph = ({ type }) => {
 
   const handleCy = (cy) => {
     setCy(cy)
-//     cy.on("add remove", () => {
-//       // Refresh Layout if needed
-
-//       const refreshLayout = _.debounce(() => {
-      
-// console.log("got there")
-//              //
-          
-//       }, 250, { 'maxWait': 1000 });
-//       //cy.layout(layout).run()
-//     });
   };
 
   const globalState = useContext(store);
@@ -138,8 +123,8 @@ const Graph = ({ type }) => {
 
   return (
     <div>
-      <div style={{ color: "white", display: "flex",margin:"10px",marginTop:"0px",marginBottom:"0px",height:"calc(100vh - 60px)" }}>
-        <div style={{overflowY:"scroll"}}>
+      <div>
+        <div>
 
           <Select
             labelId="demo-simple-select-label"
@@ -176,9 +161,6 @@ const Graph = ({ type }) => {
           <div>
             <Checkbox
               defaultChecked
-              style={{
-                color: "#444",
-              }}
               onClick={() => {
                 setRepositionNodes(!repositionNodes);
               }}
@@ -188,9 +170,6 @@ const Graph = ({ type }) => {
           <div>
             <Checkbox
               defaultChecked
-              style={{
-                color: "#444",
-              }}
               onClick={() => {
                 setShowNodeText(!showNodeText);
               }}
@@ -200,9 +179,6 @@ const Graph = ({ type }) => {
           <div>
             <Checkbox
               defaultChecked
-              style={{
-                color: "#444",
-              }}
               onClick={() => {
                 setShowEdgeText(!showEdgeText);
               }}

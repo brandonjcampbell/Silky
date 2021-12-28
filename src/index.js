@@ -32,17 +32,17 @@ ReactDOM.render(
   <React.StrictMode>
     <StateProvider>
       <BrowserRouter>
-        <div style={{ padding: "10px", backgroundColor: "#121212" }}>
-          <Link to="/" style={{ textDecoration: "none" }}>
+        <div>
+          <Link to="/">
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
         </div>
 
         <div
           className="App"
-          style={{ display: "flex", backgroundColor: "green" }}
+
         >
-          <div style={{ backgroundColor: "red" }}>
+          <div>
             <ProSidebar
               collapsed={false}
               width="70px"
@@ -54,39 +54,33 @@ ReactDOM.render(
                 <MenuItem icon={<ExtensionIcon />}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
-                <MenuItem icon={<TiScissors style={{ fontSize: "30px" }} />}>
+                <MenuItem icon={<TiScissors  />}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
                 <MenuItem
-                  icon={<GiSewingString style={{ fontSize: "30px" }} />}
+                  icon={<GiSewingString />}
                 >
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
                 {/* <MenuItem icon={<LabelIcon />}>
                   <Link to="/tags">Tags</Link>
                 </MenuItem> */}
-                <MenuItem icon={<GiSpiderWeb style={{ fontSize: "30px" }} />}>
+                <MenuItem icon={<GiSpiderWeb />}>
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
 
                 <MenuItem
-                  icon={<GiEmptyHourglass style={{ fontSize: "30px" }} />}
+                  icon={<GiEmptyHourglass />}
                 >
                   <Link to="/Reports">Reports</Link>
                 </MenuItem>
-                <MenuItem icon={<GiTreasureMap style={{ fontSize: "30px" }} />}>
+                <MenuItem icon={<GiTreasureMap />}>
                   <Link to="/maps">Maps</Link>
                 </MenuItem>
               </Menu>
             </ProSidebar>
           </div>
-          <div
-            style={{
-              backgroundColor: "#232323",
-              height: "calc( 100vh - 47px)",
-              width: "100vw",
-            }}
-          >
+          <div>
             <Route path="/" exact component={App} />
             <Route path="/Graph" exact component={Graph} />
             <Route

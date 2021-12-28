@@ -42,51 +42,34 @@ const TextEditor = ({ data, save, actorUuid }) => {
   );
 
   const onEditorStateChange = (editorState) => {
-    let currentBlock = editorState.getSelection()
+    let currentBlock = editorState.getSelection();
     let currentBlockKey = editorState.getSelection().getStartKey();
 
-    const newContent =  convertToRaw(editorState._immutable.currentContent)
+    const newContent = convertToRaw(editorState._immutable.currentContent);
 
     if (data && data.blocks) {
-
-  
-    if (currentBlockKey && !currentBlockKey.includes(":")) {
-  
-      const previousKey = editorState.getCurrentContent().getKeyBefore(currentBlockKey)
-     if(previousKey){
-      const owner = previousKey.split(":")[0]
-      const index = parseInt(previousKey.split(":")[1])
-     currentBlockKey =owner + ":"+(index+1)
-     newContent.key = currentBlockKey
-     }
+      if (currentBlockKey && !currentBlockKey.includes(":")) {
+        const previousKey = editorState
+          .getCurrentContent()
+          .getKeyBefore(currentBlockKey);
+        if (previousKey) {
+          const owner = previousKey.split(":")[0];
+          const index = parseInt(previousKey.split(":")[1]);
+          currentBlockKey = owner + ":" + (index + 1);
+          newContent.key = currentBlockKey;
+        }
+      }
     }
-  }
     setEditorState(editorState);
 
-    save(
-    newContent ,
-      currentBlockKey,
-      data
-    );
+    save(newContent, currentBlockKey, data);
   };
 
   return (
-    <div style={{ display: "flex" ,position:"relative",top:"-15px"}}>
-      <div
-        style={{
-          margin: "20px",
-          padding: "20px",
-          marginBottom:"0px",
-          paddingBottom:"0px",
-          minHeight: "300px",
-          backgroundColor: "#343434",
-          width: "8in",
-          textAlign: "center",
-          color: "white",
-        }}
-      >
+    <div>
+      <div>
         <Editor
-        editorStyle={{height:"calc(100vh - 300px)",paddingRight:"15px"}}
+          editorStyle={{ height: "calc(100vh - 300px)", paddingRight: "15px" }}
           editorState={editorState}
           onEditorStateChange={(e) => {
             onEditorStateChange(e);

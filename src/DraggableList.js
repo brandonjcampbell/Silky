@@ -1,17 +1,16 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
 import { Link } from "react-router-dom";
-import DeleteIcon from '@material-ui/icons/Delete';
-import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from "@material-ui/icons/Delete";
+import CloseIcon from "@material-ui/icons/Close";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import CreateIcon from "@material-ui/icons/Create";
 import ExtensionIcon from "@material-ui/icons/Extension";
-import TextField from "@material-ui/core/TextField"
+import TextField from "@material-ui/core/TextField";
 import Avatar from "@mui/material/Avatar";
 import { store } from "./MyContext";
 const homedir = window.require("os").homedir();
-
 
 const Thread = ({
   list,
@@ -22,9 +21,8 @@ const Thread = ({
   onDrop,
   action,
   showEdgeWeights,
-  showCharacterCount=27
+  showCharacterCount = 27,
 }) => {
-
   const globalState = useContext(store);
 
   function handleOnDragEnd(result) {
@@ -35,74 +33,62 @@ const Thread = ({
     onDrop();
   }
 
-
-
   function remove(uuid) {
     let clone = _.cloneDeep(list);
     clone = clone.filter((x) => x.uuid !== uuid);
     saveList(clone);
   }
 
-  function goRenderLabel(x,index) {
-
-      return (
+  function goRenderLabel(x, index) {
+    return (
+      <div>
         <div
-          style={{
-            margin: "4px",
-            color: "white",
-            display: "flex",
-            verticalAlign:"middle"
+          onClick={() => {
+            handleClick(x);
           }}
         >
-       
-           
-           
-          <div
-            style={{
-              padding: "2px",
-          
-            }}
-            onClick={() => {
-              handleClick(x);
-            }}
-          >
-
-                            {showEdgeWeights && <TextField  value={x.incomingEdgeWeight}  onChange={(e)=>{ 
-                              let cloned =_.cloneDeep(list)
-                              cloned[index].incomingEdgeWeight = e.target.value
-                              saveList(cloned)
-
-                            }} style={{width:"55px",height:"40px",size:"6px",background:"white", borderRadius:"4px",marginRight:"10px"}}  size="small" label="" variant="outlined" />}
-
-
-<Avatar
-              alt=" "
-              style={{display:"inline-block",}}
-              sx={{  bgcolor:x.color?x.color:"grey" }}
-              src={
-                homedir +
-                "\\.silky\\" +
-                globalState.state.project +
-                "\\" +
-                x.uuid +
-                ".png"
-              }
-
+          {showEdgeWeights && (
+            <TextField
+              value={x.incomingEdgeWeight}
+              onChange={(e) => {
+                let cloned = _.cloneDeep(list);
+                cloned[index].incomingEdgeWeight = e.target.value;
+                saveList(cloned);
+              }}
+              size="small"
+              label=""
+              variant="outlined"
             />
+          )}
 
+          <Avatar
+            alt=" "
+            sx={{ bgcolor: x.color ? x.color : "grey" }}
+            src={
+              homedir +
+              "\\.silky\\" +
+              globalState.state.project +
+              "\\" +
+              x.uuid +
+              ".png"
+            }
+          />
 
-
-              <Link style={{color:"white",textDecoration:"none",position:"relative",top:"-5px",margin:"5px"}} to={"/"+(x.type ? x.type:"snippet")+"s/"+x.uuid}>
-
- {getDisplayName(x.uuid).slice(0,showCharacterCount)}{getDisplayName(x.uuid).length>showCharacterCount?"...":""}
-              </Link>
-              {action==="remove" && <CloseIcon onClick={()=>{remove(x.uuid)}}/>}
-            {action==="delete" && <DeleteIcon/>}
-          </div>
-    
+          <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
+            {getDisplayName(x.uuid).slice(0, showCharacterCount)}
+            {getDisplayName(x.uuid).length > showCharacterCount ? "..." : ""}
+          </Link>
+          {action === "remove" && (
+            <CloseIcon
+              onClick={() => {
+                remove(x.uuid);
+              }}
+            />
+          )}
+          {action === "delete" && <DeleteIcon />}
         </div>
-      );
-    
+      </div>
+    );
   }
 
   function content() {
@@ -116,7 +102,7 @@ const Thread = ({
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
               >
-                {goRenderLabel(x,index)}
+                {goRenderLabel(x, index)}
               </div>
             )}
           </Draggable>

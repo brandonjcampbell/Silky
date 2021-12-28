@@ -6,28 +6,18 @@ import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import { makeStyles } from "@material-ui/core/styles";
-import CreateIcon from "@material-ui/icons/Create";
 import { Link } from "react-router-dom";
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import ExtensionIcon from "@material-ui/icons/Extension";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import DraggableList from "./DraggableList";
 import Avatar from "@mui/material/Avatar";
-import saveFile from "./utils/saveFile";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
-import Map from "./Map"
-import { AirlineSeatReclineNormalOutlined } from "@material-ui/icons";
+import Map from "./Map";
 import Autocomplete from "@mui/material/Autocomplete";
-
 
 const { dialog } = window.require("electron").remote;
 const fs = window.require("fs");
@@ -144,18 +134,15 @@ const Workspace = ({ actorUuid }) => {
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
   const save = (newContent, key) => {
-    //if(actor && actor.content){
     newContent.blocks = newContent.blocks.map((x, index) => {
       x.key = actorUuid + ":" + index;
       return x;
     });
-    //}
     actor.content = newContent;
     if (tags) {
       actor.tags = tags;
     }
 
-    // actor.content = newContent
     dispatch({
       action: "saveActor",
       payload: { actor: actor },
@@ -233,27 +220,15 @@ const Workspace = ({ actorUuid }) => {
   };
 
   return (
-    <div
-      style={{
-        width: windowDimensions.width - 370,
-      }}
-    >
-      {actor && actor.type !== "thread"  && actor.type !== "map" && (
-        <h2
-          style={{
-            color: "white",
-            width: "660px",
-            position: "relative",
-            left: "150px",
-          }}
-        >
+    <div>
+      {actor && actor.type !== "thread" && actor.type !== "map" && (
+        <h2>
           <Avatar
             alt=" "
             sx={{ width: 100, height: 100 }}
             onClick={() => {
               uploadPic();
             }}
-            style={{ display: "inline-block" }}
             src={
               homedir +
               "\\.silky\\" +
@@ -263,7 +238,6 @@ const Workspace = ({ actorUuid }) => {
               ".png?" +
               freshener
             }
-            style={{ position: "absolute", left: "-120px", top: "-35px" }}
           />
 
           <span
@@ -277,8 +251,7 @@ const Workspace = ({ actorUuid }) => {
           {editTitle && (
             <TextField
               autoFocus
-              sx={{bgcolor:"white"}}
-              style={{ color: "white", width:"600px"}}
+              sx={{ bgcolor: "white" }}
               id="outlined-basic"
               value={title}
               onKeyDown={keyPress}
@@ -289,11 +262,11 @@ const Workspace = ({ actorUuid }) => {
             />
           )}
 
-          <DeleteIcon style={{ float: "right" }} onClick={remove} />
+          <DeleteIcon onClick={remove} />
         </h2>
       )}
-      <div style={{ display: "flex" }}>
-        {actor && actor.type !== "thread" &&  actor.type !== "map" && (
+      <div>
+        {actor && actor.type !== "thread" && actor.type !== "map" && (
           <TextEditor
             save={save}
             data={
@@ -302,8 +275,6 @@ const Workspace = ({ actorUuid }) => {
             actorUuid={actorUuid}
           ></TextEditor>
         )}
-
-        
 
         {actor && actor.type === "snippet" && (
           <div>
@@ -322,141 +293,113 @@ const Workspace = ({ actorUuid }) => {
                 }}
                 aria-label="basic tabs example"
               >
-                <Tab
-                  style={{ color: "grey" }}
-                  label="Elements"
-                  {...a11yProps(0)}
-                />
-                <Tab style={{ color: "grey" }} label="Tags" {...a11yProps(1)} />
-                <Tab
-                  style={{ color: "grey" }}
-                  label="Threads"
-                  {...a11yProps(2)}
-                />
+                <Tab label="Elements" {...a11yProps(0)} />
+                <Tab label="Tags" {...a11yProps(1)} />
+                <Tab label="Threads" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <TabPanel value={currentTab} index={0}>
-            {globalState.state.actors
-              .filter(
-                (a) =>
-                  a.type === "element" &&
-                  actor &&
-                  actor.elements &&
-                  actor.elements.map((x) => x.uuid).includes(a.uuid)
-              )
-              .map((x) => {
-                return (
-                  <div>
-                    <Link to={`/elements/${x.uuid}`} className={classes.link}>
-                      <Avatar
-                        alt=" "
-                        style={{ display: "inline-block" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          x.uuid +
-                          ".png"
-                        }
-                      />
-                      {x.name}
-                    </Link>
-                    <CloseIcon onClick={() => removeFromElements(x.uuid)} />
-                  </div>
-                );
-              })}
+              {globalState.state.actors
+                .filter(
+                  (a) =>
+                    a.type === "element" &&
+                    actor &&
+                    actor.elements &&
+                    actor.elements.map((x) => x.uuid).includes(a.uuid)
+                )
+                .map((x) => {
+                  return (
+                    <div>
+                      <Link to={`/elements/${x.uuid}`} className={classes.link}>
+                        <Avatar
+                          alt=" "
+                          src={
+                            homedir +
+                            "\\.silky\\" +
+                            globalState.state.project +
+                            "\\" +
+                            x.uuid +
+                            ".png"
+                          }
+                        />
+                        {x.name}
+                      </Link>
+                      <CloseIcon onClick={() => removeFromElements(x.uuid)} />
+                    </div>
+                  );
+                })}
 
-<FormControl variant="filled">
-             
-             
-             
-<Autocomplete
-               disablePortal
-               clearOnBlur
-               selectOnFocus
-              blurOnSelect
-              id="combo-box-demo"
-              getOptionLabel={(option) =>
-                option.name +
-                "@tags:" +
-                option.tags +
-                (option.elements
-                  ? option.elements
-                      .map((m) => getDisplayName(m.uuid))
-                      .toString()
-                  : "")
-              }
-              options={globalState.state.actors.filter(
-                (x) =>
-                  x.type === "element" 
-              )}
-              sx={{ width: 600, bgcolor: "white", borderRadius: "4px" }}
-              onChange={(e, newValue) => {
-                if (newValue && newValue !== "Select") {
-                  addToElements(newValue.uuid);
-                }
-              
-              }}
-              renderOption={(props, option) => (
-                <div {...props}>
-                  <span>
- 
-                    <Avatar
-                      alt=" "
-                      style={{ display: "inline-block" }}
-                      sx={{ bgcolor: option.color ? option.color : "grey" }}
-                      src={
-                        homedir +
-                        "\\.silky\\" +
-                        globalState.state.project +
-                        "\\" +
-                        option.uuid +
-                        ".png"
-                      }
-                    />
-                    {props.key.split("@tags:")[0]}
-                  </span>
-                </div>
-              )}
-              renderInput={(params) => (
-                <TextField {...params} label="Add an element..." />
-              )}
-            />
-             
-             
-             
-             
-           
-            </FormControl>
-
+              <FormControl variant="filled">
+                <Autocomplete
+                  disablePortal
+                  clearOnBlur
+                  selectOnFocus
+                  blurOnSelect
+                  id="combo-box-demo"
+                  getOptionLabel={(option) =>
+                    option.name +
+                    "@tags:" +
+                    option.tags +
+                    (option.elements
+                      ? option.elements
+                          .map((m) => getDisplayName(m.uuid))
+                          .toString()
+                      : "")
+                  }
+                  options={globalState.state.actors.filter(
+                    (x) => x.type === "element"
+                  )}
+                  sx={{ width: 600, bgcolor: "white", borderRadius: "4px" }}
+                  onChange={(e, newValue) => {
+                    if (newValue && newValue !== "Select") {
+                      addToElements(newValue.uuid);
+                    }
+                  }}
+                  renderOption={(props, option) => (
+                    <div {...props}>
+                      <span>
+                        <Avatar
+                          alt=" "
+                          sx={{ bgcolor: option.color ? option.color : "grey" }}
+                          src={
+                            homedir +
+                            "\\.silky\\" +
+                            globalState.state.project +
+                            "\\" +
+                            option.uuid +
+                            ".png"
+                          }
+                        />
+                        {props.key.split("@tags:")[0]}
+                      </span>
+                    </div>
+                  )}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Add an element..." />
+                  )}
+                />
+              </FormControl>
             </TabPanel>
             <TabPanel value={currentTab} index={1}>
-            <TextField
-              aria-label="empty textarea"
-              placeholder="Enter tags as a comma separated list"
-              className={classes.root}
-              value={tags}
-              onChange={(e) => {
-                tagSave(e.target.value);
-              }}
-            />
-            <div>
-              {tags.split(",").map((tag) => {
-                if (tag) {
-                  return (
-                    <Chip
-                      label={tag}
-                      icon={<LocalOfferIcon />}
-                      style={{ margin: "2px" }}
-                    />
-                  );
-                }
-              })}
-            </div>
+              <TextField
+                aria-label="empty textarea"
+                placeholder="Enter tags as a comma separated list"
+                className={classes.root}
+                value={tags}
+                onChange={(e) => {
+                  tagSave(e.target.value);
+                }}
+              />
+              <div>
+                {tags.split(",").map((tag) => {
+                  if (tag) {
+                    return <Chip label={tag} icon={<LocalOfferIcon />} />;
+                  }
+                })}
+              </div>
             </TabPanel>
             <TabPanel value={currentTab} index={2}>
-            {globalState.state.actors
+              {globalState.state.actors
                 .filter(
                   (actor) =>
                     actor.type === "thread" &&
@@ -474,8 +417,6 @@ const Workspace = ({ actorUuid }) => {
                         <Avatar
                           alt=" "
                           sx={{ bgcolor: x.color ? x.color : "grey" }}
-
-                          style={{ display: "inline-block" }}
                           src={
                             homedir +
                             "\\.silky\\" +
@@ -491,9 +432,7 @@ const Workspace = ({ actorUuid }) => {
                   );
                 })}
             </TabPanel>
-            <div>
-
-            </div>
+            <div></div>
           </div>
         )}
         {actor && actor.type === "thread" && <Thread data={actor}></Thread>}
@@ -517,17 +456,9 @@ const Workspace = ({ actorUuid }) => {
                 }}
                 aria-label="basic tabs example"
               >
-                <Tab
-                  style={{ color: "grey" }}
-                  label="Snippets"
-                  {...a11yProps(0)}
-                />
-                <Tab style={{ color: "grey" }} label="Tags" {...a11yProps(1)} />
-                <Tab
-                  style={{ color: "grey" }}
-                  label="Threads"
-                  {...a11yProps(2)}
-                />
+                <Tab label="Snippets" {...a11yProps(0)} />
+                <Tab label="Tags" {...a11yProps(1)} />
+                <Tab label="Threads" {...a11yProps(2)} />
               </Tabs>
             </Box>
             <TabPanel value={currentTab} index={0}>
@@ -544,12 +475,6 @@ const Workspace = ({ actorUuid }) => {
                       <Link to={`/snippets/${x.uuid}`} className={classes.link}>
                         <Avatar
                           alt=" "
-                          style={{
-                            display: "inline-block",
-                            position: "relative",
-                            top: "10px",
-                            left: "-10px",
-                          }}
                           src={
                             homedir +
                             "\\.silky\\" +
@@ -578,13 +503,7 @@ const Workspace = ({ actorUuid }) => {
               <div>
                 {tags.split(",").map((tag) => {
                   if (tag) {
-                    return (
-                      <Chip
-                        label={tag}
-                        icon={<LocalOfferIcon />}
-                        style={{ margin: "2px" }}
-                      />
-                    );
+                    return <Chip label={tag} icon={<LocalOfferIcon />} />;
                   }
                 })}
               </div>
@@ -624,12 +543,6 @@ const Workspace = ({ actorUuid }) => {
                           <Avatar
                             alt=" "
                             sx={{ bgcolor: y.color ? y.color : "grey" }}
-                            style={{
-                              display: "inline-block",
-                              position: "relative",
-                              top: "10px",
-                              left: "-10px",
-                            }}
                             src={
                               homedir +
                               "\\.silky\\" +

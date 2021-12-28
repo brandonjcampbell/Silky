@@ -6,18 +6,9 @@ import { Redirect } from "react-router-dom";
 const CurrentProjectLink = ({ type }) => {
   const globalState = useContext(store);
   return (
-    <div style={{ fontWeight: "bold", fontSize: "20px", color: "white" }}>
+    <div>
       {globalState.state.project === "Silky" && <Redirect to="/" />}
-      <img
-        src={logo}
-        alt="silky"
-        style={{
-          position: "absolute",
-          top: "7px",
-          right: "50px",
-          height: "55px",
-        }}
-      />{" "}
+      <img src={logo} alt="silky" />
       {globalState.state.project}
     </div>
   );

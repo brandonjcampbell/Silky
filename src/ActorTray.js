@@ -1,12 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ActorList from "./ActorList"
-import Graph from "./Graph"
 
 const Tray = ({type}) => {
     return(
-        <div style={{display:"flex"}}>
+        <div>
                <ActorList type={type}></ActorList>
-       
         </div>
     )
 }

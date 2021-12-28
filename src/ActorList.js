@@ -80,22 +80,15 @@ const ActorList = ({ match, type }) => {
   }
 
   return (
-    <div style={{ display: "flex" }}>
+    <div>
     
-      <div
-        style={{
-          width: "300px",
-          padding: "30px;",
-        }}
-      >
+      <div>
         {globalState.state.project==="Silky" && <Redirect to="/" />}
         <div>
           <FormDialog type={type} />
-          <div style={{ textAlign: "left" }}>
-            <SearchIcon style={{ margin: "10px", color: "#555" }} />
-
+          <div>
+            <SearchIcon/>
             <TextField
-              style={{ color: "white" }}
               id="outlined-basic"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -104,15 +97,7 @@ const ActorList = ({ match, type }) => {
         </div>
 
         <div></div>
-
-        <div
-          style={{
-            height: "calc(100vh - 160px)",
-            width: "300px",
-            padding: "30px;",
-            overflowY: "scroll",
-          }}
-        >
+        <div>
           <DraggableList
             list={content.filter(
               (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))

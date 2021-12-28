@@ -5,7 +5,7 @@ import loadDir from "./utils/loadDir";
 import makeDir from "./utils/makeDir";
 import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
   root: {
@@ -43,16 +43,14 @@ const App = () => {
   };
 
   const classes = useStyles();
-  // fs.readdirSync(`${app.getPath('home')}\\.silky`, { withFileTypes: true })
-  // .filter(dirent => dirent.isDirectory())
-  // .map(dirent => dirent.name)
+
   const dirs = loadDir();
 
   return (
-    <div style={{ display: "flex", flexWrap: "wrap" }}>
+    <div>
       {dirs.map((x) => {
         return (
-          <Link  style={{textDecoration:"none"}} to={"/elements/"}>
+          <Link to={"/elements/"}>
             <Card
               className={classes.root}
               onClick={() => {
@@ -68,7 +66,6 @@ const App = () => {
       {makingNewDir && (
         <Card className={classes.root}>
           <TextField
-            style={{ color: "white" }}
             id="outlined-basic"
             variant="outlined"
             value={name}

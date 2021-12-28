@@ -47,18 +47,18 @@ export default function FormDialog({ type, specialOp }) {
 
   return (
     <div>
-        <div style={{margin:"10px",textAlign:"left"}}>
+        <div>
 
    
        
       <Fab color="primary" size="small" aria-label="add" onClick={handleClickOpen}>
         <AddIcon />
       </Fab>
-      <span style={{display:"inline-block",margin:"10px",color:"#555"}}>{type}</span>
+      <span>{type}</span>
       </div>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogContent style={{ width: "500px" }}>
+        <DialogContent>
           <TextField
             autoFocus
             margin="dense"
@@ -70,15 +70,6 @@ export default function FormDialog({ type, specialOp }) {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={keyPress}
           />
-
-          {/*   
-          <TextField
-            style={{ color: "white" }}
-            id="outlined-basic"
-            value={name}
-            onKeyDown={keyPress}
-            onChange={(e) => setName(e.target.value)}
-          /> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

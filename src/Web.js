@@ -6,7 +6,7 @@ import { store } from "./MyContext";
 const Web = ({type}) => {
     const globalState = useContext(store);
     return(
-        <div style={{display:"flex"}}>
+        <div>
             {globalState.state.project==="Silky" && <Redirect to="/" />}
             <Graph></Graph>
         </div>

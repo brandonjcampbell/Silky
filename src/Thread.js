@@ -9,7 +9,7 @@ import FormControl from "@material-ui/core/FormControl";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Avatar from "@mui/material/Avatar";
-import FormDialog from "./FormDialog"
+import FormDialog from "./FormDialog";
 
 import DraggableList from "./DraggableList";
 import TextEditor from "./TextEditor";
@@ -157,10 +157,9 @@ const Thread = ({ data }) => {
 
   return (
     <div>
-      <h2 style={{ color: "white", width: "820px" }}>
-        <div style={{ display: "inline-block" }}>
+      <h2>
+        <div>
           <ColorPicker
-            style={{ display: "inline-block" }}
             value={data.color ? data.color : "transparent"}
             hideTextfield
             onChange={(e) => updateColor(e)}
@@ -179,7 +178,6 @@ const Thread = ({ data }) => {
         {editTitle && (
           <TextField
             autoFocus
-            style={{ color: "white" }}
             id="outlined-basic"
             value={title}
             onKeyDown={keyPress}
@@ -189,10 +187,10 @@ const Thread = ({ data }) => {
 
         {}
 
-        <DeleteIcon style={{ float: "right" }} onClick={remove} />
+        <DeleteIcon onClick={remove} />
       </h2>
 
-      <div style={{ display: "flex" }}>
+      <div>
         <div>
           {threadContent !== null && toggle === true && (
             <TextEditor
@@ -211,14 +209,8 @@ const Thread = ({ data }) => {
         </div>
 
         <div>
-          <h2 style={{ color: "white" }}>Sequence</h2>
-          <div
-            style={{
-              minWidth: "600px",
-              overflowY: "scroll",
-              height: "calc(100vh - 350px)",
-            }}
-          >
+          <h2>Sequence</h2>
+          <div>
             <DraggableList
               list={data.sequence}
               saveList={(e) => {
@@ -250,7 +242,6 @@ const Thread = ({ data }) => {
               action="remove"
               handleClick={(e) => {
                 console.log("handled Click", e);
-                //history.push("/snippets/"+e.target.value.uuid);
               }}
               getDisplayName={getDisplayName}
               getType={(x) => {
@@ -298,10 +289,8 @@ const Thread = ({ data }) => {
               renderOption={(props, option) => (
                 <div {...props}>
                   <span>
- 
                     <Avatar
                       alt=" "
-                      style={{ display: "inline-block" }}
                       sx={{ bgcolor: option.color ? option.color : "grey" }}
                       src={
                         homedir +
@@ -321,37 +310,6 @@ const Thread = ({ data }) => {
               )}
             />
             <FormDialog type={"snippet"} specialOp={addToThread} />
-
-            {/* <Autocomplete
-              style={{ width: "200px", color: "white", outlineColor: "white" }}
-              labelId="demo-simple-select-outlined-label"
-              id="demo-simple-select-outlined"
-              value={next}
-              onChange={(e) => {
-                if (e.target.value && e.target.value !== "Select") {
-                  addToThread(e.target.value);
-                  redrawText();
-                }
-              }}
-              label="Subject"
-            >
-              <MenuItem value="">
-                <em>Select</em>
-              </MenuItem>
-              {globalState.state.actors
-                .filter(
-                  (x) =>
-                    x.type === "snippet" &&
-                    x.uuid !== data.uuid &&
-                    (!data.sequence ||
-                      !data.sequence.map((y) => y.uuid).includes(x.uuid))
-                )
-                .map((x) => {
-                  return (
-                    <MenuItem value={x.uuid}>{getDisplayName(x.uuid)}</MenuItem>
-                  );
-                })}
-            </Autocomplete> */}
           </FormControl>
         </div>
       </div>
