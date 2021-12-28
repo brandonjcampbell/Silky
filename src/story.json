@@ -1,0 +1,17 @@
+{
+    "name":"story",
+    "actors":[
+        {
+            "uuid":1,
+            "name":"Cameron McCarthy"
+        },
+        {
+            "uuid":1,
+            "name":"Ezra Howard"
+        },
+        {
+            "uuid":1,
+            "name":"Hathaway Valdez"
+        }
+    ]
+}
