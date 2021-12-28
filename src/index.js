@@ -1,21 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
-import Graph from "./Graph";
-import {
-  BrowserRouter,
-  Route,
-  Link,
-  Redirect,
-  NavLink,
-} from "react-router-dom";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
-import ActorList from "./ActorList/";
-import Web from "./Web";
-import Tags from "./Tags";
-import CurrentProjectLink from "./CurrentProjectLink";
+import {
+  ActorList,
+  Web,
+  Tags,
+  CurrentProjectLink,
+  App,
+  Graph,
+  Reports,
+} from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
   GiSpiderWeb,
@@ -24,7 +21,6 @@ import {
   GiTreasureMap,
 } from "react-icons/gi";
 import ExtensionIcon from "@material-ui/icons/Extension";
-import Reports from "./Reports";
 
 import { StateProvider } from "./MyContext";
 
@@ -38,10 +34,7 @@ ReactDOM.render(
           </Link>
         </div>
 
-        <div
-          className="App"
-
-        >
+        <div className="App">
           <div>
             <ProSidebar
               collapsed={false}
@@ -54,12 +47,10 @@ ReactDOM.render(
                 <MenuItem icon={<ExtensionIcon />}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
-                <MenuItem icon={<TiScissors  />}>
+                <MenuItem icon={<TiScissors />}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
-                <MenuItem
-                  icon={<GiSewingString />}
-                >
+                <MenuItem icon={<GiSewingString />}>
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
                 {/* <MenuItem icon={<LabelIcon />}>
@@ -69,9 +60,7 @@ ReactDOM.render(
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
 
-                <MenuItem
-                  icon={<GiEmptyHourglass />}
-                >
+                <MenuItem icon={<GiEmptyHourglass />}>
                   <Link to="/Reports">Reports</Link>
                 </MenuItem>
                 <MenuItem icon={<GiTreasureMap />}>

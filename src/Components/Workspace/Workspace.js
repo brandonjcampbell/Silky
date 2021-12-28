@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import TextEditor from "../../TextEditor";
+import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import Thread from "../Thread";
 import _ from "lodash";

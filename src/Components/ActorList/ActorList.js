@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "../MyContext";
+import { store } from "../../MyContext";
 import { styled, alpha } from "@mui/material/styles";
 import TextField from "@material-ui/core/TextField";
 import Workspace from "../Workspace";

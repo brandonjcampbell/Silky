@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { store } from "../MyContext";
+import { store } from "../../MyContext";
 import { makeStyles } from "@material-ui/core/styles";
-import loadDir from "../utils/loadDir";
-import makeDir from "../utils/makeDir";
+import loadDir from "../../utils/loadDir";
+import makeDir from "../../utils/makeDir";
 import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";

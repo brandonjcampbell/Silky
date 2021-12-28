@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import logo from "../images/logo.svg";
+import logo from "../../images/logo.svg";
 import { store } from "../../MyContext";
 import { Redirect } from "react-router-dom";
 

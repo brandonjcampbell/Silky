@@ -5,9 +5,9 @@ import FormControl from "@material-ui/core/FormControl";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Avatar from "@mui/material/Avatar";
-import FormDialog from "../../FormDialog";
-import DraggableList from "../../DraggableList";
-import TextEditor from "../../TextEditor";
+import FormDialog from "../FormDialog";
+import DraggableList from "../DraggableList";
+import TextEditor from "../TextEditor";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { ColorPicker } from "material-ui-color";
 
