@@ -1,28 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import "./index.css";
 import App from "./App";
 import Graph from "./Graph";
-import TextEditor from "./TextEditor";
-import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Link,
+  Redirect,
+  NavLink,
+} from "react-router-dom";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import ActorList from "./ActorList";
-import AxiomList from "./AxiomList";
 import Web from "./Web";
 import Tags from "./Tags";
 import CurrentProjectLink from "./CurrentProjectLink";
 import { TiScissors } from "react-icons/ti";
-import { GiSpiderWeb, GiSewingString, GiEmptyHourglass, GiTreasureMap} from "react-icons/gi";
-
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import BarChart from "@material-ui/icons/BarChart";
-import LabelIcon from "@material-ui/icons/LocalOffer";
-import LanguageIcon from "@material-ui/icons/Language";
+import {
+  GiSpiderWeb,
+  GiSewingString,
+  GiEmptyHourglass,
+  GiTreasureMap,
+} from "react-icons/gi";
 import ExtensionIcon from "@material-ui/icons/Extension";
-import Reports from "./Reports"
-
+import Reports from "./Reports";
 
 import { StateProvider } from "./MyContext";
 
@@ -34,7 +36,6 @@ ReactDOM.render(
           <Link to="/" style={{ textDecoration: "none" }}>
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
-
         </div>
 
         <div
@@ -50,29 +51,32 @@ ReactDOM.render(
               }}
             >
               <Menu iconShape="circle">
-              <MenuItem icon={<ExtensionIcon />}>
+                <MenuItem icon={<ExtensionIcon />}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
-                <MenuItem icon={<TiScissors style={{fontSize:"30px"}} />}>
+                <MenuItem icon={<TiScissors style={{ fontSize: "30px" }} />}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
-                <MenuItem icon={<GiSewingString style={{fontSize:"30px"}}/>}>
+                <MenuItem
+                  icon={<GiSewingString style={{ fontSize: "30px" }} />}
+                >
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
                 {/* <MenuItem icon={<LabelIcon />}>
                   <Link to="/tags">Tags</Link>
                 </MenuItem> */}
-                <MenuItem icon={<GiSpiderWeb style={{fontSize:"30px"}}/>}>
+                <MenuItem icon={<GiSpiderWeb style={{ fontSize: "30px" }} />}>
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
-    
-                <MenuItem icon={<GiEmptyHourglass style={{fontSize:"30px"}}/>}>
+
+                <MenuItem
+                  icon={<GiEmptyHourglass style={{ fontSize: "30px" }} />}
+                >
                   <Link to="/Reports">Reports</Link>
                 </MenuItem>
-                <MenuItem icon={<GiTreasureMap style={{fontSize:"30px"}} />}>
+                <MenuItem icon={<GiTreasureMap style={{ fontSize: "30px" }} />}>
                   <Link to="/maps">Maps</Link>
                 </MenuItem>
-
               </Menu>
             </ProSidebar>
           </div>
@@ -120,19 +124,15 @@ ReactDOM.render(
               )}
             />
 
-<Route
+            <Route
               path="/Maps"
               exact
-              render={(props) => (
-                <ActorList {...props} type="map"></ActorList>
-              )}
+              render={(props) => <ActorList {...props} type="map"></ActorList>}
             />
             <Route
               path="/Maps/:uuid"
               exact
-              render={(props) => (
-                <ActorList {...props} type="map"></ActorList>
-              )}
+              render={(props) => <ActorList {...props} type="map"></ActorList>}
             />
 
             <Route
@@ -153,18 +153,7 @@ ReactDOM.render(
             <Route path="/Tags" exact render={() => <Tags></Tags>} />
 
             <Route path="/Reports" exact render={() => <Reports></Reports>} />
-            {/* <Route path="/Objects" exact render={()=><ActorList type="object"></ActorList>} />
-                <Route path="/Settings" exact render={()=><ActorList type="setting"></ActorList>} /> */}
-            <Route
-              path="/Facts"
-              exact
-              render={() => <AxiomList type="fact"></AxiomList>}
-            />
-            {/* <Route path="/Facts" exact render={()=><ActorList type="fact"></ActorList>} />
-                <Route path="/Events" exact render={()=><ActorList type="event"></ActorList>} />
-                <Route path="/Scenes" exact render={()=><ActorList type="scene"></ActorList>} />
-                <Route path="/States" exact render={()=><ActorList type="state"></ActorList>} /> */}
-            {/* <Route path="/Transformations" exact render={()=><ActorList type="transformation"></ActorList>} /> */}
+
             <Route path="/Webs" exact render={() => <Web></Web>} />
           </div>
         </div>
