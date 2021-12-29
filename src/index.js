@@ -12,7 +12,10 @@ import {
   App,
   Graph,
   Reports,
+  SnippetTabs,
   Workspace,
+  Thread,
+  ElementTabs
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
@@ -54,20 +57,15 @@ ReactDOM.render(
                 <MenuItem icon={<GiEmptyHourglass />}>
                   <Link to="/Reports">Reports</Link>
                 </MenuItem>
-                <MenuItem icon={<GiTreasureMap />}>
+                {/* <MenuItem icon={<GiTreasureMap />}>
                   <Link to="/maps">Maps</Link>
-                </MenuItem>
+                </MenuItem> */}
               </Menu>
             </ProSidebar>
           </div>
           <div>
             <Route path="/" exact component={App} />
             <Route path="/Graph" exact component={Graph} />
-            <Route
-              path="/Editor"
-              exact
-              render={() => <ActorList type="snippet"></ActorList>}
-            />
             <Route
               path="/Elements"
               exact
@@ -84,6 +82,8 @@ ReactDOM.render(
                 <div>
                   <ActorList {...props} type="element"></ActorList>
                   <Workspace actorUuid={props.match.params.uuid} />
+                  <ElementTabs actorUuid={props.match.params.uuid} />
+
                 </div>
               )}
             />
@@ -101,19 +101,26 @@ ReactDOM.render(
                 <div>
                   <ActorList {...props} type="snippet"></ActorList>
                   <Workspace actorUuid={props.match.params.uuid} />
+                  <SnippetTabs actorUuid={props.match.params.uuid} />
+
                 </div>
               )}
             />
-            <Route
+            {/* <Route
               path="/Maps"
               exact
               render={(props) => <ActorList {...props} type="map"></ActorList>}
-            />
-            <Route
+            /> */}
+            {/* <Route
               path="/Maps/:uuid"
               exact
-              render={(props) => <ActorList {...props} type="map"></ActorList>}
-            />
+              render={(props) => (
+                <div>
+                  <ActorList {...props} type="map"></ActorList>
+                  <Workspace actorUuid={props.match.params.uuid} />
+                </div>
+              )}
+            /> */}
             <Route
               path="/Threads"
               exact
@@ -127,7 +134,7 @@ ReactDOM.render(
               render={(props) => (
                 <div>
                   <ActorList {...props} type="thread"></ActorList>
-                  <Workspace actorUuid={props.match.params.uuid} />
+                  <Thread actorUuid={props.match.params.uuid} />
                 </div>
               )}
             />

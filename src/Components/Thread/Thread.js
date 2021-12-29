@@ -13,8 +13,11 @@ import { ColorPicker } from "material-ui-color";
 
 const homedir = window.require("os").homedir();
 
-const Thread = ({ data }) => {
+const Thread = ({ actorUuid }) => {
+
   const globalState = useContext(store);
+  const data =  globalState.state.actors.find((x) => x.uuid === actorUuid);
+
 
   const { dispatch } = globalState;
 
@@ -114,10 +117,8 @@ const Thread = ({ data }) => {
     const actorContent = newContent.blocks.filter(
       (x) => x.key.split(":")[0] === actorKey || !x.key.includes(":")
     );
-    console.log("what is the actor content", actorContent, newContent.blocks);
     if (actor && actor.content) {
       actor.content.blocks = actorContent;
-      console.log("fire away", actor);
       dispatch({
         action: "saveActor",
         payload: { actor: actor },
@@ -179,7 +180,6 @@ const Thread = ({ data }) => {
         )}
 
         {}
-
         <DeleteIcon onClick={remove} />
       </h2>
 

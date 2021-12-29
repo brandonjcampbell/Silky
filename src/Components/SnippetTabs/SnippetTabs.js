@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import TextEditor from "../../TextEditor";
+import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import Thread from "../Thread";
 import _ from "lodash";
@@ -18,6 +18,7 @@ import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import Map from "../Map";
 import Autocomplete from "@mui/material/Autocomplete";
+import TabPanel from "../TabPanel"
 
 const { dialog } = window.require("electron").remote;
 const fs = window.require("fs");
@@ -53,26 +54,6 @@ const useStyles = makeStyles({
   },
 });
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
@@ -80,51 +61,12 @@ function a11yProps(index) {
   };
 }
 
-const Workspace = ({ actorUuid }) => {
+const SnippetTabs = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const [freshener, setFreshener] = useState("");
-  const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
-  );
   const [currentTab, setCurrentTab] = useState(0);
 
-  const uploadPic = async () => {
-    // Open a dialog to ask for the file path
-    dialog.showOpenDialog({ properties: ["openFile"] }).then(function (data) {
-      console.log(data);
-      const filePath = data.filePaths[0];
-      if (filePath) {
-        const fileName = path.basename(data.filePaths[0]);
-
-        const newPath =
-          homedir +
-          "\\.silky\\" +
-          globalState.state.project +
-          "\\" +
-          actorUuid +
-          ".png";
-        const image = nativeImage.createFromPath(filePath);
-        fs.writeFileSync(newPath, image.resize({ height: 100 }).toPNG());
-        setFreshener(performance.now());
-      }
-    });
-  };
-
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState("");
-
   const classes = useStyles();
-
-  useEffect(() => {
-    console.log("workspace useeffect");
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
@@ -133,26 +75,9 @@ const Workspace = ({ actorUuid }) => {
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
-  const save = (newContent, key) => {
-    newContent.blocks = newContent.blocks.map((x, index) => {
-      x.key = actorUuid + ":" + index;
-      return x;
-    });
-    actor.content = newContent;
-    if (tags) {
-      actor.tags = tags;
-    }
-
-    dispatch({
-      action: "saveActor",
-      payload: { actor: actor },
-    });
-  };
-
   const tagSave = (newTags) => {
     actor.tags = newTags;
     setTags(newTags);
-
     dispatch({
       action: "saveActor",
       payload: { actor: actor },
@@ -165,13 +90,6 @@ const Workspace = ({ actorUuid }) => {
       globalState.find(globalState, uuid)
     );
   }
-
-  const remove = () => {
-    dispatch({
-      action: "removeActor",
-      payload: { uuid: actorUuid },
-    });
-  };
 
   function addToElements(uuid) {
     let clone = _.cloneDeep(actor);
@@ -199,84 +117,9 @@ const Workspace = ({ actorUuid }) => {
     });
   }
 
-  const keyPress = (e) => {
-    if (e.keyCode === 13) {
-      saveTitle();
-    }
-    if (e.keyCode === 27) {
-      setEditTitle(false);
-    }
-  };
-
-  const saveTitle = () => {
-    setEditTitle(false);
-    let clone = _.cloneDeep(actor);
-    clone.name = title;
-    dispatch({
-      action: "saveActor",
-      for: "thread",
-      payload: { actor: clone },
-    });
-  };
-
   return (
     <div>
-      {actor && actor.type !== "thread" && actor.type !== "map" && (
-        <h2>
-          <Avatar
-            alt=" "
-            sx={{ width: 100, height: 100 }}
-            onClick={() => {
-              uploadPic();
-            }}
-            src={
-              homedir +
-              "\\.silky\\" +
-              globalState.state.project +
-              "\\" +
-              actorUuid +
-              ".png?" +
-              freshener
-            }
-          />
-
-          <span
-            onClick={() => {
-              setEditTitle(!editTitle);
-              setTitle(getDisplayName(actorUuid));
-            }}
-          >
-            {!editTitle && getDisplayName(actorUuid)}
-          </span>
-          {editTitle && (
-            <TextField
-              autoFocus
-              sx={{ bgcolor: "white" }}
-              id="outlined-basic"
-              value={title}
-              onKeyDown={keyPress}
-              onBlur={() => {
-                saveTitle();
-              }}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          )}
-
-          <DeleteIcon onClick={remove} />
-        </h2>
-      )}
-      <div>
-        {actor && actor.type !== "thread" && actor.type !== "map" && (
-          <TextEditor
-            save={save}
-            data={
-              globalState.state.actors.find((x) => x.uuid === actorUuid).content
-            }
-            actorUuid={actorUuid}
-          ></TextEditor>
-        )}
-
-        {actor && actor.type === "snippet" && (
+        {actor && (
           <div>
             <Box
               sx={{
@@ -432,139 +275,10 @@ const Workspace = ({ actorUuid }) => {
                   );
                 })}
             </TabPanel>
-            <div></div>
           </div>
         )}
-        {actor && actor.type === "thread" && <Thread data={actor}></Thread>}
-
-        {actor && actor.type === "map" && <Map data={actor}></Map>}
-
-        {actor && actor.type === "element" && (
-          <div>
-            <Box
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                width: "600px",
-                fontColor: "white",
-              }}
-            >
-              <Tabs
-                value={currentTab}
-                onChange={(event, newValue) => {
-                  setCurrentTab(newValue);
-                }}
-                aria-label="basic tabs example"
-              >
-                <Tab label="Snippets" {...a11yProps(0)} />
-                <Tab label="Tags" {...a11yProps(1)} />
-                <Tab label="Threads" {...a11yProps(2)} />
-              </Tabs>
-            </Box>
-            <TabPanel value={currentTab} index={0}>
-              {globalState.state.actors
-                .filter(
-                  (a) =>
-                    a.type === "snippet" &&
-                    a.elements &&
-                    a.elements.map((x) => x.uuid).includes(actor.uuid)
-                )
-                .map((x) => {
-                  return (
-                    <div>
-                      <Link to={`/snippets/${x.uuid}`} className={classes.link}>
-                        <Avatar
-                          alt=" "
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            x.uuid +
-                            ".png"
-                          }
-                        />
-                        {x.name}
-                      </Link>
-                    </div>
-                  );
-                })}
-            </TabPanel>
-            <TabPanel value={currentTab} index={1}>
-              <TextField
-                aria-label="empty textarea"
-                placeholder="Enter tags as a comma separated list"
-                className={classes.root}
-                value={tags}
-                onChange={(e) => {
-                  tagSave(e.target.value);
-                }}
-              />
-              <div>
-                {tags.split(",").map((tag) => {
-                  if (tag) {
-                    return <Chip label={tag} icon={<LocalOfferIcon />} />;
-                  }
-                })}
-              </div>
-            </TabPanel>
-            <TabPanel value={currentTab} index={2}>
-              {_.uniqBy(
-                globalState.state.actors
-                  .filter(
-                    (snippet) =>
-                      snippet.type === "snippet" &&
-                      snippet.elements &&
-                      snippet.elements
-                        .map((y) => {
-                          return y.uuid;
-                        })
-                        .includes(actor.uuid)
-                  )
-                  .map((snippet) =>
-                    globalState.state.actors.filter(
-                      (t) =>
-                        t.type === "thread" &&
-                        t.sequence &&
-                        t.sequence
-                          .map((y) => {
-                            return y.uuid;
-                          })
-                          .includes(snippet.uuid)
-                    )
-                  )
-                  .map((x) =>
-                    x.map((y) => (
-                      <div>
-                        <Link
-                          to={`/threads/${y.uuid}`}
-                          className={classes.link}
-                        >
-                          <Avatar
-                            alt=" "
-                            sx={{ bgcolor: y.color ? y.color : "grey" }}
-                            src={
-                              homedir +
-                              "\\.silky\\" +
-                              globalState.state.project +
-                              "\\" +
-                              y.uuid +
-                              ".png"
-                            }
-                          />
-                          {y.name}
-                        </Link>
-                      </div>
-                    ))
-                  ),
-                "uuid"
-              )}
-            </TabPanel>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
 
-export default Workspace;
+export default SnippetTabs;
