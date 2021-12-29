@@ -5,57 +5,22 @@ import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "@mui/material/Avatar";
+import {uploadPic} from "../../utils";
 
-const { dialog } = window.require("electron").remote;
-const fs = window.require("fs");
-const path = window.require("path");
 const homedir = window.require("os").homedir();
-const nativeImage = window.require("electron").nativeImage;
-
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
 
 const Workspace = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [freshener, setFreshener] = useState("");
-
-  const uploadPic = async () => {
-    // Open a dialog to ask for the file path
-    dialog.showOpenDialog({ properties: ["openFile"] }).then(function (data) {
-      console.log(data);
-      const filePath = data.filePaths[0];
-      if (filePath) {
-        const fileName = path.basename(data.filePaths[0]);
-
-        const newPath =
-          homedir +
-          "\\.silky\\" +
-          globalState.state.project +
-          "\\" +
-          actorUuid +
-          ".png";
-        const image = nativeImage.createFromPath(filePath);
-        fs.writeFileSync(newPath, image.resize({ height: 100 }).toPNG());
-        setFreshener(performance.now());
-      }
-    });
-  };
-
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState("");
+  let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
+  const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
   }, [actorUuid]);
-
-  let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
-  const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
   const save = (newContent, key) => {
     newContent.blocks = newContent.blocks.map((x, index) => {
@@ -115,7 +80,7 @@ const Workspace = ({ actorUuid }) => {
             alt=" "
             sx={{ width: 100, height: 100 }}
             onClick={() => {
-              uploadPic();
+              uploadPic(actorUuid,globalState,setFreshener);
             }}
             src={
               homedir +
@@ -127,7 +92,6 @@ const Workspace = ({ actorUuid }) => {
               freshener
             }
           />
-
           <span
             onClick={() => {
               setEditTitle(!editTitle);
@@ -164,5 +128,4 @@ const Workspace = ({ actorUuid }) => {
     </div>
   );
 };
-
 export default Workspace;
