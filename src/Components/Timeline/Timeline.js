@@ -1,16 +1,10 @@
 import React, { useContext } from "react";
 import { store } from "../../MyContext";
 import _ from "lodash";
+import {getDisplayName} from "../../utils"
 
 const Timeline = ({ unit, fontSize, active }) => {
   const globalState = useContext(store);
-
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
 
   return (
     <div>
@@ -65,7 +59,7 @@ const Timeline = ({ unit, fontSize, active }) => {
                 >
               
         
-                  {getDisplayName(x.uuid)}
+                  {getDisplayName(x.uuid,globalState)} 
                 </div>
               </div>
             </div>

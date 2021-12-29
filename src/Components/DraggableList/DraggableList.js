@@ -4,9 +4,6 @@ import _ from "lodash";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import CreateIcon from "@material-ui/icons/Create";
-import ExtensionIcon from "@material-ui/icons/Extension";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@mui/material/Avatar";
 import { store } from "../../MyContext";
@@ -16,8 +13,6 @@ const Thread = ({
   list,
   saveList,
   handleClick,
-  getDisplayName,
-  getType,
   onDrop,
   action,
   showEdgeWeights,
@@ -75,8 +70,8 @@ const Thread = ({
           />
 
           <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
-            {getDisplayName(x.uuid).slice(0, showCharacterCount)}
-            {getDisplayName(x.uuid).length > showCharacterCount ? "..." : ""}
+            {x.name.slice(0, showCharacterCount)}
+            {x.name.length > showCharacterCount ? "..." : ""}
           </Link>
           {action === "remove" && (
             <CloseIcon

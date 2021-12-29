@@ -10,19 +10,14 @@ import DraggableList from "../DraggableList";
 import TextEditor from "../TextEditor";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { ColorPicker } from "material-ui-color";
-
+import {getDisplayName} from "../../utils"
 const homedir = window.require("os").homedir();
 
 const Thread = ({ actorUuid }) => {
 
   const globalState = useContext(store);
   const data =  globalState.state.actors.find((x) => x.uuid === actorUuid);
-
-
   const { dispatch } = globalState;
-
-  const [cursor, setCursor] = useState();
-
   function determineOutput() {
     let output = [];
     if (data.sequence) {
@@ -46,7 +41,6 @@ const Thread = ({ actorUuid }) => {
     return [];
   }
 
-  const [next, setNext] = useState();
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState("");
   const [toggle, setToggle] = useState(true);
@@ -82,13 +76,6 @@ const Thread = ({ actorUuid }) => {
       payload: { uuid: data.uuid },
     });
   };
-
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
 
   const empty = {
     entityMap: {},
@@ -163,10 +150,10 @@ const Thread = ({ actorUuid }) => {
         <span
           onClick={() => {
             setEditTitle(!editTitle);
-            setTitle(getDisplayName(data.uuid));
+            setTitle(data.name);
           }}
         >
-          {!editTitle && getDisplayName(data.uuid)}
+          {!editTitle && data.name}
         </span>
 
         {editTitle && (
@@ -236,7 +223,6 @@ const Thread = ({ actorUuid }) => {
               handleClick={(e) => {
                 console.log("handled Click", e);
               }}
-              getDisplayName={getDisplayName}
               getType={(x) => {
                 return (
                   globalState.state.actors.find((y) => x.uuid === y.uuid).type +

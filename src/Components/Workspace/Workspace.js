@@ -38,13 +38,6 @@ const Workspace = ({ actorUuid }) => {
     });
   };
 
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
-
   const remove = () => {
     dispatch({
       action: "removeActor",
@@ -95,10 +88,10 @@ const Workspace = ({ actorUuid }) => {
           <span
             onClick={() => {
               setEditTitle(!editTitle);
-              setTitle(getDisplayName(actorUuid));
+              setTitle(actor.name);
             }}
           >
-            {!editTitle && getDisplayName(actorUuid)}
+            {!editTitle && actor.name}
           </span>
           {editTitle && (
             <TextField

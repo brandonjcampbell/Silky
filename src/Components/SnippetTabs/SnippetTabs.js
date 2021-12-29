@@ -1,38 +1,22 @@
 import React, { useContext, useState, useEffect } from "react";
-import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
-import Thread from "../Thread";
 import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "@material-ui/icons/Delete";
 import FormControl from "@material-ui/core/FormControl";
 import Avatar from "@mui/material/Avatar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
-import Map from "../Map";
 import Autocomplete from "@mui/material/Autocomplete";
 import TabPanel from "../TabPanel"
+import {getDisplayName} from "../../utils"
 
-const { dialog } = window.require("electron").remote;
-const fs = window.require("fs");
-const path = window.require("path");
 const homedir = window.require("os").homedir();
-const nativeImage = window.require("electron").nativeImage;
-
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window;
-  return {
-    width,
-    height,
-  };
-}
 
 const useStyles = makeStyles({
   root: {
@@ -83,13 +67,6 @@ const SnippetTabs = ({ actorUuid }) => {
       payload: { actor: actor },
     });
   };
-
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
 
   function addToElements(uuid) {
     let clone = _.cloneDeep(actor);
@@ -185,7 +162,7 @@ const SnippetTabs = ({ actorUuid }) => {
                     option.tags +
                     (option.elements
                       ? option.elements
-                          .map((m) => getDisplayName(m.uuid))
+                          .map((m) => getDisplayName(m.uuid,globalState))
                           .toString()
                       : "")
                   }

@@ -7,8 +7,7 @@ import _ from "lodash";
 import FormDialog from "../FormDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-import { BrowserRouter, Route, Link,Redirect, NavLink  } from "react-router-dom";
-
+import {Redirect } from "react-router-dom";
 const ActorList = ({ match, type }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
@@ -71,12 +70,6 @@ const ActorList = ({ match, type }) => {
     },
   }));
 
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
 
   return (
     <div>
@@ -102,7 +95,6 @@ const ActorList = ({ match, type }) => {
               (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))
             )}
             handleClick={handleRowClick}
-            getDisplayName={getDisplayName}
             saveList={(e) => {
               dispatch({
                 action: "saveActors",

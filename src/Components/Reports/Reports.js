@@ -14,13 +14,6 @@ const Reports = () => {
   const [list, setList] = useState([]);
   const [longest, setLongest] = useState(0);
 
-  function getDisplayName(uuid) {
-    return globalState.getDisplayName(
-      globalState,
-      globalState.find(globalState, uuid)
-    );
-  }
-
   useEffect(
     function () {
       let longest = 0;
@@ -62,7 +55,7 @@ const Reports = () => {
             )
             .map((x) => {
               return (
-                <MenuItem value={x.uuid}>{getDisplayName(x.uuid)}</MenuItem>
+                <MenuItem value={x.uuid}>{x.name}</MenuItem>
               );
             })}
         </Select>
