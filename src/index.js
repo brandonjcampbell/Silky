@@ -44,22 +44,22 @@ ReactDOM.render(
           <div className="Sidebar">
             <ProSidebar collapsed={false} width="80px">
               <Menu iconShape="circle">
-                <MenuItem icon={<HiPuzzle/>}>
+                <MenuItem icon={<HiPuzzle className="menuItem"/>}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
-                <MenuItem icon={<TiScissors />}>
+                <MenuItem  icon={<TiScissors className="menuItem"/>}>
                   <Link to="/snippets">Snippets</Link>
                 </MenuItem>
-                <MenuItem icon={<GiSewingString />}>
+                <MenuItem icon={<GiSewingString className="menuItem"/>}>
                   <Link to="/threads">Threads</Link>
                 </MenuItem>
-                <MenuItem icon={<GiSpiderWeb />}>
+                <MenuItem icon={<GiSpiderWeb className="menuItem"/>}>
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
-                {/* <MenuItem icon={<GiEmptyHourglass />}>
+                {/* <MenuItem className="menuItem" icon={<GiEmptyHourglass />}>
                   <Link to="/Reports">Reports</Link>
                 </MenuItem> */}
-                {/* <MenuItem icon={<GiTreasureMap />}>
+                {/* <MenuItem className="menuItem" icon={<GiTreasureMap />}>
                   <Link to="/maps">Maps</Link>
                 </MenuItem> */}
               </Menu>
@@ -75,6 +75,10 @@ ReactDOM.render(
                 <div className="View">
                   <div className="List">
                     <ActorList {...props} type="element" />
+                  </div>
+                  <div className="Workspace">
+                  </div>
+                  <div className="Extras">
                   </div>
                 </div>
               )}
@@ -103,6 +107,10 @@ ReactDOM.render(
                 <div className="View">
                   <div className="List">
                     <ActorList {...props} type="snippet" />
+                    <div className="Workspace">
+                  </div>
+                  <div className="Extras">
+                  </div>
                   </div>
                 </div>
               )}
@@ -146,6 +154,10 @@ ReactDOM.render(
                 <div className="View">
                   <div className="List">
                     <ActorList {...props} type="thread" />
+                  </div>
+                  <div className="Workspace">
+                  </div>
+                  <div className="Extras">
                   </div>
                 </div>
               )}

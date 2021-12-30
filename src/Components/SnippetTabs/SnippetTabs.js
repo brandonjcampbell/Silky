@@ -13,8 +13,9 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
-import TabPanel from "../TabPanel"
-import {getDisplayName} from "../../utils"
+import TabPanel from "../TabPanel";
+import {getDisplayName} from "../../utils";
+import SimpleList from "../SimpleList";
 
 const homedir = window.require("os").homedir();
 
@@ -98,14 +99,7 @@ const SnippetTabs = ({ actorUuid }) => {
     <div>
         {actor && (
           <div>
-            <Box
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                width: "200px",
-                fontColor: "white",
-              }}
-            >
+            <Box>
               <Tabs
                 value={currentTab}
                 onChange={(event, newValue) => {
@@ -119,36 +113,16 @@ const SnippetTabs = ({ actorUuid }) => {
               </Tabs>
             </Box>
             <TabPanel value={currentTab} index={0}>
-              {globalState.state.actors
+              <SimpleList 
+                xAction={removeFromElements}
+                list={globalState.state.actors
                 .filter(
                   (a) =>
                     a.type === "element" &&
                     actor &&
                     actor.elements &&
                     actor.elements.map((x) => x.uuid).includes(a.uuid)
-                )
-                .map((x) => {
-                  return (
-                    <div>
-                      <Link to={`/elements/${x.uuid}`} className={classes.link}>
-                        <Avatar
-                          alt=" "
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            x.uuid +
-                            ".png"
-                          }
-                        />
-                        {x.name}
-                      </Link>
-                      <CloseIcon onClick={() => removeFromElements(x.uuid)} />
-                    </div>
-                  );
-                })}
-
+                )}/>
               <FormControl variant="filled">
                 <Autocomplete
                   disablePortal
@@ -213,13 +187,13 @@ const SnippetTabs = ({ actorUuid }) => {
               <div>
                 {tags.split(",").map((tag) => {
                   if (tag) {
-                    return <Chip label={tag} icon={<LocalOfferIcon />} />;
+                    return <Chip className="tag" label={tag} icon={<LocalOfferIcon />} />;
                   }
                 })}
               </div>
             </TabPanel>
             <TabPanel value={currentTab} index={2}>
-              {globalState.state.actors
+              <SimpleList list = {globalState.state.actors
                 .filter(
                   (actor) =>
                     actor.type === "thread" &&
@@ -229,28 +203,7 @@ const SnippetTabs = ({ actorUuid }) => {
                         return y.uuid;
                       })
                       .includes(actorUuid)
-                )
-                .map((x) => {
-                  return (
-                    <div>
-                      <Link to={`/threads/${x.uuid}`} className={classes.link}>
-                        <Avatar
-                          alt=" "
-                          sx={{ bgcolor: x.color ? x.color : "grey" }}
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            x.uuid +
-                            ".png"
-                          }
-                        />
-                        {x.name}
-                      </Link>
-                    </div>
-                  );
-                })}
+                )}/>
             </TabPanel>
           </div>
         )}

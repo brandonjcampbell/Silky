@@ -7,8 +7,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@mui/material/Avatar";
 import { store } from "../../MyContext";
-import {getDisplayName} from "../../utils"
-import "./DraggableList.css"
+import { getDisplayName } from "../../utils";
+import "./DraggableList.css";
 const homedir = window.require("os").homedir();
 
 const Thread = ({
@@ -18,7 +18,7 @@ const Thread = ({
   onDrop,
   action,
   showEdgeWeights,
-  showCharacterCount = 27,
+  showCharacterCount = 100,
 }) => {
   const globalState = useContext(store);
 
@@ -38,28 +38,27 @@ const Thread = ({
 
   function goRenderLabel(x, index) {
     return (
+      <div
+        className="row"
+        onClick={() => {
+          handleClick(x);
+        }}
+      >
+        {showEdgeWeights && (
+          <TextField
+            value={x.incomingEdgeWeight}
+            onChange={(e) => {
+              let cloned = _.cloneDeep(list);
+              cloned[index].incomingEdgeWeight = e.target.value;
+              saveList(cloned);
+            }}
+            size="small"
+            label=""
+            variant="outlined"
+          />
+        )}
 
-        <div
-          className="row"
-          onClick={() => {
-            handleClick(x);
-          }}
-        >
-          {showEdgeWeights && (
-            <TextField
-              value={x.incomingEdgeWeight}
-              onChange={(e) => {
-                let cloned = _.cloneDeep(list);
-                cloned[index].incomingEdgeWeight = e.target.value;
-                saveList(cloned);
-              }}
-              size="small"
-              label=""
-              variant="outlined"
-            />
-          )}
-
-<Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
+        <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
           <Avatar
             alt=" "
             className="avatar"
@@ -74,21 +73,18 @@ const Thread = ({
             }
           />
 
-
-
-            {getDisplayName(x.uuid,globalState).slice(0, showCharacterCount)}
-            {getDisplayName(x.uuid,globalState).length > showCharacterCount ? "..." : ""}
-          </Link>
-          {action === "remove" && (
-            <CloseIcon
-              onClick={() => {
-                remove(x.uuid);
-              }}
-            />
-          )}
-          {action === "delete" && <DeleteIcon />}
-        </div>
-   
+          {getDisplayName(x.uuid, globalState).slice(0, showCharacterCount)}
+          {getDisplayName(x.uuid, globalState).length > showCharacterCount ? "...":""}
+        </Link>
+        {action === "remove" && (
+          <CloseIcon
+            onClick={() => {
+              remove(x.uuid);
+            }}
+          />
+        )}
+        {action === "delete" && <DeleteIcon />}
+      </div>
     );
   }
 

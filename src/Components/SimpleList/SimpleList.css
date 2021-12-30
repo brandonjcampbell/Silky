@@ -1,4 +1,4 @@
-.row{
+.simpleListRow{
     display: flex;
     vertical-align: middle;
     line-height: 40px;
@@ -7,13 +7,21 @@
     overflow-y: hidden;
     height:50px;
 }
-.row > *{
+.simpleListRow > *{
     display: flex;
 }
-.row a{
-    color:white;
+
+.simpleListRow > * {
     text-decoration: none;
+    color:white;
+    font-weight: normal;
 }
-.avatar{
+.simpleListAvatar{
     margin-right: 10px;
+
+}
+.simpleListXAction{
+    position: relative;
+    top:10px;
+    left:10px;
 }

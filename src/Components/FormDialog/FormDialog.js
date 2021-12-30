@@ -6,6 +6,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import AddIcon from "@mui/icons-material/Add";
+import "./FormDialog.css"
 
 export default function FormDialog({ type, specialOp }) {
   const [open, setOpen] = React.useState(false);
@@ -49,13 +50,13 @@ export default function FormDialog({ type, specialOp }) {
         <div>
 
    
-      <Button color="primary" size="small" aria-label="add" onClick={handleClickOpen}>
+      <Button className="addButton" color="primary" size="small" aria-label="add" onClick={handleClickOpen}>
       <AddIcon /> {type} 
       </Button>
       </div>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogContent>
+      <Dialog open={open}  onClose={handleClose}>
+        <DialogContent className="dialog">
           <TextField
             autoFocus
             margin="dense"
