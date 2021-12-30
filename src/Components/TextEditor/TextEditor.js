@@ -43,7 +43,6 @@ const TextEditor = ({ data, save, actorUuid }) => {
     EditorState.createWithContent(contentState)
   );
 
-  const [strokeCount, setStrokeCount] = useState(0);
   const [dirty,setDirty] = useState(0);
 
   const onEditorStateChange = (editorState) => {
@@ -84,7 +83,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
   return (
     <div>
       <div style={{ backgroundColor: "rgb(69, 68, 71)" }}>
-        {dirty && <AiFillSave className="unsaved"/>}
+       
         <Editor
           editorStyle={{
             height: "calc(100vh - 216px)",
@@ -100,6 +99,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
             onEditorStateChange(e);
           }}
         ></Editor>
+         {dirty && <AiFillSave className="unsaved"/>}
       </div>
     </div>
   );

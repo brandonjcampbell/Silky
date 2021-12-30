@@ -90,7 +90,7 @@ const ThreadTabs = ({ actorUuid }) => {
                 option.tags +
                 (option.elements
                   ? option.elements
-                      .map((m) => getDisplayName(m.uuid))
+                      .map((m) => getDisplayName(m.uuid, globalState))
                       .toString()
                   : "")
               }
