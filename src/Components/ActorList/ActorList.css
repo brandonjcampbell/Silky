@@ -1,0 +1,7 @@
+.content{
+    overflow-y: auto;
+    height:calc(100vh - 122px);
+  }
+  .controls{
+      margin:4px;
+  }

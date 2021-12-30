@@ -105,24 +105,6 @@ const find = (state, id) => {
   return result;
 };
 
-const getDisplayName = (state, payload) => {
-  if (payload.class === "actor") {
-    return payload.name;
-  }
-  if (payload.class === "axiom") {
-    const subject = find(state, payload.subject);
-    const target = find(state, payload.target);
-    return `${getDisplayName(state, subject)} ${payload.name} ${getDisplayName(
-      state,
-      target
-    )}`;
-  }
-  if(payload.class==="edgeWeight"){
-    const result= find(state, payload.subject);
-    console.log(result,"doopus")
-  }
-};
-
 const saveContent = (state, action) => {
   let newState = _.cloneDeep(state);
 
@@ -219,7 +201,7 @@ const StateProvider = ({ children }) => {
   }, initialState);
 
   return (
-    <Provider value={{ state, dispatch, getDisplayName, find }}>
+    <Provider value={{ state, dispatch, find }}>
       {children}
     </Provider>
   );

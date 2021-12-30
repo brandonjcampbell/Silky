@@ -1,0 +1,16 @@
+.row{
+    display: flex;
+    vertical-align: middle;
+    line-height: 40px;
+    margin:4px;
+}
+.row > *{
+    display: flex;
+}
+.row a{
+    color:white;
+    text-decoration: none;
+}
+.avatar{
+    margin-right: 10px;
+}
