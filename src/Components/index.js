@@ -12,6 +12,7 @@ import TabPanel from "./TabPanel";
 import Tags from "./Tags";
 import TextEditor from "./TextEditor";
 import Thread from "./Thread";
+import ThreadTabs from "./ThreadTabs";
 import Timeline from "./Timeline";
 import Web from "./Web";
 import Workspace from "./Workspace";
@@ -30,6 +31,7 @@ export {
   Tags,
   TextEditor,
   Thread,
+  ThreadTabs,
   Timeline,
   Web,
   Workspace,

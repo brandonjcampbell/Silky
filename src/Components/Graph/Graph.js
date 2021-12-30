@@ -72,7 +72,6 @@ const Graph = ({ type }) => {
     function handleResize() {
       setWindowDimensions(getWindowDimensions());
     }
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -118,8 +117,8 @@ const Graph = ({ type }) => {
 
   return (
     <div>
-      <div>
-        <div>
+      <div className="View">
+        <div className="List">
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
@@ -222,12 +221,7 @@ const Graph = ({ type }) => {
           })}
         </div>
 
-        <div
-          style={{
-            height: windowDimensions.height,
-            width: windowDimensions.width - 500,
-          }}
-        >
+        <div className="Workspace">
           <CytoscapeComponent
             layout={layout}
             cy={handleCy}
@@ -243,8 +237,8 @@ const Graph = ({ type }) => {
               ...axioms,
             ]}
             style={{
-              height: windowDimensions.height,
-              width: windowDimensions.width - 200,
+              height: windowDimensions.height+20,
+              width: windowDimensions.width-400,
             }}
             stylesheet={[
               {

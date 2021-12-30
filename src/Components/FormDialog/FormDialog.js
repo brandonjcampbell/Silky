@@ -5,7 +5,6 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 
 export default function FormDialog({ type, specialOp }) {
@@ -50,11 +49,9 @@ export default function FormDialog({ type, specialOp }) {
         <div>
 
    
-       
-      <Fab color="primary" size="small" aria-label="add" onClick={handleClickOpen}>
-        <AddIcon />
-      </Fab>
-      <span>{type}</span>
+      <Button color="primary" size="small" aria-label="add" onClick={handleClickOpen}>
+      <AddIcon /> {type} 
+      </Button>
       </div>
 
       <Dialog open={open} onClose={handleClose}>

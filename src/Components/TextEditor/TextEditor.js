@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
+import Paper from '@mui/material/Paper';
 
 function usePrevious(value) {
   const ref = useRef();
@@ -67,14 +68,16 @@ const TextEditor = ({ data, save, actorUuid }) => {
 
   return (
     <div>
-      <div>
+      <div style={{backgroundColor:"rgb(69, 68, 71)"}}>
+   
         <Editor
-          editorStyle={{ height: "calc(100vh - 300px)", paddingRight: "15px" }}
+          editorStyle={{ height: "calc(100vh - 216px)", paddingRight: "15px" , paddingLeft:"20px", color:"rgb(300, 300, 300)",backgroundColor:"rgb(69, 68, 71)", margin:"10px", marginBottom:"0px"}}
           editorState={editorState}
           onEditorStateChange={(e) => {
             onEditorStateChange(e);
           }}
         ></Editor>
+   
       </div>
     </div>
   );

@@ -7,6 +7,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
 import Avatar from "@mui/material/Avatar";
 import { store } from "../../MyContext";
+import {getDisplayName} from "../../utils"
+import "./DraggableList.css"
 const homedir = window.require("os").homedir();
 
 const Thread = ({
@@ -36,8 +38,9 @@ const Thread = ({
 
   function goRenderLabel(x, index) {
     return (
-      <div>
+
         <div
+          className="row"
           onClick={() => {
             handleClick(x);
           }}
@@ -56,8 +59,10 @@ const Thread = ({
             />
           )}
 
+<Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
           <Avatar
             alt=" "
+            className="avatar"
             sx={{ bgcolor: x.color ? x.color : "grey" }}
             src={
               homedir +
@@ -69,9 +74,10 @@ const Thread = ({
             }
           />
 
-          <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
-            {x.name.slice(0, showCharacterCount)}
-            {x.name.length > showCharacterCount ? "..." : ""}
+
+
+            {getDisplayName(x.uuid,globalState).slice(0, showCharacterCount)}
+            {getDisplayName(x.uuid,globalState).length > showCharacterCount ? "..." : ""}
           </Link>
           {action === "remove" && (
             <CloseIcon
@@ -82,7 +88,7 @@ const Thread = ({
           )}
           {action === "delete" && <DeleteIcon />}
         </div>
-      </div>
+   
     );
   }
 

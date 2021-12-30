@@ -5,7 +5,8 @@ import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "@mui/material/Avatar";
-import {uploadPic} from "../../utils";
+import { uploadPic } from "../../utils";
+import "./Workspace.css";
 
 const homedir = window.require("os").homedir();
 
@@ -66,14 +67,15 @@ const Workspace = ({ actorUuid }) => {
   };
 
   return (
-    <div>
+    <div className="workspace">
       {actor && (
         <h2>
           <Avatar
+            className="avatar"
             alt=" "
             sx={{ width: 100, height: 100 }}
             onClick={() => {
-              uploadPic(actorUuid,globalState,setFreshener);
+              uploadPic(actorUuid, globalState, setFreshener);
             }}
             src={
               homedir +
@@ -85,38 +87,44 @@ const Workspace = ({ actorUuid }) => {
               freshener
             }
           />
-          <span
-            onClick={() => {
-              setEditTitle(!editTitle);
-              setTitle(actor.name);
-            }}
-          >
-            {!editTitle && actor.name}
-          </span>
-          {editTitle && (
-            <TextField
-              autoFocus
-              sx={{ bgcolor: "white" }}
-              id="outlined-basic"
-              value={title}
-              onKeyDown={keyPress}
-              onBlur={() => {
-                saveTitle();
+          <span className="title">
+            <span
+              onClick={() => {
+                setEditTitle(!editTitle);
+                setTitle(actor.name);
               }}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          )}
-          <DeleteIcon onClick={remove} />
+            >
+              {!editTitle && actor.name}
+            </span>
+            {editTitle && (
+              <TextField
+                autoFocus
+                sx={{ bgcolor: "white" }}
+                id="outlined-basic"
+                value={title}
+                onKeyDown={keyPress}
+                onBlur={() => {
+                  saveTitle();
+                }}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            )}
+          </span>
+          <span className="delete">
+            <DeleteIcon onClick={remove} />
+          </span>
         </h2>
       )}
       {actor && (
-        <TextEditor
-          save={save}
-          data={
-            globalState.state.actors.find((x) => x.uuid === actorUuid).content
-          }
-          actorUuid={actorUuid}
-        ></TextEditor>
+        <div className="editor">
+          <TextEditor
+            save={save}
+            data={
+              globalState.state.actors.find((x) => x.uuid === actorUuid).content
+            }
+            actorUuid={actorUuid}
+          ></TextEditor>
+        </div>
       )}
     </div>
   );

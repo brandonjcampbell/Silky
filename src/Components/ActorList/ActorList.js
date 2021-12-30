@@ -8,6 +8,7 @@ import FormDialog from "../FormDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import {Redirect } from "react-router-dom";
+import "./ActorList.css"
 const ActorList = ({ match, type }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
@@ -72,11 +73,10 @@ const ActorList = ({ match, type }) => {
 
 
   return (
-    <div>
+    <div className="ActorList">
     
-      <div>
         {globalState.state.project==="Silky" && <Redirect to="/" />}
-        <div>
+        <div className="controls">
           <FormDialog type={type} />
           <div>
             <SearchIcon/>
@@ -88,8 +88,7 @@ const ActorList = ({ match, type }) => {
           </div>
         </div>
 
-        <div></div>
-        <div>
+        <div className="content">
           <DraggableList
             list={content.filter(
               (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))
@@ -118,7 +117,7 @@ const ActorList = ({ match, type }) => {
             }}
           ></DraggableList>
         </div>
-      </div>
+   
     </div>
   );
 };

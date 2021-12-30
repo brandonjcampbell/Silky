@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   root: {
     background: "#333",
     color: "white",
-    width: "500px",
+    width: "200px",
     padding: "5px",
     margin: "5px",
   },
@@ -67,7 +67,7 @@ const ElementTabs = ({ actorUuid }) => {
             sx={{
               borderBottom: 1,
               borderColor: "divider",
-              width: "600px",
+              width: "200px",
               fontColor: "white",
             }}
           >

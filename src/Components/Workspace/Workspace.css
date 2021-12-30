@@ -1,0 +1,35 @@
+.workspace{
+    position: relative;
+    top:-20px;
+  
+}
+h2{
+    display: flex;
+    vertical-align: bottom;
+    line-height: 35px;
+}
+.workspace h2 .avatar{
+ position: relative;
+ top:10px;
+height:70px;
+width:70px;
+ background-color: rgb(81, 78, 87);;
+}
+.editor{
+    position: relative;
+    top:-18px;
+    padding:0px
+}
+
+.workspace .title{
+    position: relative;
+    top:25px;
+    color:white;
+   
+}
+.workspace .delete {
+    color:white;
+    position: relative;
+    top:30px; 
+    left:10px;  
+}

@@ -5,9 +5,65 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background:green;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+.Topbar{
+  height:50px;
+  background-color:black;
+  text-decoration: none;
+  color:white;
+}
+.Topbar a{
+  text-decoration: none;
+}
+.App{
+  display: flex;
+}
+.SideBar{
+
+}
+.View{
+  background: rgb(39, 38, 41);
+  display:flex;
+  width:calc(100vw - 80px);
+  height:calc(100vh - 50px);
+  overflow-y: hidden;
+  overflow-x: hidden;
+
+}
+.Workspace{
+  padding: 0px;
+}
+.List{
+
+  min-width:200px;
+  width:20%;
+  height:calc(100vh - 50px);
+
+}
+
+.Extras{
+  min-width:200px;
+  width:20%;
+  overflow-y: auto;
+  height:calc(100vh - 50px);
+}
+
+*::-webkit-scrollbar {
+  width: 12px;               /* width of the entire scrollbar */
+}
+*::-webkit-scrollbar-track {
+  background: transparent;        /* color of the tracking area */
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(100, 95, 107);    /* color of the scroll thumb */
+  border-radius: 10px;       /* roundness of the scroll thumb */
+  border:3px transparent rgb(39, 38, 41);
+
+
 }

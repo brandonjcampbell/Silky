@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   root: {
     background: "#333",
     color: "white",
-    width: "500px",
+    width: "200px",
     padding: "5px",
     margin: "5px",
   },
@@ -102,7 +102,7 @@ const SnippetTabs = ({ actorUuid }) => {
               sx={{
                 borderBottom: 1,
                 borderColor: "divider",
-                width: "600px",
+                width: "200px",
                 fontColor: "white",
               }}
             >
@@ -169,7 +169,7 @@ const SnippetTabs = ({ actorUuid }) => {
                   options={globalState.state.actors.filter(
                     (x) => x.type === "element"
                   )}
-                  sx={{ width: 600, bgcolor: "white", borderRadius: "4px" }}
+                  sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
                   onChange={(e, newValue) => {
                     if (newValue && newValue !== "Select") {
                       addToElements(newValue.uuid);

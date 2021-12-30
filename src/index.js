@@ -15,7 +15,8 @@ import {
   SnippetTabs,
   Workspace,
   Thread,
-  ElementTabs
+  ThreadTabs,
+  ElementTabs,
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
@@ -24,6 +25,7 @@ import {
   GiEmptyHourglass,
   GiTreasureMap,
 } from "react-icons/gi";
+import {HiPuzzle} from "react-icons/hi"
 import ExtensionIcon from "@material-ui/icons/Extension";
 
 import { StateProvider } from "./MyContext";
@@ -32,17 +34,17 @@ ReactDOM.render(
   <React.StrictMode>
     <StateProvider>
       <BrowserRouter>
-        <div>
+        <div className="Topbar">
           <Link to="/">
             <CurrentProjectLink></CurrentProjectLink>
           </Link>
         </div>
 
         <div className="App">
-          <div>
-            <ProSidebar collapsed={false} width="70px">
+          <div className="Sidebar">
+            <ProSidebar collapsed={false} width="80px">
               <Menu iconShape="circle">
-                <MenuItem icon={<ExtensionIcon />}>
+                <MenuItem icon={<HiPuzzle/>}>
                   <Link to="/elements">Elements</Link>
                 </MenuItem>
                 <MenuItem icon={<TiScissors />}>
@@ -54,9 +56,9 @@ ReactDOM.render(
                 <MenuItem icon={<GiSpiderWeb />}>
                   <Link to="/webs">Webs</Link>
                 </MenuItem>
-                <MenuItem icon={<GiEmptyHourglass />}>
+                {/* <MenuItem icon={<GiEmptyHourglass />}>
                   <Link to="/Reports">Reports</Link>
-                </MenuItem>
+                </MenuItem> */}
                 {/* <MenuItem icon={<GiTreasureMap />}>
                   <Link to="/maps">Maps</Link>
                 </MenuItem> */}
@@ -70,8 +72,10 @@ ReactDOM.render(
               path="/Elements"
               exact
               render={(props) => (
-                <div>
-                  <ActorList {...props} type="element"></ActorList>
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="element" />
+                  </div>
                 </div>
               )}
             />
@@ -79,11 +83,16 @@ ReactDOM.render(
               path="/Elements/:uuid"
               exact
               render={(props) => (
-                <div>
-                  <ActorList {...props} type="element"></ActorList>
-                  <Workspace actorUuid={props.match.params.uuid} />
-                  <ElementTabs actorUuid={props.match.params.uuid} />
-
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="element" />
+                  </div>
+                  <div className="Workspace">
+                    <Workspace actorUuid={props.match.params.uuid} />
+                  </div>
+                  <div className="Extras">
+                    <ElementTabs actorUuid={props.match.params.uuid} />
+                  </div>
                 </div>
               )}
             />
@@ -91,18 +100,27 @@ ReactDOM.render(
               path="/Snippets"
               exact
               render={(props) => (
-                <ActorList {...props} type="snippet"></ActorList>
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="snippet" />
+                  </div>
+                </div>
               )}
             />
             <Route
               path="/Snippets/:uuid"
               exact
               render={(props) => (
-                <div>
-                  <ActorList {...props} type="snippet"></ActorList>
-                  <Workspace actorUuid={props.match.params.uuid} />
-                  <SnippetTabs actorUuid={props.match.params.uuid} />
-
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="snippet" />
+                  </div>
+                  <div className="Workspace">
+                    <Workspace actorUuid={props.match.params.uuid} />
+                  </div>
+                  <div className="Extras">
+                    <SnippetTabs actorUuid={props.match.params.uuid} />
+                  </div>
                 </div>
               )}
             />
@@ -125,21 +143,32 @@ ReactDOM.render(
               path="/Threads"
               exact
               render={(props) => (
-                <ActorList {...props} type="thread"></ActorList>
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="thread" />
+                  </div>
+                </div>
               )}
             />
             <Route
               path="/Threads/:uuid"
               exact
               render={(props) => (
-                <div>
-                  <ActorList {...props} type="thread"></ActorList>
-                  <Thread actorUuid={props.match.params.uuid} />
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="thread" />
+                  </div>
+                  <div className="Workspace">
+                    <Thread actorUuid={props.match.params.uuid} />
+                  </div>
+                  <div className="Extras">
+                    <ThreadTabs actorUuid={props.match.params.uuid} />
+                  </div>
                 </div>
               )}
             />
-            <Route path="/Tags" exact render={() => <Tags></Tags>} />
-            <Route path="/Reports" exact render={() => <Reports></Reports>} />
+            {/* <Route path="/Tags" exact render={() => <Tags></Tags>} /> */}
+            {/* <Route path="/Reports" exact render={() => <Reports></Reports>} /> */}
             <Route path="/Webs" exact render={() => <Web></Web>} />
           </div>
         </div>
