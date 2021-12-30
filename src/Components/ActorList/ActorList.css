@@ -1,7 +1,16 @@
 .content{
     overflow-y: auto;
+    overflow-x:hidden;
     height:calc(100vh - 122px);
   }
   .controls{
       margin:4px;
+  }
+  .listSearch{
+      width:calc(100% - 40px);
+      
+  }
+  .listSearch > * {
+    color:white!important;
+    padding-left:5px;
   }

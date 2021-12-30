@@ -81,6 +81,7 @@ const ActorList = ({ match, type }) => {
           <div>
             <SearchIcon/>
             <TextField
+            className="listSearch"
               id="outlined-basic"
               value={search}
               onChange={(e) => setSearch(e.target.value)}

@@ -11,6 +11,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
+import SimpleList from "../SimpleList";
 const homedir = window.require("os").homedir();
 const useStyles = makeStyles({
   root: {
@@ -59,18 +60,37 @@ const ElementTabs = ({ actorUuid }) => {
     });
   };
 
+  const getThreads = () => {
+    const snippets = globalState.state.actors
+      .filter(
+        (snippet) =>
+          snippet.type === "snippet" &&
+          snippet.elements &&
+          snippet.elements
+            .map((y) => {
+              return y.uuid;
+            })
+            .includes(actor.uuid)
+      )
+      .map((y) => y.uuid);
+
+    const threads = globalState.state.actors.filter(
+      (thread) =>
+        thread.type === "thread" &&
+        thread.sequence &&
+        thread.sequence.filter((z) => {
+         return snippets.includes(z.uuid);
+        }).length > 0
+    );
+    
+    return _.uniqBy(threads, "uuid");
+  };
+
   return (
     <div>
       {actor && (
         <div>
-          <Box
-            sx={{
-              borderBottom: 1,
-              borderColor: "divider",
-              width: "200px",
-              fontColor: "white",
-            }}
-          >
+          <Box>
             <Tabs
               value={currentTab}
               onChange={(event, newValue) => {
@@ -84,33 +104,14 @@ const ElementTabs = ({ actorUuid }) => {
             </Tabs>
           </Box>
           <TabPanel value={currentTab} index={0}>
-            {globalState.state.actors
-              .filter(
+            <SimpleList
+              list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "snippet" &&
                   a.elements &&
                   a.elements.map((x) => x.uuid).includes(actor.uuid)
-              )
-              .map((x) => {
-                return (
-                  <div>
-                    <Link to={`/snippets/${x.uuid}`} className={classes.link}>
-                      <Avatar
-                        alt=" "
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          x.uuid +
-                          ".png"
-                        }
-                      />
-                      {x.name}
-                    </Link>
-                  </div>
-                );
-              })}
+              )}
+            />
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
             <TextField
@@ -125,59 +126,19 @@ const ElementTabs = ({ actorUuid }) => {
             <div>
               {tags.split(",").map((tag) => {
                 if (tag) {
-                  return <Chip label={tag} icon={<LocalOfferIcon />} />;
+                  return (
+                    <Chip
+                      className="tag"
+                      label={tag}
+                      icon={<LocalOfferIcon />}
+                    />
+                  );
                 }
               })}
             </div>
           </TabPanel>
           <TabPanel value={currentTab} index={2}>
-            {_.uniqBy(
-              globalState.state.actors
-                .filter(
-                  (snippet) =>
-                    snippet.type === "snippet" &&
-                    snippet.elements &&
-                    snippet.elements
-                      .map((y) => {
-                        return y.uuid;
-                      })
-                      .includes(actor.uuid)
-                )
-                .map((snippet) =>
-                  globalState.state.actors.filter(
-                    (t) =>
-                      t.type === "thread" &&
-                      t.sequence &&
-                      t.sequence
-                        .map((y) => {
-                          return y.uuid;
-                        })
-                        .includes(snippet.uuid)
-                  )
-                )
-                .map((x) =>
-                  x.map((y) => (
-                    <div>
-                      <Link to={`/threads/${y.uuid}`} className={classes.link}>
-                        <Avatar
-                          alt=" "
-                          sx={{ bgcolor: y.color ? y.color : "grey" }}
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            y.uuid +
-                            ".png"
-                          }
-                        />
-                        {y.name}
-                      </Link>
-                    </div>
-                  ))
-                ),
-              "uuid"
-            )}
+            <SimpleList list={getThreads()} />
           </TabPanel>
         </div>
       )}

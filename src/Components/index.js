@@ -8,6 +8,7 @@ import Graph from "./Graph";
 import Map from "./Map";
 import Reports from "./Reports";
 import SnippetTabs from "./SnippetTabs";
+import SimpleList from "./SimpleList";
 import TabPanel from "./TabPanel";
 import Tags from "./Tags";
 import TextEditor from "./TextEditor";
@@ -27,6 +28,7 @@ export {
   Map,
   Reports,
   SnippetTabs,
+  SimpleList,
   TabPanel,
   Tags,
   TextEditor,

@@ -1,6 +1,7 @@
 .workspace{
     position: relative;
     top:-20px;
+    margin:5px;
   
 }
 h2{
@@ -32,4 +33,5 @@ width:70px;
     position: relative;
     top:30px; 
     left:10px;  
+
 }

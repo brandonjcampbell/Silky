@@ -24,8 +24,8 @@ code {
 .App{
   display: flex;
 }
-.SideBar{
-
+.Sidebar{
+  height:calc(100vh - 50px);
 }
 .View{
   background: rgb(39, 38, 41);
@@ -38,6 +38,7 @@ code {
 }
 .Workspace{
   padding: 0px;
+  width:60%;
 }
 .List{
 
@@ -45,6 +46,9 @@ code {
   width:20%;
   height:calc(100vh - 50px);
 
+}
+.List > *{
+  color:white;
 }
 
 .Extras{
@@ -54,6 +58,14 @@ code {
   height:calc(100vh - 50px);
 }
 
+
+.menuItem{
+  font-size: 25px;
+}
+
+.tag{
+  margin:5px;
+}
 *::-webkit-scrollbar {
   width: 12px;               /* width of the entire scrollbar */
 }
