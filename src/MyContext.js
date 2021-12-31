@@ -70,23 +70,22 @@ const add = (state, action) => {
   action.payload.class = action.class;
   console.log("Let's see", action.for);
   if (action.for === "snippet") {
-    console.log("gloopy")
-    action.payload.elements=[]
+    console.log("gloopy");
+    action.payload.elements = [];
     action.payload.content = _.cloneDeep(empty);
     action.payload.content.blocks[0].text = `[${action.payload.name}]`;
-    console.log("SNOOKER",[...action.payload.name.split(" ")]);
-    [...action.payload.name.split(" ")].forEach(word=>{
-      const ac = state.actors.filter(actor=>actor.name===word)[0]
-      if(ac){
-        action.payload.elements.push({uuid:ac.uuid})
-
+    console.log("SNOOKER", [...action.payload.name.split(" ")]);
+    [...action.payload.name.split(" ")].forEach((word) => {
+      const ac = state.actors.filter((actor) => actor.name === word)[0];
+      if (ac) {
+        action.payload.elements.push({ uuid: ac.uuid });
       }
-    })
+    });
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
-  if(action.payload.callback){
-    action.payload.callback(action.payload.uuid)
+  if (action.payload.callback) {
+    action.payload.callback(action.payload.uuid);
   }
   return newState;
 };
@@ -121,10 +120,13 @@ const saveActor = (state, action) => {
   console.log("Save actor!");
   let newState = _.cloneDeep(state);
 
-  newState.actors = [
-    action.payload.actor,
-    ...state.actors.filter((x) => x.uuid !== action.payload.actor.uuid),
-  ];
+  newState.actors = state.actors.map((x) => {
+    if (x.uuid !== action.payload.actor.uuid) {
+      return x;
+    } else {
+      return action.payload.actor;
+    }
+  });
   saveProject(newState);
   return newState;
 };
@@ -200,11 +202,7 @@ const StateProvider = ({ children }) => {
     }
   }, initialState);
 
-  return (
-    <Provider value={{ state, dispatch, find }}>
-      {children}
-    </Provider>
-  );
+  return <Provider value={{ state, dispatch, find }}>{children}</Provider>;
 };
 
 export { store, StateProvider };

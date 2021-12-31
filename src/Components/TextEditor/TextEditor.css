@@ -4,3 +4,6 @@
     top:0px;
     right:0px;
 }
+.currentBlock {
+    background-color: red;
+  }

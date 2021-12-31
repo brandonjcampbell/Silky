@@ -96,10 +96,13 @@ const ActorList = ({ match, type }) => {
             )}
             handleClick={handleRowClick}
             saveList={(e) => {
+              if(search){
+                alert("Clear your search to re-order the list.")
+              }
               dispatch({
                 action: "saveActors",
                 for: type,
-                payload: { actors: e },
+                payload: { actors:  search? content.filter(x=>x.type === type) : e },
               });
             }}
             getType={(x) => {
@@ -113,7 +116,7 @@ const ActorList = ({ match, type }) => {
               dispatch({
                 action: "reorderActors",
                 for: type,
-                payload: { actors: e },
+                payload: { actors:  search? content.filter(x=>x.type === type) : e},
               });
             }}
           ></DraggableList>
