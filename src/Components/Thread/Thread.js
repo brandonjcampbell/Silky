@@ -19,6 +19,7 @@ const Thread = ({ actorUuid }) => {
   const [toggle, setToggle] = useState(true);
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
+  const [saveCounter,setSaveCounter]=useState(0)
 
   const determineOutput = () => {
     let output = [];
@@ -55,7 +56,7 @@ const Thread = ({ actorUuid }) => {
     setTimeout((x) => {
       setToggle(true);
     }, 0.1);
-  }, [actor, actor.sequence]);
+  }, [actor, actor.sequence,saveCounter]);
 
   const saveOne = (actor, blocks) => {
     console.log(blocks);
@@ -75,6 +76,7 @@ const Thread = ({ actorUuid }) => {
       let cloneContent = _.cloneDeep(newContent);
       let group = null;
       let latest = 0;
+      let rerender = false;
       cloneContent.blocks.forEach(block=>{
         if (block.key && block.key.includes(":")){
           group = block.key.split(":")[0]
@@ -94,11 +96,30 @@ const Thread = ({ actorUuid }) => {
             .filter((x, index) => 
              x.key.includes(snippet.uuid)
             )
-  
+            if(poss.length===0){
+              poss=[
+                {
+                  "key": snippet.uuid+":0",
+                  "text": "",
+                  "type": "unstyled",
+                  "depth": 0,
+                  "inlineStyleRanges": [],
+                  "entityRanges": [],
+                  "data": {}
+                }  
+              ]
+              rerender=true;
+            }
+            
           saveOne(snippet, poss);
         }
       });
+
+      if(rerender){
+        setSaveCounter(saveCounter+1)
+      }
     }
+    // 
   };
 
   const remove = () => {
@@ -178,14 +199,15 @@ const Thread = ({ actorUuid }) => {
             </span>
           </h2>
           <div className="editor">
-            <TextEditor
+           {actor && actor.sequence && <TextEditor
               save={saveAll}
               data={{
                 blocks: output,
                 entityMap: {},
               }}
               actorUuid={actorUuid}
-            ></TextEditor>
+            ></TextEditor>}
+            {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}
           </div>
         </div>
       );

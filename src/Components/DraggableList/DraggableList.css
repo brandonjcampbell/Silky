@@ -3,9 +3,10 @@
     vertical-align: middle;
     line-height: 40px;
     margin:4px;
+    padding-top:4px;
     overflow-x: hidden;
     overflow-y: hidden;
-    height:50px;
+    height:46px;
 }
 .row > *{
     display: flex;
@@ -15,5 +16,21 @@
     text-decoration: none;
 }
 .avatar{
-    margin-right: 10px;
+    margin-right: 13px;
+    position:relative;
+    left:6px;
+    
+}
+.draggableRemove{
+    color:white;
+    position: relative;
+    top:10px;
+}
+.edgeWeight{
+    width:45px;
+    min-width: 45px;
+    max-width: 45px;
+    position: relative;
+    left:0px;
+    display: inline-block;
 }

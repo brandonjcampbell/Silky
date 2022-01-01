@@ -23,6 +23,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
 
   useEffect(() => {
     if (!prevAmount || (prevAmount && prevAmount.actorUuid !== actorUuid)) {
+      setCurrentBlock(null);
       setEditorState(EditorState.createWithContent(contentState));
     }
   }, [actorUuid, data]);
@@ -51,27 +52,27 @@ const TextEditor = ({ data, save, actorUuid }) => {
   const [dirty, setDirty] = useState(0);
 
   const onEditorStateChange = (editorState) => {
-    //let currentBlock = editorState.getSelection();
     let currentBlockKey = editorState.getSelection().getStartKey();
-    setCurrentBlock(currentBlockKey.split(":")[0]);
-
-    const newContent = convertToRaw(editorState._immutable.currentContent);
-
-    if (data && data.blocks) {
-      if (currentBlockKey && !currentBlockKey.includes(":")) {
-        const previousKey = editorState
-          .getCurrentContent()
-          .getKeyBefore(currentBlockKey);
-        if (previousKey) {
-          const owner = previousKey.split(":")[0];
-          const index = parseInt(previousKey.split(":")[1]);
-          currentBlockKey = owner + ":" + (index + 1);
-          newContent.key = currentBlockKey;
-        }
-      }
+    if (currentBlockKey) {
+      setCurrentBlock(findRoot(editorState, currentBlockKey));
     }
     setDirty(true);
     setEditorState(editorState);
+  };
+
+  const findRoot = (editorState, blockKey) => {
+    if (blockKey.includes(":")) {
+      return blockKey.split(":")[0];
+    } else {
+      const previousKey = editorState
+        .getCurrentContent()
+        .getKeyBefore(blockKey);
+      if (previousKey) {
+        return findRoot(editorState, previousKey);
+      } else {
+        return blockKey;
+      }
+    }
   };
 
   useEffect(() => {
@@ -85,7 +86,6 @@ const TextEditor = ({ data, save, actorUuid }) => {
     return () => clearTimeout(delayDebounceFn);
   }, [editorState]);
 
-
   const myBlockStyleFn = (contentBlock) => {
     if (contentBlock && contentBlock.getKey().split(":")[0] === currentBlock) {
       return contentBlock.getKey().split(":")[0];
@@ -95,17 +95,9 @@ const TextEditor = ({ data, save, actorUuid }) => {
   return (
     <div>
       <div style={{ backgroundColor: "rgb(69, 68, 71)" }}>
-       
-<style>
-{/* [data-offset-key] &#123;
-          background:green;
-          &#125; */}
-
-          [href*={currentBlock}] &#123;
-          background:green;
-          &#125;
-  </style>
-          {currentBlock}
+        <style>
+          [uuid="{currentBlock}"] &#123; background: #266788; &#125;
+        </style>
         <Editor
           editorStyle={{
             height: "calc(100vh - 216px)",

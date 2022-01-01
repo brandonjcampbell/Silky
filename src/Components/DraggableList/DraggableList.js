@@ -45,17 +45,21 @@ const Thread = ({
         }}
       >
         {showEdgeWeights && (
-          <TextField
-            value={x.incomingEdgeWeight}
-            onChange={(e) => {
-              let cloned = _.cloneDeep(list);
-              cloned[index].incomingEdgeWeight = e.target.value;
-              saveList(cloned);
-            }}
-            size="small"
-            label=""
-            variant="outlined"
-          />
+          <div className="edgeWeight">
+            <TextField
+              value={x.incomingEdgeWeight}
+              onChange={(e) => {
+                let cloned = _.cloneDeep(list);
+                cloned[index].incomingEdgeWeight = e.target.value;
+                saveList(cloned);
+              }}
+              size="small"
+              label=""
+              variant="outlined"
+              sx={{textColor:"white"}}
+              
+            />
+          </div>
         )}
 
         <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
@@ -78,6 +82,7 @@ const Thread = ({
         </Link>
         {action === "remove" && (
           <CloseIcon
+            className="draggableRemove"
             onClick={() => {
               remove(x.uuid);
             }}
@@ -95,6 +100,7 @@ const Thread = ({
           <Draggable key={x.uuid} draggableId={x.uuid} index={index}>
             {(provided) => (
               <div
+                uuid={x.uuid}
                 ref={provided.innerRef}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
