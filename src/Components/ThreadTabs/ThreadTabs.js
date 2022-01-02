@@ -62,7 +62,7 @@ const ThreadTabs = ({ actorUuid }) => {
                 });
               }}
               showCharacterCount={50}
-              showEdgeWeights={true}
+              showEdgeWeights={false}
               action="remove"
               handleClick={(e) => {
                 console.log("handled Click", e);

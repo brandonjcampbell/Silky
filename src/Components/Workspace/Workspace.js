@@ -69,7 +69,7 @@ const Workspace = ({ actorUuid }) => {
   return (
     <div className="workspace">
       {actor && (
-        <h2>
+        <h2 className="workspaceHeader">
           <Avatar
             className="avatar"
             alt=" "

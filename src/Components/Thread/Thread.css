@@ -1,0 +1,36 @@
+.ColorPicker-MuiButton-label,
+.ColorPicker-MuiButton-label div {
+  height: 70px !important;
+  width: 70px !important;
+  border-radius: 70px;
+  display: inline-block;
+}
+
+.threadspace{
+    position: relative;
+    top:-20px;
+    margin:5px;
+}
+.threadspaceHeader{
+    display: flex;
+    vertical-align: bottom;
+    line-height: 35px;
+    color:white;
+    position: relative;
+    top:30px;
+    left:30px;
+}
+.threadspace h2 .colorPicker {
+    position: relative;
+
+   height:70px;
+   width:70px;
+}
+
+.threadspace .delete {
+    color:white;
+    position: relative;
+    top:3px; 
+    left:10px;  
+
+}

@@ -4,10 +4,11 @@
     margin:5px;
   
 }
-h2{
+.workspaceHeader{
     display: flex;
     vertical-align: bottom;
     line-height: 35px;
+    position: relative;
 }
 .workspace h2 .avatar{
  position: relative;
