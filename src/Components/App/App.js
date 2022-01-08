@@ -47,7 +47,7 @@ const App = () => {
   const dirs = loadDir();
 
   return (
-    <div>
+    <div className="projectTray">
       {dirs.map((x) => {
         return (
           <Link to={"/elements/"}>

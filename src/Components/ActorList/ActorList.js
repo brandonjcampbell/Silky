@@ -25,7 +25,6 @@ const ActorList = ({ match, type }) => {
   const {
     params: { userId },
   } = match;
-  console.log("match??", match.params.uuid);
 
   const handleRowClick = (row) => {
     setActive(row);
@@ -111,7 +110,7 @@ const ActorList = ({ match, type }) => {
                   .type + "s"
               );
             }}
-            onDrop={() => console.log("not necessary")}
+            onDrop={() =>{}}
             reorderList={(e) => {
               dispatch({
                 action: "reorderActors",

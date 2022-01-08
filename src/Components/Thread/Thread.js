@@ -52,7 +52,6 @@ const Thread = ({ actorUuid }) => {
   }, [actorUuid]);
 
   useEffect(() => {
-    //console.log(prevActor,"prevs")
     if((prevActor && actor.uuid===prevActor.uuid && actor.color !== prevActor.color)){
 
     }else{
@@ -64,7 +63,7 @@ const Thread = ({ actorUuid }) => {
       setToggle(true);
     }, 0.1);
   }
-   // }
+
   }, [actor, saveCounter]);
 
 
@@ -91,7 +90,6 @@ const Thread = ({ actorUuid }) => {
 
 
   const saveOne = (actor, blocks) => {
-    console.log(blocks);
     let remappedBlocks = _.cloneDeep(blocks).map((x, index) => {
       x.key = actorUuid + ":" + index;
       return x;

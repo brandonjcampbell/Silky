@@ -22,10 +22,22 @@
 }
 .threadspace h2 .colorPicker {
     position: relative;
+}
 
+.threadspace h2 .colorPicker div {
+
+border-radius: 100px!important;
    height:70px;
    width:70px;
 }
+
+.threadspace h3 {
+    position: relative;
+    top:-6px;
+    left:100px;
+    color:rgb(80, 76, 83);
+}
+
 
 .threadspace .delete {
     color:white;

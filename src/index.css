@@ -5,7 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background:green;
+  background: rgb(39, 38, 41);
+
 }
 
 code {
@@ -28,7 +29,7 @@ code {
   height:calc(100vh - 50px);
 }
 .View{
-  background: rgb(39, 38, 41);
+
   display:flex;
   width:calc(100vw - 80px);
   height:calc(100vh - 50px);

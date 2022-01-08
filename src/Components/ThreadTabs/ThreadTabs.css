@@ -1,0 +1,7 @@
+.autoCompleteRow{
+    display: flex;
+    min-width: 200px;
+}
+.projectTray{
+    display: flex;
+}
