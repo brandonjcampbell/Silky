@@ -12,6 +12,7 @@ import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
+import Tesseract from 'tesseract.js';
 const homedir = window.require("os").homedir();
 const useStyles = makeStyles({
   root: {
@@ -79,12 +80,74 @@ const ElementTabs = ({ actorUuid }) => {
         thread.type === "thread" &&
         thread.sequence &&
         thread.sequence.filter((z) => {
-         return snippets.includes(z.uuid);
+          return snippets.includes(z.uuid);
         }).length > 0
     );
-    
+
     return _.uniqBy(threads, "uuid");
   };
+
+  var video = document.querySelector(".videoElement");
+
+  if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then(function (stream) {
+        video.srcObject = stream;
+      })
+      .catch(function (err0r) {
+        console.log("Something went wrong!");
+      });
+  } else {
+    console.log("not allowed");
+  }
+
+  // Get handles on the video and canvas elements
+  var video = document.querySelector(".videoElement");
+  var canvas = document.querySelector("canvas");
+  // Get a handle on the 2d context of the canvas element
+  if(canvas){
+  var context = canvas.getContext("2d");
+  // Define some vars required later
+  var w, h, ratio;
+
+  // Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
+  video.addEventListener(
+    "loadedmetadata",
+    function () {
+      // Calculate the ratio of the video's width to height
+      ratio = video.videoWidth / video.videoHeight;
+      // Define the required width as 100 pixels smaller than the actual video's width
+      w = video.videoWidth - 100;
+      // Calculate the height based on the video's width and the ratio
+      h = parseInt(w / ratio, 10);
+      // Set the canvas width and height to the values just calculated
+      canvas.width = w;
+      canvas.height = h;
+    },
+    false
+  );
+}
+  // Takes a snapshot of the video
+  function snap() {
+    // Define the size of the rectangle that will be filled (basically the entire element)
+    context.fillRect(0, 0, w, h);
+    // Grab the image from the video
+    context.drawImage(video, 0, 0, w, h);
+    var dataURL = canvas.toDataURL("image/png")
+console.log(dataURL)
+    Tesseract.recognize(
+      dataURL,
+      'eng',
+      { logger: m => document.querySelector(".OCR").innerHTML=m.progress }
+    ).then(({ data: { text } }) => {
+      
+      document.querySelector(".OCR").innerHTML=text
+    })
+
+
+  }
+
 
   return (
     <div>
@@ -101,6 +164,7 @@ const ElementTabs = ({ actorUuid }) => {
               <Tab label="Snippets" {...a11yProps(0)} />
               <Tab label="Tags" {...a11yProps(1)} />
               <Tab label="Threads" {...a11yProps(2)} />
+              <Tab label="Sparks" {...a11yProps(2)} />
             </Tabs>
           </Box>
           <TabPanel value={currentTab} index={0}>
@@ -139,6 +203,19 @@ const ElementTabs = ({ actorUuid }) => {
           </TabPanel>
           <TabPanel value={currentTab} index={2}>
             <SimpleList list={getThreads()} />
+          </TabPanel>
+          <TabPanel value={currentTab} index={3}>
+            <video autoplay="true" className="videoElement"></video>
+            <canvas></canvas>
+            <button
+              id="snap"
+              onClick={() => {
+                snap();
+              }}
+            >
+              Take screenshot
+            </button>
+            <p className="OCR"></p>
           </TabPanel>
         </div>
       )}
