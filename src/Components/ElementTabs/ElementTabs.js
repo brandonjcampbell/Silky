@@ -12,7 +12,8 @@ import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
-import Tesseract from 'tesseract.js';
+import Tesseract from "tesseract.js";
+import clustering from "density-clustering";
 const homedir = window.require("os").homedir();
 const useStyles = makeStyles({
   root: {
@@ -106,48 +107,131 @@ const ElementTabs = ({ actorUuid }) => {
   var video = document.querySelector(".videoElement");
   var canvas = document.querySelector("canvas");
   // Get a handle on the 2d context of the canvas element
-  if(canvas){
-  var context = canvas.getContext("2d");
-  // Define some vars required later
-  var w, h, ratio;
+  if (canvas) {
+    var context = canvas.getContext("2d");
+    // Define some vars required later
+    var w, h, ratio;
 
-  // Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
-  video.addEventListener(
-    "loadedmetadata",
-    function () {
-      // Calculate the ratio of the video's width to height
-      ratio = video.videoWidth / video.videoHeight;
-      // Define the required width as 100 pixels smaller than the actual video's width
-      w = video.videoWidth - 100;
-      // Calculate the height based on the video's width and the ratio
-      h = parseInt(w / ratio, 10);
-      // Set the canvas width and height to the values just calculated
-      canvas.width = w;
-      canvas.height = h;
-    },
-    false
-  );
-}
+    // Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
+    video.addEventListener(
+      "loadedmetadata",
+      function () {
+        // Calculate the ratio of the video's width to height
+        ratio = video.videoWidth / video.videoHeight;
+        // Define the required width as 100 pixels smaller than the actual video's width
+        w = video.videoWidth - 100;
+        // Calculate the height based on the video's width and the ratio
+        h = parseInt(w / ratio, 10);
+        // Set the canvas width and height to the values just calculated
+        canvas.width = w;
+        canvas.height = h;
+      },
+      false
+    );
+  }
+
+  const grayscale = function (pixels) {
+    var d = pixels.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+
+      // CIE luminance for the RGB
+      // The human eye is bad at seeing red and blue, so we de-emphasize them.
+      // var v = r + g + b;
+      if (r - g > 13 && r - b > 23) {
+        d[i] = 0;
+        d[i + 1] = 0;
+        d[i + 2] = 0;
+      } else {
+        d[i] = 255;
+        d[i + 1] = 255;
+        d[i + 2] = 255;
+      }
+    }
+    return pixels;
+  };
+
+  const redButton = function (pixels, h, w) {
+    var d = _.cloneDeep(pixels.data);
+    for (var i = 0; i < d.length; i += 4) {
+      var r = d[i];
+      var g = d[i + 1];
+      var b = d[i + 2];
+
+      // CIE luminance for the RGB
+      // The human eye is bad at seeing red and blue, so we de-emphasize them.
+      // var v = r + g + b;
+      if (r - g > 13 && r - b > 23 && r>100) {
+        d[i] = 1;
+        d[i + 1] = 1;
+        d[i + 2] = 1;
+        d[i + 3] = 1;
+      } else {
+        d[i] = 0;
+        d[i + 1] = 0;
+        d[i + 2] = 0;
+        d[i + 3] = 0;
+      }
+    }
+    let justRed = d.filter((x, index) => index % 4 === 0);
+    justRed = d;
+    let pix = [];
+    //   let m,j, temporary, chunk = w;
+    // for (m = 0,j = justRed.length; m < j; m += chunk) {
+    //     pix.push(justRed.slice(m, m + chunk));
+    //     // do whatever
+    // }
+    console.log("HI",d)
+    justRed.forEach((point,index)=> {
+
+      
+      if(point===1)
+      pix.push(index
+    )})
+
+    // for (let ii = 1; ii < h; ii++) {
+    //   for (let jj = 1; jj < w; jj++) {
+    //     console.log(ii*h + jj*w)
+    //     if (justRed[ii*h + jj*w] === 1) {
+    //       pix.push([ii, jj]);
+    //     }
+    //   }
+    // }
+
+    return pix;
+  };
+
   // Takes a snapshot of the video
   function snap() {
     // Define the size of the rectangle that will be filled (basically the entire element)
     context.fillRect(0, 0, w, h);
     // Grab the image from the video
+    // context.drawImage(video, 0, 0, w, h);
     context.drawImage(video, 0, 0, w, h);
-    var dataURL = canvas.toDataURL("image/png")
-console.log(dataURL)
-    Tesseract.recognize(
-      dataURL,
-      'eng',
-      { logger: m => document.querySelector(".OCR").innerHTML=m.progress }
-    ).then(({ data: { text } }) => {
-      
-      document.querySelector(".OCR").innerHTML=text
-    })
 
+    let resu = context.getImageData(0, 0, w, h);
+   // let scanny=redButton(resu,h,w);
+   //console.log(scanny)
+    resu = grayscale(resu);
+ 
+    context.putImageData(resu, 0, 0);
+    var dataURL = canvas.toDataURL("image/png");
 
+    //var dbscan = new clustering.DBSCAN();
+    // parameters: 5 - neighborhood radius, 2 - number of points in neighborhood to form a cluster
+    //console.log(resu.data,Array.from(resu.data))
+  // var clusters = dbscan.run(Array.from(scanny), 5, 2);
+
+    //console.log("clusters",clusters,"noise" ,dbscan.noise);
+
+    Tesseract.recognize(dataURL, "eng", {
+      logger: (m) => (document.querySelector(".OCR").innerHTML = m.progress),
+    }).then(({ data: { text } }) => {
+      document.querySelector(".OCR").innerHTML = text;
+    });
   }
-
 
   return (
     <div>
