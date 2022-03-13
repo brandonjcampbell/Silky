@@ -40,12 +40,13 @@ code {
 .Workspace{
   padding: 0px;
   width:60%;
+  height:calc(100vh - 50px);
 }
 .List{
 
   min-width:200px;
   width:20%;
-  height:calc(100vh - 50px);
+  height:calc(100vh - 350px);
 
 }
 .List > *{

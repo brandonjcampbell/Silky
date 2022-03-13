@@ -1,8 +1,41 @@
+
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+   80% { transform: rotate(0deg); }
+   85% { transform: rotate(15deg) translate(-10px,0px); }
+   95% { transform: rotate(-15deg)translate(10px,0px);  }
+  100% { transform: rotate(0deg); }
+}
+
 .unsaved{
-    color:red;
+    color:white;
     position:absolute;
-    top:0px;
-    right:0px;
+    display: inline-block;
+    top:-20px;
+    right:-20px;
+    font-size: 30px;
+    transform-origin: bottom right;
+    animation: wiggle 2.5s infinite; 
+    background:rgb(184, 35, 35);
+    padding:10px;
+    border-radius: 100px;
+    cursor: pointer;
+}
+
+
+
+
+.unsaved:hover {
+  animation: none;
+  transform:scale(110%)
+}
+
+.editingBlockBanner{
+    background:white;
+    color:rgb(39, 39, 39);
+    height:25px;
+    padding:10px
 }
 .currentBlock {
     background-color: red;

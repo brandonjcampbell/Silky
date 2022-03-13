@@ -14,6 +14,7 @@ import {
   Reports,
   SnippetTabs,
   Workspace,
+  FactTabs,
   Thread,
   ThreadTabs,
   ElementTabs,
@@ -24,6 +25,7 @@ import {
   GiSewingString,
   GiEmptyHourglass,
   GiTreasureMap,
+  GiLightBulb
 } from "react-icons/gi";
 import {HiPuzzle} from "react-icons/hi"
 import ExtensionIcon from "@material-ui/icons/Extension";
@@ -46,6 +48,9 @@ ReactDOM.render(
               <Menu iconShape="circle">
                 <MenuItem icon={<HiPuzzle className="menuItem"/>}>
                   <Link to="/elements">Elements</Link>
+                </MenuItem>
+                <MenuItem icon={<GiLightBulb className="menuItem"/>}>
+                  <Link to="/facts">Facts</Link>
                 </MenuItem>
                 <MenuItem  icon={<TiScissors className="menuItem"/>}>
                   <Link to="/snippets">Snippets</Link>
@@ -96,6 +101,38 @@ ReactDOM.render(
                   </div>
                   <div className="Extras">
                     <ElementTabs actorUuid={props.match.params.uuid} />
+                  </div>
+                </div>
+              )}
+            />
+            <Route
+              path="/Facts"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="fact" />
+                  </div>
+                  <div className="Workspace">
+                  </div>
+                  <div className="Extras">
+                  </div>
+                </div>
+              )}
+            />
+            <Route
+              path="/Facts/:uuid"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <div className="List">
+                    <ActorList {...props} type="fact" />
+                  </div>
+                  <div className="Workspace">
+                    <Workspace actorUuid={props.match.params.uuid} />
+                  </div>
+                  <div className="Extras">
+                    <FactTabs actorUuid={props.match.params.uuid} />
                   </div>
                 </div>
               )}
@@ -157,8 +194,6 @@ ReactDOM.render(
                   </div>
                   <div className="Workspace">
                   </div>
-                  <div className="Extras">
-                  </div>
                 </div>
               )}
             />
@@ -171,10 +206,11 @@ ReactDOM.render(
                     <ActorList {...props} type="thread" />
                   </div>
                   <div className="Workspace">
-                    <Thread actorUuid={props.match.params.uuid} />
+                  <ThreadTabs actorUuid={props.match.params.uuid} />
+                   
                   </div>
                   <div className="Extras">
-                    <ThreadTabs actorUuid={props.match.params.uuid} />
+                    
                   </div>
                 </div>
               )}

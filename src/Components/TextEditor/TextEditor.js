@@ -49,7 +49,8 @@ const TextEditor = ({ data, save, actorUuid }) => {
     EditorState.createWithContent(contentState)
   );
 
-  const [dirty, setDirty] = useState(0);
+  const [dirty, setDirty] = useState(null);
+  const [saving, setSaving] = useState(0);
 
   const onEditorStateChange = (editorState) => {
     let currentBlockKey = editorState.getSelection().getStartKey();
@@ -75,16 +76,25 @@ const TextEditor = ({ data, save, actorUuid }) => {
     }
   };
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
+  const goForIt = ()=>{
       let currentBlockKey = editorState.getSelection().getStartKey();
       const newContent = convertToRaw(editorState._immutable.currentContent);
       save(newContent, currentBlockKey, data);
-      setDirty(false);
-    }, 500);
+      setDirty(null);
+  }
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [editorState]);
+  // useEffect(() => {
+  //   const delayDebounceFn = setTimeout(() => {
+  //     let currentBlockKey = editorState.getSelection().getStartKey();
+  //     const newContent = convertToRaw(editorState._immutable.currentContent);
+  //     save(newContent, currentBlockKey, data);
+  //     setDirty(false);
+  //   }, 500);
+
+  //   return () => {
+  //     clearTimeout(delayDebounceFn);
+  //   };
+  // }, [editorState]);
 
   const myBlockStyleFn = (contentBlock) => {
     if (contentBlock && contentBlock.getKey().split(":")[0] === currentBlock) {
@@ -95,17 +105,16 @@ const TextEditor = ({ data, save, actorUuid }) => {
   return (
     <div>
       <div style={{ backgroundColor: "rgb(69, 68, 71)" }}>
-        <style>
-          [uuid="{currentBlock}"] &#123; background: #266788; &#125;
-        </style>
+        <div className="editingBlockBanner">
+         {currentBlock && <span>Currently Editing: <strong>{getDisplayName(currentBlock,globalState)}</strong></span>}
+        </div>
         <Editor
           editorStyle={{
-            height: "calc(100vh - 216px)",
+            height: "calc(100vh - 316px)",
             paddingRight: "15px",
             paddingLeft: "20px",
             color: "rgb(300, 300, 300)",
             backgroundColor: "rgb(69, 68, 71)",
-            margin: "10px",
             marginBottom: "0px",
           }}
           editorState={editorState}
@@ -114,7 +123,8 @@ const TextEditor = ({ data, save, actorUuid }) => {
           }}
           blockStyleFn={myBlockStyleFn}
         ></Editor>
-        {dirty && <AiFillSave className="unsaved" />}
+        {dirty && <AiFillSave className="unsaved"  onClick={()=>{goForIt()}}/>}
+      
       </div>
     </div>
   );

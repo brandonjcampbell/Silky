@@ -3,6 +3,7 @@ import ActorList from "./ActorList";
 import CurrentProjectLink from "./CurrentProjectLink";
 import DraggableList from "./DraggableList";
 import ElementTabs from "./ElementTabs";
+import FactTabs from "./FactTabs";
 import FormDialog from "./FormDialog";
 import Graph from "./Graph";
 import Map from "./Map";
@@ -23,6 +24,7 @@ export {
   CurrentProjectLink,
   DraggableList,
   ElementTabs,
+  FactTabs,
   FormDialog,
   Graph,
   Map,

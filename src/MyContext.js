@@ -56,44 +56,42 @@ const saveTextFile = (state) => {
     .filter((x) => x.type === "snippet")
     .map((x) => {
       text += `\n\n ${x.name}`;
-      if(x.content && x.content.blocks){
-      x.content.blocks.map((y) => {
-        if (y.text) {
-          text += `\n ${y.text}`;
-        }
-      });
-    }
+      if (x.content && x.content.blocks) {
+        x.content.blocks.map((y) => {
+          if (y.text) {
+            text += `\n ${y.text}`;
+          }
+        });
+      }
     });
 
-    text+=`\n\n\n\n==== Elements ====`
-    state.actors
+  text += `\n\n\n\n==== Elements ====`;
+  state.actors
     .filter((x) => x.type === "element")
     .map((x) => {
       text += `\n\n ${x.name}`;
-      if(x.content && x.content.blocks){
-      x.content.blocks.map((y) => {
-        if (y.text) {
-          text += `\n ${y.text}`;
-        }
-      });
-    }
+      if (x.content && x.content.blocks) {
+        x.content.blocks.map((y) => {
+          if (y.text) {
+            text += `\n ${y.text}`;
+          }
+        });
+      }
     });
 
-    text+=`\n\n\n\n==== Threads ====`
-    state.actors
+  text += `\n\n\n\n==== Threads ====`;
+  state.actors
     .filter((x) => x.type === "thread")
     .map((x) => {
       text += `\n\n ${x.name}`;
-      if(x.sequence){
-      x.sequence.map((y) => {
-
-        const result = state.actors.find(z=>z.uuid === y.uuid)
-         if(result && result.name){
-          text += `\n ${result.name}`;
-         }
-        
-      });
-    }
+      if (x.sequence) {
+        x.sequence.map((y) => {
+          const result = state.actors.find((z) => z.uuid === y.uuid);
+          if (result && result.name) {
+            text += `\n ${result.name}`;
+          }
+        });
+      }
     });
 
   const results = saveFile(
@@ -136,7 +134,7 @@ const remove = (state, action) => {
 };
 
 const find = (state, id) => {
-  let result = state.state.actors.filter((x) => x.uuid === id)[0];
+  let result = state.state.actors.find((x) => x.uuid === id);
   return result;
 };
 
@@ -186,25 +184,43 @@ const saveActors = (state, action) => {
 };
 
 const removeActor = (state, action) => {
-  let newState = _.cloneDeep(state);
-  newState.actors = state.actors
-    .filter((x) => x.uuid !== action.payload.uuid)
-    .map((actorx) => {
-      let actory = _.cloneDeep(actorx);
-      if (actory.sequence) {
-        actory.sequence = [
-          ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
-        ];
-      }
-      if (actory.elements) {
-        actory.elements = [
-          ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
-        ];
-      }
-      return actory;
-    });
-  saveProject(newState);
-  return newState;
+
+    let newState = _.cloneDeep(state);
+    newState.actors = state.actors
+      .filter((x) => x.uuid !== action.payload.uuid)
+      .map((actorx) => {
+        let actory = _.cloneDeep(actorx);
+        if (actory.sequence) {
+          actory.sequence = [
+            ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
+          ];
+        }
+        if (actory.elements) {
+          actory.elements = [
+            ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
+          ];
+        }
+        return actory;
+      });
+    saveProject(newState);
+    return newState;
+
+};
+
+const duplicate = (state, action) => {
+  let target = state.actors.find((x) => x.uuid === action.payload.uuid);
+  if (target) {
+    let actory = _.cloneDeep(target);
+    let newState = _.cloneDeep(state);
+
+    actory.uuid = uuidv4();
+    actory.name = actory.name + " Copy";
+    newState.actors.unshift(actory);
+
+    saveProject(newState);
+    return newState;
+  }
+  return null;
 };
 
 const StateProvider = ({ children }) => {
@@ -226,6 +242,8 @@ const StateProvider = ({ children }) => {
         return saveActors(state, action);
       case "reorderActors":
         return reorderActors(state, action);
+      case "duplicate":
+        return duplicate(state, action);
       default:
         throw new Error();
     }

@@ -11,13 +11,12 @@ import { getDisplayName } from "../../utils";
 import "./DraggableList.css";
 const homedir = window.require("os").homedir();
 
-const Thread = ({
+const DraggableList = ({
   list,
   saveList,
   handleClick,
   onDrop,
   action,
-  showEdgeWeights,
   showCharacterCount = 100,
 }) => {
   const globalState = useContext(store);
@@ -37,6 +36,8 @@ const Thread = ({
   }
 
   function goRenderLabel(x, index) {
+    const displayName = getDisplayName(x.uuid, globalState);
+
     return (
       <div
         className="row"
@@ -44,24 +45,6 @@ const Thread = ({
           handleClick(x);
         }}
       >
-        {showEdgeWeights && (
-          <div className="edgeWeight">
-            <TextField
-              value={x.incomingEdgeWeight}
-              onChange={(e) => {
-                let cloned = _.cloneDeep(list);
-                cloned[index].incomingEdgeWeight = e.target.value;
-                saveList(cloned);
-              }}
-              size="small"
-              label=""
-              variant="outlined"
-              sx={{textColor:"white"}}
-              
-            />
-          </div>
-        )}
-
         <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
           <Avatar
             alt=" "
@@ -77,8 +60,9 @@ const Thread = ({
             }
           />
 
-          {getDisplayName(x.uuid, globalState).slice(0, showCharacterCount)}
-          {getDisplayName(x.uuid, globalState).length > showCharacterCount ? "...":""}
+          {displayName.slice(0, showCharacterCount)}
+          {displayName.length > showCharacterCount ? "..." : ""}
+
         </Link>
         {action === "remove" && (
           <CloseIcon
@@ -132,4 +116,4 @@ const Thread = ({
   );
 };
 
-export default Thread;
+export default DraggableList;

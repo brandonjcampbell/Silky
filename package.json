@@ -39,7 +39,7 @@
     "material-ui-color": "^1.2.0",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
-    "react-confirm": "^0.1.24",
+    "react-confirm-alert": "^2.8.0",
     "react-cytoscape": "^1.0.6",
     "react-cytoscapejs": "^1.2.1",
     "react-dnd": "^14.0.2",

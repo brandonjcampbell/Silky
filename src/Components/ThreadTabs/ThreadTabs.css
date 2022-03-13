@@ -4,4 +4,47 @@
 }
 .projectTray{
     display: flex;
+    background-color: red;
+}
+
+.ColorPicker-MuiButton-label,
+.ColorPicker-MuiButton-label div {
+  height: 70px !important;
+  width: 70px !important;
+  border-radius: 70px!important;
+  display: inline-block;
+}
+
+.MuiBox-root.css-1{
+    position: relative;
+    left:85px;
+    top:-10px;
+}
+#simple-tabpanel-0{
+    max-height: calc( 100vh - 200px);
+    overflow: auto;
+}
+
+.threadspaceHeader{
+    display: flex;
+    vertical-align: bottom;
+    line-height: 35px;
+    color:white;
+    position: relative;
+    top:10px;
+    left:50px;
+}
+.threadspaceHeader .colorPicker {
+    position: relative;
+    right:22px;
+}
+.threadspaceHeader .title{
+}
+
+.threadspace .delete {
+    color:white;
+    position: relative;
+    top:10px; 
+    left:12px;  
+
 }

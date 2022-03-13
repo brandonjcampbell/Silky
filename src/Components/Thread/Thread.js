@@ -2,11 +2,7 @@ import React, { useContext, useState, useEffect,useRef } from "react";
 import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import _ from "lodash";
-import TextField from "@material-ui/core/TextField";
-import DeleteIcon from "@material-ui/icons/Delete";
-import Avatar from "@mui/material/Avatar";
-import { uploadPic } from "../../utils";
-import { ColorPicker } from "material-ui-color";
+
 import "./Thread.css";
 
 const homedir = window.require("os").homedir();
@@ -15,8 +11,7 @@ const Thread = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [freshener, setFreshener] = useState("");
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState("");
+
   const [toggle, setToggle] = useState(true);
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
@@ -77,20 +72,11 @@ const Thread = ({ actorUuid }) => {
 
   const prevActor = usePrevious(actor)
 
-  function updateColor(newColor) {
 
-    let clone = _.cloneDeep(actor);
-    clone.color = "#"+newColor.hex;
-    dispatch({
-      action: "saveActor",
-      for: "thread",
-      payload: { actor: clone },
-    });
-  }
 
 
   const saveOne = (actor, blocks) => {
-    let remappedBlocks = _.cloneDeep(blocks).map((x, index) => {
+    let remappedBlocks = blocks.map((x, index) => {
       x.key = actorUuid + ":" + index;
       return x;
     });
@@ -103,7 +89,7 @@ const Thread = ({ actorUuid }) => {
 
   const saveAll = (newContent) => {
     if (actor && actor.sequence) {
-      let cloneContent = _.cloneDeep(newContent);
+      let cloneContent = newContent;//_.cloneDeep(newContent);
       let group = null;
       let latest = 0;
       let rerender = false;
@@ -150,75 +136,13 @@ const Thread = ({ actorUuid }) => {
     //
   };
 
-  const remove = () => {
-    dispatch({
-      action: "removeActor",
-      payload: { uuid: actorUuid },
-    });
-  };
 
-  const keyPress = (e) => {
-    if (e.keyCode === 13) {
-      saveTitle();
-    }
-    if (e.keyCode === 27) {
-      setEditTitle(false);
-    }
-  };
-
-  const saveTitle = () => {
-    setEditTitle(false);
-    let clone = _.cloneDeep(actor);
-    clone.name = title;
-    dispatch({
-      action: "saveActor",
-      for: "thread",
-      payload: { actor: clone },
-    });
-  };
 
   const renderTextEditor = () => {
     if (actor && toggle === true) {
       return (
         <div>
-          <h2 className="threadspaceHeader">
-            <div className="colorPicker">
-              <ColorPicker
-                value={actor.color}
-                hideTextfield
-                onChange={(e) => {updateColor(e);}}
 
-                
-              />
-            </div>
-
-            <span className="title">
-              <span
-                onClick={() => {
-                  setEditTitle(!editTitle);
-                  setTitle(actor.name);
-                }}
-              >
-                {!editTitle && actor.name}
-              </span>
-              {editTitle && (
-                <TextField
-                  autoFocus
-                  sx={{ bgcolor: "white" }}
-                  id="outlined-basic"
-                  value={title}
-                  onKeyDown={keyPress}
-                  onBlur={() => {
-                    saveTitle();
-                  }}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              )}
-            </span>
-            <span className="delete">
-              <DeleteIcon onClick={remove} />
-            </span>
-          </h2>
           <div className="editor">
             {actor && actor.sequence && (
               <TextEditor

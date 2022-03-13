@@ -8,14 +8,14 @@ import "./SimpleList.css";
 
 const homedir = window.require("os").homedir();
 
-const SimpleList = ({ list,xAction }) => {
+const SimpleList = ({ list,xAction,type="threads" }) => {
   const globalState = useContext(store);
 
   return (
     <div>
       {list.map((x) => (
         <div className="simpleListRow">
-          <Link to={`/threads/${x.uuid}`}>
+          <Link to={`/${type}/${x.uuid}`}>
             <Avatar
               alt=" "
               className="simpleListAvatar"

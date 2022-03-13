@@ -18,7 +18,7 @@ import FormDialog from "../FormDialog";
 import FormControl from "@material-ui/core/FormControl";
 import { getDisplayName } from "../../utils";
 import Autocomplete from "@mui/material/Autocomplete";
-import "./ElementTabs.css";
+import "./FactTabs.css";
 
 import { TiScissors } from "react-icons/ti";
 import { GiSewingString, GiLightBulb } from "react-icons/gi";
@@ -50,7 +50,7 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-const ElementTabs = ({ actorUuid }) => {
+const FactTabs = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [currentTab, setCurrentTab] = useState(0);
@@ -62,9 +62,6 @@ const ElementTabs = ({ actorUuid }) => {
 
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
-  if(!actor.facts){
-    actor.facts=[]
-  }
 
   const tagSave = (newTags) => {
     actor.tags = newTags;
@@ -80,8 +77,8 @@ const ElementTabs = ({ actorUuid }) => {
       .filter(
         (snippet) =>
           snippet.type === "snippet" &&
-          snippet.elements &&
-          snippet.elements
+          snippet.facts &&
+          snippet.facts
             .map((y) => {
               return y.uuid;
             })
@@ -101,171 +98,34 @@ const ElementTabs = ({ actorUuid }) => {
     return _.uniqBy(threads, "uuid");
   };
 
-  function addToFacts(uuid) {
-    let clone = _.cloneDeep(actor);
+  function addTo(uuid,type) {
+    let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
+    let clone = _.cloneDeep(el);
     if (!clone.facts) {
       clone.facts = [];
     }
-    clone.facts.push({ uuid: uuid });
+    clone.facts.push({ uuid: actor.uuid });
     dispatch({
       action: "saveActor",
-      for: "snippet",
+      for: type,
       payload: { actor: clone },
     });
   }
 
-  function removeFromFacts(uuid) {
-    let clone = _.cloneDeep(actor);
+  function removeFrom(uuid,type) {
+    let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
+
+    let clone = _.cloneDeep(el);
     if (!clone.facts) {
       clone.facts = [];
     }
-    clone.facts = clone.facts.filter((x) => x.uuid !== uuid);
+    console.log(clone.facts);
+    clone.facts = clone.facts.filter((x) => x.uuid !== actor.uuid);
+    console.log(clone.facts);
     dispatch({
       action: "saveActor",
-      for: "snippet",
+      for: type,
       payload: { actor: clone },
-    });
-  }
-
-  var video = document.querySelector(".videoElement");
-
-  if (navigator.mediaDevices.getUserMedia) {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then(function (stream) {
-        video.srcObject = stream;
-      })
-      .catch(function (err0r) {
-        console.log("Something went wrong!");
-      });
-  } else {
-    console.log("not allowed");
-  }
-
-  // Get handles on the video and canvas elements
-  var video = document.querySelector(".videoElement");
-  var canvas = document.querySelector("canvas");
-  // Get a handle on the 2d context of the canvas element
-  if (canvas) {
-    var context = canvas.getContext("2d");
-    // Define some vars required later
-    var w, h, ratio;
-
-    // Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
-    video.addEventListener(
-      "loadedmetadata",
-      function () {
-        // Calculate the ratio of the video's width to height
-        ratio = video.videoWidth / video.videoHeight;
-        // Define the required width as 100 pixels smaller than the actual video's width
-        w = video.videoWidth - 100;
-        // Calculate the height based on the video's width and the ratio
-        h = parseInt(w / ratio, 10);
-        // Set the canvas width and height to the values just calculated
-        canvas.width = w;
-        canvas.height = h;
-      },
-      false
-    );
-  }
-
-  const grayscale = function (pixels) {
-    var d = pixels.data;
-    for (var i = 0; i < d.length; i += 4) {
-      var r = d[i];
-      var g = d[i + 1];
-      var b = d[i + 2];
-
-      // CIE luminance for the RGB
-      // The human eye is bad at seeing red and blue, so we de-emphasize them.
-      // var v = r + g + b;
-      if (r - g > 13 && r - b > 23) {
-        d[i] = 0;
-        d[i + 1] = 0;
-        d[i + 2] = 0;
-      } else {
-        d[i] = 255;
-        d[i + 1] = 255;
-        d[i + 2] = 255;
-      }
-    }
-    return pixels;
-  };
-
-  const redButton = function (pixels, h, w) {
-    var d = _.cloneDeep(pixels.data);
-    for (var i = 0; i < d.length; i += 4) {
-      var r = d[i];
-      var g = d[i + 1];
-      var b = d[i + 2];
-
-      // CIE luminance for the RGB
-      // The human eye is bad at seeing red and blue, so we de-emphasize them.
-      // var v = r + g + b;
-      if (r - g > 13 && r - b > 23 && r > 100) {
-        d[i] = 1;
-        d[i + 1] = 1;
-        d[i + 2] = 1;
-        d[i + 3] = 1;
-      } else {
-        d[i] = 0;
-        d[i + 1] = 0;
-        d[i + 2] = 0;
-        d[i + 3] = 0;
-      }
-    }
-    let justRed = d.filter((x, index) => index % 4 === 0);
-    justRed = d;
-    let pix = [];
-    //   let m,j, temporary, chunk = w;
-    // for (m = 0,j = justRed.length; m < j; m += chunk) {
-    //     pix.push(justRed.slice(m, m + chunk));
-    //     // do whatever
-    // }
-    console.log("HI", d);
-    justRed.forEach((point, index) => {
-      if (point === 1) pix.push(index);
-    });
-
-    // for (let ii = 1; ii < h; ii++) {
-    //   for (let jj = 1; jj < w; jj++) {
-    //     console.log(ii*h + jj*w)
-    //     if (justRed[ii*h + jj*w] === 1) {
-    //       pix.push([ii, jj]);
-    //     }
-    //   }
-    // }
-
-    return pix;
-  };
-
-  // Takes a snapshot of the video
-  function snap() {
-    // Define the size of the rectangle that will be filled (basically the entire element)
-    context.fillRect(0, 0, w, h);
-    // Grab the image from the video
-    // context.drawImage(video, 0, 0, w, h);
-    context.drawImage(video, 0, 0, w, h);
-
-    let resu = context.getImageData(0, 0, w, h);
-    // let scanny=redButton(resu,h,w);
-    //console.log(scanny)
-    resu = grayscale(resu);
-
-    context.putImageData(resu, 0, 0);
-    var dataURL = canvas.toDataURL("image/png");
-
-    //var dbscan = new clustering.DBSCAN();
-    // parameters: 5 - neighborhood radius, 2 - number of points in neighborhood to form a cluster
-    //console.log(resu.data,Array.from(resu.data))
-    // var clusters = dbscan.run(Array.from(scanny), 5, 2);
-
-    //console.log("clusters",clusters,"noise" ,dbscan.noise);
-
-    Tesseract.recognize(dataURL, "eng", {
-      logger: (m) => (document.querySelector(".OCR").innerHTML = m.progress),
-    }).then(({ data: { text } }) => {
-      document.querySelector(".OCR").innerHTML = text;
     });
   }
 
@@ -291,10 +151,6 @@ const ElementTabs = ({ actorUuid }) => {
               />
 
               <Tab
-                label={<GiSewingString className="menuItem" />}
-                {...a11yProps(2)}
-              />
-              <Tab
                 label={<AiFillTag className="menuItem" />}
                 {...a11yProps(3)}
               />
@@ -302,17 +158,15 @@ const ElementTabs = ({ actorUuid }) => {
           </Box>
           <TabPanel className="tabPanel" value={currentTab} index={0}>
             <SimpleList
-              type="facts"
-              xAction={removeFromFacts}
+              type="snippets"
+              xAction={(uuid)=>{removeFrom(uuid,"element")}}
               list={globalState.state.actors.filter(
                 (a) =>
-                  a.type === "fact" &&
-                  actor &&
-                  actor.facts &&
-                  actor.facts.map((x) => x.uuid).includes(a.uuid)
+                  a.type === "element" &&
+                  a.facts &&
+                  a.facts.map((x) => x.uuid).includes(actor.uuid)
               )}
             />
-
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal
@@ -331,16 +185,15 @@ const ElementTabs = ({ actorUuid }) => {
                     : "")
                 }
                 options={globalState.state.actors.filter(
-                  (x) => x.type === "fact" 
-                  &&
-                  actor.facts 
-                  &&
-                  !actor.facts.map((y) => y.uuid).includes(x.uuid)
+                  (x) =>
+                    x.type === "element" &&
+                    (!x.facts ||
+                      (x.facts && !x.facts.map((y) => y.uuid).includes(actor.uuid)))
                 )}
                 sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
                 onChange={(e, newValue) => {
                   if (newValue && newValue !== "Select") {
-                    addToFacts(newValue.uuid);
+                    addTo(newValue.uuid,"element");
                   }
                 }}
                 renderOption={(props, option) => (
@@ -363,22 +216,77 @@ const ElementTabs = ({ actorUuid }) => {
                   </div>
                 )}
                 renderInput={(params) => (
-                  <TextField {...params} label="Add a Fact..." />
+                  <TextField {...params} label="Add an Element..." />
                 )}
               />
             </FormControl>
-            <FormDialog type={"fact"} specialOp={addToFacts} />
+            <FormDialog type={"snippet"} specialOp={(uuid)=>{addTo(uuid,"snippet")}} />
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
-            <SimpleList
+          <SimpleList
               type="snippets"
+              xAction={(uuid)=>{removeFrom(uuid,"snippet")}}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "snippet" &&
-                  a.elements &&
-                  a.elements.map((x) => x.uuid).includes(actor.uuid)
+                  a.facts &&
+                  a.facts.map((x) => x.uuid).includes(actor.uuid)
               )}
             />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.facts
+                    ? option.facts
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "snippet" &&
+                    (!x.facts ||
+                      (x.facts && !x.facts.map((y) => y.uuid).includes(actor.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid,"snippet");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      <Avatar
+                        alt=" "
+                        sx={{ bgcolor: option.color ? option.color : "grey" }}
+                        src={
+                          homedir +
+                          "\\.silky\\" +
+                          globalState.state.project +
+                          "\\" +
+                          option.uuid +
+                          ".png"
+                        }
+                      />
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add a Snippet..." />
+                )}
+              />
+            </FormControl>
+            <FormDialog type={"snippet"} specialOp={(uuid)=>{addTo(uuid,"snippet")}} />
           </TabPanel>
 
           <TabPanel value={currentTab} index={2}>
@@ -427,4 +335,4 @@ const ElementTabs = ({ actorUuid }) => {
   );
 };
 
-export default ElementTabs;
+export default FactTabs;
