@@ -37,6 +37,7 @@
     "electron-is-dev": "^2.0.0",
     "lodash": "^4.17.21",
     "material-ui-color": "^1.2.0",
+    "neo4j-driver": "^4.4.5",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
     "react-confirm-alert": "^2.8.0",

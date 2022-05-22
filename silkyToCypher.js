@@ -1,11 +1,45 @@
 const silkyJson = require("./silkySample.json");
+const neo4j = require("neo4j-driver");
+const _ = require("lodash");
 
 const actors = [];
 const axioms = [];
 
+const driver = neo4j.driver(
+  "bolt://localhost:11003",
+  neo4j.auth.basic("neo4j", "password")
+);
+
+function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+async function runAllQueries(queries) {
+  for await (const batch of queries) {
+    const session = driver.session();
+
+    try {
+      const result = await session.run(batch);
+        console.log("operation successful ");
+    } catch (error) {
+      console.log("exception occurred", error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+}
+
 silkyJson.actors.forEach((actor) => {
   if (actor.type === "fact") {
     actors.push(`CREATE (:Fact {name:"${actor.name}", uuid:"${actor.uuid}"})`);
+    if (actor.facts){
+    actor.facts.forEach((fact) => {
+        axioms.push(
+          `MATCH (el {uuid:"${actor.uuid}"}), (fa {uuid:"${fact.uuid}"}) CREATE (fa)-[:DEPENDS_ON]->(el)`
+        );
+      });
+    }
   }
 
   if (actor.type === "element") {
@@ -57,6 +91,33 @@ silkyJson.actors.forEach((actor) => {
   }
 });
 
-actors.forEach(actor=> console.log(actor));
-console.log(" WITH 0 as o ")
-axioms.forEach(axiom=> console.log(axiom + " WITH 0 as o"));
+runAllQueries([...actors,...axioms]);
+
+
+
+
+
+console.log("done");
+
+// actors.forEach(actor=>
+
+//     console.log(actor)
+
+//     );
+// console.log(" WITH 0 as o ")
+// axioms.forEach(axiom=> console.log(axiom + " WITH 0 as o"));
+
+// const actorString = actors.map(x=>x+ " ")
+
+// actors.forEach(actor=> {
+//     session.run(actor) ;
+//     console.log(actor)
+// }
+//     );
+
+// axioms.forEach(axiom=>
+//     session.run(axiom)  ;
+//     console.log(axiom)
+//     );
+
+driver.close();

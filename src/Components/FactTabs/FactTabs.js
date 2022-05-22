@@ -21,7 +21,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import "./FactTabs.css";
 
 import { TiScissors } from "react-icons/ti";
-import { GiSewingString, GiLightBulb } from "react-icons/gi";
+import { GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
 import { AiFillTag } from "react-icons/ai";
 
 const homedir = window.require("os").homedir();
@@ -98,7 +99,7 @@ const FactTabs = ({ actorUuid }) => {
     return _.uniqBy(threads, "uuid");
   };
 
-  function addTo(uuid,type) {
+  function addTo(uuid, type) {
     let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
     let clone = _.cloneDeep(el);
     if (!clone.facts) {
@@ -112,7 +113,7 @@ const FactTabs = ({ actorUuid }) => {
     });
   }
 
-  function removeFrom(uuid,type) {
+  function removeFrom(uuid, type) {
     let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
 
     let clone = _.cloneDeep(el);
@@ -125,6 +126,32 @@ const FactTabs = ({ actorUuid }) => {
     dispatch({
       action: "saveActor",
       for: type,
+      payload: { actor: clone },
+    });
+  }
+
+  function addToFacts(uuid) {
+    let clone = _.cloneDeep(actor);
+    if (!clone.facts) {
+      clone.facts = [];
+    }
+    clone.facts.push({ uuid: uuid });
+    dispatch({
+      action: "saveActor",
+      for: "fact",
+      payload: { actor: clone },
+    });
+  }
+
+  function removeFromFacts(uuid) {
+    let clone = _.cloneDeep(actor);
+    if (!clone.facts) {
+      clone.facts = [];
+    }
+    clone.facts = clone.facts.filter((x) => x.uuid !== uuid);
+    dispatch({
+      action: "saveActor",
+      for: "fact",
       payload: { actor: clone },
     });
   }
@@ -142,12 +169,16 @@ const FactTabs = ({ actorUuid }) => {
               aria-label="basic tabs example"
             >
               <Tab
+                label={<HiPuzzle className="menuItem" />}
+                {...a11yProps(0)}
+              />
+              <Tab
                 label={<GiLightBulb className="menuItem" />}
                 {...a11yProps(1)}
               />
               <Tab
                 label={<TiScissors className="menuItem" />}
-                {...a11yProps(0)}
+                {...a11yProps(2)}
               />
 
               <Tab
@@ -156,10 +187,13 @@ const FactTabs = ({ actorUuid }) => {
               />
             </Tabs>
           </Box>
+
           <TabPanel className="tabPanel" value={currentTab} index={0}>
             <SimpleList
-              type="snippets"
-              xAction={(uuid)=>{removeFrom(uuid,"element")}}
+              type="element"
+              xAction={(uuid) => {
+                removeFrom(uuid, "element");
+              }}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "element" &&
@@ -188,12 +222,13 @@ const FactTabs = ({ actorUuid }) => {
                   (x) =>
                     x.type === "element" &&
                     (!x.facts ||
-                      (x.facts && !x.facts.map((y) => y.uuid).includes(actor.uuid)))
+                      (x.facts &&
+                        !x.facts.map((y) => y.uuid).includes(actor.uuid)))
                 )}
                 sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
                 onChange={(e, newValue) => {
                   if (newValue && newValue !== "Select") {
-                    addTo(newValue.uuid,"element");
+                    addTo(newValue.uuid, "element");
                   }
                 }}
                 renderOption={(props, option) => (
@@ -220,12 +255,91 @@ const FactTabs = ({ actorUuid }) => {
                 )}
               />
             </FormControl>
-            <FormDialog type={"snippet"} specialOp={(uuid)=>{addTo(uuid,"snippet")}} />
+            <FormDialog
+              type={"element"}
+              specialOp={(uuid) => {
+                addTo(uuid, "element");
+              }}
+            />
           </TabPanel>
-          <TabPanel value={currentTab} index={1}>
-          <SimpleList
+
+          <TabPanel className="tabPanel" value={currentTab} index={1}>
+            <SimpleList
+              type="facts"
+              xAction={removeFromFacts}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "fact" &&
+                  actor &&
+                  actor.facts &&
+                  actor.facts.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.facts
+                    ? option.facts
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "fact" &&
+                    x.uuid!==actor.uuid &&
+                    ((actor.facts &&
+                      !actor.facts.map((y) => y.uuid).includes(x.uuid)) ||
+                      !actor.facts)
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addToFacts(newValue.uuid);
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      <Avatar
+                        alt=" "
+                        sx={{ bgcolor: option.color ? option.color : "grey" }}
+                        src={
+                          homedir +
+                          "\\.silky\\" +
+                          globalState.state.project +
+                          "\\" +
+                          option.uuid +
+                          ".png"
+                        }
+                      />
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add a Fact..." />
+                )}
+              />
+            </FormControl>
+            <FormDialog type={"fact"} specialOp={addToFacts} />
+          </TabPanel>
+
+          <TabPanel value={currentTab} index={2}>
+            <SimpleList
               type="snippets"
-              xAction={(uuid)=>{removeFrom(uuid,"snippet")}}
+              xAction={(uuid) => {
+                removeFrom(uuid, "snippet");
+              }}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "snippet" &&
@@ -254,12 +368,13 @@ const FactTabs = ({ actorUuid }) => {
                   (x) =>
                     x.type === "snippet" &&
                     (!x.facts ||
-                      (x.facts && !x.facts.map((y) => y.uuid).includes(actor.uuid)))
+                      (x.facts &&
+                        !x.facts.map((y) => y.uuid).includes(actor.uuid)))
                 )}
                 sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
                 onChange={(e, newValue) => {
                   if (newValue && newValue !== "Select") {
-                    addTo(newValue.uuid,"snippet");
+                    addTo(newValue.uuid, "snippet");
                   }
                 }}
                 renderOption={(props, option) => (
@@ -286,25 +401,14 @@ const FactTabs = ({ actorUuid }) => {
                 )}
               />
             </FormControl>
-            <FormDialog type={"snippet"} specialOp={(uuid)=>{addTo(uuid,"snippet")}} />
+            <FormDialog
+              type={"snippet"}
+              specialOp={(uuid) => {
+                addTo(uuid, "snippet");
+              }}
+            />
           </TabPanel>
 
-          <TabPanel value={currentTab} index={2}>
-            <SimpleList list={getThreads()} />
-          </TabPanel>
-          {/* <TabPanel value={currentTab} index={3}>
-            <video autoplay="true" className="videoElement"></video>
-            <canvas></canvas>
-            <button
-              id="snap"
-              onClick={() => {
-                snap();
-              }}
-            >
-              Take screenshot
-            </button>
-            <p className="OCR"></p>
-          </TabPanel> */}
           <TabPanel value={currentTab} index={3}>
             <TextField
               aria-label="empty textarea"
