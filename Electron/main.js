@@ -21,6 +21,7 @@ function createWindow () {
   mainWindow.loadURL(startURL);
 
 
+  
 
     // Without checking if dir already exists
     if (!fs.existsSync(`${app.getPath('home')}\\.silky`)) fs.mkdir(`${app.getPath('home')}\\.silky`,function(){});

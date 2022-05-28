@@ -8,21 +8,7 @@ const homedir = window.require("os").homedir();
 let initialState = {
   project: "Silky",
   cursor: null,
-  actors: [
-    // {name: "that", subject: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", target: "2011aa60-548e-4d26-a7be-d9c22f96b081", uuid: "b5877f82-0e2e-4934-b51f-fd708449ab1c", type: "link",  class: "axiom"}
-    // ,{name: "is", subject: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", target: "c0f92045-5a06-4a6e-8224-eeef504ed9ee", uuid: "c41914d3-ee08-4f30-b3ec-7c286e4a2536", type: "link",  class: "axiom"}
-    // ,{name: "unaware", uuid: "c0f92045-5a06-4a6e-8224-eeef504ed9ee", type: "fact", class: "actor"}
-    // ,{name: "that", subject: "705a7094-4804-49e5-99a5-9040556940b8", target: "d312452b-cb09-4431-b07e-29b3b81cd2ee", uuid: "bf2061ff-6207-4374-9fe5-bf27a033ced1", type: "link",  class: "axiom"}
-    // ,{name: "is", subject: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", target: "53e09d24-03aa-4ff9-a8bd-2105e79784bf", uuid: "705a7094-4804-49e5-99a5-9040556940b8", type: "link",  class: "axiom"}
-    // ,{name: "amused", uuid: "53e09d24-03aa-4ff9-a8bd-2105e79784bf", type: "fact", class: "actor"}
-    // ,{name: "because", subject: "d312452b-cb09-4431-b07e-29b3b81cd2ee", target: "d65034d5-572c-4133-9eb1-a0cf42969345", uuid: "2011aa60-548e-4d26-a7be-d9c22f96b081", type: "link",  class: "axiom"}
-    // ,{name: "carries", subject: 1, target: "5c64be57-905b-463f-801c-54209390fdf4", uuid: "d312452b-cb09-4431-b07e-29b3b81cd2ee", type: "link",  class: "axiom"}
-    // ,{name: "flashlight", uuid: "5c64be57-905b-463f-801c-54209390fdf4", type: "fact", class: "actor"}
-    // , {name: "fears", subject: 1, target: "b5c66a5a-1fc7-407a-bb1d-0094ce52faeb", uuid: "d65034d5-572c-4133-9eb1-a0cf42969345", type: "link", class: "axiom"}
-    // , {name: "the dark", uuid: "b5c66a5a-1fc7-407a-bb1d-0094ce52faeb", type: "fact", class: "actor"}
-    // , {name: "Hathaway", uuid: "a3bb38a6-8971-4e34-aa28-767cdebbf0ec", type: "character", class: "actor"}
-    // , {name: "Cameron", uuid: 1, type: "character", class: "actor"}
-  ],
+  actors: [],
   content: [],
 };
 
@@ -61,6 +47,57 @@ const saveProject = (state) => {
     `${homedir}\\.silky\\${state.project}\\silky.json`,
     state
   );
+  saveTextFile(state);
+};
+
+const saveTextFile = (state) => {
+  let text = "==== Snippets ====";
+  state.actors
+    .filter((x) => x.type === "snippet")
+    .map((x) => {
+      text += `\n\n ${x.name}`;
+      if (x.content && x.content.blocks) {
+        x.content.blocks.map((y) => {
+          if (y.text) {
+            text += `\n ${y.text}`;
+          }
+        });
+      }
+    });
+
+  text += `\n\n\n\n==== Elements ====`;
+  state.actors
+    .filter((x) => x.type === "element")
+    .map((x) => {
+      text += `\n\n ${x.name}`;
+      if (x.content && x.content.blocks) {
+        x.content.blocks.map((y) => {
+          if (y.text) {
+            text += `\n ${y.text}`;
+          }
+        });
+      }
+    });
+
+  text += `\n\n\n\n==== Threads ====`;
+  state.actors
+    .filter((x) => x.type === "thread")
+    .map((x) => {
+      text += `\n\n ${x.name}`;
+      if (x.sequence) {
+        x.sequence.map((y) => {
+          const result = state.actors.find((z) => z.uuid === y.uuid);
+          if (result && result.name) {
+            text += `\n ${result.name}`;
+          }
+        });
+      }
+    });
+
+  const results = saveFile(
+    `${homedir}\\.silky\\${state.project}\\silky.txt`,
+    text
+  );
 };
 
 const add = (state, action) => {
@@ -68,25 +105,21 @@ const add = (state, action) => {
   action.payload.uuid = uuidv4();
   action.payload.type = action.for;
   action.payload.class = action.class;
-  console.log("Let's see", action.for);
   if (action.for === "snippet") {
-    console.log("gloopy")
-    action.payload.elements=[]
+    action.payload.elements = [];
     action.payload.content = _.cloneDeep(empty);
     action.payload.content.blocks[0].text = `[${action.payload.name}]`;
-    console.log("SNOOKER",[...action.payload.name.split(" ")]);
-    [...action.payload.name.split(" ")].forEach(word=>{
-      const ac = state.actors.filter(actor=>actor.name===word)[0]
-      if(ac){
-        action.payload.elements.push({uuid:ac.uuid})
-
+    [...action.payload.name.split(" ")].forEach((word) => {
+      const ac = state.actors.filter((actor) => actor.name === word)[0];
+      if (ac) {
+        action.payload.elements.push({ uuid: ac.uuid });
       }
-    })
+    });
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
-  if(action.payload.callback){
-    action.payload.callback(action.payload.uuid)
+  if (action.payload.callback) {
+    action.payload.callback(action.payload.uuid);
   }
   return newState;
 };
@@ -101,7 +134,7 @@ const remove = (state, action) => {
 };
 
 const find = (state, id) => {
-  let result = state.state.actors.filter((x) => x.uuid === id)[0];
+  let result = state.state.actors.find((x) => x.uuid === id);
   return result;
 };
 
@@ -118,28 +151,24 @@ const saveContent = (state, action) => {
 };
 
 const saveActor = (state, action) => {
-  console.log("Save actor!");
   let newState = _.cloneDeep(state);
 
-  newState.actors = [
-    action.payload.actor,
-    ...state.actors.filter((x) => x.uuid !== action.payload.actor.uuid),
-  ];
+  newState.actors = state.actors.map((x) => {
+    if (x.uuid !== action.payload.actor.uuid) {
+      return x;
+    } else {
+      return action.payload.actor;
+    }
+  });
   saveProject(newState);
   return newState;
 };
 
 const reorderActors = (state, action) => {
   let newState = _.cloneDeep(state);
-  console.log(
-    "the UUIDS of the updated actors",
-    action.payload.actors.map((y) => y.uuid)
-  );
   newState.actors = state.actors.filter(
     (x) => !action.payload.actors.map((y) => y.uuid).includes(x.uuid)
   );
-  console.log("all the UNRELATED actors", newState.actors);
-  console.log("all the UPDATED actors", action.payload.actors);
   newState.actors = [...action.payload.actors, ...newState.actors];
   saveProject(newState);
   return newState;
@@ -155,25 +184,43 @@ const saveActors = (state, action) => {
 };
 
 const removeActor = (state, action) => {
-  let newState = _.cloneDeep(state);
-  newState.actors = state.actors
-    .filter((x) => x.uuid !== action.payload.uuid)
-    .map((actorx) => {
-      let actory = _.cloneDeep(actorx);
-      if (actory.sequence) {
-        actory.sequence = [
-          ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
-        ];
-      }
-      if (actory.elements) {
-        actory.elements = [
-          ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
-        ];
-      }
-      return actory;
-    });
-  saveProject(newState);
-  return newState;
+
+    let newState = _.cloneDeep(state);
+    newState.actors = state.actors
+      .filter((x) => x.uuid !== action.payload.uuid)
+      .map((actorx) => {
+        let actory = _.cloneDeep(actorx);
+        if (actory.sequence) {
+          actory.sequence = [
+            ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
+          ];
+        }
+        if (actory.elements) {
+          actory.elements = [
+            ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
+          ];
+        }
+        return actory;
+      });
+    saveProject(newState);
+    return newState;
+
+};
+
+const duplicate = (state, action) => {
+  let target = state.actors.find((x) => x.uuid === action.payload.uuid);
+  if (target) {
+    let actory = _.cloneDeep(target);
+    let newState = _.cloneDeep(state);
+
+    actory.uuid = uuidv4();
+    actory.name = actory.name + " Copy";
+    newState.actors.unshift(actory);
+
+    saveProject(newState);
+    return newState;
+  }
+  return null;
 };
 
 const StateProvider = ({ children }) => {
@@ -195,16 +242,14 @@ const StateProvider = ({ children }) => {
         return saveActors(state, action);
       case "reorderActors":
         return reorderActors(state, action);
+      case "duplicate":
+        return duplicate(state, action);
       default:
         throw new Error();
     }
   }, initialState);
 
-  return (
-    <Provider value={{ state, dispatch, find }}>
-      {children}
-    </Provider>
-  );
+  return <Provider value={{ state, dispatch, find }}>{children}</Provider>;
 };
 
 export { store, StateProvider };

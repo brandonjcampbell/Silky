@@ -1,20 +1,26 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect,useRef } from "react";
+import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import _ from "lodash";
-import TextField from "@mui/material/TextField";
-import TextEditor from "../TextEditor";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { ColorPicker } from "material-ui-color";
+
+import "./Thread.css";
+
+const homedir = window.require("os").homedir();
 
 const Thread = ({ actorUuid }) => {
   const globalState = useContext(store);
-  const [actor,setActor]= useState(globalState.state.actors.find((x) => x.uuid === actorUuid))
-  const data = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const { dispatch } = globalState;
-  function determineOutput() {
+  const [freshener, setFreshener] = useState("");
+
+  const [toggle, setToggle] = useState(true);
+  let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
+  const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
+  const [saveCounter, setSaveCounter] = useState(0);
+
+  const determineOutput = () => {
     let output = [];
-    if (data.sequence) {
-      data.sequence.forEach((x, index) => {
+    if (actor && actor.sequence) {
+      actor.sequence.forEach((x, index) => {
         const result = globalState.state.actors.find((y) => y.uuid === x.uuid);
         const xz = result
           ? result.content
@@ -32,135 +38,131 @@ const Thread = ({ actorUuid }) => {
       return output;
     }
     return [];
-  }
-
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState("");
-  const [toggle, setToggle] = useState(true);
-  const [threadContent, setThreadContent] = useState(null);
-
-  function updateColor(color) {
-    console.log("doin update4color", color);
-    let clone = _.cloneDeep(data);
-    clone.color = "#" + color.hex;
-    dispatch({
-      action: "saveActor",
-      for: "thread",
-      payload: { actor: clone },
-    });
-  }
-
-  const remove = () => {
-    dispatch({
-      action: "removeActor",
-      payload: { uuid: data.uuid },
-    });
   };
+
+  const [output, setOutput] = useState(determineOutput());
 
   useEffect(() => {
-    setThreadContent(determineOutput());
-    redrawText()
-  }, [globalState.state.actors]);
+    setTags(actor && actor.tags ? actor.tags : "");
+  }, [actorUuid]);
 
-  const save = (newContent, key) => {
-    const actorKey = key.split(":")[0];
-    const actor = _.cloneDeep(
-      globalState.state.actors.find((x) => x.uuid === actorKey)
-    );
-    const actorContent = newContent.blocks.filter(
-      (x) => x.key.split(":")[0] === actorKey || !x.key.includes(":")
-    );
-    if (actor && actor.content) {
-      actor.content.blocks = actorContent;
-      dispatch({
-        action: "saveActor",
-        payload: { actor: actor },
-      });
-    }
-  };
+  useEffect(() => {
+    if((prevActor && actor.uuid===prevActor.uuid && actor.color !== prevActor.color)){
 
-  const keyPress = (e) => {
-    if (e.keyCode === 13) {
-      setEditTitle(false);
-      let clone = _.cloneDeep(data);
-      clone.name = title;
-      dispatch({
-        action: "saveActor",
-        for: "thread",
-        payload: { actor: clone },
-      });
-    }
-    if (e.keyCode === 27) {
-      setEditTitle(false);
-    }
-  };
+    }else{
+    setOutput(determineOutput());
 
-  const redrawText = () => {
+  
     setToggle(false);
     setTimeout((x) => {
       setToggle(true);
     }, 0.1);
+  }
+
+  }, [actor, saveCounter]);
+
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
+  const prevActor = usePrevious(actor)
+
+
+
+
+  const saveOne = (actor, blocks) => {
+    let remappedBlocks = blocks.map((x, index) => {
+      x.key = actorUuid + ":" + index;
+      return x;
+    });
+    actor.content = { blocks: remappedBlocks, entityMap: {} };
+    dispatch({
+      action: "saveActor",
+      payload: { actor: actor },
+    });
   };
 
-  return (
-    <div>
-      {data && (
-        <div>
-          <h2>
-            <div>
-              <ColorPicker
-                value={data.color ? data.color : "transparent"}
-                hideTextfield
-                onChange={(e) => updateColor(e)}
-              />
-            </div>
+  const saveAll = (newContent) => {
+    if (actor && actor.sequence) {
+      let cloneContent = newContent;//_.cloneDeep(newContent);
+      let group = null;
+      let latest = 0;
+      let rerender = false;
+      cloneContent.blocks.forEach((block) => {
+        if (block.key && block.key.includes(":")) {
+          group = block.key.split(":")[0];
+          latest = parseInt(block.key.split(":")[0]);
+        } else if (group) {
+          block.key = group + ":" + (latest + 1);
+        }
+      });
 
-            <span
-              onClick={() => {
-                setEditTitle(!editTitle);
-                setTitle(data.name);
-              }}
-            >
-              {!editTitle && data.name}
-            </span>
+      actor.sequence.forEach((snippetSeq) => {
+        const snippet = globalState.state.actors.find(
+          (a) => a.uuid === snippetSeq.uuid
+        );
+        if (snippet) {
+          let poss = cloneContent.blocks.filter((x, index) =>
+            x.key.includes(snippet.uuid)
+          );
+          if (poss.length === 0) {
+            poss = [
+              {
+                key: snippet.uuid + ":0",
+                text: "",
+                type: "unstyled",
+                depth: 0,
+                inlineStyleRanges: [],
+                entityRanges: [],
+                data: {},
+              },
+            ];
+            rerender = true;
+          }
 
-            {editTitle && (
-              <TextField
-                autoFocus
-                id="outlined-basic"
-                value={title}
-                onKeyDown={keyPress}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            )}
+          saveOne(snippet, poss);
+        }
+      });
 
-            {}
-            <DeleteIcon onClick={remove} />
-          </h2>
+      if (rerender) {
+        setSaveCounter(saveCounter + 1);
+      }
+    }
+    //
+  };
 
-          <div>
-         
-              {threadContent !== null && toggle === true && (
-                <TextEditor
-                  save={save}
-                  data={{ blocks: threadContent, entityMap: {} }}
-                  actorUuid={"thread" + data.uuid}
-                ></TextEditor>
-              )}
-              {threadContent !== null && toggle === false && (
-                <TextEditor
-                  save={save}
-                  data={{ blocks: [], entityMap: {} }}
-                  actorUuid={"thread" + data.uuid}
-                ></TextEditor>
-              )}
+
+
+  const renderTextEditor = () => {
+    if (actor && toggle === true) {
+      return (
        
 
-           </div>
-        </div>
-      )}
-    </div>
-  );
-};
+          <div className="editor">
+            {actor && actor.sequence && (
+              <TextEditor
+                save={saveAll}
+                data={{
+                  blocks: output,
+                  entityMap: {},
+                }}
+                actorUuid={actorUuid}
+              ></TextEditor>
+            )}
+            {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}
+          </div>
+       
+      );
+    } else {
+      return <div></div>;
+    }
+  };
 
+  return <div className="threadspace">{renderTextEditor()}</div>;
+};
 export default Thread;

@@ -1,0 +1,2513 @@
+{
+  "project": "Gladhollow",
+  "cursor": null,
+  "actors": [
+    {
+      "name": "Father Nightengale preaches that The Apothecary is in league with The Grin",
+      "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum's corpse saponified into Grave Wax",
+      "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" }]
+    },
+    {
+      "name": "The Sangrenta Berry is the first step toward Dark Chemistry",
+      "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum grew obese feasting on Sangrenta Berries",
+      "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Delia Deacon was a descendant of Chrysanthemum",
+      "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Dark Chemistry",
+      "uuid": "c5d34310-52d1-4883-a288-86a8c2107f9f",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" },
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
+      ]
+    },
+    {
+      "name": "The Apothecary is a master of Dark Chemistry",
+      "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Delia Deacon learned dark chemistry in her banishment",
+      "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew spills the beans",
+      "uuid": "99d7cb13-afdf-4f59-b701-3b47be5c8be8",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Mother Mayhew spills the beans]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "3c9bcd36-33d1-412e-870a-9c3db45fdef8" },
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew has a very good memory",
+      "uuid": "3c9bcd36-33d1-412e-870a-9c3db45fdef8",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold brings Father Nightengale's sleeve to Sixstrata Cathedral",
+      "uuid": "a8dafaf6-2234-42f7-a97f-d0195ff3e375",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" }
+      ]
+    },
+    {
+      "name": "Delia Deacon longed for a family",
+      "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold brings a lock of Bridget's hair to Sixstrata Cathedral",
+      "uuid": "d92ba7b5-f5db-4302-849d-e1a49e0dcc0c",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" }
+      ]
+    },
+    {
+      "name": "Appease the Apothecary to Appease the Grin",
+      "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" }
+      ]
+    },
+    {
+      "name": "The Grin can Smell Wickedness",
+      "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" }]
+    },
+    {
+      "name": "The blob of melted wax is Bridget's dog",
+      "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "4e9a83ee-2289-41d2-a4cf-c90a912b2cf5" },
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" }
+      ]
+    },
+    {
+      "name": "The Grin is made of Grave Wax",
+      "uuid": "a8402e63-35de-4306-95b9-af3f85c84861",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" }]
+    },
+    {
+      "name": "Everyone calls Harold dunce",
+      "uuid": "6d38c7cb-683b-4d27-94a8-702bf9bc9265",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Hapless Harold wants to prove he is smart",
+      "uuid": "11016c74-76e2-4d23-8a47-ee6d0f99f94e",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "6d38c7cb-683b-4d27-94a8-702bf9bc9265" }]
+    },
+    {
+      "name": "Bridget Bloodwicke wants to prove she is tough",
+      "uuid": "2a4e86d3-86c4-4103-a873-822978874a7c",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" }]
+    },
+    {
+      "name": "Hard Knocks",
+      "uuid": "5677e82a-fc54-43a9-bbe0-74ad5e20fac2",
+      "type": "thread",
+      "class": "actor",
+      "color": "#D2E51E",
+      "sequence": [
+        { "uuid": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6", "consecutive": 0 },
+        { "uuid": "008bedde-0487-4862-abb2-4f32f987e643", "consecutive": 0 },
+        { "uuid": "86860e64-9a6d-4518-a39c-7a691f187207", "consecutive": 0 },
+        { "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5", "consecutive": 0 },
+        { "uuid": "dbd7d71a-5a75-40e5-8b81-de9f6fbe9990", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0
+    },
+    {
+      "name": "Langua runs the Home for Lost Foundlings",
+      "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Phillip Phips is an Orphan",
+      "uuid": "71035709-af7f-4d7e-8c25-5e230b95ccbf",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Bridget Bloodwicke is an Orphan",
+      "uuid": "9bb5f2cf-0cde-42a8-a68c-d4c6e90b268f",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Gregory Grimorgan is an Orphan",
+      "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Orphans",
+      "uuid": "10efa133-4ebe-49db-992c-702bd920220a",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "2256b310-9092-46b4-a6a2-9bd030f8f770" },
+        { "uuid": "71035709-af7f-4d7e-8c25-5e230b95ccbf" },
+        { "uuid": "9bb5f2cf-0cde-42a8-a68c-d4c6e90b268f" },
+        { "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a" },
+        { "uuid": "6a414758-d706-4936-9927-8a6998c7ce42" }
+      ]
+    },
+    {
+      "name": "Christopher Clamwell is an orphan",
+      "uuid": "2256b310-9092-46b4-a6a2-9bd030f8f770",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Langua LeWant turns a blind eye to the orphans",
+      "uuid": "6a414758-d706-4936-9927-8a6998c7ce42",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" }
+      ]
+    },
+    {
+      "name": "Harold can't remember much",
+      "uuid": "668afff1-576f-4fb5-ab07-f4b3d5752979",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Brain Fog",
+      "uuid": "d9ad0be8-1988-46bb-a17b-4a6532cf4ac9",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Brain Fog]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [{ "uuid": "05ad9cd8-8971-4a10-95ca-f4ef1de1b2f1" }]
+    },
+    {
+      "name": "Harold wakes up with a bump on his head",
+      "uuid": "05ad9cd8-8971-4a10-95ca-f4ef1de1b2f1",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Bridget has a dog",
+      "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Bridget's dog is awful to all other people",
+      "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0" }]
+    },
+    {
+      "name": "Bridget's Dog often ran away to the Libratorium",
+      "uuid": "4e9a83ee-2289-41d2-a4cf-c90a912b2cf5",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a" }]
+    },
+    {
+      "name": "Constable Knowles Threatens Harold with Banishment",
+      "uuid": "ef28b7db-fa7a-4f7e-b567-0f2432844d24",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3" },
+        { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" }
+      ]
+    },
+    {
+      "name": "Exaggerations And Fabrications",
+      "uuid": "7ca80b5a-c137-45d1-8a7f-775afc93180b",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Exaggerations And Fabrications]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb" },
+        { "uuid": "0e6e8cfd-b4e6-413a-8457-e9330f711f6e" },
+        { "uuid": "874f67e7-8470-4892-b401-56d9869a2174" },
+        { "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7" }
+      ]
+    },
+    {
+      "name": "The Apothecary was once Delia Deacon",
+      "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" }
+      ]
+    },
+    {
+      "name": "Father Nightengale purchased Bridget's Dress",
+      "uuid": "9bc9d563-035d-4c90-9401-8da8ced80b05",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "At the Libratorium",
+      "uuid": "c11bb86e-397b-488e-a46a-3699c8ef24eb",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "c11bb86e-397b-488e-a46a-3699c8ef24eb:0",
+            "text": "[At the Libratorium]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "bcb79c00-9d55-4a93-a677-3cfd7672f090" },
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
+        { "uuid": "dbe36b1c-7aab-43d9-b865-b3451254c229" }
+      ]
+    },
+    {
+      "name": "Harold goes to the Libratorium to find a cookbook",
+      "uuid": "bcb79c00-9d55-4a93-a677-3cfd7672f090",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold discovers a melted blob of Grave Wax at the Libratorium",
+      "uuid": "8306db4a-690c-466a-915e-c04ccbee404c",
+      "type": "fact",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "The Apothecary made Bridget's Dog",
+      "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" }
+      ]
+    },
+    {
+      "name": "Bridget receieves an expensive dress from an anonymous benefactor",
+      "uuid": "50734314-c7ca-4829-a0b3-b76be8f77d8f",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The orphans throw the Dog in the fireplace",
+      "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a" },
+        { "uuid": "2256b310-9092-46b4-a6a2-9bd030f8f770" },
+        { "uuid": "71035709-af7f-4d7e-8c25-5e230b95ccbf" },
+        { "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84" }
+      ]
+    },
+    {
+      "name": "Hot Dog",
+      "uuid": "008bedde-0487-4862-abb2-4f32f987e643",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "blocks": [
+          {
+            "key": "008bedde-0487-4862-abb2-4f32f987e643:0",
+            "text": "[Rough Roast]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "c39f8ac6-1164-42e4-b499-0fad678182f0" }
+      ]
+    },
+    {
+      "name": "Bridget's Dog",
+      "uuid": "1ddc20f7-288d-4ac0-91c8-60e5193baedd",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a" },
+        { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
+        { "uuid": "4e9a83ee-2289-41d2-a4cf-c90a912b2cf5" },
+        { "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84" },
+        { "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0" },
+        { "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a" }
+      ],
+      "content": {
+        "blocks": [
+          {
+            "key": "1ddc20f7-288d-4ac0-91c8-60e5193baedd:0",
+            "text": "A yappy white dog that follows Bridget around.  Detestable to all but her.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Bridget's dog is made of Grave Wax",
+      "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a" }]
+    },
+    {
+      "name": "The Apothecary was Bridget's mother",
+      "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" }]
+    },
+    {
+      "name": "Uncovering Unsavory Habits",
+      "uuid": "392b1d9e-8b28-4d0a-a5af-ad45185db4fb",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Uncovering Unsavory Habits]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [{ "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" }]
+    },
+    {
+      "name": "The Apothecary harvests Grave Wax from Crysanthemum's grave",
+      "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Phillip Phips",
+      "uuid": "d6dfa892-b90b-4553-8bd3-70474c71e594",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" },
+        { "uuid": "71035709-af7f-4d7e-8c25-5e230b95ccbf" }
+      ],
+      "content": {
+        "blocks": [
+          {
+            "key": "d6dfa892-b90b-4553-8bd3-70474c71e594:0",
+            "text": "A prideful young man who is about to leave LeWant's at last.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Christopher Clamwell",
+      "uuid": "5645b171-f31c-4601-9d8f-e5ceadf0b976",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" },
+        { "uuid": "2256b310-9092-46b4-a6a2-9bd030f8f770" }
+      ],
+      "content": {
+        "blocks": [
+          {
+            "key": "5645b171-f31c-4601-9d8f-e5ceadf0b976:0",
+            "text": "A grubby orphan boy that is unusually damp most of the time.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "The orphans all hate Bridget Bloodwicke",
+      "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84" },
+        { "uuid": "50734314-c7ca-4829-a0b3-b76be8f77d8f" },
+        { "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a" }
+      ]
+    },
+    {
+      "name": "Teacher's Pet",
+      "uuid": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6:0",
+            "text": "[Teacher's Pet]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "50734314-c7ca-4829-a0b3-b76be8f77d8f" },
+        { "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0" },
+        { "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84" }
+      ]
+    },
+    {
+      "name": "Delia Deacon ate from the Sangrenta Berry Bush",
+      "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "3699877e-93ba-460a-ba35-bfdd96411c6c:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Ancient History",
+      "uuid": "832f0730-f948-45df-b97b-64b0fac9b5d5",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Ancient History]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" }
+      ]
+    },
+    {
+      "name": "Regarding the Apothecary",
+      "uuid": "696e86e8-97e7-4b4b-bb5c-980ed809f6dd",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "832f0730-f948-45df-b97b-64b0fac9b5d5", "consecutive": 0 },
+        { "uuid": "392b1d9e-8b28-4d0a-a5af-ad45185db4fb", "consecutive": 0 },
+        { "uuid": "9aadf176-652f-441a-bc68-11c7910bb414", "consecutive": 0 },
+        { "uuid": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6", "consecutive": 0 },
+        { "uuid": "cc01617b-40f1-4e56-8758-d185e69bf8c4", "consecutive": 0 },
+        { "uuid": "fecdc86e-bccc-4a20-91ea-fa52e27ec950", "consecutive": 0 },
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e", "consecutive": 0 },
+        { "uuid": "c11bb86e-397b-488e-a46a-3699c8ef24eb", "consecutive": 0 },
+        { "uuid": "954d32c6-563f-494f-bfa3-ad0b496b4051", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#7AA06C"
+    },
+    {
+      "name": "Delia Deacon longed to be part of the community",
+      "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold brings the Apothecary's jawbone to Sixstrata Chathedral",
+      "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "5246c3e7-8e8c-44cd-990f-25ac44becbf9:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" }
+      ]
+    },
+    {
+      "name": "Delia Deacon was banished from Gladhollow long ago",
+      "uuid": "9f8d42da-346e-4001-991d-b689515c4900",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "9f8d42da-346e-4001-991d-b689515c4900:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" }
+      ]
+    },
+    {
+      "name": "Bear the Bones Home",
+      "uuid": "954d32c6-563f-494f-bfa3-ad0b496b4051",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "1ddc20f7-288d-4ac0-91c8-60e5193baedd" },
+        { "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" },
+        { "uuid": "a5299338-9fab-4302-94a4-1d5bc35e2ce0" },
+        { "uuid": "e9e2313e-4ec9-4d08-b3fa-7be9bc684e0b" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Bear the Bones Home]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [{ "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9" }]
+    },
+    {
+      "name": "Bridget receives an expensive dog from an anonymous benefactor",
+      "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0" }]
+    },
+    {
+      "name": "Bridget's crime of convenience",
+      "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Bridget's crime of convenience]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "305a22ea-cdba-4168-95b4-18f050e97321" },
+        { "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" },
+        { "uuid": "0a33aa4b-a026-4eda-8b71-d996a8053fa1" }
+      ]
+    },
+    {
+      "name": "Bridget sees the Blaze at Turnbull Cottage",
+      "uuid": "305a22ea-cdba-4168-95b4-18f050e97321",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Bridget believes she can melt the Grin",
+      "uuid": "c39f8ac6-1164-42e4-b499-0fad678182f0",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "2a4e86d3-86c4-4103-a873-822978874a7c" },
+        { "uuid": "a8402e63-35de-4306-95b9-af3f85c84861" }
+      ]
+    },
+    {
+      "name": "Bridget locks Etta in her burning room to lure The Grin to Turnbull Farm",
+      "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d" },
+        { "uuid": "2a4e86d3-86c4-4103-a873-822978874a7c" }
+      ]
+    },
+    {
+      "name": "LeWant found Wanting",
+      "uuid": "dbd7d71a-5a75-40e5-8b81-de9f6fbe9990",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "dbd7d71a-5a75-40e5-8b81-de9f6fbe9990:0",
+            "text": "[LeWant found Wanting]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "a2446383-7ca4-4748-aab1-ab66bf604544" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" }
+      ]
+    },
+    {
+      "name": "Langua witholds the Draught of Purity from the Orphans",
+      "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Grin devours Langua LeWant",
+      "uuid": "a2446383-7ca4-4748-aab1-ab66bf604544",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "a2446383-7ca4-4748-aab1-ab66bf604544:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "6a414758-d706-4936-9927-8a6998c7ce42" },
+        { "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5" },
+        { "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9" },
+        { "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a" }
+      ]
+    },
+    {
+      "name": "The Grin breaks into The Home for Lost Foundlings",
+      "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Orphan Hordervs",
+      "uuid": "86860e64-9a6d-4518-a39c-7a691f187207",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "d6dfa892-b90b-4553-8bd3-70474c71e594" },
+        { "uuid": "5645b171-f31c-4601-9d8f-e5ceadf0b976" },
+        { "uuid": "095765ac-94ef-4653-a51f-267c23126ef5" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "86860e64-9a6d-4518-a39c-7a691f187207:0",
+            "text": "[Orphan Hordervs]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5" },
+        { "uuid": "d8831c52-c16d-4c55-8c99-3c1fd7c84a49" },
+        { "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9" }
+      ]
+    },
+    {
+      "name": "The Grin devours Christopher Clamswell",
+      "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" }
+      ]
+    },
+    {
+      "name": "The Grin devours Phillip Phips",
+      "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" }
+      ]
+    },
+    {
+      "name": "The Grin devours Gregory Grimorgan",
+      "uuid": "d8831c52-c16d-4c55-8c99-3c1fd7c84a49",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18" }
+      ]
+    },
+    {
+      "name": "The Grin devours Bridget Bloodwicke",
+      "uuid": "0a33aa4b-a026-4eda-8b71-d996a8053fa1",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" }]
+    },
+    {
+      "name": "Knowles flounders to keep the facade",
+      "uuid": "cfd5e432-0624-4ceb-b023-af28e965e163",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Knowles flounders to keep the facade]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "cd07ced0-2790-41e3-ab3b-4dfd3785ca67" },
+        { "uuid": "874f67e7-8470-4892-b401-56d9869a2174" },
+        { "uuid": "8d36ad5e-3015-4df0-8f28-4fad1664db08" },
+        { "uuid": "fa5b2dd1-fd86-4071-a808-151bf73d8f99" },
+        { "uuid": "fca0c4c6-6585-4717-a51e-7e6f4bf78310" }
+      ]
+    },
+    {
+      "name": "Banished",
+      "uuid": "a6058557-2f1c-4f5f-9424-f88a1cfd2bc5",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "blocks": [
+          {
+            "key": "a6058557-2f1c-4f5f-9424-f88a1cfd2bc5:0",
+            "text": "[Banished]  Harold witnesses Etta's banishment and decides he must try to save her.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3" },
+        { "uuid": "f76fa79d-8774-4abb-971f-7cff32ac97be" }
+      ]
+    },
+    {
+      "name": "Harold Bakes a Pie",
+      "uuid": "2b718010-d1f6-4ede-b5e4-74d950fd0739",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "2b718010-d1f6-4ede-b5e4-74d950fd0739:0",
+            "text": "[Harold Bakes a Pie]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade" },
+        { "uuid": "a8b9566a-fbb7-404f-a16e-50b2a5130ac0" },
+        { "uuid": "a5583693-eeab-4151-9d3e-dd43c193c95a" }
+      ]
+    },
+    {
+      "name": "Etta Survives",
+      "uuid": "7d8a3060-8e65-4e79-b291-f452f64a1843",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "7d8a3060-8e65-4e79-b291-f452f64a1843:0",
+            "text": "[Etta Survives]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "82c06d94-15f8-43c2-b4ae-35f6b81d9873" },
+        { "uuid": "246d5147-04f7-4756-bd07-e22183c19788" }
+      ]
+    },
+    {
+      "name": "Etta discovers that Sangrenta Berries repel the Grin",
+      "uuid": "82c06d94-15f8-43c2-b4ae-35f6b81d9873",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Warpaint",
+      "uuid": "70907e23-2147-4c65-9e4b-52199090690d",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "blocks": [
+          {
+            "key": "70907e23-2147-4c65-9e4b-52199090690d:0",
+            "text": "[Warpaint] Etta has survived in the Woods by painting her face with Sangrenta Berry pulp. It repels the Grin.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [{ "uuid": "c119a436-d671-4f6b-9d03-07d501d45f10" }]
+    },
+    {
+      "name": "Knowles blames the Draught for Mayhew's indifference",
+      "uuid": "0fa638da-9fc4-4f88-b8bb-498d9fdaeeb5",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Knowles dispenses his supply of undrunken Draught",
+      "uuid": "cd07ced0-2790-41e3-ab3b-4dfd3785ca67",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Knowles saved his undrunken Draughts",
+      "uuid": "874f67e7-8470-4892-b401-56d9869a2174",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Secret Heretic",
+      "uuid": "b8f5992c-b325-48cd-b251-14edc78c40b3",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "blocks": [
+          {
+            "key": "b8f5992c-b325-48cd-b251-14edc78c40b3:0",
+            "text": "[Secret Heretic] Knowles has been hoarding his Draught of Purity. He doesn't want his feelings to be repressed.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb" },
+        { "uuid": "8d36ad5e-3015-4df0-8f28-4fad1664db08" }
+      ]
+    },
+    {
+      "name": "Knowles doesn't believe in The Grin",
+      "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Knowles never Drank his Draught",
+      "uuid": "8d36ad5e-3015-4df0-8f28-4fad1664db08",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The love letter never posted",
+      "uuid": "983a536c-9857-47ba-91e8-df76239485e5",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[The love letter never posted]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "f9b02a41-f8c1-46c1-95c7-da9a1a15b4c8" },
+        { "uuid": "357fe1c5-5bb9-41ca-84ae-3f162b49d932" },
+        { "uuid": "0a98f425-ef64-4d43-b1a2-99460bdce9d9" }
+      ]
+    },
+    {
+      "name": "Nightengale stops taking the Draught of Purity",
+      "uuid": "edbd93dc-0324-4500-ac1e-ece61032c4dc",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Nightengale's last sermon",
+      "uuid": "47fbe9c3-27b9-4444-899c-c6608f65a0ac",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "47fbe9c3-27b9-4444-899c-c6608f65a0ac:0",
+            "text": "[Nightengale's last sermon]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "f350d94b-5f3d-4357-9912-f8a25f2b4d67" },
+        { "uuid": "edbd93dc-0324-4500-ac1e-ece61032c4dc" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew steps in after Nightengale's death",
+      "uuid": "30a54003-7f90-40ec-89c2-d545bc0758c5",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Filling the Void of Leadership",
+      "uuid": "04c01366-d0d5-41cc-b1d1-d3e973b5d69f",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "3499e107-f093-45c5-8251-728a470f842f" },
+        { "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "04c01366-d0d5-41cc-b1d1-d3e973b5d69f:0",
+            "text": "[Filling the Void of Leadership]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "30a54003-7f90-40ec-89c2-d545bc0758c5" },
+        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
+        { "uuid": "357fe1c5-5bb9-41ca-84ae-3f162b49d932" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew raises funds to buy more Draught of Purity",
+      "uuid": "ebb67fe2-f908-442c-bbf9-d78829105229",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Etta is curious about the taste of Sangrenta Berry",
+      "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }]
+    },
+    {
+      "name": "The Immaculate Bakesale",
+      "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "3499e107-f093-45c5-8251-728a470f842f" },
+        { "uuid": "a7c9b8bd-931f-4234-a4a7-91a75c866c74" },
+        { "uuid": "d882bc63-33f7-46f7-b21e-fb2bccab9a16" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692:0",
+            "text": "[The Immaculate Bakesale]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
+        { "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80" },
+        { "uuid": "c11aab57-5b03-44b7-8df6-f3d5afd9e77d" },
+        { "uuid": "ebb67fe2-f908-442c-bbf9-d78829105229" },
+        { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" }
+      ]
+    },
+    {
+      "name": "Knowles doesn't know how to make the Draught of Purity",
+      "uuid": "fa5b2dd1-fd86-4071-a808-151bf73d8f99",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Draught of Purity runs out",
+      "uuid": "f350d94b-5f3d-4357-9912-f8a25f2b4d67",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Goodnight Nightengale",
+      "uuid": "6efc1260-47dd-4c14-81f5-63c2b7cbf737",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" },
+        { "uuid": "2da96f7f-aa84-40fa-9471-8f74e24f8ab6" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "6efc1260-47dd-4c14-81f5-63c2b7cbf737:0",
+            "text": "[Goodnight Nightengale]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
+        { "uuid": "9bc9d563-035d-4c90-9401-8da8ced80b05" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" }
+      ]
+    },
+    {
+      "name": "Nightengale promises that the Draught of Purity will deter The Grin",
+      "uuid": "c6a127b5-3dc8-4566-a2cf-53bdf8028915",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "c6a127b5-3dc8-4566-a2cf-53bdf8028915:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Father Nightengale wants strict authority",
+      "uuid": "392acf03-2d71-42ff-9959-1da9f9a481d3",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" },
+        { "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d" }
+      ]
+    },
+    {
+      "name": "Nightengale's second sermon",
+      "uuid": "074dd18a-9210-4332-a9ec-1bbec71d776f",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "074dd18a-9210-4332-a9ec-1bbec71d776f:0",
+            "text": "[Nightengale's second sermon]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "2e01339d-0352-4a73-8e63-fe9430fe2f13" },
+        { "uuid": "c6a127b5-3dc8-4566-a2cf-53bdf8028915" },
+        { "uuid": "dd837549-fa82-425d-a499-15bed14d4c2d" }
+      ]
+    },
+    {
+      "name": "Residents drink the Draught of Introspection in the well water",
+      "uuid": "78549376-011e-4682-9834-e667cabca059",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Hysterics",
+      "uuid": "fecdc86e-bccc-4a20-91ea-fa52e27ec950",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "fecdc86e-bccc-4a20-91ea-fa52e27ec950:0",
+            "text": "[Hysterics]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "705d1abc-131b-4d31-b239-f0c440df1824" },
+        { "uuid": "78549376-011e-4682-9834-e667cabca059" }
+      ]
+    },
+    {
+      "name": "The Well",
+      "uuid": "d4def993-e897-4adf-a6ea-db3a64551682",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "78549376-011e-4682-9834-e667cabca059" },
+        { "uuid": "c0a34783-32e7-49a3-a896-7b5a3e920a60" },
+        { "uuid": "5a200e80-36e4-4ea1-9b28-a7774c7ab69c" }
+      ]
+    },
+    {
+      "name": "Father Nightengale pours the Draught of Introspection into The Well",
+      "uuid": "c0a34783-32e7-49a3-a896-7b5a3e920a60",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale ordered the Draught of Introspection from the Apothecary",
+      "uuid": "fb4af7e6-6572-41b7-bb46-e4c20f78d16e",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Poisoning The Well",
+      "uuid": "cc01617b-40f1-4e56-8758-d185e69bf8c4",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "d4def993-e897-4adf-a6ea-db3a64551682" },
+        { "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "cc01617b-40f1-4e56-8758-d185e69bf8c4:0",
+            "text": "[Poisoning The Well]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "fb4af7e6-6572-41b7-bb46-e4c20f78d16e" },
+        { "uuid": "c0a34783-32e7-49a3-a896-7b5a3e920a60" },
+        { "uuid": "5a200e80-36e4-4ea1-9b28-a7774c7ab69c" }
+      ]
+    },
+    {
+      "name": "The Grin emerges from Chrysanthemum's grave",
+      "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The first Grin splits",
+      "uuid": "08a49826-9117-4ee4-bcbc-4b6da30547e4",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[The first Grin splits]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" },
+        { "uuid": "e1f8ffd1-2556-4c00-ade9-7f339f6733f0" }
+      ]
+    },
+    {
+      "name": "The Apothecary works at the Libratorium",
+      "uuid": "dbe36b1c-7aab-43d9-b865-b3451254c229",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold wants to exonerate Etta",
+      "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "11016c74-76e2-4d23-8a47-ee6d0f99f94e" },
+        { "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80" }
+      ]
+    },
+    {
+      "name": "Etta is on bad terms with Father Nightengale",
+      "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
+      ]
+    },
+    {
+      "name": "Smoldering Aftermath",
+      "uuid": "64afe89a-94e1-4954-adc0-d266ca23acd8",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "6578d21e-4cee-4ae6-8b6a-d36ff08d65c4" },
+        { "uuid": "a7c9b8bd-931f-4234-a4a7-91a75c866c74" },
+        { "uuid": "d882bc63-33f7-46f7-b21e-fb2bccab9a16" },
+        { "uuid": "b9f617a7-072c-4165-b4e4-28c0cf4918f4" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "64afe89a-94e1-4954-adc0-d266ca23acd8:0",
+            "text": "[Smoldering Aftermath]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "f76fa79d-8774-4abb-971f-7cff32ac97be" },
+        { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" },
+        { "uuid": "a8b9566a-fbb7-404f-a16e-50b2a5130ac0" },
+        { "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3" },
+        { "uuid": "5448491f-2434-42e9-a2e2-4b5179ba0808" }
+      ]
+    },
+    {
+      "name": "A Clandestine Agreement",
+      "uuid": "9aadf176-652f-441a-bc68-11c7910bb414",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" },
+        { "uuid": "a5299338-9fab-4302-94a4-1d5bc35e2ce0" },
+        { "uuid": "8fc27660-7b76-46c5-8c4a-bc2112f84074" },
+        { "uuid": "eb14fbd2-b86d-4090-b2af-bf414113f0fa" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "9aadf176-652f-441a-bc68-11c7910bb414:0",
+            "text": "[A Clandestine Agreement]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472" },
+        { "uuid": "bb599222-3b9c-4568-a706-8f2fe8b8b741" }
+      ]
+    },
+    {
+      "name": "Nightengale's first sermon",
+      "uuid": "77388107-6661-40d9-a839-dad4b3729902",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [{ "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1" }],
+      "content": {
+        "blocks": [
+          {
+            "key": "77388107-6661-40d9-a839-dad4b3729902:0",
+            "text": "[Nightengale's first sermon]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" },
+        { "uuid": "392acf03-2d71-42ff-9959-1da9f9a481d3" },
+        { "uuid": "f0cc533e-e44f-4814-8e9a-4336b8076b9b" },
+        { "uuid": "f32c4e61-96dc-45d4-a036-5c5f636aa79c" }
+      ]
+    },
+    {
+      "name": "The Bridge Breaks",
+      "uuid": "04026a1b-ddf8-4a52-9931-a3d5e8818c4d",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[The Bridge Breaks]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "ed0d7a35-2b25-4a2e-b7d2-ff0e20493565" },
+        { "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121" },
+        { "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d" }
+      ]
+    },
+    {
+      "name": "Midnight At the Broken Bridge",
+      "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [
+        { "uuid": "a5299338-9fab-4302-94a4-1d5bc35e2ce0" },
+        { "uuid": "a20031b6-eaf0-4778-8178-8bb344979a90" },
+        { "uuid": "6578d21e-4cee-4ae6-8b6a-d36ff08d65c4" },
+        { "uuid": "d882bc63-33f7-46f7-b21e-fb2bccab9a16" }
+      ],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "028a3834-e47f-46c0-beec-88b9ba01e98e:0",
+            "text": "[Midnight At the Broken Bridge]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "7bcccdca-7211-4cde-a368-13bdbe4921ac" },
+        { "uuid": "c0fb93ea-0e0a-4798-847f-f4401243d944" },
+        { "uuid": "0fa638da-9fc4-4f88-b8bb-498d9fdaeeb5" },
+        { "uuid": "39980160-e36f-48b2-9e85-eac5cad1805a" },
+        { "uuid": "e1a2d963-76ff-4c76-a588-c1bdacfc9558" }
+      ]
+    },
+    {
+      "name": "The Draught of Complacence",
+      "uuid": "56461139-97e1-453f-b000-626e9186a1f7",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "39980160-e36f-48b2-9e85-eac5cad1805a" },
+        { "uuid": "e1a2d963-76ff-4c76-a588-c1bdacfc9558" }
+      ],
+      "content": {
+        "blocks": [
+          {
+            "key": "56461139-97e1-453f-b000-626e9186a1f7:0",
+            "text": "A potion that renders the drinker sweetly confused.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "The Phrenologist",
+      "uuid": "d597b98b-c395-4cc2-a584-d3a7c6327ce1",
+      "type": "element",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "The Draught of Complacence makes Harold forgetful",
+      "uuid": "39980160-e36f-48b2-9e85-eac5cad1805a",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "668afff1-576f-4fb5-ab07-f4b3d5752979" }]
+    },
+    {
+      "name": "Constable Knowles drugs Harold with the Draught of Complacence",
+      "uuid": "e1a2d963-76ff-4c76-a588-c1bdacfc9558",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold witness the Apothecary's murder",
+      "uuid": "7bcccdca-7211-4cde-a368-13bdbe4921ac",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Etta is banished from Gladhollow",
+      "uuid": "5448491f-2434-42e9-a2e2-4b5179ba0808",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Etta Turnbull is accused of Arson",
+      "uuid": "f76fa79d-8774-4abb-971f-7cff32ac97be",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The pie lights Turnbull farm on fire",
+      "uuid": "a8b9566a-fbb7-404f-a16e-50b2a5130ac0",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold leaves the pie on Etta's windowsill",
+      "uuid": "a5583693-eeab-4151-9d3e-dd43c193c95a",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold cooks a Sangrenta Berry pie for Etta",
+      "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold has a crush on Etta",
+      "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Etta Turnbull is nice to Harold",
+      "uuid": "c11aab57-5b03-44b7-8df6-f3d5afd9e77d",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Draught of Introspection",
+      "uuid": "dd921762-221d-4c07-8008-8b156b3bbfe2",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "78549376-011e-4682-9834-e667cabca059" },
+        { "uuid": "c0a34783-32e7-49a3-a896-7b5a3e920a60" },
+        { "uuid": "fb4af7e6-6572-41b7-bb46-e4c20f78d16e" },
+        { "uuid": "5a200e80-36e4-4ea1-9b28-a7774c7ab69c" }
+      ],
+      "content": {
+        "blocks": [
+          {
+            "key": "dd921762-221d-4c07-8008-8b156b3bbfe2:0",
+            "text": "A potion that causes the drinker to see physical manifestations of their inner guilts.",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Residents of Gladhollow begin sighting The Grin",
+      "uuid": "705d1abc-131b-4d31-b239-f0c440df1824",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Apothecary medicates the well with the Draught of Introspection",
+      "uuid": "5a200e80-36e4-4ea1-9b28-a7774c7ab69c",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Constable Knowles learns that the Grin is not real",
+      "uuid": "0e6e8cfd-b4e6-413a-8457-e9330f711f6e",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale preaches that the Grin will devour the wicked",
+      "uuid": "6578580b-1fee-469c-b2db-c4208b44959d",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Crysanthemum broke the bridge",
+      "uuid": "ed0d7a35-2b25-4a2e-b7d2-ff0e20493565",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Mother Mayhew wants to lead Gladhollow in Nightengale's place",
+      "uuid": "357fe1c5-5bb9-41ca-84ae-3f162b49d932",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Constable Knowles is in love with Mother Mayhew",
+      "uuid": "f9b02a41-f8c1-46c1-95c7-da9a1a15b4c8",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Draught of Purity dulls passionate feelings",
+      "uuid": "f0cc533e-e44f-4814-8e9a-4336b8076b9b",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale tricks residents into drinking the Draught of Purity",
+      "uuid": "2e01339d-0352-4a73-8e63-fe9430fe2f13",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale ordered the Draught of Purity from the Apothecary",
+      "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale invented The Grin to frighten Gladhollow into obedience",
+      "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale is Bridget's father",
+      "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Grin devours Father Nightengale",
+      "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Constable Knowles assumed the Apothecary's identity",
+      "uuid": "fca0c4c6-6585-4717-a51e-7e6f4bf78310",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Grin was created by The Draught of Introspection, Grave Wax, and the Apothecary's blood",
+      "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "140cca5a-d86f-41c1-9945-4ee82a54a437:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "Constable Knowles killed the Apothecary on Crysanthemum's grave",
+      "uuid": "c0fb93ea-0e0a-4798-847f-f4401243d944",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum's body transformed into grave wax",
+      "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum is buried at the broken bridge",
+      "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Grin's vicitims become Nasties",
+      "uuid": "e1f8ffd1-2556-4c00-ade9-7f339f6733f0",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Draught of Purity is made with Sangrenta Berries",
+      "uuid": "246d5147-04f7-4756-bd07-e22183c19788",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Sangrenta Berries are poisonous to the Grin",
+      "uuid": "c119a436-d671-4f6b-9d03-07d501d45f10",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Father Nightengale forbids the consumption of Sangrenta Berries",
+      "uuid": "f32c4e61-96dc-45d4-a036-5c5f636aa79c",
+      "type": "fact",
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "f32c4e61-96dc-45d4-a036-5c5f636aa79c:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
+    },
+    {
+      "name": "The Apothecary brews Draught of Purity",
+      "uuid": "bb599222-3b9c-4568-a706-8f2fe8b8b741",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "The Grin devours the wicked at night",
+      "uuid": "dd837549-fa82-425d-a499-15bed14d4c2d",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Nasties",
+      "uuid": "8125ee34-0d72-415e-9f99-4e09be97f7ec",
+      "type": "element",
+      "class": "actor",
+      "facts": [{ "uuid": "e1f8ffd1-2556-4c00-ade9-7f339f6733f0" }]
+    },
+    {
+      "name": "Regrettable Etta",
+      "uuid": "359723a4-37c3-4959-9afb-051d9b802141",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692", "consecutive": 0 },
+        { "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5", "consecutive": 0 },
+        { "uuid": "64afe89a-94e1-4954-adc0-d266ca23acd8", "consecutive": 0 },
+        { "uuid": "a6058557-2f1c-4f5f-9424-f88a1cfd2bc5", "consecutive": 0 },
+        { "uuid": "70907e23-2147-4c65-9e4b-52199090690d", "consecutive": 0 },
+        { "uuid": "7d8a3060-8e65-4e79-b291-f452f64a1843", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#AE87E8"
+    },
+    {
+      "name": "Leaning to Wickedness",
+      "uuid": "ffcec374-3e33-4648-b189-f24912360584",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "9aadf176-652f-441a-bc68-11c7910bb414", "consecutive": 0 },
+        { "uuid": "77388107-6661-40d9-a839-dad4b3729902", "consecutive": 0 },
+        { "uuid": "cc01617b-40f1-4e56-8758-d185e69bf8c4", "consecutive": 0 },
+        { "uuid": "fecdc86e-bccc-4a20-91ea-fa52e27ec950", "consecutive": 0 },
+        { "uuid": "074dd18a-9210-4332-a9ec-1bbec71d776f", "consecutive": 0 },
+        { "uuid": "47fbe9c3-27b9-4444-899c-c6608f65a0ac", "consecutive": 0 },
+        { "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692", "consecutive": 0 },
+        { "uuid": "6efc1260-47dd-4c14-81f5-63c2b7cbf737", "consecutive": 0 },
+        { "uuid": "04c01366-d0d5-41cc-b1d1-d3e973b5d69f", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#51376B"
+    },
+    {
+      "name": "The Sorry Story of Hapless Harold",
+      "uuid": "237be5f8-520c-46c4-b667-759d795ade2e",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "d9ad0be8-1988-46bb-a17b-4a6532cf4ac9", "consecutive": 0 },
+        { "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692", "consecutive": 0 },
+        { "uuid": "c11bb86e-397b-488e-a46a-3699c8ef24eb", "consecutive": 0 },
+        { "uuid": "2b718010-d1f6-4ede-b5e4-74d950fd0739", "consecutive": 0 },
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e", "consecutive": 0 },
+        { "uuid": "64afe89a-94e1-4954-adc0-d266ca23acd8", "consecutive": 0 },
+        { "uuid": "7d8a3060-8e65-4e79-b291-f452f64a1843", "consecutive": 0 },
+        { "uuid": "954d32c6-563f-494f-bfa3-ad0b496b4051" }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#EB910C"
+    },
+    {
+      "name": "Wilting Chrysanthemum",
+      "uuid": "3574010e-88f8-44af-b508-fcb170daf610",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "04026a1b-ddf8-4a52-9931-a3d5e8818c4d" },
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e" },
+        { "uuid": "08a49826-9117-4ee4-bcbc-4b6da30547e4" }
+      ],
+      "color": "#1D72B3"
+    },
+    {
+      "name": "The Pedigree of Bridget Bloodwicke",
+      "uuid": "db13760f-aa1c-4aaf-8bb5-83d1022c64a5",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6", "consecutive": 0 },
+        { "uuid": "008bedde-0487-4862-abb2-4f32f987e643", "consecutive": 0 },
+        { "uuid": "c11bb86e-397b-488e-a46a-3699c8ef24eb", "consecutive": 0 },
+        { "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#B50E0E"
+    },
+    {
+      "name": "Knowle's Amorous Intent",
+      "uuid": "3024c865-d1ea-4c59-be72-a4618a890cac",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "77388107-6661-40d9-a839-dad4b3729902", "consecutive": 0 },
+        { "uuid": "b8f5992c-b325-48cd-b251-14edc78c40b3", "consecutive": 0 },
+        { "uuid": "983a536c-9857-47ba-91e8-df76239485e5", "consecutive": 0 },
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e", "consecutive": 0 },
+        { "uuid": "cfd5e432-0624-4ceb-b023-af28e965e163" }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#F392F3"
+    },
+    {
+      "name": "Beware the Grin",
+      "uuid": "9ca5d940-b6f5-42fd-9a12-cea9370c4026",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e", "consecutive": 0 },
+        { "uuid": "08a49826-9117-4ee4-bcbc-4b6da30547e4", "consecutive": 0 },
+        { "uuid": "6efc1260-47dd-4c14-81f5-63c2b7cbf737", "consecutive": 0 },
+        { "uuid": "86860e64-9a6d-4518-a39c-7a691f187207", "consecutive": 0 },
+        { "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5", "consecutive": 0 },
+        { "uuid": "70907e23-2147-4c65-9e4b-52199090690d", "consecutive": 0 },
+        { "uuid": "dbd7d71a-5a75-40e5-8b81-de9f6fbe9990", "consecutive": 0 },
+        { "uuid": "954d32c6-563f-494f-bfa3-ad0b496b4051", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#000000"
+    },
+    {
+      "name": "Mother Mayhew's Ambition",
+      "uuid": "bdf9ffd3-388a-43d3-a5b2-a712c1b962a4",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692", "consecutive": 0 },
+        { "uuid": "6efc1260-47dd-4c14-81f5-63c2b7cbf737", "consecutive": 0 },
+        { "uuid": "04c01366-d0d5-41cc-b1d1-d3e973b5d69f", "consecutive": 0 }
+      ],
+      "totalSequenceLength": 0,
+      "color": "#358675"
+    },
+    {
+      "name": "Chronological Path",
+      "uuid": "604dd1e5-3afa-4043-ba33-e54846cf4d9a",
+      "type": "thread",
+      "class": "actor",
+      "sequence": [
+        { "uuid": "832f0730-f948-45df-b97b-64b0fac9b5d5", "consecutive": 0 },
+        { "uuid": "04026a1b-ddf8-4a52-9931-a3d5e8818c4d", "consecutive": 0 },
+        { "uuid": "392b1d9e-8b28-4d0a-a5af-ad45185db4fb", "consecutive": 0 },
+        { "uuid": "9aadf176-652f-441a-bc68-11c7910bb414", "consecutive": 0 },
+        { "uuid": "77388107-6661-40d9-a839-dad4b3729902", "consecutive": 0 },
+        { "uuid": "c0ff730f-2cb0-4fea-82bc-a2e4a1a42fb6", "consecutive": 0 },
+        { "uuid": "983a536c-9857-47ba-91e8-df76239485e5", "consecutive": 0 },
+        { "uuid": "cc01617b-40f1-4e56-8758-d185e69bf8c4", "consecutive": 0 },
+        { "uuid": "fecdc86e-bccc-4a20-91ea-fa52e27ec950", "consecutive": 0 },
+        { "uuid": "074dd18a-9210-4332-a9ec-1bbec71d776f", "consecutive": 0 },
+        { "uuid": "b8f5992c-b325-48cd-b251-14edc78c40b3", "consecutive": 0 },
+        { "uuid": "028a3834-e47f-46c0-beec-88b9ba01e98e", "consecutive": 0 },
+        { "uuid": "08a49826-9117-4ee4-bcbc-4b6da30547e4", "consecutive": 0 },
+        { "uuid": "414bbcc8-ea8f-4bef-a2ec-d7cfb4894692", "consecutive": 0 },
+        { "uuid": "008bedde-0487-4862-abb2-4f32f987e643", "consecutive": 0 },
+        { "uuid": "c11bb86e-397b-488e-a46a-3699c8ef24eb", "consecutive": 0 },
+        { "uuid": "2b718010-d1f6-4ede-b5e4-74d950fd0739", "consecutive": 0 },
+        { "uuid": "47fbe9c3-27b9-4444-899c-c6608f65a0ac", "consecutive": 0 },
+        { "uuid": "6efc1260-47dd-4c14-81f5-63c2b7cbf737", "consecutive": 0 },
+        { "uuid": "04c01366-d0d5-41cc-b1d1-d3e973b5d69f", "consecutive": 0 },
+        { "uuid": "cfd5e432-0624-4ceb-b023-af28e965e163", "consecutive": 0 },
+        { "uuid": "86860e64-9a6d-4518-a39c-7a691f187207", "consecutive": 0 },
+        { "uuid": "42ff0ac7-6567-4b46-acb1-423dcb91c5c5", "consecutive": 0 },
+        { "uuid": "64afe89a-94e1-4954-adc0-d266ca23acd8", "consecutive": 0 },
+        { "uuid": "dbd7d71a-5a75-40e5-8b81-de9f6fbe9990", "consecutive": 0 },
+        { "uuid": "a6058557-2f1c-4f5f-9424-f88a1cfd2bc5", "consecutive": 0 },
+        { "uuid": "70907e23-2147-4c65-9e4b-52199090690d", "consecutive": 0 },
+        { "uuid": "7d8a3060-8e65-4e79-b291-f452f64a1843", "consecutive": 0 },
+        { "uuid": "954d32c6-563f-494f-bfa3-ad0b496b4051", "consecutive": 0 }
+      ],
+      "color": "#4BDE31",
+      "totalSequenceLength": 0
+    },
+    {
+      "name": "The Libratorium Card",
+      "uuid": "4b2a5878-c3e6-4857-8d4a-13f8328fe38d",
+      "type": "element",
+      "class": "actor",
+      "facts": [{ "uuid": "bcb79c00-9d55-4a93-a677-3cfd7672f090" }]
+    },
+    {
+      "name": "The Draught of Purity",
+      "uuid": "8fc27660-7b76-46c5-8c4a-bc2112f84074",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "bb599222-3b9c-4568-a706-8f2fe8b8b741" },
+        { "uuid": "2e01339d-0352-4a73-8e63-fe9430fe2f13" },
+        { "uuid": "c6a127b5-3dc8-4566-a2cf-53bdf8028915" },
+        { "uuid": "8d36ad5e-3015-4df0-8f28-4fad1664db08" },
+        { "uuid": "0fa638da-9fc4-4f88-b8bb-498d9fdaeeb5" },
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" },
+        { "uuid": "edbd93dc-0324-4500-ac1e-ece61032c4dc" },
+        { "uuid": "fa5b2dd1-fd86-4071-a808-151bf73d8f99" },
+        { "uuid": "ebb67fe2-f908-442c-bbf9-d78829105229" },
+        { "uuid": "f350d94b-5f3d-4357-9912-f8a25f2b4d67" },
+        { "uuid": "8037e634-47bc-4f98-bc83-bdacf3a6d3d0" },
+        { "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472" },
+        { "uuid": "f0cc533e-e44f-4814-8e9a-4336b8076b9b" },
+        { "uuid": "246d5147-04f7-4756-bd07-e22183c19788" }
+      ]
+    },
+    {
+      "name": "Grave Wax",
+      "uuid": "f3351f1b-2a11-477d-be17-c93534619e3d",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
+        { "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d" },
+        { "uuid": "a8402e63-35de-4306-95b9-af3f85c84861" },
+        { "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a" },
+        { "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329" }
+      ]
+    },
+    {
+      "name": "Turnbull Farm",
+      "uuid": "b9f617a7-072c-4165-b4e4-28c0cf4918f4",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "a8b9566a-fbb7-404f-a16e-50b2a5130ac0" },
+        { "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" }
+      ]
+    },
+    {
+      "name": "Terrence Turnbull",
+      "uuid": "2c4b7c37-f780-4c08-85e9-f08b30e7e847",
+      "type": "element",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "The Libratorium",
+      "uuid": "eb14fbd2-b86d-4090-b2af-bf414113f0fa",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "dbe36b1c-7aab-43d9-b865-b3451254c229" },
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "bcb79c00-9d55-4a93-a677-3cfd7672f090" },
+        { "uuid": "9417243a-75e5-4a24-9239-6a3efc10d775" },
+        { "uuid": "4e9a83ee-2289-41d2-a4cf-c90a912b2cf5" }
+      ]
+    },
+    {
+      "name": "Sixstrata Cathedral",
+      "uuid": "31cc19d7-70f6-42d4-b0da-fea745c35297",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" },
+        { "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9" }
+      ]
+    },
+    {
+      "name": "Sangrenta Berry",
+      "uuid": "07f9cba8-588a-4f2b-aebf-b057a3bfd84f",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "c119a436-d671-4f6b-9d03-07d501d45f10" },
+        { "uuid": "f32c4e61-96dc-45d4-a036-5c5f636aa79c" },
+        { "uuid": "82c06d94-15f8-43c2-b4ae-35f6b81d9873" },
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
+        { "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade" },
+        { "uuid": "246d5147-04f7-4756-bd07-e22183c19788" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
+      ]
+    },
+    {
+      "name": "The Grin",
+      "uuid": "2da96f7f-aa84-40fa-9471-8f74e24f8ab6",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "c119a436-d671-4f6b-9d03-07d501d45f10" },
+        { "uuid": "dd837549-fa82-425d-a499-15bed14d4c2d" },
+        { "uuid": "e1f8ffd1-2556-4c00-ade9-7f339f6733f0" },
+        { "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" },
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "c6a127b5-3dc8-4566-a2cf-53bdf8028915" },
+        { "uuid": "82c06d94-15f8-43c2-b4ae-35f6b81d9873" },
+        { "uuid": "c39f8ac6-1164-42e4-b499-0fad678182f0" },
+        { "uuid": "a2446383-7ca4-4748-aab1-ab66bf604544" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" },
+        { "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9" },
+        { "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5" },
+        { "uuid": "d8831c52-c16d-4c55-8c99-3c1fd7c84a49" },
+        { "uuid": "0a33aa4b-a026-4eda-8b71-d996a8053fa1" },
+        { "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" },
+        { "uuid": "0e6e8cfd-b4e6-413a-8457-e9330f711f6e" },
+        { "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" },
+        { "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7" },
+        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
+        { "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb" },
+        { "uuid": "705d1abc-131b-4d31-b239-f0c440df1824" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
+      ]
+    },
+    {
+      "name": "Pa Hellwether",
+      "uuid": "de4b5d3a-7d22-40e5-8a3f-70386630f2b1",
+      "type": "element",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "Ma Hellwether",
+      "uuid": "ce4b22cc-71dd-49a5-8e82-bf212943ac3c",
+      "type": "element",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "Bridget Bloodwicke",
+      "uuid": "e9e2313e-4ec9-4d08-b3fa-7be9bc684e0b",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "ce097d9e-7fe4-4305-a89e-b1b66249b7ac" },
+        { "uuid": "ec553f9a-3be5-4c13-9a32-21c8cabb2f7a" },
+        { "uuid": "50734314-c7ca-4829-a0b3-b76be8f77d8f" },
+        { "uuid": "9bc9d563-035d-4c90-9401-8da8ced80b05" },
+        { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
+        { "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" },
+        { "uuid": "305a22ea-cdba-4168-95b4-18f050e97321" },
+        { "uuid": "c39f8ac6-1164-42e4-b499-0fad678182f0" },
+        { "uuid": "0a33aa4b-a026-4eda-8b71-d996a8053fa1" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
+        { "uuid": "6a538617-be3d-4276-831d-3c7f5be15a84" },
+        { "uuid": "eea2d9fe-bd14-4643-8bd3-17fe8fa364c0" },
+        { "uuid": "9bb5f2cf-0cde-42a8-a68c-d4c6e90b268f" }
+      ]
+    },
+    {
+      "name": "Big Jack the Blacksmith",
+      "uuid": "ee4d8dfd-ecf3-4742-a9f3-40eb1eb0a1ac",
+      "type": "element",
+      "class": "actor",
+      "facts": []
+    },
+    {
+      "name": "The Broken Bridge",
+      "uuid": "a20031b6-eaf0-4778-8178-8bb344979a90",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" },
+        { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
+        { "uuid": "ed0d7a35-2b25-4a2e-b7d2-ff0e20493565" },
+        { "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121" }
+      ]
+    },
+    {
+      "name": "LeWant's Home for Lost Foundlings",
+      "uuid": "8c0a9133-4969-42ba-8b47-860968ae58d5",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" },
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" },
+        { "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18" }
+      ]
+    },
+    {
+      "name": "Langua LeWant",
+      "uuid": "116016f6-a72e-407b-9d44-e37d48c4a1b3",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "d69aba5e-02c4-4d64-9b48-56e574833472" },
+        { "uuid": "a2446383-7ca4-4748-aab1-ab66bf604544" },
+        { "uuid": "6a414758-d706-4936-9927-8a6998c7ce42" },
+        { "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18" }
+      ]
+    },
+    {
+      "name": "Delia Deacon",
+      "uuid": "95ea29e0-472a-40c3-bcd0-b68256c09d9a",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd" }
+      ]
+    },
+    {
+      "name": "Chrysanthemum",
+      "uuid": "0e02eaa7-dfc5-494b-ab6c-57927bc979e7",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" },
+        { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
+        { "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d" },
+        { "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" },
+        { "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd" },
+        { "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329" }
+      ]
+    },
+    {
+      "name": "Father Nightengale",
+      "uuid": "4e2e4587-14f9-49d1-b9d9-feab3267cac1",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "f32c4e61-96dc-45d4-a036-5c5f636aa79c" },
+        { "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" },
+        { "uuid": "392acf03-2d71-42ff-9959-1da9f9a481d3" },
+        { "uuid": "2e01339d-0352-4a73-8e63-fe9430fe2f13" },
+        { "uuid": "c6a127b5-3dc8-4566-a2cf-53bdf8028915" },
+        { "uuid": "9bc9d563-035d-4c90-9401-8da8ced80b05" },
+        { "uuid": "edbd93dc-0324-4500-ac1e-ece61032c4dc" },
+        { "uuid": "fb4af7e6-6572-41b7-bb46-e4c20f78d16e" },
+        { "uuid": "c0a34783-32e7-49a3-a896-7b5a3e920a60" },
+        { "uuid": "30a54003-7f90-40ec-89c2-d545bc0758c5" },
+        { "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472" },
+        { "uuid": "357fe1c5-5bb9-41ca-84ae-3f162b49d932" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
+        { "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7" },
+        { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" },
+        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
+      ]
+    },
+    {
+      "name": "The Apothecary",
+      "uuid": "a5299338-9fab-4302-94a4-1d5bc35e2ce0",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "bb599222-3b9c-4568-a706-8f2fe8b8b741" },
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "dbe36b1c-7aab-43d9-b865-b3451254c229" },
+        { "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9" },
+        { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
+        { "uuid": "8037e634-47bc-4f98-bc83-bdacf3a6d3d0" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
+        { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
+        { "uuid": "7bcccdca-7211-4cde-a368-13bdbe4921ac" },
+        { "uuid": "fb4af7e6-6572-41b7-bb46-e4c20f78d16e" },
+        { "uuid": "5a200e80-36e4-4ea1-9b28-a7774c7ab69c" },
+        { "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472" },
+        { "uuid": "fca0c4c6-6585-4717-a51e-7e6f4bf78310" },
+        { "uuid": "c0fb93ea-0e0a-4798-847f-f4401243d944" },
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
+      ]
+    },
+    {
+      "name": "Constable Knowles",
+      "uuid": "6578d21e-4cee-4ae6-8b6a-d36ff08d65c4",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "8d36ad5e-3015-4df0-8f28-4fad1664db08" },
+        { "uuid": "0fa638da-9fc4-4f88-b8bb-498d9fdaeeb5" },
+        { "uuid": "cd07ced0-2790-41e3-ab3b-4dfd3785ca67" },
+        { "uuid": "874f67e7-8470-4892-b401-56d9869a2174" },
+        { "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb" },
+        { "uuid": "fa5b2dd1-fd86-4071-a808-151bf73d8f99" },
+        { "uuid": "e1a2d963-76ff-4c76-a588-c1bdacfc9558" },
+        { "uuid": "fca0c4c6-6585-4717-a51e-7e6f4bf78310" },
+        { "uuid": "c0fb93ea-0e0a-4798-847f-f4401243d944" },
+        { "uuid": "f9b02a41-f8c1-46c1-95c7-da9a1a15b4c8" },
+        { "uuid": "0e6e8cfd-b4e6-413a-8457-e9330f711f6e" },
+        { "uuid": "ef28b7db-fa7a-4f7e-b567-0f2432844d24" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew",
+      "uuid": "3499e107-f093-45c5-8251-728a470f842f",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "0fa638da-9fc4-4f88-b8bb-498d9fdaeeb5" },
+        { "uuid": "30a54003-7f90-40ec-89c2-d545bc0758c5" },
+        { "uuid": "ebb67fe2-f908-442c-bbf9-d78829105229" },
+        { "uuid": "357fe1c5-5bb9-41ca-84ae-3f162b49d932" },
+        { "uuid": "f9b02a41-f8c1-46c1-95c7-da9a1a15b4c8" }
+      ]
+    },
+    {
+      "name": "Etta Turnbull",
+      "uuid": "a7c9b8bd-931f-4234-a4a7-91a75c866c74",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3" },
+        { "uuid": "82c06d94-15f8-43c2-b4ae-35f6b81d9873" },
+        { "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" },
+        { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
+        { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" },
+        { "uuid": "5448491f-2434-42e9-a2e2-4b5179ba0808" },
+        { "uuid": "f76fa79d-8774-4abb-971f-7cff32ac97be" },
+        { "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80" },
+        { "uuid": "a5583693-eeab-4151-9d3e-dd43c193c95a" },
+        { "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade" },
+        { "uuid": "c11aab57-5b03-44b7-8df6-f3d5afd9e77d" }
+      ]
+    },
+    {
+      "name": "Gregory Grimorgan",
+      "uuid": "095765ac-94ef-4653-a51f-267c23126ef5",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "38bcba95-4442-47b5-b62d-639d2e17ff37" },
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "d8831c52-c16d-4c55-8c99-3c1fd7c84a49" },
+        { "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a" }
+      ]
+    },
+    {
+      "name": "Hapless Harold",
+      "uuid": "d882bc63-33f7-46f7-b21e-fb2bccab9a16",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3" },
+        { "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9" },
+        { "uuid": "bcb79c00-9d55-4a93-a677-3cfd7672f090" },
+        { "uuid": "8306db4a-690c-466a-915e-c04ccbee404c" },
+        { "uuid": "1f36b205-b528-4b82-a226-c81df6a2afe2" },
+        { "uuid": "39980160-e36f-48b2-9e85-eac5cad1805a" },
+        { "uuid": "e1a2d963-76ff-4c76-a588-c1bdacfc9558" },
+        { "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade" },
+        { "uuid": "a5583693-eeab-4151-9d3e-dd43c193c95a" },
+        { "uuid": "9417243a-75e5-4a24-9239-6a3efc10d775" },
+        { "uuid": "7bcccdca-7211-4cde-a368-13bdbe4921ac" },
+        { "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80" },
+        { "uuid": "c11aab57-5b03-44b7-8df6-f3d5afd9e77d" },
+        { "uuid": "ef28b7db-fa7a-4f7e-b567-0f2432844d24" },
+        { "uuid": "05ad9cd8-8971-4a10-95ca-f4ef1de1b2f1" }
+      ]
+    }
+  ],
+  "content": []
+}

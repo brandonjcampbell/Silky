@@ -17,6 +17,8 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import _ from "lodash";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
+import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
+
 
 import { useState, useContext, useEffect } from "react";
 
@@ -118,177 +120,187 @@ const Graph = ({ type }) => {
   return (
     <div>
       <div className="View">
-        <div className="List">
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={layout.name}
-            onChange={(e) => {
-              let tempLayout = _.cloneDeep(layout);
-              tempLayout.name = e.target.value;
-              setLayout(tempLayout);
-            }}
-          >
-            <MenuItem value="cola">Cola</MenuItem>
-            <MenuItem value="cose-bilkent">COSEBilkent</MenuItem>
-            <MenuItem value="dagre">Dagre</MenuItem>
-            <MenuItem value="klay">Klay</MenuItem>
-            <MenuItem value="fcose">Fcose</MenuItem>
-            <MenuItem value="spread">Spread</MenuItem>
-            <MenuItem value="cise">Cise</MenuItem>
-            <MenuItem value="avsdf">avsdf</MenuItem>
-          </Select>
+        <ReflexContainer orientation="vertical">
+          <ReflexElement className="left-pane" flex={0.15}>
+            <div className="List">
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={layout.name}
+                onChange={(e) => {
+                  let tempLayout = _.cloneDeep(layout);
+                  tempLayout.name = e.target.value;
+                  setLayout(tempLayout);
+                }}
+              >
+                <MenuItem value="cola">Cola</MenuItem>
+                <MenuItem value="cose-bilkent">COSEBilkent</MenuItem>
+                <MenuItem value="dagre">Dagre</MenuItem>
+                <MenuItem value="klay">Klay</MenuItem>
+                <MenuItem value="fcose">Fcose</MenuItem>
+                <MenuItem value="spread">Spread</MenuItem>
+                <MenuItem value="cise">Cise</MenuItem>
+                <MenuItem value="avsdf">avsdf</MenuItem>
+              </Select>
 
-          <div>
-            <Checkbox
-              defaultChecked
-              style={{
-                color: "#444",
-              }}
-              onClick={() => {
-                setHideDisconnectedNodes(!hideDisconnctedNodes);
-              }}
-            />
-            Hide disconnected nodes
-          </div>
-          <div>
-            <Checkbox
-              defaultChecked
-              onClick={() => {
-                setRepositionNodes(!repositionNodes);
-              }}
-            />
-            Reposition nodes on change
-          </div>
-          <div>
-            <Checkbox
-              defaultChecked
-              onClick={() => {
-                setShowNodeText(!showNodeText);
-              }}
-            />
-            Show Snippet Text
-          </div>
-          <div>
-            <Checkbox
-              defaultChecked
-              onClick={() => {
-                setShowEdgeText(!showEdgeText);
-              }}
-            />
-            Show Thread Text
-          </div>
+              <div>
+                <Checkbox
+                  defaultChecked
+                  style={{
+                    color: "#444",
+                  }}
+                  onClick={() => {
+                    setHideDisconnectedNodes(!hideDisconnctedNodes);
+                  }}
+                />
+                Hide disconnected nodes
+              </div>
+              <div>
+                <Checkbox
+                  defaultChecked
+                  onClick={() => {
+                    setRepositionNodes(!repositionNodes);
+                  }}
+                />
+                Reposition nodes on change
+              </div>
+              <div>
+                <Checkbox
+                  defaultChecked
+                  onClick={() => {
+                    setShowNodeText(!showNodeText);
+                  }}
+                />
+                Show Snippet Text
+              </div>
+              <div>
+                <Checkbox
+                  defaultChecked
+                  onClick={() => {
+                    setShowEdgeText(!showEdgeText);
+                  }}
+                />
+                Show Thread Text
+              </div>
 
-          <Button
-            variant="contained"
-            onClick={() => {
-              cy.center();
-            }}
-          >
-            Center
-          </Button>
-          <Button variant="contained" onClick={() => cy.layout(layout).run()}>
-            Reposition
-          </Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  cy.center();
+                }}
+              >
+                Center
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => cy.layout(layout).run()}
+              >
+                Reposition
+              </Button>
 
-          <h2>
-            {" "}
-            <LinearScaleIcon /> Threads
-          </h2>
+              <h2>
+                {" "}
+                <LinearScaleIcon /> Threads
+              </h2>
 
-          {globalState.state.actors.map((x) => {
-            if (x.type === "thread") {
-              return (
-                <div>
-                  <Checkbox
-                    value={x.name}
-                    defaultChecked
-                    style={{
-                      color: x.color ? x.color : "#444",
-                    }}
-                    onClick={() => {
-                      if (hide.includes(x.uuid)) {
-                        setHide(hide.filter((y) => y !== x.uuid));
-                      } else {
-                        setHide([...hide, x.uuid]);
-                      }
-                    }}
-                  />
-                  {x.name}
-                </div>
-              );
-            }
-          })}
-        </div>
-
-        <div className="Workspace">
-          <CytoscapeComponent
-            layout={layout}
-            cy={handleCy}
-            elements={[
-              ...content.filter(
-                (x) =>
-                  hideDisconnctedNodes === false ||
-                  axioms.filter(
-                    (y) =>
-                      y.data.source === x.data.id || y.data.target === x.data.id
-                  ).length > 0
-              ),
-              ...axioms,
-            ]}
-            style={{
-              height: windowDimensions.height+20,
-              width: windowDimensions.width-400,
-            }}
-            stylesheet={[
-              {
-                selector: "node",
-                style: {
-                  height: showNodeText ? 100 : 15,
-                  width: showNodeText ? 100 : 15,
-                  shape: "circle",
-                  backgroundColor: "#333",
-                  label: showNodeText ? "data(label)" : "",
-                  "text-wrap": "wrap",
-                  "text-max-width": 100,
-                  "font-size": "12px",
-                  "text-halign": "center",
-                  "text-valign": "center",
-                  color: "white",
-                  "text-outline-color": "black",
-                  "text-outline-width": 2,
-                },
-              },
-              {
-                selector: "edge",
-                style: {
-                  width: 2,
-                  "line-color": "data(color)",
-                  "target-arrow-color": "data(color)",
-                  "target-arrow-shape": "triangle",
-                  "curve-style": "bezier",
-                  color: "black",
-                  "text-outline-color": "data(color)",
-                  "text-outline-width": 2,
-                  "font-size": "12px",
-                  "edge-text-rotation": "autorotate",
-                  label: showEdgeText ? "data(label)" : "",
-                },
-              },
-              {
-                selector: "node[hyper>0]",
-                style: {
-                  color: "black",
-                  width: 25,
-                  height: 25,
-                  backgroundColor: "white",
-                  "text-outline-color": "white",
-                  "text-outline-width": 2,
-                },
-              },
-            ]}
-          />
-        </div>
+              {globalState.state.actors.map((x) => {
+                if (x.type === "thread") {
+                  return (
+                    <div>
+                      <Checkbox
+                        value={x.name}
+                        defaultChecked
+                        style={{
+                          color: x.color ? x.color : "#444",
+                        }}
+                        onClick={() => {
+                          if (hide.includes(x.uuid)) {
+                            setHide(hide.filter((y) => y !== x.uuid));
+                          } else {
+                            setHide([...hide, x.uuid]);
+                          }
+                        }}
+                      />
+                      {x.name}
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          </ReflexElement>
+          <ReflexSplitter />
+          <ReflexElement className="middle-pane" flex={0.85}>
+            <div className="Workspace">
+              <CytoscapeComponent
+                layout={layout}
+                cy={handleCy}
+                elements={[
+                  ...content.filter(
+                    (x) =>
+                      hideDisconnctedNodes === false ||
+                      axioms.filter(
+                        (y) =>
+                          y.data.source === x.data.id ||
+                          y.data.target === x.data.id
+                      ).length > 0
+                  ),
+                  ...axioms,
+                ]}
+                style={{
+                  height: windowDimensions.height + 20,
+                  width: windowDimensions.width - 400,
+                }}
+                stylesheet={[
+                  {
+                    selector: "node",
+                    style: {
+                      height: showNodeText ? 100 : 15,
+                      width: showNodeText ? 100 : 15,
+                      shape: "circle",
+                      backgroundColor: "#333",
+                      label: showNodeText ? "data(label)" : "",
+                      "text-wrap": "wrap",
+                      "text-max-width": 100,
+                      "font-size": "12px",
+                      "text-halign": "center",
+                      "text-valign": "center",
+                      color: "white",
+                      "text-outline-color": "black",
+                      "text-outline-width": 2,
+                    },
+                  },
+                  {
+                    selector: "edge",
+                    style: {
+                      width: 2,
+                      "line-color": "data(color)",
+                      "target-arrow-color": "data(color)",
+                      "target-arrow-shape": "triangle",
+                      "curve-style": "bezier",
+                      color: "black",
+                      "text-outline-color": "data(color)",
+                      "text-outline-width": 2,
+                      "font-size": "12px",
+                      "edge-text-rotation": "autorotate",
+                      label: showEdgeText ? "data(label)" : "",
+                    },
+                  },
+                  {
+                    selector: "node[hyper>0]",
+                    style: {
+                      color: "black",
+                      width: 25,
+                      height: 25,
+                      backgroundColor: "white",
+                      "text-outline-color": "white",
+                      "text-outline-width": 2,
+                    },
+                  },
+                ]}
+              />
+            </div>
+          </ReflexElement>
+        </ReflexContainer>
       </div>
     </div>
   );

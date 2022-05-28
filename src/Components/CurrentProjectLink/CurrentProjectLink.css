@@ -1,12 +1,8 @@
 .wrapper{
-    display: flex;
     padding:12px;
     color:white;
-   
-}
-.logo{
-    height:40px;
+    display: inline-block;
     position: absolute;
-    right:20px;
     top:5px;
+    right:15px;
 }

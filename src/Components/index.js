@@ -3,6 +3,7 @@ import ActorList from "./ActorList";
 import CurrentProjectLink from "./CurrentProjectLink";
 import DraggableList from "./DraggableList";
 import ElementTabs from "./ElementTabs";
+import FactTabs from "./FactTabs";
 import FormDialog from "./FormDialog";
 import Graph from "./Graph";
 import Map from "./Map";
@@ -16,6 +17,7 @@ import Thread from "./Thread";
 import ThreadTabs from "./ThreadTabs";
 import Timeline from "./Timeline";
 import Web from "./Web";
+
 import Workspace from "./Workspace";
 export {
   App,
@@ -23,6 +25,7 @@ export {
   CurrentProjectLink,
   DraggableList,
   ElementTabs,
+  FactTabs,
   FormDialog,
   Graph,
   Map,

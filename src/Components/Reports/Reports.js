@@ -36,9 +36,6 @@ const Reports = () => {
           labelId="demo-simple-select-outlined-label"
           id="demo-simple-select-outlined"
           onChange={(e) => {
-            console.log(
-              globalState.state.actors.find((x) => x.uuid === e.target.value)
-            );
             setList([
               ...list,
               globalState.state.actors.find((x) => x.uuid === e.target.value),

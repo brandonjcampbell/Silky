@@ -6,6 +6,10 @@ import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "@mui/material/Avatar";
 import { uploadPic } from "../../utils";
+import { confirmAlert } from "react-confirm-alert"; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+
+
 import "./Workspace.css";
 
 const homedir = window.require("os").homedir();
@@ -40,9 +44,24 @@ const Workspace = ({ actorUuid }) => {
   };
 
   const remove = () => {
-    dispatch({
-      action: "removeActor",
-      payload: { uuid: actorUuid },
+    confirmAlert({
+      title: "Confirm to remove",
+      message: "Are you sure you want to remove " +actor.type+" "+ actor.name + "? You won't be able to undo this action.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            dispatch({
+              action: "removeActor",
+              payload: { uuid: actorUuid },
+            });
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
     });
   };
 
@@ -69,7 +88,7 @@ const Workspace = ({ actorUuid }) => {
   return (
     <div className="workspace">
       {actor && (
-        <h2>
+        <h2 className="workspaceHeader">
           <Avatar
             className="avatar"
             alt=" "

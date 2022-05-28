@@ -25,7 +25,6 @@ const ActorList = ({ match, type }) => {
   const {
     params: { userId },
   } = match;
-  console.log("match??", match.params.uuid);
 
   const handleRowClick = (row) => {
     setActive(row);
@@ -96,10 +95,13 @@ const ActorList = ({ match, type }) => {
             )}
             handleClick={handleRowClick}
             saveList={(e) => {
+              if(search){
+                alert("Clear your search to re-order the list.")
+              }
               dispatch({
                 action: "saveActors",
                 for: type,
-                payload: { actors: e },
+                payload: { actors:  search? content.filter(x=>x.type === type) : e },
               });
             }}
             getType={(x) => {
@@ -108,12 +110,12 @@ const ActorList = ({ match, type }) => {
                   .type + "s"
               );
             }}
-            onDrop={() => console.log("not necessary")}
+            onDrop={() =>{}}
             reorderList={(e) => {
               dispatch({
                 action: "reorderActors",
                 for: type,
-                payload: { actors: e },
+                payload: { actors:  search? content.filter(x=>x.type === type) : e},
               });
             }}
           ></DraggableList>

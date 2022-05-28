@@ -1,4 +1,9 @@
 function getDisplayName(uuid, globalState) {
-  return globalState.find(globalState, uuid).name;
+  const result = globalState.find(globalState, uuid);
+  if (result) {
+    return result.name;
+  } else {
+    return null;
+  }
 }
 export default getDisplayName;
