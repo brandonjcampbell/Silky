@@ -18,6 +18,8 @@ code {
   background-color:black;
   text-decoration: none;
   color:white;
+ padding-left:100px;
+  
 }
 .Topbar a{
   text-decoration: none;
@@ -25,39 +27,58 @@ code {
 .App{
   display: flex;
 }
-.Sidebar{
-  height:calc(100vh - 50px);
+.logo{
+  height:55px;
+z-index: 100;
+position: fixed;
+top:2px;
+left:20px;
+
 }
+.Topbar .menuItem{
+background:rgb(24, 23, 23);
+border-radius: 100px;
+padding:8px;
+margin:5px;
+color:rgb(185, 185, 185);
+}
+
 .View{
 
   display:flex;
-  width:calc(100vw - 80px);
+  width:100vw;
   height:calc(100vh - 50px);
   overflow-y: hidden;
   overflow-x: hidden;
 
 }
 .Workspace{
-  padding: 0px;
-  width:60%;
+
+  overflow-y: hidden;
+  overflow-x: hidden;
   height:calc(100vh - 50px);
 }
 .List{
 
-  min-width:200px;
-  width:20%;
-  height:calc(100vh - 350px);
+padding-right:5px;
+margin-top:-5px;
+height:calc(100vh - 50px);
+  background-color: #1b1818;
 
 }
 .List > *{
   color:white;
+ 
 }
 
 .Extras{
-  min-width:200px;
-  width:20%;
-  overflow-y: auto;
   height:calc(100vh - 50px);
+}
+
+.reflex-container.vertical > .reflex-splitter {
+  border-right: 0px solid #1b1818;
+  background-color: #1b1818;
+  border-left: 0px solid #1b1818;
 }
 
 
@@ -85,9 +106,3 @@ code {
 
 
 
-
-.videoElement {
-	width: 100%;
-
-	background-color: #666;
-}

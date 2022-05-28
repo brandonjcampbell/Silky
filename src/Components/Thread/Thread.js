@@ -141,7 +141,7 @@ const Thread = ({ actorUuid }) => {
   const renderTextEditor = () => {
     if (actor && toggle === true) {
       return (
-        <div>
+       
 
           <div className="editor">
             {actor && actor.sequence && (
@@ -156,7 +156,7 @@ const Thread = ({ actorUuid }) => {
             )}
             {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}
           </div>
-        </div>
+       
       );
     } else {
       return <div></div>;

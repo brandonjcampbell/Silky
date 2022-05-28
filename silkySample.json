@@ -3,6 +3,143 @@
   "cursor": null,
   "actors": [
     {
+      "name": "Father Nightengale preaches that The Apothecary is in league with The Grin",
+      "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum's corpse saponified into Grave Wax",
+      "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" }]
+    },
+    {
+      "name": "The Sangrenta Berry is the first step toward Dark Chemistry",
+      "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Chrysanthemum grew obese feasting on Sangrenta Berries",
+      "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Delia Deacon was a descendant of Chrysanthemum",
+      "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Dark Chemistry",
+      "uuid": "c5d34310-52d1-4883-a288-86a8c2107f9f",
+      "type": "element",
+      "class": "actor",
+      "facts": [
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" },
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
+      ]
+    },
+    {
+      "name": "The Apothecary is a master of Dark Chemistry",
+      "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Delia Deacon learned dark chemistry in her banishment",
+      "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew spills the beans",
+      "uuid": "99d7cb13-afdf-4f59-b701-3b47be5c8be8",
+      "type": "snippet",
+      "class": "actor",
+      "elements": [],
+      "content": {
+        "entityMap": {},
+        "blocks": [
+          {
+            "key": "637gr",
+            "text": "[Mother Mayhew spills the beans]",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ]
+      },
+      "facts": [
+        { "uuid": "3c9bcd36-33d1-412e-870a-9c3db45fdef8" },
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" }
+      ]
+    },
+    {
+      "name": "Mother Mayhew has a very good memory",
+      "uuid": "3c9bcd36-33d1-412e-870a-9c3db45fdef8",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold brings Father Nightengale's sleeve to Sixstrata Cathedral",
+      "uuid": "a8dafaf6-2234-42f7-a97f-d0195ff3e375",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" }
+      ]
+    },
+    {
+      "name": "Delia Deacon longed for a family",
+      "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57",
+      "type": "fact",
+      "class": "actor"
+    },
+    {
+      "name": "Harold brings a lock of Bridget's hair to Sixstrata Cathedral",
+      "uuid": "d92ba7b5-f5db-4302-849d-e1a49e0dcc0c",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" },
+        { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" }
+      ]
+    },
+    {
+      "name": "Appease the Apothecary to Appease the Grin",
+      "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6",
+      "type": "fact",
+      "class": "actor",
+      "facts": [
+        { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" }
+      ]
+    },
+    {
+      "name": "The Grin can Smell Wickedness",
+      "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d",
+      "type": "fact",
+      "class": "actor",
+      "facts": [{ "uuid": "6578580b-1fee-469c-b2db-c4208b44959d" }]
+    },
+    {
       "name": "The blob of melted wax is Bridget's dog",
       "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a",
       "type": "fact",
@@ -203,7 +340,11 @@
       "name": "The Apothecary was once Delia Deacon",
       "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" }
+      ]
     },
     {
       "name": "Father Nightengale purchased Bridget's Dress",
@@ -474,10 +615,24 @@
       ]
     },
     {
-      "name": "The Apothecary ate from the Sangrenta Berry Bush",
+      "name": "Delia Deacon ate from the Sangrenta Berry Bush",
       "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "3699877e-93ba-460a-ba35-bfdd96411c6c:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      }
     },
     {
       "name": "Ancient History",
@@ -526,7 +681,7 @@
       "color": "#7AA06C"
     },
     {
-      "name": "The Apothecary longed to be part of the community",
+      "name": "Delia Deacon longed to be part of the community",
       "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692",
       "type": "fact",
       "class": "actor"
@@ -549,13 +704,35 @@
           }
         ],
         "entityMap": {}
-      }
+      },
+      "facts": [
+        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
+        { "uuid": "5498be2e-6199-46f4-9a3f-7f0dfba4dca6" }
+      ]
     },
     {
-      "name": "The Apothecary was banished from Gladhollow long ago",
+      "name": "Delia Deacon was banished from Gladhollow long ago",
       "uuid": "9f8d42da-346e-4001-991d-b689515c4900",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "content": {
+        "blocks": [
+          {
+            "key": "9f8d42da-346e-4001-991d-b689515c4900:0",
+            "text": "",
+            "type": "unstyled",
+            "depth": 0,
+            "inlineStyleRanges": [],
+            "entityRanges": [],
+            "data": {}
+          }
+        ],
+        "entityMap": {}
+      },
+      "facts": [
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" }
+      ]
     },
     {
       "name": "Bear the Bones Home",
@@ -638,7 +815,11 @@
       "name": "Bridget locks Etta in her burning room to lure The Grin to Turnbull Farm",
       "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [
+        { "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d" },
+        { "uuid": "2a4e86d3-86c4-4103-a873-822978874a7c" }
+      ]
     },
     {
       "name": "LeWant found Wanting",
@@ -690,7 +871,12 @@
         ],
         "entityMap": {}
       },
-      "facts": [{ "uuid": "6a414758-d706-4936-9927-8a6998c7ce42" }]
+      "facts": [
+        { "uuid": "6a414758-d706-4936-9927-8a6998c7ce42" },
+        { "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5" },
+        { "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9" },
+        { "uuid": "68d4a5f9-b070-4a1a-ab22-b69b4a8a831a" }
+      ]
     },
     {
       "name": "The Grin breaks into The Home for Lost Foundlings",
@@ -733,27 +919,37 @@
       "uuid": "78f62057-8e03-423d-94fc-481bcb10ebb5",
       "type": "fact",
       "class": "actor",
-      "facts": [{ "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" }]
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" }
+      ]
     },
     {
       "name": "The Grin devours Phillip Phips",
       "uuid": "beb7ec68-0ec4-40e0-ab6a-b1d56d055ea9",
       "type": "fact",
       "class": "actor",
-      "facts": [{ "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" }]
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "38c75133-d1c0-4118-ad8c-14dc772923e7" }
+      ]
     },
     {
       "name": "The Grin devours Gregory Grimorgan",
       "uuid": "d8831c52-c16d-4c55-8c99-3c1fd7c84a49",
       "type": "fact",
       "class": "actor",
-      "facts": [{ "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" }]
+      "facts": [
+        { "uuid": "71412dcd-ca34-4cb6-83c9-aab42700c625" },
+        { "uuid": "311cfc9c-516b-41a9-a96f-174e09380d18" }
+      ]
     },
     {
       "name": "The Grin devours Bridget Bloodwicke",
       "uuid": "0a33aa4b-a026-4eda-8b71-d996a8053fa1",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [{ "uuid": "a5df79e7-c617-423f-b010-7c181157e8f0" }]
     },
     {
       "name": "Knowles flounders to keep the facade",
@@ -1044,7 +1240,8 @@
       "name": "Etta is curious about the taste of Sangrenta Berry",
       "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [{ "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }]
     },
     {
       "name": "The Immaculate Bakesale",
@@ -1144,7 +1341,12 @@
       "name": "Father Nightengale wants strict authority",
       "uuid": "392acf03-2d71-42ff-9959-1da9f9a481d3",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" },
+        { "uuid": "9e09c588-4e4c-4ec0-a122-4b408f1e185d" }
+      ]
     },
     {
       "name": "Nightengale's second sermon",
@@ -1297,13 +1499,21 @@
       "name": "Harold wants to exonerate Etta",
       "uuid": "15394051-737f-4a4a-8779-ffcf5e1b8af3",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [
+        { "uuid": "11016c74-76e2-4d23-8a47-ee6d0f99f94e" },
+        { "uuid": "39f05e62-bada-4b60-8839-e88bebd42a80" }
+      ]
     },
     {
       "name": "Etta is on bad terms with Father Nightengale",
       "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c",
       "type": "fact",
-      "class": "actor"
+      "class": "actor",
+      "facts": [
+        { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
+      ]
     },
     {
       "name": "Smoldering Aftermath",
@@ -1958,7 +2168,8 @@
         { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
         { "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d" },
         { "uuid": "a8402e63-35de-4306-95b9-af3f85c84861" },
-        { "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a" }
+        { "uuid": "23d99b5a-1cb5-42c6-868d-491156e85d8a" },
+        { "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329" }
       ]
     },
     {
@@ -2013,7 +2224,9 @@
         { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
         { "uuid": "9d65d181-bf36-49d5-be3a-0f821808fdf3" },
         { "uuid": "3897e4fe-8937-44a5-9d54-6cbe566beade" },
-        { "uuid": "246d5147-04f7-4756-bd07-e22183c19788" }
+        { "uuid": "246d5147-04f7-4756-bd07-e22183c19788" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" },
+        { "uuid": "1119d996-91a3-4d80-be1d-841ac6c0a74f" }
       ]
     },
     {
@@ -2042,7 +2255,8 @@
         { "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7" },
         { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
         { "uuid": "f40ab8a7-289e-4224-9571-a3f38a747edb" },
-        { "uuid": "705d1abc-131b-4d31-b239-f0c440df1824" }
+        { "uuid": "705d1abc-131b-4d31-b239-f0c440df1824" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
       ]
     },
     {
@@ -2131,7 +2345,15 @@
       "uuid": "95ea29e0-472a-40c3-bcd0-b68256c09d9a",
       "type": "element",
       "class": "actor",
-      "facts": [{ "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" }]
+      "facts": [
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "b6abdb42-17f1-4997-8c72-158926fb2c5d" },
+        { "uuid": "507c028c-8f74-43aa-8bdf-ea108ec88e57" },
+        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
+        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd" }
+      ]
     },
     {
       "name": "Chrysanthemum",
@@ -2142,7 +2364,11 @@
         { "uuid": "3b85fec2-8a76-4e0d-a4cf-9f6896551c41" },
         { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
         { "uuid": "82f91790-dbb1-4819-b3b9-a0921f1f346d" },
-        { "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121" }
+        { "uuid": "81fcdda7-bd38-46fc-9c76-214ee979e121" },
+        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
+        { "uuid": "cc3b9bd6-24d0-412d-ae52-3004ee704d5c" },
+        { "uuid": "ba09eca3-db3c-4d1b-8a76-337503a7cbbd" },
+        { "uuid": "5ad82219-37e9-40ed-9538-9c94f77a9329" }
       ]
     },
     {
@@ -2166,7 +2392,8 @@
         { "uuid": "ab62da99-d541-4e51-89cc-ac7dbeed9e5d" },
         { "uuid": "1f56158e-6230-45b3-8db3-9a3a44119ec7" },
         { "uuid": "840e3798-7246-4dd8-987d-4a71da85a82c" },
-        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" }
+        { "uuid": "8ecadae2-8f84-46de-83b2-3fde01113ba2" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
       ]
     },
     {
@@ -2178,11 +2405,8 @@
         { "uuid": "bb599222-3b9c-4568-a706-8f2fe8b8b741" },
         { "uuid": "140cca5a-d86f-41c1-9945-4ee82a54a437" },
         { "uuid": "dbe36b1c-7aab-43d9-b865-b3451254c229" },
-        { "uuid": "3699877e-93ba-460a-ba35-bfdd96411c6c" },
-        { "uuid": "b970ee1a-2e60-471d-bc5c-71afc2c09692" },
         { "uuid": "5246c3e7-8e8c-44cd-990f-25ac44becbf9" },
         { "uuid": "8235b8a1-dfcf-4f9a-a2ab-52a08a52cb9b" },
-        { "uuid": "9f8d42da-346e-4001-991d-b689515c4900" },
         { "uuid": "8037e634-47bc-4f98-bc83-bdacf3a6d3d0" },
         { "uuid": "247fa3e6-201a-4416-a05b-98b827d4d9a9" },
         { "uuid": "a1e1ab4a-9def-4a84-b4fd-75e4bcb06f84" },
@@ -2192,7 +2416,9 @@
         { "uuid": "dc2723a8-369d-4ecc-8fb5-a7e5f1d06472" },
         { "uuid": "fca0c4c6-6585-4717-a51e-7e6f4bf78310" },
         { "uuid": "c0fb93ea-0e0a-4798-847f-f4401243d944" },
-        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" }
+        { "uuid": "6250e74f-4a20-41bf-8214-eb5bcece85ff" },
+        { "uuid": "565e580a-4889-4bc0-9925-92cd27bcc9e4" },
+        { "uuid": "c90ec9d4-d80e-4718-808d-df0ad871ab63" }
       ]
     },
     {

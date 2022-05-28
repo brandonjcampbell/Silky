@@ -110,7 +110,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
         </div>
         <Editor
           editorStyle={{
-            height: "calc(100vh - 316px)",
+            height: "calc(100vh - 218px)",
             paddingRight: "15px",
             paddingLeft: "20px",
             color: "rgb(300, 300, 300)",
