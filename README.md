@@ -1,4 +1,3 @@
-# Silky
 ![Silky](./src/images/lightLogo.svg)
 
 This project is very much a work in progress, so use caution when writing in the tool. Use at your own risk!
