@@ -21,12 +21,15 @@ import {
   FactTabs,
   ThreadTabs,
   ElementTabs,
+  LinkTabs,
+  LinkSpace
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
   GiSpiderWeb,
   GiSewingString,
   GiLightBulb,
+  GiPendulumSwing
 } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
@@ -50,6 +53,12 @@ ReactDOM.render(
             {" "}
             <GiLightBulb className="menuItem" />
           </Link>
+
+          <Link to="/links">
+            {" "}
+            <GiPendulumSwing className="menuItem" />
+          </Link>
+
 
           <Link to="/snippets">
             <TiScissors className="menuItem" />
@@ -162,6 +171,54 @@ ReactDOM.render(
                 </div>
               )}
             />
+
+<Route
+              path="/Links"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <ReflexContainer orientation="vertical">
+                    <ReflexElement className="left-pane" flex={0.15}>
+                      <div className="List">
+                        <ActorList {...props} type="link" />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="middle-pane" flex={0.85}>
+                      <div className="Workspace"></div>
+                    </ReflexElement>
+                  </ReflexContainer>
+                </div>
+              )}
+            />
+            <Route
+              path="/Links/:uuid"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <ReflexContainer orientation="vertical">
+                    <ReflexElement className="left-pane" flex={0.15}>
+                      <div className="List">
+                        <ActorList {...props} type="link" />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="middle-pane" flex={0.7}>
+                      <div className="Workspace">
+                        <LinkSpace actorUuid={props.match.params.uuid} />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.15}>
+                      <div className="Extras">
+                        <LinkTabs actorUuid={props.match.params.uuid} />
+                      </div>
+                    </ReflexElement>
+                  </ReflexContainer>
+                </div>
+              )}
+            />
+
             <Route
               path="/Snippets"
               exact

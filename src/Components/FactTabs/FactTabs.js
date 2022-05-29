@@ -12,7 +12,6 @@ import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
-import Tesseract from "tesseract.js";
 import FormDialog from "../FormDialog";
 
 import FormControl from "@material-ui/core/FormControl";
@@ -21,7 +20,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import "./FactTabs.css";
 
 import { TiScissors } from "react-icons/ti";
-import { GiLightBulb } from "react-icons/gi";
+import { GiLightBulb,GiPendulumSwing} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { AiFillTag } from "react-icons/ai";
 
@@ -173,7 +172,7 @@ const FactTabs = ({ actorUuid }) => {
                 {...a11yProps(0)}
               />
               <Tab
-                label={<GiLightBulb className="menuItem" />}
+                label={<GiPendulumSwing className="menuItem" />}
                 {...a11yProps(1)}
               />
               <Tab
@@ -263,7 +262,38 @@ const FactTabs = ({ actorUuid }) => {
             />
           </TabPanel>
 
+
+
           <TabPanel className="tabPanel" value={currentTab} index={1}>
+            <SimpleList
+              type="links"
+              xAction={removeFromFacts}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "link" &&
+                  actor &&
+                  actor.facts &&
+                  actor.facts.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+
+<SimpleList
+              type="links"
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "link" &&
+                  a.subjects &&
+                  a.targets &&
+                  (a.subjects.map((x) => x.uuid).includes(actor.uuid)
+                  ||a.targets.map((x) => x.uuid).includes(actor.uuid)
+                  )
+              )}
+            />
+
+          </TabPanel>
+
+
+          {/* <TabPanel className="tabPanel" value={currentTab} index={1}>
             <SimpleList
               type="facts"
               xAction={removeFromFacts}
@@ -332,7 +362,7 @@ const FactTabs = ({ actorUuid }) => {
               />
             </FormControl>
             <FormDialog type={"fact"} specialOp={addToFacts} />
-          </TabPanel>
+          </TabPanel> */}
 
           <TabPanel value={currentTab} index={2}>
             <SimpleList

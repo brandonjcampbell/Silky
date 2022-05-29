@@ -14,18 +14,13 @@ import Box from "@mui/material/Box";
 import Chip from "@material-ui/core/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
 import TabPanel from "../TabPanel";
-import {getDisplayName} from "../../utils";
+import { getDisplayName } from "../../utils";
 import SimpleList from "../SimpleList";
-import {
+import { GiSewingString, GiLightBulb, GiPendulumSwing } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
+import { AiFillTag } from "react-icons/ai";
 
-  GiSewingString,
-  GiLightBulb
-} from "react-icons/gi";
-import {HiPuzzle} from "react-icons/hi"
-import {AiFillTag} from "react-icons/ai"
-
-import "./SnippetTabs.css"
-
+import "./SnippetTabs.css";
 
 const homedir = window.require("os").homedir();
 
@@ -79,14 +74,13 @@ const SnippetTabs = ({ actorUuid }) => {
     });
   };
 
-  function addTo(uuid,type) {
- 
+  function addTo(uuid, type) {
     let clone = _.cloneDeep(actor);
-    console.log(clone)
+    console.log(clone);
     if (!clone[type]) {
       clone[type] = [];
     }
-    console.log(clone)
+    console.log(clone);
 
     clone[type].push({ uuid: uuid });
     dispatch({
@@ -96,7 +90,7 @@ const SnippetTabs = ({ actorUuid }) => {
     });
   }
 
-  function removeFrom(uuid,type) {
+  function removeFrom(uuid, type) {
     let clone = _.cloneDeep(actor);
     if (!clone[type]) {
       clone[type] = [];
@@ -111,194 +105,286 @@ const SnippetTabs = ({ actorUuid }) => {
 
   return (
     <div>
-        {actor && (
-          <div>
-            <Box>
-              <Tabs
-                value={currentTab}
-                onChange={(event, newValue) => {
-                  setCurrentTab(newValue);
-                }}
-                aria-label="basic tabs example"
-              >
-                
-                <Tab label={<GiLightBulb className="menuItem" />} {...a11yProps(0)} />
-                <Tab label={<HiPuzzle className="menuItem" />} {...a11yProps(1)} />
-                <Tab label={<GiSewingString className="menuItem" />} {...a11yProps(2)} />
-                <Tab label={<AiFillTag className="menuItem" />} {...a11yProps(3)} />
-
-              </Tabs>
-            </Box>
-            <TabPanel className="tabPanel" value={currentTab} index={0}>
-              <SimpleList
-              type="facts" 
-                xAction={(uuid)=>{removeFrom(uuid,"facts")}}
-                list={globalState.state.actors
-                .filter(
-                  (a) =>
-                    a.type === "fact" &&
-                    actor &&
-                    actor.facts &&
-                    actor.facts.map((x) => x.uuid).includes(a.uuid)
-                )}/>
-              <FormControl variant="filled">
-                <Autocomplete
-                  disablePortal
-                  clearOnBlur
-                  selectOnFocus
-                  blurOnSelect
-                  id="combo-box-demo"
-                  getOptionLabel={(option) =>
-                    option.name +
-                    "@tags:" +
-                    option.tags +
-                    (option.elements
-                      ? option.elements
-                          .map((m) => getDisplayName(m.uuid,globalState))
-                          .toString()
-                      : "")
-                  }
-                  options={globalState.state.actors.filter(
-                    (x) => x.type === "fact"
-                    &&
-                    (!actor.facts ||
-                      (actor.facts && !actor.facts.map((y) => y.uuid).includes(x.uuid)))
-                  )}
-                  sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                  onChange={(e, newValue) => {
-                    if (newValue && newValue !== "Select") {
-                      addTo(newValue.uuid,"facts");
-                    }
-                  }}
-                  renderOption={(props, option) => (
-                    <div {...props}>
-                      <span>
-                        <Avatar
-                          alt=" "
-                          sx={{ bgcolor: option.color ? option.color : "grey" }}
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            option.uuid +
-                            ".png"
-                          }
-                        />
-                        {props.key.split("@tags:")[0]}
-                      </span>
-                    </div>
-                  )}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Add an element..." />
-                  )}
-                />
-              </FormControl>
-            </TabPanel>
-            
-           
-            <TabPanel className="tabPanel" value={currentTab} index={1}>
-              <SimpleList 
-                   type="elements" 
-                xAction={(uuid)=>{removeFrom(uuid,"elements")}}
-                list={globalState.state.actors
-                .filter(
-                  (a) =>
-                    a.type === "element" &&
-                    actor &&
-                    actor.elements &&
-                    actor.elements.map((x) => x.uuid).includes(a.uuid)
-                )}/>
-              <FormControl variant="filled">
-                <Autocomplete
-                  disablePortal
-                  clearOnBlur
-                  selectOnFocus
-                  blurOnSelect
-                  id="combo-box-demo"
-                  getOptionLabel={(option) =>
-                    option.name +
-                    "@tags:" +
-                    option.tags +
-                    (option.elements
-                      ? option.elements
-                          .map((m) => getDisplayName(m.uuid,globalState))
-                          .toString()
-                      : "")
-                  }
-                  options={globalState.state.actors.filter(
-                    (x) => x.type === "element"
-                    &&
-                    (!actor.elements ||
-                      (actor.elements && !actor.elements.map((y) => y.uuid).includes(x.uuid)))
-                  )}
-                  sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                  onChange={(e, newValue) => {
-                    if (newValue && newValue !== "Select") {
-                      addTo(newValue.uuid,"elements");
-                    }
-                  }}
-                  renderOption={(props, option) => (
-                    <div {...props}>
-                      <span>
-                        <Avatar
-                          alt=" "
-                          sx={{ bgcolor: option.color ? option.color : "grey" }}
-                          src={
-                            homedir +
-                            "\\.silky\\" +
-                            globalState.state.project +
-                            "\\" +
-                            option.uuid +
-                            ".png"
-                          }
-                        />
-                        {props.key.split("@tags:")[0]}
-                      </span>
-                    </div>
-                  )}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Add an element..." />
-                  )}
-                />
-              </FormControl>
-            </TabPanel>
-            
-            <TabPanel value={currentTab} index={2}>
-              <SimpleList 
-                type="threads"
-                list = {globalState.state.actors
-                .filter(
-                  (actor) =>
-                    actor.type === "thread" &&
-                    actor.sequence &&
-                    actor.sequence
-                      .map((y) => {
-                        return y.uuid;
-                      })
-                      .includes(actorUuid)
-                )}/>
-            </TabPanel>
-            <TabPanel value={currentTab} index={3}>
-              <TextField
-                aria-label="empty textarea"
-                placeholder="Enter tags as a comma separated list"
-                className={classes.root}
-                value={tags}
-                onChange={(e) => {
-                  tagSave(e.target.value);
-                }}
+      {actor && (
+        <div>
+          <Box>
+            <Tabs
+              value={currentTab}
+              onChange={(event, newValue) => {
+                setCurrentTab(newValue);
+              }}
+              aria-label="basic tabs example"
+            >
+              <Tab
+                label={<GiLightBulb className="menuItem" />}
+                {...a11yProps(0)}
               />
-              <div>
-                {tags.split(",").map((tag) => {
-                  if (tag) {
-                    return <Chip className="tag" label={tag} icon={<LocalOfferIcon />} />;
+
+              <Tab
+                label={<HiPuzzle className="menuItem" />}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label={<GiSewingString className="menuItem" />}
+                {...a11yProps(3)}
+              />
+              <Tab
+                label={<AiFillTag className="menuItem" />}
+                {...a11yProps(4)}
+              />
+            </Tabs>
+          </Box>
+          <TabPanel className="tabPanel" value={currentTab} index={0}>
+            <h2 className="ExtraHeader">Facts</h2>
+            <SimpleList
+              type="facts"
+              xAction={(uuid) => {
+                removeFrom(uuid, "facts");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "fact" &&
+                  actor &&
+                  actor.facts &&
+                  actor.facts.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "fact" &&
+                    (!actor.facts ||
+                      (actor.facts &&
+                        !actor.facts.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "facts");
                   }
-                })}
-              </div>
-            </TabPanel>
-          </div>
-        )}
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      <Avatar
+                        alt=" "
+                        sx={{ bgcolor: option.color ? option.color : "grey" }}
+                        src={
+                          homedir +
+                          "\\.silky\\" +
+                          globalState.state.project +
+                          "\\" +
+                          option.uuid +
+                          ".png"
+                        }
+                      />
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add a fact..." />
+                )}
+              />
+            </FormControl>
+            <h2 className="ExtraHeader">Causations</h2>
+
+            <SimpleList
+              type="links"
+              xAction={(uuid) => {
+                removeFrom(uuid, "links");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "link" &&
+                  actor &&
+                  actor.links &&
+                  actor.links.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "link" &&
+                    (!actor.links ||
+                      (actor.links &&
+                        !actor.links.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "links");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      <Avatar
+                        alt=" "
+                        sx={{ bgcolor: option.color ? option.color : "grey" }}
+                        src={
+                          homedir +
+                          "\\.silky\\" +
+                          globalState.state.project +
+                          "\\" +
+                          option.uuid +
+                          ".png"
+                        }
+                      />
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add a link" />
+                )}
+              />
+            </FormControl>
+          </TabPanel>
+
+          <TabPanel className="tabPanel" value={currentTab} index={2}>
+            <SimpleList
+              type="elements"
+              xAction={(uuid) => {
+                removeFrom(uuid, "elements");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "element" &&
+                  actor &&
+                  actor.elements &&
+                  actor.elements.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "element" &&
+                    (!actor.elements ||
+                      (actor.elements &&
+                        !actor.elements.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "elements");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      <Avatar
+                        alt=" "
+                        sx={{ bgcolor: option.color ? option.color : "grey" }}
+                        src={
+                          homedir +
+                          "\\.silky\\" +
+                          globalState.state.project +
+                          "\\" +
+                          option.uuid +
+                          ".png"
+                        }
+                      />
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add an element..." />
+                )}
+              />
+            </FormControl>
+          </TabPanel>
+
+          <TabPanel value={currentTab} index={3}>
+            <SimpleList
+              type="threads"
+              list={globalState.state.actors.filter(
+                (actor) =>
+                  actor.type === "thread" &&
+                  actor.sequence &&
+                  actor.sequence
+                    .map((y) => {
+                      return y.uuid;
+                    })
+                    .includes(actorUuid)
+              )}
+            />
+          </TabPanel>
+          <TabPanel value={currentTab} index={4}>
+            <TextField
+              aria-label="empty textarea"
+              placeholder="Enter tags as a comma separated list"
+              className={classes.root}
+              value={tags}
+              onChange={(e) => {
+                tagSave(e.target.value);
+              }}
+            />
+            <div>
+              {tags.split(",").map((tag) => {
+                if (tag) {
+                  return (
+                    <Chip
+                      className="tag"
+                      label={tag}
+                      icon={<LocalOfferIcon />}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </TabPanel>
+        </div>
+      )}
     </div>
   );
 };
