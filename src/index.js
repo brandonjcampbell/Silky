@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { BrowserRouter, Route, Link } from "react-router-dom";
+import { BrowserRouter, Route, Link, useLocation } from "react-router-dom";
+
 
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 
@@ -22,17 +23,19 @@ import {
   ThreadTabs,
   ElementTabs,
   LinkTabs,
-  LinkSpace
+  LinkSpace,
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
   GiSpiderWeb,
   GiSewingString,
   GiLightBulb,
-  GiPendulumSwing
+  GiPendulumSwing,
 } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
+
+
 
 ReactDOM.render(
   <React.StrictMode>
@@ -46,30 +49,32 @@ ReactDOM.render(
           </Link>
 
           <Link to="/elements">
+            <span className="menuLabel">Elements</span>{" "}
             <HiPuzzle className="menuItem" />
           </Link>
 
           <Link to="/facts">
-            {" "}
+            <span className="menuLabel">Facts</span>{" "}
             <GiLightBulb className="menuItem" />
           </Link>
 
           <Link to="/links">
-            {" "}
+            <span className="menuLabel">Causations</span>{" "}
             <GiPendulumSwing className="menuItem" />
           </Link>
 
-
           <Link to="/snippets">
+            <span className="menuLabel">Snippets</span>{" "}
             <TiScissors className="menuItem" />
           </Link>
 
           <Link to="/threads">
+            <span className="menuLabel">Threads</span>{" "}
             <GiSewingString className="menuItem" />
           </Link>
 
           <Link to="/webs">
-            {" "}
+            <span className="menuLabel">Webs</span>{" "}
             <GiSpiderWeb className="menuItem" />
           </Link>
         </div>
@@ -133,7 +138,7 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="fact" showAvatar={false}/>
+                        <ActorList {...props} type="fact" showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -152,13 +157,16 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="fact"  showAvatar={false}/>
+                        <ActorList {...props} type="fact" showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
-                        <Workspace actorUuid={props.match.params.uuid}  showAvatar={false}/>
+                        <Workspace
+                          actorUuid={props.match.params.uuid}
+                          showAvatar={false}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -172,7 +180,7 @@ ReactDOM.render(
               )}
             />
 
-<Route
+            <Route
               path="/Links"
               exact
               render={(props) => (
@@ -180,7 +188,7 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="link"  showAvatar={false} />
+                        <ActorList {...props} type="link" showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -227,7 +235,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="snippet" showAvatar={false}/>
+                        <ActorList
+                          {...props}
+                          type="snippet"
+                          showAvatar={false}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -246,13 +258,20 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="snippet" showAvatar={false}/>
+                        <ActorList
+                          {...props}
+                          type="snippet"
+                          showAvatar={false}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
-                        <Workspace actorUuid={props.match.params.uuid} showAvatar={false} />
+                        <Workspace
+                          actorUuid={props.match.params.uuid}
+                          showAvatar={false}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -273,12 +292,12 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="thread"  />
+                        <ActorList {...props} type="thread" />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace" ></div>
+                      <div className="Workspace"></div>
                     </ReflexElement>
                   </ReflexContainer>
                 </div>

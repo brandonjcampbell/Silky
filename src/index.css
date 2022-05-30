@@ -40,6 +40,15 @@ left:20px;
 padding:8px;
 margin:5px;
 color:rgb(185, 185, 185);
+height: 30px;
+}
+.menuLabel{
+  color:rgb(185, 185, 185);
+  position: relative;
+  top:-25px;
+  right:-10px;
+  font-size: 11px;
+  margin-left: 20px;
 }
 
 .View{
