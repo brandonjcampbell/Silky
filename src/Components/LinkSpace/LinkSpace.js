@@ -137,7 +137,7 @@ const LinkSpace = ({ actorUuid }) => {
 
           <div className="subjectBox">
             <SimpleList
-              type="links"
+              type="facts"
               showAvatars={false}
 
               xAction={(uuid) => {
@@ -193,7 +193,7 @@ const LinkSpace = ({ actorUuid }) => {
           <div className="relationshipBox">BECAUSE</div>
           <div className="targetBox">
             <SimpleList
-              type="links"
+              type="facts"
               showAvatars={false}
 
               xAction={(uuid) => {

@@ -192,7 +192,7 @@ const SnippetTabs = ({ actorUuid }) => {
                 )}
               />
             </FormControl>
-            <h2 className="ExtraHeader">Causations</h2>
+            <h2 className="ExtraHeader">Links</h2>
 
             <SimpleList
               type="links"
@@ -246,7 +246,7 @@ const SnippetTabs = ({ actorUuid }) => {
                   </div>
                 )}
                 renderInput={(params) => (
-                  <TextField {...params} label="Add a Causation" />
+                  <TextField {...params} label="Add a Link" />
                 )}
               />
             </FormControl>

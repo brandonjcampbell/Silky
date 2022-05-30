@@ -66,12 +66,15 @@ height: 30px;
   overflow-x: hidden;
   height:calc(100vh - 50px);
 }
+.left-pane{
+  background-color: #1b1818;
+
+}
 .List{
 
 padding-right:5px;
 margin-top:-5px;
-height:calc(100vh - 50px);
-  background-color: #1b1818;
+ 
 
 }
 .List > *{

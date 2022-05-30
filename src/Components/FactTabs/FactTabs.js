@@ -172,7 +172,7 @@ const FactTabs = ({ actorUuid }) => {
                 {...a11yProps(0)}
               />
               <Tab
-                label={<GiPendulumSwing className="menuItem" />}
+                label={<GiLightBulb className="menuItem" />}
                 {...a11yProps(1)}
               />
               <Tab

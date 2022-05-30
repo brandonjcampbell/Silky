@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 
 import { BrowserRouter, Route, Link, useLocation } from "react-router-dom";
 
-
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 
 import "react-reflex/styles.css";
@@ -35,8 +34,6 @@ import {
 import { HiPuzzle } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
 
-
-
 ReactDOM.render(
   <React.StrictMode>
     <StateProvider>
@@ -54,13 +51,8 @@ ReactDOM.render(
           </Link>
 
           <Link to="/facts">
-            <span className="menuLabel">Facts</span>{" "}
+            <span className="menuLabel">Reveals</span>{" "}
             <GiLightBulb className="menuItem" />
-          </Link>
-
-          <Link to="/links">
-            <span className="menuLabel">Causations</span>{" "}
-            <GiPendulumSwing className="menuItem" />
           </Link>
 
           <Link to="/snippets">
@@ -135,11 +127,29 @@ ReactDOM.render(
               exact
               render={(props) => (
                 <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="fact" showAvatar={false} />
-                      </div>
+                  <ReflexContainer orientation="vertical" flex={0.25}>
+                    <ReflexElement className="left-pane" >
+                      <ReflexContainer orientation="horizontal">
+                        <ReflexElement className="left-pane" flex={0.75}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="fact"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                        <ReflexSplitter />
+                        <ReflexElement className="left-pane" flex={0.25}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="link"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                      </ReflexContainer>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.75}>
@@ -155,10 +165,28 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="fact" showAvatar={false} />
-                      </div>
+                  <ReflexElement className="left-pane" >
+                      <ReflexContainer orientation="horizontal">
+                        <ReflexElement className="left-pane" flex={0.75}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="fact"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                        <ReflexSplitter />
+                        <ReflexElement className="left-pane" flex={0.25}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="link"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                      </ReflexContainer>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
@@ -185,11 +213,29 @@ ReactDOM.render(
               exact
               render={(props) => (
                 <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="link" showAvatar={false} />
-                      </div>
+                  <ReflexContainer orientation="vertical" flex={0.25}>
+                    <ReflexElement className="left-pane" >
+                      <ReflexContainer orientation="horizontal">
+                        <ReflexElement className="left-pane" flex={0.75}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="fact"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                        <ReflexSplitter />
+                        <ReflexElement className="left-pane" flex={0.25}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="link"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                      </ReflexContainer>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.75}>
@@ -205,10 +251,28 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="link" showAvatar={false} />
-                      </div>
+                  <ReflexElement className="left-pane" >
+                      <ReflexContainer orientation="horizontal">
+                        <ReflexElement className="left-pane" flex={0.75}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="fact"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                        <ReflexSplitter />
+                        <ReflexElement className="left-pane" flex={0.25}>
+                          <div className="List">
+                            <ActorList
+                              {...props}
+                              type="link"
+                              showAvatar={false}
+                            />
+                          </div>
+                        </ReflexElement>
+                      </ReflexContainer>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
