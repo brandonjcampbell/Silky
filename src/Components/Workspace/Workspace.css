@@ -24,8 +24,16 @@ width:70px;
 
 .workspace .title{
     position: relative;
-    top:25px;
+    top:0px;
+    margin-left:5px;
     color:white;
+   
+}
+.workspace .title.showAvatar{
+
+    top:25px;
+    margin-left: 0px;
+
    
 }
 .workspace .delete {

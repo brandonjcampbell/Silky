@@ -15,7 +15,7 @@ import { getDisplayName } from "../../utils";
 import Autocomplete from "@mui/material/Autocomplete";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-import { uploadPic } from "../../utils";
+
 import { confirmAlert } from "react-confirm-alert"; // Import
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
@@ -24,7 +24,6 @@ const homedir = window.require("os").homedir();
 const LinkSpace = ({ actorUuid }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const [freshener, setFreshener] = useState("");
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState("");
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
@@ -103,27 +102,11 @@ const LinkSpace = ({ actorUuid }) => {
   }
 
   return (
-    <div>
+    <div className="rootLinkSpace">
       {actor && (
         <div>
           <h2 className="workspaceHeader">
-            <Avatar
-              className="avatar"
-              alt=" "
-              sx={{ width: 100, height: 100 }}
-              onClick={() => {
-                uploadPic(actorUuid, globalState, setFreshener);
-              }}
-              src={
-                homedir +
-                "\\.silky\\" +
-                globalState.state.project +
-                "\\" +
-                actorUuid +
-                ".png?" +
-                freshener
-              }
-            />
+
             <span className="title">
               <span
                 onClick={() => {
@@ -155,11 +138,14 @@ const LinkSpace = ({ actorUuid }) => {
           <div className="subjectBox">
             <SimpleList
               type="links"
+              showAvatars={false}
+
               xAction={(uuid) => {
                 removeFromX(uuid, "subjects");
               }}
               list={actor.subjects ? actor.subjects:[]}
             />
+    
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal
@@ -193,18 +179,6 @@ const LinkSpace = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>
@@ -220,6 +194,8 @@ const LinkSpace = ({ actorUuid }) => {
           <div className="targetBox">
             <SimpleList
               type="links"
+              showAvatars={false}
+
               xAction={(uuid) => {
                 removeFromX(uuid, "targets");
               }}
@@ -258,18 +234,6 @@ const LinkSpace = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>

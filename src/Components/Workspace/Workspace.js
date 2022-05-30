@@ -7,14 +7,13 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "@mui/material/Avatar";
 import { uploadPic } from "../../utils";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 import "./Workspace.css";
 
 const homedir = window.require("os").homedir();
 
-const Workspace = ({ actorUuid }) => {
+const Workspace = ({ actorUuid, showAvatar = true }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [freshener, setFreshener] = useState("");
@@ -46,7 +45,12 @@ const Workspace = ({ actorUuid }) => {
   const remove = () => {
     confirmAlert({
       title: "Confirm to remove",
-      message: "Are you sure you want to remove " +actor.type+" "+ actor.name + "? You won't be able to undo this action.",
+      message:
+        "Are you sure you want to remove " +
+        actor.type +
+        " " +
+        actor.name +
+        "? You won't be able to undo this action.",
       buttons: [
         {
           label: "Yes",
@@ -89,24 +93,27 @@ const Workspace = ({ actorUuid }) => {
     <div className="workspace">
       {actor && (
         <h2 className="workspaceHeader">
-          <Avatar
-            className="avatar"
-            alt=" "
-            sx={{ width: 100, height: 100 }}
-            onClick={() => {
-              uploadPic(actorUuid, globalState, setFreshener);
-            }}
-            src={
-              homedir +
-              "\\.silky\\" +
-              globalState.state.project +
-              "\\" +
-              actorUuid +
-              ".png?" +
-              freshener
-            }
-          />
-          <span className="title">
+          {showAvatar && (
+            <Avatar
+              className="avatar"
+              alt=" "
+              sx={{ width: 100, height: 100 }}
+              onClick={() => {
+                uploadPic(actorUuid, globalState, setFreshener);
+              }}
+              src={
+                homedir +
+                "\\.silky\\" +
+                globalState.state.project +
+                "\\" +
+                actorUuid +
+                ".png?" +
+                freshener
+              }
+            />
+          )}
+          
+          <span className={showAvatar?"title showAvatar":"title"}>
             <span
               onClick={() => {
                 setEditTitle(!editTitle);
@@ -137,6 +144,7 @@ const Workspace = ({ actorUuid }) => {
       {actor && (
         <div className="editor">
           <TextEditor
+          showAvatar={showAvatar}
             save={save}
             data={
               globalState.state.actors.find((x) => x.uuid === actorUuid).content

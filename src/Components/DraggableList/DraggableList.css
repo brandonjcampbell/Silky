@@ -1,12 +1,17 @@
 .row{
     display: flex;
     vertical-align: middle;
-    line-height: 40px;
+
     margin:4px;
     padding-top:4px;
     overflow-x: hidden;
     overflow-y: hidden;
+
+}
+.row.showAvatar{
+    line-height: 40px;
     height:46px;
+
 }
 .row > *{
     display: flex;
@@ -24,6 +29,9 @@
 .draggableRemove{
     color:white;
     position: relative;
+    top:0px;
+}
+.showAvatar  .draggableRemove{
     top:10px;
 }
 .edgeWeight{

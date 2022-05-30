@@ -20,8 +20,12 @@
 #simple-tabpanel-0{
     max-height: calc( 100vh - 200px);
     overflow: auto;
+    padding:0px;
 }
-
+#simple-tabpanel-1 div{
+    padding-left:0px;
+    padding-right:0px;
+}
 .threadspaceHeader{
     display: flex;
     vertical-align: bottom;
@@ -44,4 +48,8 @@
     top:10px; 
     left:12px;  
 
+}
+
+.rootThreadDiv{
+    height: 100%;
 }

@@ -9,7 +9,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import {Redirect } from "react-router-dom";
 import "./ActorList.css"
-const ActorList = ({ match, type }) => {
+const ActorList = ({ match, type, showAvatar=true }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const content = globalState.state.actors;
@@ -90,6 +90,7 @@ const ActorList = ({ match, type }) => {
 
         <div className="content">
           <DraggableList
+            showAvatar={showAvatar}
             list={content.filter(
               (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))
             )}

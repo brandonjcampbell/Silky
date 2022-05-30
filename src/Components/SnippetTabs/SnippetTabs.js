@@ -122,15 +122,15 @@ const SnippetTabs = ({ actorUuid }) => {
 
               <Tab
                 label={<HiPuzzle className="menuItem" />}
-                {...a11yProps(2)}
+                {...a11yProps(1)}
               />
               <Tab
                 label={<GiSewingString className="menuItem" />}
-                {...a11yProps(3)}
+                {...a11yProps(2)}
               />
               <Tab
                 label={<AiFillTag className="menuItem" />}
-                {...a11yProps(4)}
+                {...a11yProps(3)}
               />
             </Tabs>
           </Box>
@@ -138,6 +138,7 @@ const SnippetTabs = ({ actorUuid }) => {
             <h2 className="ExtraHeader">Facts</h2>
             <SimpleList
               type="facts"
+              showAvatars={false}
               xAction={(uuid) => {
                 removeFrom(uuid, "facts");
               }}
@@ -182,18 +183,6 @@ const SnippetTabs = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>
@@ -251,30 +240,18 @@ const SnippetTabs = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>
                 )}
                 renderInput={(params) => (
-                  <TextField {...params} label="Add a link" />
+                  <TextField {...params} label="Add a Causation" />
                 )}
               />
             </FormControl>
           </TabPanel>
 
-          <TabPanel className="tabPanel" value={currentTab} index={2}>
+          <TabPanel className="tabPanel" value={currentTab} index={1}>
             <SimpleList
               type="elements"
               xAction={(uuid) => {
@@ -344,7 +321,7 @@ const SnippetTabs = ({ actorUuid }) => {
             </FormControl>
           </TabPanel>
 
-          <TabPanel value={currentTab} index={3}>
+          <TabPanel value={currentTab} index={2}>
             <SimpleList
               type="threads"
               list={globalState.state.actors.filter(
@@ -359,7 +336,7 @@ const SnippetTabs = ({ actorUuid }) => {
               )}
             />
           </TabPanel>
-          <TabPanel value={currentTab} index={4}>
+          <TabPanel value={currentTab} index={3}>
             <TextField
               aria-label="empty textarea"
               placeholder="Enter tags as a comma separated list"

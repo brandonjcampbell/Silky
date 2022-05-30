@@ -1,19 +1,26 @@
+.rootLinkSpace{
+    margin:10px;
+}
 .subjectBox{
 
-    background:rgb(62, 112, 78);
-    border-radius:10px;
+
     padding:10px;
-    margin:10px;
+
 }
 .targetBox{
-    background:rgb(131, 84, 75);
-    border-radius:10px;
+
     padding:10px;
-    margin:10px;
+
 }
 .relationshipBox{
-    text-align: center;
-    color:white;
+    padding:10px;
+    margin-left:10px;
+    margin-right:10px;
+   color:white;
+ 
     font-weight: bold;
     font-size: 30px;
+}
+.title, .delete{
+    color:white;
 }

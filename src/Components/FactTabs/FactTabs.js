@@ -20,7 +20,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import "./FactTabs.css";
 
 import { TiScissors } from "react-icons/ti";
-import { GiLightBulb,GiPendulumSwing} from "react-icons/gi";
+import { GiLightBulb, GiPendulumSwing } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { AiFillTag } from "react-icons/ai";
 
@@ -262,11 +262,10 @@ const FactTabs = ({ actorUuid }) => {
             />
           </TabPanel>
 
-
-
           <TabPanel className="tabPanel" value={currentTab} index={1}>
             <SimpleList
               type="links"
+              showAvatars={false}
               xAction={removeFromFacts}
               list={globalState.state.actors.filter(
                 (a) =>
@@ -277,96 +276,24 @@ const FactTabs = ({ actorUuid }) => {
               )}
             />
 
-<SimpleList
+            <SimpleList
               type="links"
+              showAvatars={false}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "link" &&
                   a.subjects &&
                   a.targets &&
-                  (a.subjects.map((x) => x.uuid).includes(actor.uuid)
-                  ||a.targets.map((x) => x.uuid).includes(actor.uuid)
-                  )
+                  (a.subjects.map((x) => x.uuid).includes(actor.uuid) ||
+                    a.targets.map((x) => x.uuid).includes(actor.uuid))
               )}
             />
-
           </TabPanel>
-
-
-          {/* <TabPanel className="tabPanel" value={currentTab} index={1}>
-            <SimpleList
-              type="facts"
-              xAction={removeFromFacts}
-              list={globalState.state.actors.filter(
-                (a) =>
-                  a.type === "fact" &&
-                  actor &&
-                  actor.facts &&
-                  actor.facts.map((x) => x.uuid).includes(a.uuid)
-              )}
-            />
-
-            <FormControl variant="filled">
-              <Autocomplete
-                disablePortal
-                clearOnBlur
-                selectOnFocus
-                blurOnSelect
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.facts
-                    ? option.facts
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
-                }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "fact" &&
-                    x.uuid!==actor.uuid &&
-                    ((actor.facts &&
-                      !actor.facts.map((y) => y.uuid).includes(x.uuid)) ||
-                      !actor.facts)
-                )}
-                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addToFacts(newValue.uuid);
-                  }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
-                      {props.key.split("@tags:")[0]}
-                    </span>
-                  </div>
-                )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a Fact..." />
-                )}
-              />
-            </FormControl>
-            <FormDialog type={"fact"} specialOp={addToFacts} />
-          </TabPanel> */}
 
           <TabPanel value={currentTab} index={2}>
             <SimpleList
               type="snippets"
+              showAvatars={false}
               xAction={(uuid) => {
                 removeFrom(uuid, "snippet");
               }}
@@ -410,18 +337,6 @@ const FactTabs = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>

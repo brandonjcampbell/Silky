@@ -15,7 +15,7 @@ function usePrevious(value) {
   return ref.current;
 }
 
-const TextEditor = ({ data, save, actorUuid }) => {
+const TextEditor = ({ data, save, actorUuid, showAvatar }) => {
   const globalState = useContext(store);
 
   const prevAmount = usePrevious({ actorUuid, data });
@@ -110,7 +110,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
         </div>
         <Editor
           editorStyle={{
-            height: "calc(100vh - 218px)",
+            height: showAvatar? "calc(100vh - 218px)" : "calc(100vh - 178px)",
             paddingRight: "15px",
             paddingLeft: "20px",
             color: "rgb(300, 300, 300)",

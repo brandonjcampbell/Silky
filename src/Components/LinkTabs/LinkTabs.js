@@ -173,12 +173,12 @@ const LinkTabs = ({ actorUuid }) => {
 
               <Tab
                 label={<AiFillTag className="menuItem" />}
-                {...a11yProps(3)}
+                {...a11yProps(1)}
               />
             </Tabs>
           </Box>
           <TabPanel value={currentTab} index={0}>
-{/* 
+
             <SimpleList
               type="snippets"
               xAction={(uuid) => {
@@ -190,7 +190,7 @@ const LinkTabs = ({ actorUuid }) => {
                   a.links &&
                   a.links.map((x) => x.uuid).includes(actor.uuid)
               )}
-            /> */}
+            />
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal
@@ -253,7 +253,7 @@ const LinkTabs = ({ actorUuid }) => {
             />
           </TabPanel>
 
-          <TabPanel value={currentTab} index={3}>
+          <TabPanel value={currentTab} index={1}>
             <TextField
               aria-label="empty textarea"
               placeholder="Enter tags as a comma separated list"

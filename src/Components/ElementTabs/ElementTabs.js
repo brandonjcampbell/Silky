@@ -160,6 +160,7 @@ const ElementTabs = ({ actorUuid }) => {
           <TabPanel className="tabPanel" value={currentTab} index={0}>
             <SimpleList
               type="facts"
+              showAvatars={false}
               xAction={removeFromFacts}
               list={globalState.state.actors.filter(
                 (a) =>
@@ -203,18 +204,6 @@ const ElementTabs = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <span>
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </span>
                   </div>
@@ -229,6 +218,7 @@ const ElementTabs = ({ actorUuid }) => {
           <TabPanel value={currentTab} index={1}>
             <SimpleList
               type="snippets"
+              showAvatars={false}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "snippet" &&

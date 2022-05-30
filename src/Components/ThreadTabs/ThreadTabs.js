@@ -146,7 +146,7 @@ const ThreadTabs = ({ actorUuid }) => {
   }
 
   return (
-    <div>
+    <div className="rootThreadDiv">
       {actor && (
         <div>
           <h2 className="threadspaceHeader">
@@ -231,6 +231,7 @@ const ThreadTabs = ({ actorUuid }) => {
                   payload: { actor: clone },
                 });
               }}
+              showAvatar={false}
               showCharacterCount={150}
               showEdgeWeights={true}
               action="remove"
@@ -249,6 +250,7 @@ const ThreadTabs = ({ actorUuid }) => {
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal
+                showAvatar={false}
                 clearOnBlur
                 selectOnFocus
                 id="combo-box-demo"
@@ -283,18 +285,6 @@ const ThreadTabs = ({ actorUuid }) => {
                 renderOption={(props, option) => (
                   <div {...props}>
                     <div className="autoCompleteRow">
-                      <Avatar
-                        alt=" "
-                        sx={{ bgcolor: option.color ? option.color : "grey" }}
-                        src={
-                          homedir +
-                          "\\.silky\\" +
-                          globalState.state.project +
-                          "\\" +
-                          option.uuid +
-                          ".png"
-                        }
-                      />
                       {props.key.split("@tags:")[0]}
                     </div>
                   </div>

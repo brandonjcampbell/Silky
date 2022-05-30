@@ -1,11 +1,15 @@
 .simpleListRow{
     display: flex;
     vertical-align: middle;
-    line-height: 40px;
+
     margin:4px;
     overflow-x: hidden;
     overflow-y: hidden;
+
+}
+.simpleListRow.showAvatar{
     height:50px;
+    line-height: 40px;
 }
 .simpleListRow > *{
     display: flex;
@@ -22,6 +26,8 @@
 }
 .simpleListXAction{
     position: relative;
+    left:0px;
+}
+.showAvatar .simpleListXAction{
     top:10px;
-    left:10px;
 }

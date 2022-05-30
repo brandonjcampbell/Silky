@@ -18,6 +18,7 @@ const DraggableList = ({
   onDrop,
   action,
   showCharacterCount = 100,
+  showAvatar = true,
 }) => {
   const globalState = useContext(store);
 
@@ -40,29 +41,30 @@ const DraggableList = ({
 
     return (
       <div
-        className="row"
+        className={showAvatar?"row showAvatar":"row"}
         onClick={() => {
           handleClick(x);
         }}
       >
         <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
-          <Avatar
-            alt=" "
-            className="avatar"
-            sx={{ bgcolor: x.color ? x.color : "grey" }}
-            src={
-              homedir +
-              "\\.silky\\" +
-              globalState.state.project +
-              "\\" +
-              x.uuid +
-              ".png"
-            }
-          />
+          {showAvatar && (
+            <Avatar
+              alt=" "
+              className="avatar"
+              sx={{ bgcolor: x.color ? x.color : "grey" }}
+              src={
+                homedir +
+                "\\.silky\\" +
+                globalState.state.project +
+                "\\" +
+                x.uuid +
+                ".png"
+              }
+            />
+          )}
 
           {displayName.slice(0, showCharacterCount)}
           {displayName.length > showCharacterCount ? "..." : ""}
-
         </Link>
         {action === "remove" && (
           <CloseIcon

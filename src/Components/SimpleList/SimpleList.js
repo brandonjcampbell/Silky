@@ -8,7 +8,7 @@ import "./SimpleList.css";
 
 const homedir = window.require("os").homedir();
 
-const SimpleList = ({ list,xAction,type="threads" }) => {
+const SimpleList = ({ list,xAction,type="threads",showAvatars=true }) => {
   const globalState = useContext(store);
 
   return (
@@ -16,7 +16,7 @@ const SimpleList = ({ list,xAction,type="threads" }) => {
       {list.map((x) => (
         <div className="simpleListRow">
           <Link to={`/${type}/${x.uuid}`}>
-            <Avatar
+            {showAvatars && <Avatar
               alt=" "
               className="simpleListAvatar"
               sx={{ bgcolor: x.color ? x.color : "grey" }}
@@ -28,7 +28,7 @@ const SimpleList = ({ list,xAction,type="threads" }) => {
                 x.uuid +
                 ".png"
               }
-            />
+            />}
             {getDisplayName(x.uuid,globalState)}
           </Link>
           {xAction && <CloseIcon className="simpleListXAction" onClick={() => xAction(x.uuid)} />}
