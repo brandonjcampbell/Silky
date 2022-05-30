@@ -196,6 +196,7 @@ const SnippetTabs = ({ actorUuid }) => {
 
             <SimpleList
               type="links"
+              showAvatars={false}
               xAction={(uuid) => {
                 removeFrom(uuid, "links");
               }}

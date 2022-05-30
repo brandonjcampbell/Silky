@@ -100,12 +100,15 @@ const ElementTabs = ({ actorUuid }) => {
     return _.uniqBy(threads, "uuid");
   };
 
-  function addToFacts(uuid) {
+  function addTo(uuid, type) {
     let clone = _.cloneDeep(actor);
-    if (!clone.facts) {
-      clone.facts = [];
+    console.log(clone);
+    if (!clone[type]) {
+      clone[type] = [];
     }
-    clone.facts.push({ uuid: uuid });
+    console.log(clone);
+
+    clone[type].push({ uuid: uuid });
     dispatch({
       action: "saveActor",
       for: "snippet",
@@ -113,12 +116,12 @@ const ElementTabs = ({ actorUuid }) => {
     });
   }
 
-  function removeFromFacts(uuid) {
+  function removeFrom(uuid, type) {
     let clone = _.cloneDeep(actor);
-    if (!clone.facts) {
-      clone.facts = [];
+    if (!clone[type]) {
+      clone[type] = [];
     }
-    clone.facts = clone.facts.filter((x) => x.uuid !== uuid);
+    clone[type] = clone[type].filter((x) => x.uuid !== uuid);
     dispatch({
       action: "saveActor",
       for: "snippet",
@@ -157,11 +160,15 @@ const ElementTabs = ({ actorUuid }) => {
               />
             </Tabs>
           </Box>
+         
           <TabPanel className="tabPanel" value={currentTab} index={0}>
+            <h2 className="ExtraHeader">Facts</h2>
             <SimpleList
               type="facts"
               showAvatars={false}
-              xAction={removeFromFacts}
+              xAction={(uuid) => {
+                removeFrom(uuid, "facts");
+              }}
               list={globalState.state.actors.filter(
                 (a) =>
                   a.type === "fact" &&
@@ -170,7 +177,6 @@ const ElementTabs = ({ actorUuid }) => {
                   actor.facts.map((x) => x.uuid).includes(a.uuid)
               )}
             />
-
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal
@@ -182,23 +188,23 @@ const ElementTabs = ({ actorUuid }) => {
                   option.name +
                   "@tags:" +
                   option.tags +
-                  (option.facts
-                    ? option.facts
+                  (option.elements
+                    ? option.elements
                         .map((m) => getDisplayName(m.uuid, globalState))
                         .toString()
                     : "")
                 }
                 options={globalState.state.actors.filter(
-                  (x) => x.type === "fact" 
-                  &&
-                  actor.facts 
-                  &&
-                  !actor.facts.map((y) => y.uuid).includes(x.uuid)
+                  (x) =>
+                    x.type === "fact" &&
+                    (!actor.facts ||
+                      (actor.facts &&
+                        !actor.facts.map((y) => y.uuid).includes(x.uuid)))
                 )}
                 sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
                 onChange={(e, newValue) => {
                   if (newValue && newValue !== "Select") {
-                    addToFacts(newValue.uuid);
+                    addTo(newValue.uuid, "facts");
                   }
                 }}
                 renderOption={(props, option) => (
@@ -209,12 +215,71 @@ const ElementTabs = ({ actorUuid }) => {
                   </div>
                 )}
                 renderInput={(params) => (
-                  <TextField {...params} label="Add a Fact..." />
+                  <TextField {...params} label="Add a fact..." />
                 )}
               />
             </FormControl>
-            <FormDialog type={"fact"} specialOp={addToFacts} />
+            <h2 className="ExtraHeader">Causations</h2>
+
+            <SimpleList
+              type="links"
+              showAvatars={false}
+              xAction={(uuid) => {
+                removeFrom(uuid, "links");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "link" &&
+                  actor &&
+                  actor.links &&
+                  actor.links.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "link" &&
+                    (!actor.links ||
+                      (actor.links &&
+                        !actor.links.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "links");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => (
+                  <TextField {...params} label="Add a Causation" />
+                )}
+              />
+            </FormControl>
           </TabPanel>
+         
+         
           <TabPanel value={currentTab} index={1}>
             <div className="readOnlyListTab">
             <SimpleList
