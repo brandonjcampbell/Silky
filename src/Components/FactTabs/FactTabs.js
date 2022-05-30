@@ -263,6 +263,7 @@ const FactTabs = ({ actorUuid }) => {
           </TabPanel>
 
           <TabPanel className="tabPanel" value={currentTab} index={1}>
+            <div className="readOnlyListTab">
             <SimpleList
               type="links"
               showAvatars={false}
@@ -288,6 +289,7 @@ const FactTabs = ({ actorUuid }) => {
                     a.targets.map((x) => x.uuid).includes(actor.uuid))
               )}
             />
+            </div>
           </TabPanel>
 
           <TabPanel value={currentTab} index={2}>

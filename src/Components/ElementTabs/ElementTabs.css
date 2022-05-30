@@ -10,7 +10,9 @@
   border-radius: 70px!important;
   display: inline-block;
 }
-
+.readOnlyListTab{
+    margin-left:25px;
+}
 .MuiBox-root.css-1{
     position: relative;
     left:85px;

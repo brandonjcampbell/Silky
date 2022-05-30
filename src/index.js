@@ -85,13 +85,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="element" />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace"></div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -104,19 +104,19 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="element" />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.7}>
+                    <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
                         <Workspace actorUuid={props.match.params.uuid} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.15}>
+                    <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
                         <ElementTabs actorUuid={props.match.params.uuid} />
                       </div>
@@ -131,13 +131,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="fact" showAvatar={false}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace"></div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -150,19 +150,19 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="fact"  showAvatar={false}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.7}>
+                    <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
                         <Workspace actorUuid={props.match.params.uuid}  showAvatar={false}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.15}>
+                    <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
                         <FactTabs actorUuid={props.match.params.uuid} />
                       </div>
@@ -178,13 +178,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="link"  showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace"></div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -197,19 +197,19 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="link" showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.7}>
+                    <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
                         <LinkSpace actorUuid={props.match.params.uuid} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.15}>
+                    <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
                         <LinkTabs actorUuid={props.match.params.uuid} />
                       </div>
@@ -225,13 +225,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="snippet" showAvatar={false}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace" showAvatar={false}></div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -244,19 +244,19 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="snippet" showAvatar={false}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.7}>
+                    <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
                         <Workspace actorUuid={props.match.params.uuid} showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.15}>
+                    <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
                         <SnippetTabs actorUuid={props.match.params.uuid} />
                       </div>
@@ -271,13 +271,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="thread"  />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace" ></div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -290,13 +290,13 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.15}>
+                    <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
                         <ActorList {...props} type="thread" />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.85}>
+                    <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace">
                         <ThreadTabs actorUuid={props.match.params.uuid} />
                       </div>

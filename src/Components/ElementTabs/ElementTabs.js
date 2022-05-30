@@ -216,6 +216,7 @@ const ElementTabs = ({ actorUuid }) => {
             <FormDialog type={"fact"} specialOp={addToFacts} />
           </TabPanel>
           <TabPanel value={currentTab} index={1}>
+            <div className="readOnlyListTab">
             <SimpleList
               type="snippets"
               showAvatars={false}
@@ -226,24 +227,13 @@ const ElementTabs = ({ actorUuid }) => {
                   a.elements.map((x) => x.uuid).includes(actor.uuid)
               )}
             />
+            </div>
           </TabPanel>
 
           <TabPanel value={currentTab} index={2}>
             <SimpleList list={getThreads()} />
           </TabPanel>
-          {/* <TabPanel value={currentTab} index={3}>
-            <video autoplay="true" className="videoElement"></video>
-            <canvas></canvas>
-            <button
-              id="snap"
-              onClick={() => {
-                snap();
-              }}
-            >
-              Take screenshot
-            </button>
-            <p className="OCR"></p>
-          </TabPanel> */}
+
           <TabPanel value={currentTab} index={3}>
             <TextField
               aria-label="empty textarea"
