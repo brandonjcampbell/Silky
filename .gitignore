@@ -3,3 +3,4 @@ node_modules/
 
 #builds
 silky-win32-x64/
+build/

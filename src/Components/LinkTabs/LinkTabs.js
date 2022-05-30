@@ -178,7 +178,7 @@ const LinkTabs = ({ actorUuid }) => {
             </Tabs>
           </Box>
           <TabPanel value={currentTab} index={0}>
-
+{/* 
             <SimpleList
               type="snippets"
               xAction={(uuid) => {
@@ -190,7 +190,7 @@ const LinkTabs = ({ actorUuid }) => {
                   a.links &&
                   a.links.map((x) => x.uuid).includes(actor.uuid)
               )}
-            />
+            /> */}
             <FormControl variant="filled">
               <Autocomplete
                 disablePortal

@@ -17,9 +17,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { uploadPic } from "../../utils";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
-
-
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 const homedir = window.require("os").homedir();
 
@@ -43,7 +41,12 @@ const LinkSpace = ({ actorUuid }) => {
   const remove = () => {
     confirmAlert({
       title: "Confirm to remove",
-      message: "Are you sure you want to remove " +actor.type+" "+ actor.name + "? You won't be able to undo this action.",
+      message:
+        "Are you sure you want to remove " +
+        actor.type +
+        " " +
+        actor.name +
+        "? You won't be able to undo this action.",
       buttons: [
         {
           label: "Yes",
@@ -61,7 +64,7 @@ const LinkSpace = ({ actorUuid }) => {
       ],
     });
   };
-  
+
   const saveTitle = () => {
     setEditTitle(false);
     let clone = _.cloneDeep(actor);
@@ -101,64 +104,61 @@ const LinkSpace = ({ actorUuid }) => {
 
   return (
     <div>
-
       {actor && (
         <div>
-
-<h2 className="workspaceHeader">
-          <Avatar
-            className="avatar"
-            alt=" "
-            sx={{ width: 100, height: 100 }}
-            onClick={() => {
-              uploadPic(actorUuid, globalState, setFreshener);
-            }}
-            src={
-              homedir +
-              "\\.silky\\" +
-              globalState.state.project +
-              "\\" +
-              actorUuid +
-              ".png?" +
-              freshener
-            }
-          />
-          <span className="title">
-            <span
+          <h2 className="workspaceHeader">
+            <Avatar
+              className="avatar"
+              alt=" "
+              sx={{ width: 100, height: 100 }}
               onClick={() => {
-                setEditTitle(!editTitle);
-                setTitle(actor.name);
+                uploadPic(actorUuid, globalState, setFreshener);
               }}
-            >
-              {!editTitle && actor.name}
-            </span>
-            {editTitle && (
-              <TextField
-                autoFocus
-                sx={{ bgcolor: "white" }}
-                id="outlined-basic"
-                value={title}
-                onKeyDown={keyPress}
-                onBlur={() => {
-                  saveTitle();
+              src={
+                homedir +
+                "\\.silky\\" +
+                globalState.state.project +
+                "\\" +
+                actorUuid +
+                ".png?" +
+                freshener
+              }
+            />
+            <span className="title">
+              <span
+                onClick={() => {
+                  setEditTitle(!editTitle);
+                  setTitle(actor.name);
                 }}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            )}
-          </span>
-          <span className="delete">
-            <DeleteIcon onClick={remove} />
-          </span>
-        </h2>
-
+              >
+                {!editTitle && actor.name}
+              </span>
+              {editTitle && (
+                <TextField
+                  autoFocus
+                  sx={{ bgcolor: "white" }}
+                  id="outlined-basic"
+                  value={title}
+                  onKeyDown={keyPress}
+                  onBlur={() => {
+                    saveTitle();
+                  }}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              )}
+            </span>
+            <span className="delete">
+              <DeleteIcon onClick={remove} />
+            </span>
+          </h2>
 
           <div className="subjectBox">
             <SimpleList
-              type="link"
+              type="links"
               xAction={(uuid) => {
                 removeFromX(uuid, "subjects");
               }}
-              list={actor.subjects}
+              list={actor.subjects ? actor.subjects:[]}
             />
             <FormControl variant="filled">
               <Autocomplete
@@ -216,14 +216,14 @@ const LinkSpace = ({ actorUuid }) => {
             </FormControl>
           </div>
 
-<div className="relationshipBox">BECAUSE</div>
+          <div className="relationshipBox">BECAUSE</div>
           <div className="targetBox">
             <SimpleList
-              type="link"
+              type="links"
               xAction={(uuid) => {
                 removeFromX(uuid, "targets");
               }}
-              list={actor.targets}
+              list={actor.targets ? actor.targets:[]}
             />
             <FormControl variant="filled">
               <Autocomplete

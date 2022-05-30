@@ -1,6 +1,7 @@
 const {app, BrowserWindow, ipcMain} = require('electron')
 const isDev = require('electron-is-dev');   
 const path = require('path')
+const url = require('url');
 const fs = require('fs')
 
 
@@ -18,16 +19,11 @@ function createWindow () {
     }
   })
   const startURL = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`;
+  //const startURL =  `file://${path.join(__dirname, '../build/index.html')}`;
   mainWindow.loadURL(startURL);
 
+  if (!fs.existsSync(`${app.getPath('home')}\\.silky`)) fs.mkdir(`${app.getPath('home')}\\.silky`,function(){});
 
-  
-
-    // Without checking if dir already exists
-    if (!fs.existsSync(`${app.getPath('home')}\\.silky`)) fs.mkdir(`${app.getPath('home')}\\.silky`,function(){});
-    
-    // With checking if dir already exists
-    //if (!fs.existsSync('.silky')) fs.mkdir('.silky');
 
 }
 

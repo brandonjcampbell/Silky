@@ -8,6 +8,10 @@ This project is very much a work in progress, so use caution when writing in the
 - run `npm i` to update packages
 - run `npm start dev` to launch app
 
+# Building Silky
+
+- run `npm run build` to publish the react portion of the app
+- run `npx electron-packager .` to build the executable portion of the app
 
 ## License
 
