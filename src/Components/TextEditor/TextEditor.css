@@ -13,7 +13,7 @@
     position:absolute;
     display: inline-block;
     top:-20px;
-    right:-20px;
+    right:20px;
     font-size: 30px;
     transform-origin: bottom right;
     animation: wiggle 2.5s infinite; 
