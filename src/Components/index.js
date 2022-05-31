@@ -7,6 +7,8 @@ import LinkTabs from "./LinkTabs";
 import FactTabs from "./FactTabs";
 import FormDialog from "./FormDialog";
 import Graph from "./Graph";
+import GraphSpace from "./GraphSpace";
+import GraphTabs from "./GraphTabs";
 import Map from "./Map";
 import Reports from "./Reports";
 import SnippetTabs from "./SnippetTabs";
@@ -32,6 +34,8 @@ export {
   FactTabs,
   FormDialog,
   Graph,
+  GraphSpace,
+  GraphTabs,
   Map,
   Reports,
   SnippetTabs,

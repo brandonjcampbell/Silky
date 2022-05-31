@@ -16,12 +16,14 @@ import {
   CurrentProjectLink,
   App,
   Graph,
+  GraphSpace,
   SnippetTabs,
   Workspace,
   FactTabs,
   ThreadTabs,
   ElementTabs,
   LinkTabs,
+  GraphTabs,
   LinkSpace,
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
@@ -128,7 +130,7 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical" flex={0.25}>
-                    <ReflexElement className="left-pane" >
+                    <ReflexElement className="left-pane">
                       <ReflexContainer orientation="horizontal">
                         <ReflexElement className="left-pane" flex={0.75}>
                           <div className="List">
@@ -165,7 +167,7 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                  <ReflexElement className="left-pane" >
+                    <ReflexElement className="left-pane">
                       <ReflexContainer orientation="horizontal">
                         <ReflexElement className="left-pane" flex={0.75}>
                           <div className="List">
@@ -214,7 +216,7 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical" flex={0.25}>
-                    <ReflexElement className="left-pane" >
+                    <ReflexElement className="left-pane">
                       <ReflexContainer orientation="horizontal">
                         <ReflexElement className="left-pane" flex={0.75}>
                           <div className="List">
@@ -251,7 +253,7 @@ ReactDOM.render(
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                  <ReflexElement className="left-pane" >
+                    <ReflexElement className="left-pane">
                       <ReflexContainer orientation="horizontal">
                         <ReflexElement className="left-pane" flex={0.75}>
                           <div className="List">
@@ -388,7 +390,56 @@ ReactDOM.render(
                 </div>
               )}
             />
-            <Route path="/Webs" exact render={() => <Web></Web>} />
+
+            <Route
+              path="/Webs"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <ReflexContainer orientation="vertical">
+                    <ReflexElement className="left-pane" flex={0.25}>
+                      <div className="List">
+                        <ActorList {...props} type="web" />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="middle-pane" flex={0.75}>
+                      <div className="Workspace"></div>
+                    </ReflexElement>
+                  </ReflexContainer>
+                </div>
+              )}
+            />
+            <Route
+              path="/Webs/:uuid"
+              exact
+              render={(props) => (
+                <div className="View">
+                  <ReflexContainer orientation="vertical">
+                    <ReflexElement className="left-pane" flex={0.25}>
+                      <div className="List">
+                        <ActorList {...props} type="web" />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="middle-pane" flex={0.5}>
+                      <div className="Workspace">
+                        <GraphSpace
+                          actorUuid={props.match.params.uuid}
+                          showAvatar={false}
+                        />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.25}>
+                      <div className="Extras">
+                        <GraphTabs actorUuid={props.match.params.uuid} />
+                      </div>
+                    </ReflexElement>
+                  </ReflexContainer>
+                </div>
+              )}
+            />
           </div>
         </div>
       </BrowserRouter>
