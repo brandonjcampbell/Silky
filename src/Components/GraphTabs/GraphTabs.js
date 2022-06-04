@@ -9,6 +9,7 @@ import Avatar from "@mui/material/Avatar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
+import Switch from "@mui/material/Switch";
 import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
@@ -24,7 +25,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import "./GraphTabs.css";
 
 import { TiScissors } from "react-icons/ti";
-import { GiLightBulb, GiSettingsKnobs } from "react-icons/gi";
+import { GiLightBulb, GiSewingString, GiSettingsKnobs } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { AiFillTag } from "react-icons/ai";
 
@@ -80,6 +81,66 @@ const GraphTabs = ({ actorUuid }) => {
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
   const [layout, setLayout] = useState(defaultLayout);
 
+  const init = () => {
+
+    if (!actor.show) {
+      actor.show=[]
+    }
+
+    if (!actor.showActor) {
+      actor.showActor=[]
+    }
+
+    if (!actor.showAxiom) {
+      actor.showAxiom=[]
+    }
+
+    if (!actor.layout) {
+      actor.layout="cola"
+    }
+
+    if (!actor.thread) {
+      actor.thread = globalState.state.actors
+        .filter((x) => x.type === "thread")
+        .map((x) => {
+          return { uuid: x.uuid };
+        });
+    }
+
+    if (!actor.snippet) {
+      actor.snippet = globalState.state.actors
+        .filter((x) => x.type === "snippet")
+        .map((x) => {
+          return { uuid: x.uuid };
+        });
+    }
+
+    if (!actor.element) {
+      actor.element = globalState.state.actors
+        .filter((x) => x.type === "element")
+        .map((x) => {
+          return { uuid: x.uuid };
+        });
+    }
+
+    if (!actor.fact) {
+      actor.fact = globalState.state.actors
+        .filter((x) => x.type === "fact")
+        .map((x) => {
+          return { uuid: x.uuid };
+        });
+    }
+
+    if (!actor.link) {
+      actor.link = globalState.state.actors
+        .filter((x) => x.type === "link")
+        .map((x) => {
+          return { uuid: x.uuid };
+        });
+    }
+  };
+
+  init()
   const save = () => {
     dispatch({
       action: "saveActor",
@@ -123,103 +184,102 @@ const GraphTabs = ({ actorUuid }) => {
   };
 
   function addTo(uuid, prop, type) {
-    let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
-    let clone = _.cloneDeep(el);
-    if (!clone[prop]) {
-      clone[prop] = [];
-    }
-    clone[prop].push({ uuid: actor.uuid });
+    actor[prop].push({ uuid: uuid });
     dispatch({
       action: "saveActor",
       for: type,
-      payload: { actor: clone },
+      payload: { actor: actor },
     });
+    recalculateShow()
   }
 
   function removeFrom(uuid, prop, type) {
-    let el = globalState.state.actors.filter((x) => x.uuid === uuid)[0];
-
-    let clone = _.cloneDeep(el);
-    if (!clone[prop]) {
-      clone[prop] = [];
-    }
-    clone[prop] = clone[prop].filter((x) => x.uuid !== actor.uuid);
+    actor[prop] = actor[prop].filter((x) => x.uuid !== uuid);
     dispatch({
       action: "saveActor",
       for: type,
-      payload: { actor: clone },
+      payload: { actor: actor },
     });
+    recalculateShow()
   }
 
-  function addToLinks(uuid) {
-    let clone = _.cloneDeep(actor);
-    if (!clone.facts) {
-      clone.facts = [];
+  function toggleActorType(type) {
+    if (!actor.showActor) {
+      actor.showActor = [];
     }
-    clone.facts.push({ uuid: uuid });
-    dispatch({
-      action: "saveActor",
-      for: "fact",
-      payload: { actor: clone },
-    });
+    if (actor.showActor.includes(type)) {
+      actor.showActor = actor.showActor.filter((x) => x !== type);
+    } else {
+      actor.showActor.push(type);
+    }
+
+    if (type === "fact") {
+      toggleAxiomType("because");
+      toggleActorType("link");
+    } else {
+      recalculateShow();
+    }
   }
 
-  function removeFromLinks(uuid) {
-    let clone = _.cloneDeep(actor);
-    if (!clone.facts) {
-      clone.facts = [];
-    }
-    clone.facts = clone.facts.filter((x) => x.uuid !== uuid);
-    dispatch({
-      action: "saveActor",
-      for: "fact",
-      payload: { actor: clone },
-    });
-  }
-
-  function includeType(typeToInclude) {
-    if (!actor.show) {
-      actor.show = [];
-    }
-    actor.show = [
-      ...actor.show,
-      ...globalState.state.actors
-        .filter((x) => x.type === typeToInclude)
-        .map((x) => {
-          return x.uuid;
-        }),
-    ];
+  function recalculateShow() {
+    const masterList = [...actor.element,...actor.fact,...actor.snippet].map(y=>y.uuid)
+    console.log(masterList)
+    actor.show = globalState.state.actors
+      .filter(x=>masterList.includes(x.uuid) || x.type==="link")
+      .filter((x) => actor.showActor.includes(x.type))
+      .map((x) => {
+        return x.uuid;
+      });
     save();
   }
 
-  function removeType(typeToRemove) {
-    if (!actor.show) {
-      actor.show = [];
-    }
-    actor.show = actor.show.filter((x) => {
-      if (globalState.state.actors.find((y) => y.uuid=== x && y.type !== typeToRemove))
-        return true;
-      else return false;
-    });
-    save();
-  }
-
-  function includeAxiomByType(typeToInclude) {
+  function toggleAxiomType(type) {
     if (!actor.showAxiom) {
       actor.showAxiom = [];
     }
-    actor.showAxiom.push(typeToInclude)
+    if (actor.showAxiom.includes(type)) {
+      actor.showAxiom = actor.showAxiom.filter((x) => x !== type);
+    } else {
+      actor.showAxiom.push(type);
+    }
+    if (type === "thread") {
+      if (!actor.thread) {
+        actor.thread = globalState.state.actors
+          .filter((x) => x.type === "thread")
+          .map((x) => {
+            return { uuid: x.uuid };
+          });
+      }
+    }
     save();
   }
 
-  function removeAxiomByType(typeToRemove) {
-    if (!actor.showAxiom) {
-      actor.showAxiom = [];
-    }
-    actor.showAxiom = actor.showAxiom.filter((x) => 
-      x!==typeToRemove
+  function renderActorToggle(type) {
+    return (
+      <div>
+        <Switch
+          onChange={() => {
+            toggleActorType(type);
+          }}
+          checked={actor.showActor && actor.showActor.includes(type)}
+        />{" "}
+        {type}
+      </div>
     );
-    save();
+  }
+
+  function renderAxiomToggle(type) {
+    return (
+      <div>
+        <Switch
+          onChange={() => {
+            toggleAxiomType(type);
+          }}
+          checked={actor.showAxiom && actor.showAxiom.includes(type)}
+        />{" "}
+        {type}
+      </div>
+    );
   }
 
   return (
@@ -234,20 +294,25 @@ const GraphTabs = ({ actorUuid }) => {
               }}
               aria-label="basic tabs example"
             >
-              <Tab
-                label={<GiSettingsKnobs className="menuItem" />}
-                {...a11yProps(0)}
-              />
+              <Tab label={<GiSettingsKnobs className="menuItem" />} />
+
+              <Tab label={<HiPuzzle className="menuItem" />} />
+
+              <Tab label={<GiLightBulb className="menuItem" />} />
+
+              <Tab label={<TiScissors className="menuItem" />} />
+
+              <Tab label={<GiSewingString className="menuItem" />} />
             </Tabs>
           </Box>
           <TabPanel value={currentTab} index={0}>
+            <h2>SETTINGS</h2>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={actor.layout}
               onChange={(e) => {
                 actor.layout = e.target.value;
-
                 save();
               }}
             >
@@ -260,208 +325,289 @@ const GraphTabs = ({ actorUuid }) => {
               <MenuItem value="cise">Cise</MenuItem>
               <MenuItem value="avsdf">avsdf</MenuItem>
             </Select>
-
             <div>
-              <Checkbox
-                style={{
-                  color: "#444",
-                }}
-                onClick={() => {
-                  actor.hideDisconnectedNodes = !actor.hideDisconnectedNodes;
-                  save();
-                }}
-              />
-              Hide disconnected nodes
-            </div>
-            <div>
-              <Checkbox
-                onClick={() => {
+              <Switch
+                onChange={() => {
                   actor.repositionNodes = !actor.repositionNodes;
                   save();
                 }}
-              />
+                checked={actor.repositionNodes}
+              />{" "}
               Reposition nodes on change
             </div>
 
             <div>
-              <Checkbox
-                onClick={() => {
-                  includeType("thread");
+              <Switch
+                onChange={() => {
+                  actor.hideDisconnectedNodes = !actor.hideDisconnectedNodes;
+                  save();
                 }}
-              />
-              Threads!
+                checked={actor.hideDisconnectedNodes}
+              />{" "}
+              Hide disconnected nodes
             </div>
 
-            <div>
-              <Button
-                onClick={() => {
-                  includeType("element");
-                }}
-              >
-                Include Elements{" "}
-              </Button>
+            <h2>NODES</h2>
 
-              <Button
-                onClick={() => {
-                  removeType("element");
-                }}
-              >
-                Remove Elements{" "}
-              </Button>
-            </div>
+            <h2>RELATIONSHIPS</h2>
+            {renderAxiomToggle("thread")}
+            {renderAxiomToggle("reveals")}
+            {renderAxiomToggle("involves")}
+          </TabPanel>
 
-            <div>
-              <Button
-                onClick={() => {
-                  includeType("fact");
-                }}
-              >
-                Include Facts{" "}
-              </Button>
+          <TabPanel value={currentTab} index={1}>
+            {renderActorToggle("element")}
+            {actor.showActor.includes("element") && (
+              <div>
+    
+                <SimpleList
+                  type="elements"
+                  xAction={(uuid) => {
+                    removeFrom(uuid, "element", "web");
+                  }}
+                  showAvatars={false}
+                  list={globalState.state.actors.filter(
+                    (a) =>
+                      a.type === "element" &&
+                      actor.element.map((x) => x.uuid).includes(a.uuid)
+                  )}
+                />
+                <FormControl variant="filled">
+                  <Autocomplete
+                    disablePortal
+                    clearOnBlur
+                    selectOnFocus
+                    blurOnSelect
+                    id="combo-box-demo"
+                    getOptionLabel={(option) =>
+                      option.name +
+                      "@tags:" +
+                      option.tags +
+                      (option.links
+                        ? option.links
+                            .map((m) => getDisplayName(m.uuid, globalState))
+                            .toString()
+                        : "")
+                    }
+                    options={globalState.state.actors.filter(
+                      (x) =>
+                        x.type === "element" &&
+                        !actor.element.map((y) => y.uuid).includes(x.uuid)
+                    )}
+                    sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                    onChange={(e, newValue) => {
+                      if (newValue && newValue !== "Select") {
+                        addTo(newValue.uuid, "element", "web");
+                      }
+                    }}
+                    renderOption={(props, option) => (
+                      <div {...props}>
+                        <span>{props.key.split("@tags:")[0]}</span>
+                      </div>
+                    )}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Add an element..." />
+                    )}
+                  />
+                </FormControl>
+              </div>
+            )}
+          </TabPanel>
 
-              <Button
-                onClick={() => {
-                  removeType("fact");
-                }}
-              >
-                Remove Facts{" "}
-              </Button>
-            </div>
+          <TabPanel value={currentTab} index={2}>
+            {renderActorToggle("fact")}
+            {actor.showActor.includes("fact") && (
+              <div>
+    
+                <SimpleList
+                  type="facts"
+                  xAction={(uuid) => {
+                    removeFrom(uuid, "fact", "web");
+                  }}
+                  showAvatars={false}
+                  list={globalState.state.actors.filter(
+                    (a) =>
+                      a.type === "fact" &&
+                      actor.fact.map((x) => x.uuid).includes(a.uuid)
+                  )}
+                />
+                <FormControl variant="filled">
+                  <Autocomplete
+                    disablePortal
+                    clearOnBlur
+                    selectOnFocus
+                    blurOnSelect
+                    id="combo-box-demo"
+                    getOptionLabel={(option) =>
+                      option.name +
+                      "@tags:" +
+                      option.tags +
+                      (option.links
+                        ? option.links
+                            .map((m) => getDisplayName(m.uuid, globalState))
+                            .toString()
+                        : "")
+                    }
+                    options={globalState.state.actors.filter(
+                      (x) =>
+                        x.type === "fact" &&
+                        !actor.fact.map((y) => y.uuid).includes(x.uuid)
+                    )}
+                    sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                    onChange={(e, newValue) => {
+                      if (newValue && newValue !== "Select") {
+                        addTo(newValue.uuid, "fact", "web");
+                      }
+                    }}
+                    renderOption={(props, option) => (
+                      <div {...props}>
+                        <span>{props.key.split("@tags:")[0]}</span>
+                      </div>
+                    )}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Add a fact..." />
+                    )}
+                  />
+                </FormControl>
+              </div>
+            )}
+          </TabPanel>
 
-            <div>
-              <Button
-                onClick={() => {
-                  includeType("link");
-                }}
-              >
-                Include Links{" "}
-              </Button>
+          <TabPanel value={currentTab} index={3}>
+            {renderActorToggle("snippet")}
 
-              <Button
-                onClick={() => {
-                  removeType("link");
-                }}
-              >
-                Remove Links{" "}
-              </Button>
-            </div>
+            {actor.showActor.includes("snippet") && (
+              <div>
+    
+                <SimpleList
+                  type="snippets"
+                  xAction={(uuid) => {
+                    removeFrom(uuid, "snippet", "web");
+                  }}
+                  showAvatars={false}
+                  list={globalState.state.actors.filter(
+                    (a) =>
+                      a.type === "snippet" &&
+                      actor.snippet.map((x) => x.uuid).includes(a.uuid)
+                  )}
+                />
+                <FormControl variant="filled">
+                  <Autocomplete
+                    disablePortal
+                    clearOnBlur
+                    selectOnFocus
+                    blurOnSelect
+                    id="combo-box-demo"
+                    getOptionLabel={(option) =>
+                      option.name +
+                      "@tags:" +
+                      option.tags +
+                      (option.links
+                        ? option.links
+                            .map((m) => getDisplayName(m.uuid, globalState))
+                            .toString()
+                        : "")
+                    }
+                    options={globalState.state.actors.filter(
+                      (x) =>
+                        x.type === "snippet" &&
+                        !actor.snippet.map((y) => y.uuid).includes(x.uuid)
+                    )}
+                    sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                    onChange={(e, newValue) => {
+                      if (newValue && newValue !== "Select") {
+                        addTo(newValue.uuid, "snippet", "web");
+                      }
+                    }}
+                    renderOption={(props, option) => (
+                      <div {...props}>
+                        <span>{props.key.split("@tags:")[0]}</span>
+                      </div>
+                    )}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Add a Snippet..." />
+                    )}
+                  />
+                </FormControl>
+              </div>
+            )}
+          </TabPanel>
 
-     
-            <div>
-              <Button
-                onClick={() => {
-                  includeType("snippet");
-                }}
-              >
-                Include Snippets{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeType("snippet");
-                }}
-              >
-                Remove Snippets{" "}
-              </Button>
-            </div>
-
-
-            
-     
-
-     RELATIONSHIPS
-
-     <div>
-              <Button
-                onClick={() => {
-                  includeAxiomByType("reveals");
-                }}
-              >
-                Include REVEALS{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeAxiomByType("reveals");
-                }}
-              >
-                Remove REVEALS{" "}
-              </Button>
-            </div>
-
-
-            <div>
-              <Button
-                onClick={() => {
-                  includeAxiomByType("because");
-                }}
-              >
-                Include BECAUSE{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeAxiomByType("because");
-                }}
-              >
-                Remove BECAUSE{" "}
-              </Button>
-            </div>
-
-            <div>
-              <Button
-                onClick={() => {
-                  includeAxiomByType("involves");
-                }}
-              >
-                Include INVOLVES{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeAxiomByType("involves");
-                }}
-              >
-                Remove INVOLVES{" "}
-              </Button>
-            </div>
-
-            <div>
-              <Button
-                onClick={() => {
-                  includeAxiomByType("involvedBy");
-                }}
-              >
-                Include INVOLVED BY{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeAxiomByType("involvedBy");
-                }}
-              >
-                Remove INVOLVED BY{" "}
-              </Button>
-            </div>
-
-            <div>
-              <Button
-                onClick={() => {
-                  includeAxiomByType("thread");
-                }}
-              >
-                Include Threads{" "}
-              </Button>
-
-              <Button
-                onClick={() => {
-                  removeAxiomByType("thread");
-                }}
-              >
-                Remove Threads{" "}
-              </Button>
-            </div>
-
+          <TabPanel value={currentTab} index={4}>
+            {renderAxiomToggle("thread")}
+            {actor.showAxiom.includes("thread") && (
+              <div>
+                <SimpleList
+                  type="threads"
+                  showAvatars={true}
+                  xAction={(uuid) => {
+                    removeFrom(uuid, "thread", "web");
+                  }}
+                  list={globalState.state.actors.filter(
+                    (a) =>
+                      a.type === "thread" &&
+                      actor.thread &&
+                      actor.thread.map((x) => x.uuid).includes(a.uuid)
+                  )}
+                />
+                <FormControl variant="filled">
+                  <Autocomplete
+                    disablePortal
+                    clearOnBlur
+                    selectOnFocus
+                    blurOnSelect
+                    id="combo-box-demo"
+                    getOptionLabel={(option) =>
+                      option.name +
+                      "@tags:" +
+                      option.tags +
+                      (option.links
+                        ? option.links
+                            .map((m) => getDisplayName(m.uuid, globalState))
+                            .toString()
+                        : "")
+                    }
+                    options={globalState.state.actors.filter(
+                      (x) =>
+                        x.type === "thread" &&
+                        x.thread &&
+                        (!actor.thread ||
+                          !actor.thread.map((y) => y.uuid).includes(x.uuid))
+                    )}
+                    sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                    onChange={(e, newValue) => {
+                      if (newValue && newValue !== "Select") {
+                        addTo(newValue.uuid, "thread", "web");
+                      }
+                    }}
+                    renderOption={(props, option) => (
+                      <div {...props}>
+                        <span>
+                          <Avatar
+                            alt=" "
+                            sx={{
+                              bgcolor: option.color ? option.color : "grey",
+                            }}
+                            src={
+                              homedir +
+                              "\\.silky\\" +
+                              globalState.state.project +
+                              "\\" +
+                              option.uuid +
+                              ".png"
+                            }
+                          />
+                          {props.key.split("@tags:")[0]}
+                        </span>
+                      </div>
+                    )}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Add a Thread..." />
+                    )}
+                  />
+                </FormControl>
+              </div>
+            )}{" "}
           </TabPanel>
         </div>
       )}

@@ -11,6 +11,9 @@ import spread from "cytoscape-spread";
 import cise from "cytoscape-cise";
 import avsdf from "cytoscape-avsdf";
 import { actorToCyto } from "../../utils";
+import TextField from "@material-ui/core/TextField";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { confirmAlert } from "react-confirm-alert"; // Import
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select";
@@ -70,16 +73,21 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
     console.log(cy);
     if (cy) {
       cy.layout(defaultLayout).run();
+      cy.center();
     }
   }, [actor.layout]);
 
   useEffect(() => {
     if (cy) {
       if (actor.repositionNodes) {
-        cy.layout(layout).run();
+        cy.layout(defaultLayout).run();
+        cy.center();
       }
     }
-  }, [actor.repositionNodes]);
+  }, [actor.show,actor.showAxiom,actor.repositionNodes,actor.hideDisconnectedNodes]);
+
+
+
 
   useEffect(() => {
     function handleResize() {
@@ -91,6 +99,27 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
 
   const handleCy = (cy) => {
     setCy(cy);
+  };
+
+  
+  const keyPress = (e) => {
+    if (e.keyCode === 13) {
+      saveTitle();
+    }
+    if (e.keyCode === 27) {
+      setEditTitle(false);
+    }
+  };
+
+  const saveTitle = () => {
+    setEditTitle(false);
+    let clone = _.cloneDeep(actor);
+    clone.name = title;
+    dispatch({
+      action: "saveActor",
+      for: "web",
+      payload: { actor: clone },
+    });
   };
 
   let axioms = [];
@@ -225,6 +254,8 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
       if (
         actor.showAxiom && 
         actor.showAxiom.includes("thread") &&
+        actor.thread &&
+        actor.thread.map(x=>x.uuid).includes(node.uuid) &&
         node.type == "thread" &&
         node.sequence 
       ) {
@@ -263,16 +294,85 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
       })
   );
 
+
+  
+  const remove = () => {
+    confirmAlert({
+      title: "Confirm to remove",
+      message:
+        "Are you sure you want to remove " +
+        actor.type +
+        " " +
+        actor.name +
+        "? You won't be able to undo this action.",
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => {
+            dispatch({
+              action: "removeActor",
+              payload: { uuid: actorUuid },
+            });
+          },
+        },
+        {
+          label: "No",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
   return (
     <div>
       <h1>
-        {actor.name} - {actor.layout && actor.layout}
+
+      <span className={showAvatar?"title showAvatar":"title"}>
+            <span
+              onClick={() => {
+                setEditTitle(!editTitle);
+                setTitle(actor.name);
+              }}
+            >
+              {!editTitle && actor.name}
+            </span>
+            {editTitle && (
+              <TextField
+                autoFocus
+                sx={{ bgcolor: "white" }}
+                id="outlined-basic"
+                value={title}
+                onKeyDown={keyPress}
+                onBlur={() => {
+                  saveTitle();
+                }}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            )}
+          </span>
+
+          <span className="delete">
+            <DeleteIcon onClick={remove} />
+          </span>
       </h1>
 
       <CytoscapeComponent
         layout={layout}
         cy={handleCy}
-        elements={[...content, ...axioms]}
+
+        elements={[
+          ...content.filter(
+            (x) =>
+              !actor.hideDisconnectedNodes  ||
+              axioms.filter(
+                (y) =>
+                  y.data.source === x.data.id ||
+                  y.data.target === x.data.id
+              ).length > 0
+          ),
+          ...axioms,
+        ]}
+
         style={{
           height: windowDimensions.height + 20,
           width: windowDimensions.width - 400,
