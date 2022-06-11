@@ -7,9 +7,9 @@ import _ from "lodash";
 import FormDialog from "../FormDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-import {Redirect } from "react-router-dom";
-import "./ActorList.css"
-const ActorList = ({ match, type, showAvatar=true }) => {
+import { Redirect } from "react-router-dom";
+import "./ActorList.css";
+const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const content = globalState.state.actors;
@@ -70,58 +70,64 @@ const ActorList = ({ match, type, showAvatar=true }) => {
     },
   }));
 
-
   return (
     <div className="ActorList">
-    
-        {globalState.state.project==="Silky" && <Redirect to="/" />}
-        <div className="controls">
-          <FormDialog type={type} />
-          <div>
-            <SearchIcon/>
-            <TextField
+      {globalState.state.project === "Silky" && <Redirect to="/" />}
+      <div className="controls">
+        {type && <FormDialog type={type} />}
+        <div>
+          <SearchIcon />
+          <TextField
             className="listSearch"
-              id="outlined-basic"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
+            id="outlined-basic"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
+      </div>
 
-        <div className="content">
-          <DraggableList
-            showAvatar={showAvatar}
-            list={content.filter(
-              (x) => x.type === type && (!search || x.name.includes(search) || (x.tags && x.tags.includes(search)))
-            )}
-            handleClick={handleRowClick}
-            saveList={(e) => {
-              if(search){
-                alert("Clear your search to re-order the list.")
-              }
-              dispatch({
-                action: "saveActors",
-                for: type,
-                payload: { actors:  search? content.filter(x=>x.type === type) : e },
-              });
-            }}
-            getType={(x) => {
-              return (
-                globalState.state.actors.find((y) => y.uuid === active.uuid)
-                  .type + "s"
-              );
-            }}
-            onDrop={() =>{}}
-            reorderList={(e) => {
-              dispatch({
-                action: "reorderActors",
-                for: type,
-                payload: { actors:  search? content.filter(x=>x.type === type) : e},
-              });
-            }}
-          ></DraggableList>
-        </div>
-   
+      <div className="content">
+        <DraggableList
+          showAvatar={showAvatar}
+          list={content.filter(
+            (x) =>
+              ((type && x.type === type) || !type) &&
+              (!search ||
+                x.name.includes(search) ||
+                (x.tags && globalState.state.actors.filter(y=>x.tags.find(z=>z.uuid===y.uuid)).find(y=>y.name.includes(search)))) &&
+              ((tag && x.tags && Array.isArray(x.tags) && x.tags.map(z=>z.uuid).includes(tag)) || !tag)
+          )}
+          handleClick={handleRowClick}
+          saveList={(e) => {
+            if (search) {
+              alert("Clear your search to re-order the list.");
+            }
+            dispatch({
+              action: "saveActors",
+              for: type,
+              payload: {
+                actors: search ? content.filter((x) => x.type === type) : e,
+              },
+            });
+          }}
+          getType={(x) => {
+            return (
+              globalState.state.actors.find((y) => y.uuid === active.uuid)
+                .type + "s"
+            );
+          }}
+          onDrop={() => {}}
+          reorderList={(e) => {
+            dispatch({
+              action: "reorderActors",
+              for: type,
+              payload: {
+                actors: search ? content.filter((x) => x.type === type) : e,
+              },
+            });
+          }}
+        ></DraggableList>
+      </div>
     </div>
   );
 };

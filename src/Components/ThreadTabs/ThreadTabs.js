@@ -19,17 +19,14 @@ import { CgDuplicate } from "react-icons/cg";
 import { uploadPic } from "../../utils";
 import { ColorPicker } from "material-ui-color";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import {
+import { GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
+import { AiFillTag } from "react-icons/ai";
 
-  GiSewingString,
-  GiLightBulb
-} from "react-icons/gi";
-import {HiPuzzle} from "react-icons/hi"
-import {AiFillTag} from "react-icons/ai"
-
-import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 import "./ThreadTabs.css";
+import { IoReturnDownBack } from "react-icons/io5";
 const homedir = window.require("os").homedir();
 
 const useStyles = makeStyles({
@@ -71,10 +68,14 @@ const ThreadTabs = ({ actorUuid }) => {
   const classes = useStyles();
 
   const remove = () => {
-
     confirmAlert({
       title: "Confirm to remove",
-      message: "Are you sure you want to remove " +actor.type+" "+ actor.name + "? You won't be able to undo this action.",
+      message:
+        "Are you sure you want to remove " +
+        actor.type +
+        " " +
+        actor.name +
+        "? You won't be able to undo this action.",
 
       buttons: [
         {
@@ -92,7 +93,6 @@ const ThreadTabs = ({ actorUuid }) => {
         },
       ],
     });
-
   };
 
   const keyPress = (e) => {
@@ -249,10 +249,9 @@ const ThreadTabs = ({ actorUuid }) => {
             <br />
             <FormControl variant="filled">
               <Autocomplete
-                disablePortal
                 showAvatar={false}
-                clearOnBlur
-                selectOnFocus
+                clearOnBlur={true}
+                selectOnFocus={true}
                 id="combo-box-demo"
                 getOptionLabel={(option) =>
                   option.name +
@@ -289,9 +288,12 @@ const ThreadTabs = ({ actorUuid }) => {
                     </div>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Then..." />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
               <br />
               <FormDialog type={"snippet"} specialOp={addToThread} />

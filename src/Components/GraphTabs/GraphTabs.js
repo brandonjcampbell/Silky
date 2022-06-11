@@ -405,9 +405,12 @@ const GraphTabs = ({ actorUuid }) => {
                         <span>{props.key.split("@tags:")[0]}</span>
                       </div>
                     )}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Add an element..." />
-                    )}
+                    renderInput={(params) => {
+                      if(params && params.inputProps ){
+                      params.inputProps.value=null;
+                      }
+                      return <TextField {...params} label="Then..." value={null} />;
+                    }}
                   />
                 </FormControl>
               </div>
@@ -464,9 +467,12 @@ const GraphTabs = ({ actorUuid }) => {
                         <span>{props.key.split("@tags:")[0]}</span>
                       </div>
                     )}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Add a fact..." />
-                    )}
+                    renderInput={(params) => {
+                      if(params && params.inputProps ){
+                      params.inputProps.value=null;
+                      }
+                      return <TextField {...params} label="Then..." value={null} />;
+                    }}
                   />
                 </FormControl>
               </div>
@@ -524,9 +530,12 @@ const GraphTabs = ({ actorUuid }) => {
                         <span>{props.key.split("@tags:")[0]}</span>
                       </div>
                     )}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Add a Snippet..." />
-                    )}
+                    renderInput={(params) => {
+                      if(params && params.inputProps ){
+                      params.inputProps.value=null;
+                      }
+                      return <TextField {...params} label="Then..." value={null} />;
+                    }}
                   />
                 </FormControl>
               </div>
@@ -601,9 +610,12 @@ const GraphTabs = ({ actorUuid }) => {
                         </span>
                       </div>
                     )}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Add a Thread..." />
-                    )}
+                    renderInput={(params) => {
+                      if(params && params.inputProps ){
+                      params.inputProps.value=null;
+                      }
+                      return <TextField {...params} label="Then..." value={null} />;
+                    }}
                   />
                 </FormControl>
               </div>

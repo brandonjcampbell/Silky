@@ -9,6 +9,10 @@ import Avatar from "@mui/material/Avatar";
 import { store } from "../../MyContext";
 import { getDisplayName } from "../../utils";
 import "./DraggableList.css";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle, HiTag } from "react-icons/hi";
+
 const homedir = window.require("os").homedir();
 
 const DraggableList = ({
@@ -41,7 +45,7 @@ const DraggableList = ({
 
     return (
       <div
-        className={showAvatar?"row showAvatar":"row"}
+        className={showAvatar ? "row showAvatar" : "row"}
         onClick={() => {
           handleClick(x);
         }}
@@ -62,6 +66,22 @@ const DraggableList = ({
               }
             />
           )}
+          {!showAvatar && x.type === "element" && (
+            <HiPuzzle className="avatar" />
+          )}
+          {!showAvatar && (x.type === "fact" || x.type === "link") && (
+            <GiLightBulb className="avatar" />
+          )}
+          {!showAvatar && x.type === "snippet" && (
+            <TiScissors className="avatar" />
+          )}
+          {!showAvatar && x.type === "thread" && (
+            <GiSewingString className="avatar" />
+          )}
+          {!showAvatar && x.type === "web" && (
+            <GiSpiderWeb className="avatar" />
+          )}
+          {!showAvatar && x.type === "tag" && <HiTag className="avatar" />}
 
           {displayName.slice(0, showCharacterCount)}
           {displayName.length > showCharacterCount ? "..." : ""}

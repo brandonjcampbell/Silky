@@ -33,7 +33,7 @@ import {
   GiLightBulb,
   GiPendulumSwing,
 } from "react-icons/gi";
-import { HiPuzzle } from "react-icons/hi";
+import { HiPuzzle, HiTag } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
 
 ReactDOM.render(
@@ -47,29 +47,34 @@ ReactDOM.render(
             <img className="logo" src={logo} alt="silky" />
           </Link>
 
-          <Link to="/elements">
+          <Link to="/elements/">
             <span className="menuLabel">Elements</span>{" "}
             <HiPuzzle className="menuItem" />
           </Link>
 
-          <Link to="/facts">
+          <Link to="/facts/">
             <span className="menuLabel">Reveals</span>{" "}
             <GiLightBulb className="menuItem" />
           </Link>
 
-          <Link to="/snippets">
+          <Link to="/snippets/">
             <span className="menuLabel">Snippets</span>{" "}
             <TiScissors className="menuItem" />
           </Link>
 
-          <Link to="/threads">
+          <Link to="/threads/">
             <span className="menuLabel">Threads</span>{" "}
             <GiSewingString className="menuItem" />
           </Link>
 
-          <Link to="/webs">
+          <Link to="/webs/">
             <span className="menuLabel">Webs</span>{" "}
             <GiSpiderWeb className="menuItem" />
+          </Link>
+
+          <Link to="/tags/">
+            <span className="menuLabel">Tags</span>{" "}
+            <HiTag className="menuItem" />
           </Link>
         </div>
 
@@ -78,27 +83,9 @@ ReactDOM.render(
           <div>
             <Route path="/" exact component={App} />
             <Route path="/Graph" exact component={Graph} />
+
             <Route
-              path="/Elements"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="element" />
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace"></div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Elements/:uuid"
+              path={["/Elements/", "/Elements/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
@@ -111,98 +98,17 @@ ReactDOM.render(
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
-                        <Workspace actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <Workspace actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
-                        <ElementTabs actorUuid={props.match.params.uuid} />
-                      </div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Facts"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical" flex={0.25}>
-                    <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace"></div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Facts/:uuid"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
-                        <Workspace
-                          actorUuid={props.match.params.uuid}
-                          showAvatar={false}
-                        />
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.25}>
-                      <div className="Extras">
-                        <FactTabs actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <ElementTabs actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -211,11 +117,11 @@ ReactDOM.render(
             />
 
             <Route
-              path="/Links"
+              path={["/Facts/", "/Facts/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
-                  <ReflexContainer orientation="vertical" flex={0.25}>
+                  <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane">
                       <ReflexContainer orientation="horizontal">
                         <ReflexElement className="left-pane" flex={0.75}>
@@ -240,13 +146,29 @@ ReactDOM.render(
                       </ReflexContainer>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace"></div>
+                    <ReflexElement className="middle-pane" flex={0.5}>
+                      <div className="Workspace">
+                        {props.match.params.uuid && (
+                          <Workspace
+                            actorUuid={props.match.params.uuid}
+                            showAvatar={false}
+                          />
+                        )}
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.25}>
+                      <div className="Extras">
+                        {props.match.params.uuid && (
+                          <FactTabs actorUuid={props.match.params.uuid} />
+                        )}
+                      </div>
                     </ReflexElement>
                   </ReflexContainer>
                 </div>
               )}
             />
+
             <Route
               path="/Links/:uuid"
               exact
@@ -279,13 +201,17 @@ ReactDOM.render(
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
-                        <LinkSpace actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <LinkSpace actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
-                        <LinkTabs actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <LinkTabs actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -294,30 +220,7 @@ ReactDOM.render(
             />
 
             <Route
-              path="/Snippets"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList
-                          {...props}
-                          type="snippet"
-                          showAvatar={false}
-                        />
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace" showAvatar={false}></div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Snippets/:uuid"
+              path={["/Snippets/", "/Snippets/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
@@ -334,43 +237,29 @@ ReactDOM.render(
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
-                        <Workspace
-                          actorUuid={props.match.params.uuid}
-                          showAvatar={false}
-                        />
+                        {props.match.params.uuid && (
+                          <Workspace
+                            actorUuid={props.match.params.uuid}
+                            showAvatar={false}
+                          />
+                        )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
-                        <SnippetTabs actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <SnippetTabs actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>
                 </div>
               )}
             />
+
             <Route
-              path="/Threads"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="thread" />
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace"></div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Threads/:uuid"
+              path={["/Threads/", "/Threads/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
@@ -383,7 +272,9 @@ ReactDOM.render(
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.75}>
                       <div className="Workspace">
-                        <ThreadTabs actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <ThreadTabs actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>
@@ -392,26 +283,7 @@ ReactDOM.render(
             />
 
             <Route
-              path="/Webs"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
-                      <div className="List">
-                        <ActorList {...props} type="web" />
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
-                      <div className="Workspace"></div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-            <Route
-              path="/Webs/:uuid"
+              path={["/Webs/", "/Webs/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
@@ -423,23 +295,70 @@ ReactDOM.render(
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
-                        <GraphSpace
-                          actorUuid={props.match.params.uuid}
-                          showAvatar={false}
-                        />
-                      </div>
+                      {props.match.params.uuid && (
+                        <div className="Workspace">
+                          <GraphSpace
+                            actorUuid={props.match.params.uuid}
+                            showAvatar={false}
+                          />
+                        </div>
+                      )}
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="right-pane" flex={0.25}>
                       <div className="Extras">
-                        <GraphTabs actorUuid={props.match.params.uuid} />
+                        {props.match.params.uuid && (
+                          <GraphTabs actorUuid={props.match.params.uuid} />
+                        )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>
                 </div>
               )}
             />
+
+
+
+<Route
+              path={["/Tags/", "/Tags/:uuid"]}
+              exact
+              render={(props) => (
+                <div className="View">
+                  <ReflexContainer orientation="vertical">
+                    <ReflexElement className="left-pane" flex={0.25}>
+                      <div className="List">
+                        <ActorList
+                          {...props}
+                          type="tag"
+                          showAvatar={false}
+                        />
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="middle-pane" flex={0.5}>
+                      <div className="Workspace">
+
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.25}>
+                      <div className="Extras">
+                      {props.match.params.uuid && (
+              
+              <ActorList
+              {...props}
+        tag={props.match.params.uuid}
+              showAvatar={false}
+            />
+
+                        )}
+                      </div>
+                    </ReflexElement>
+                  </ReflexContainer>
+                </div>
+              )}
+            />
+
           </div>
         </div>
       </BrowserRouter>

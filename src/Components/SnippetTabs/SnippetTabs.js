@@ -19,6 +19,8 @@ import SimpleList from "../SimpleList";
 import { GiSewingString, GiLightBulb, GiPendulumSwing } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { AiFillTag } from "react-icons/ai";
+import FormDialog from "../FormDialog";
+
 
 import "./SnippetTabs.css";
 
@@ -187,9 +189,12 @@ const SnippetTabs = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a fact..." />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
             <h2 className="ExtraHeader">Links</h2>
@@ -245,9 +250,12 @@ const SnippetTabs = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a Link" />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
           </TabPanel>
@@ -315,9 +323,12 @@ const SnippetTabs = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add an element..." />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
           </TabPanel>
@@ -338,28 +349,72 @@ const SnippetTabs = ({ actorUuid }) => {
             />
           </TabPanel>
           <TabPanel value={currentTab} index={3}>
-            <TextField
-              aria-label="empty textarea"
-              placeholder="Enter tags as a comma separated list"
-              className={classes.root}
-              value={tags}
-              onChange={(e) => {
-                tagSave(e.target.value);
+          <SimpleList
+              type="tags"
+              showAvatars={false}
+              xAction={(uuid) => {
+                removeFrom(uuid, "tags");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "tag" &&
+                  actor &&
+                  actor.tags &&
+                  actor.tags.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "tag" &&
+                    (!actor.tags ||
+                      (actor.tags &&
+                        !actor.tags.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "tags");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
+              />
+            </FormControl>
+            <FormDialog
+              type={"tag"}
+              specialOp={(uuid) => {
+                addTo(uuid, "tag");
               }}
             />
-            <div>
-              {tags.split(",").map((tag) => {
-                if (tag) {
-                  return (
-                    <Chip
-                      className="tag"
-                      label={tag}
-                      icon={<LocalOfferIcon />}
-                    />
-                  );
-                }
-              })}
-            </div>
+        
           </TabPanel>
         </div>
       )}

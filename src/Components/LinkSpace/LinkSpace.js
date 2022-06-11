@@ -183,9 +183,12 @@ const LinkSpace = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a Fact..." />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
           </div>
@@ -238,9 +241,12 @@ const LinkSpace = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a Fact..." />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
             {/* <FormDialog type={"fact"} specialOp={addToX} /> */}

@@ -214,9 +214,13 @@ const ElementTabs = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a fact..." />
-                )}
+                renderInput={(params) => {
+                  console.log("PARAMS!",params)
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
             <h2 className="ExtraHeader">Links</h2>
@@ -272,11 +276,15 @@ const ElementTabs = ({ actorUuid }) => {
                     </span>
                   </div>
                 )}
-                renderInput={(params) => (
-                  <TextField {...params} label="Add a Link" />
-                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
               />
             </FormControl>
+
           </TabPanel>
          
          
@@ -299,7 +307,80 @@ const ElementTabs = ({ actorUuid }) => {
             <SimpleList list={getThreads()} />
           </TabPanel>
 
-          <TabPanel value={currentTab} index={3}>
+
+
+          <TabPanel className="tabPanel" value={currentTab} index={3}>
+            <SimpleList
+              type="tags"
+              showAvatars={false}
+              xAction={(uuid) => {
+                removeFrom(uuid, "tags");
+              }}
+              list={globalState.state.actors.filter(
+                (a) =>
+                  a.type === "tag" &&
+                  actor &&
+                  actor.tags &&
+                  actor.tags.map((x) => x.uuid).includes(a.uuid)
+              )}
+            />
+            <FormControl variant="filled">
+              <Autocomplete
+                disablePortal
+                clearOnBlur
+                selectOnFocus
+                blurOnSelect
+                id="combo-box-demo"
+                getOptionLabel={(option) =>
+                  option.name +
+                  "@tags:" +
+                  option.tags +
+                  (option.elements
+                    ? option.elements
+                        .map((m) => getDisplayName(m.uuid, globalState))
+                        .toString()
+                    : "")
+                }
+                options={globalState.state.actors.filter(
+                  (x) =>
+                    x.type === "tag" &&
+                    (!actor.tags ||
+                      (actor.tags &&
+                        !actor.tags.map((y) => y.uuid).includes(x.uuid)))
+                )}
+                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                onChange={(e, newValue) => {
+                  if (newValue && newValue !== "Select") {
+                    addTo(newValue.uuid, "tags");
+                  }
+                }}
+                renderOption={(props, option) => (
+                  <div {...props}>
+                    <span>
+                      {props.key.split("@tags:")[0]}
+                    </span>
+                  </div>
+                )}
+                renderInput={(params) => {
+                  if(params && params.inputProps ){
+                  params.inputProps.value=null;
+                  }
+                  return <TextField {...params} label="Then..." value={null} />;
+                }}
+              />
+            </FormControl>
+            <FormDialog
+              type={"tag"}
+              specialOp={(uuid) => {
+                addTo(uuid, "tag");
+              }}
+            />
+        
+          </TabPanel>
+         
+         
+
+          {/* <TabPanel value={currentTab} index={3}>
             <TextField
               aria-label="empty textarea"
               placeholder="Enter tags as a comma separated list"
@@ -323,6 +404,10 @@ const ElementTabs = ({ actorUuid }) => {
               })}
             </div>
           </TabPanel>
+       
+        */}
+       
+       
         </div>
       )}
     </div>
