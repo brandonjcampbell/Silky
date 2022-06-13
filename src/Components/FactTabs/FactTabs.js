@@ -189,7 +189,7 @@ const FactTabs = ({ actorUuid }) => {
 
           <TabPanel className="tabPanel" value={currentTab} index={0}>
             <SimpleList
-              type="element"
+              type="elements"
               xAction={(uuid) => {
                 removeFrom(uuid, "element");
               }}

@@ -14,13 +14,9 @@ import { actorToCyto } from "../../utils";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+
 import _ from "lodash";
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
+import TitleBar from "../TitleBar"
 
 import { useState, useContext, useEffect } from "react";
 
@@ -325,36 +321,8 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
 
   return (
     <div>
-      <h1>
-
-      <span className={showAvatar?"title showAvatar":"title"}>
-            <span
-              onClick={() => {
-                setEditTitle(!editTitle);
-                setTitle(actor.name);
-              }}
-            >
-              {!editTitle && actor.name}
-            </span>
-            {editTitle && (
-              <TextField
-                autoFocus
-                sx={{ bgcolor: "white" }}
-                id="outlined-basic"
-                value={title}
-                onKeyDown={keyPress}
-                onBlur={() => {
-                  saveTitle();
-                }}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            )}
-          </span>
-
-          <span className="delete">
-            <DeleteIcon onClick={remove} />
-          </span>
-      </h1>
+     
+     <TitleBar actor={actor} />
 
       <CytoscapeComponent
         layout={layout}

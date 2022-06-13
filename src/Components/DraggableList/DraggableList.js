@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext,useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import TextField from "@material-ui/core/TextField";
-import Avatar from "@mui/material/Avatar";
+import Avatar from "../Avatar";
 import { store } from "../../MyContext";
 import { getDisplayName } from "../../utils";
 import "./DraggableList.css";
@@ -34,11 +34,19 @@ const DraggableList = ({
     onDrop();
   }
 
+
+  // useEffect(() => {
+  //   console.log(list);
+  // }, [list]);
+
   function remove(uuid) {
     let clone = _.cloneDeep(list);
     clone = clone.filter((x) => x.uuid !== uuid);
     saveList(clone);
   }
+
+
+
 
   function goRenderLabel(x, index) {
     const displayName = getDisplayName(x.uuid, globalState);
@@ -51,37 +59,7 @@ const DraggableList = ({
         }}
       >
         <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
-          {showAvatar && (
-            <Avatar
-              alt=" "
-              className="avatar"
-              sx={{ bgcolor: x.color ? x.color : "grey" }}
-              src={
-                homedir +
-                "\\.silky\\" +
-                globalState.state.project +
-                "\\" +
-                x.uuid +
-                ".png"
-              }
-            />
-          )}
-          {!showAvatar && x.type === "element" && (
-            <HiPuzzle className="avatar" />
-          )}
-          {!showAvatar && (x.type === "fact" || x.type === "link") && (
-            <GiLightBulb className="avatar" />
-          )}
-          {!showAvatar && x.type === "snippet" && (
-            <TiScissors className="avatar" />
-          )}
-          {!showAvatar && x.type === "thread" && (
-            <GiSewingString className="avatar" />
-          )}
-          {!showAvatar && x.type === "web" && (
-            <GiSpiderWeb className="avatar" />
-          )}
-          {!showAvatar && x.type === "tag" && <HiTag className="avatar" />}
+          <Avatar actor={x} small={true} />
 
           {displayName.slice(0, showCharacterCount)}
           {displayName.length > showCharacterCount ? "..." : ""}

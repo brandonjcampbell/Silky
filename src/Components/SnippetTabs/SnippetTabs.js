@@ -359,7 +359,8 @@ const SnippetTabs = ({ actorUuid }) => {
                 (a) =>
                   a.type === "tag" &&
                   actor &&
-                  actor.tags &&
+                  actor.tags && 
+                  Array.isArray(actor.tags) &&
                   actor.tags.map((x) => x.uuid).includes(a.uuid)
               )}
             />
@@ -385,6 +386,7 @@ const SnippetTabs = ({ actorUuid }) => {
                     x.type === "tag" &&
                     (!actor.tags ||
                       (actor.tags &&
+                        Array.isArray(actor.tags) &&
                         !actor.tags.map((y) => y.uuid).includes(x.uuid)))
                 )}
                 sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}

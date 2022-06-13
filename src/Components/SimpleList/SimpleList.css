@@ -21,8 +21,12 @@
     font-weight: normal;
 }
 .simpleListAvatar{
-    margin-right: 10px;
+    margin-right: 0px;
 
+}
+.value{
+    display: inline-block;
+    margin-left:20px;
 }
 .simpleListXAction{
     position: relative;

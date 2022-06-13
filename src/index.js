@@ -317,9 +317,7 @@ ReactDOM.render(
               )}
             />
 
-
-
-<Route
+            <Route
               path={["/Tags/", "/Tags/:uuid"]}
               exact
               render={(props) => (
@@ -327,30 +325,31 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList
-                          {...props}
-                          type="tag"
-                          showAvatar={false}
-                        />
+                        <ActorList {...props} type="tag" showAvatar={false} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
+        
 
+                      <div className="Extras">
+                        {props.match.params.uuid && (
+                          <ActorList
+                            {...props}
+                            tag={props.match.params.uuid}
+                            showAvatar={false}
+                          />
+                        )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="right-pane" flex={0.25}>
-                      <div className="Extras">
-                      {props.match.params.uuid && (
-              
-              <ActorList
-              {...props}
-        tag={props.match.params.uuid}
-              showAvatar={false}
-            />
-
+                    <div className="Workspace">
+                        {props.match.params.uuid && (
+                          <Workspace
+                            actorUuid={props.match.params.uuid}
+                            showAvatar={false}
+                          />
                         )}
                       </div>
                     </ReflexElement>
@@ -358,7 +357,6 @@ ReactDOM.render(
                 </div>
               )}
             />
-
           </div>
         </div>
       </BrowserRouter>

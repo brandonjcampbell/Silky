@@ -1,45 +1,7 @@
-.workspace{
-    position: relative;
-    top:-20px;
-  
-}
-.workspaceHeader{
-    display: flex;
-    vertical-align: bottom;
-    line-height: 35px;
-    position: relative;
-}
-.workspace h2 .avatar{
- position: relative;
- top:10px;
-height:70px;
-width:70px;
- background-color: rgb(81, 78, 87);
-}
-.editor{
-    position: relative;
-    top:-18px;
-    padding:0px
-}
 
-.workspace .title{
-    position: relative;
-    top:0px;
-    margin-left:5px;
-    color:white;
-   
-}
-.workspace .title.showAvatar{
 
-    top:25px;
-    margin-left: 0px;
-
-   
-}
-.workspace .delete {
-    color:white;
-    position: relative;
-    top:30px; 
-    left:10px;  
-
+.editor {
+  padding: 0px;
+  position: relative;
+  top: -20px;
 }

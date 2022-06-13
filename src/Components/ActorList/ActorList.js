@@ -12,7 +12,6 @@ import "./ActorList.css";
 const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const content = globalState.state.actors;
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [active, setActive] = useState(
@@ -21,6 +20,10 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
       : null
   );
   const [count, setCount] = useState(1);
+
+// useEffect(()=>{
+// console.log(globalState.state.actors)
+// },[globalState.state.actors])
 
   const {
     params: { userId },
@@ -89,7 +92,7 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
       <div className="content">
         <DraggableList
           showAvatar={showAvatar}
-          list={content.filter(
+          list={globalState.state.actors.filter(
             (x) =>
               ((type && x.type === type) || !type) &&
               (!search ||
@@ -106,7 +109,7 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
               action: "saveActors",
               for: type,
               payload: {
-                actors: search ? content.filter((x) => x.type === type) : e,
+                actors: search ? globalState.state.actors.filter((x) => x.type === type) : e,
               },
             });
           }}
@@ -122,7 +125,7 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
               action: "reorderActors",
               for: type,
               payload: {
-                actors: search ? content.filter((x) => x.type === type) : e,
+                actors: search ? globalState.state.actors.filter((x) => x.type === type) : e,
               },
             });
           }}

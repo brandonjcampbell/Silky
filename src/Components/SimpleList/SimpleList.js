@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import Avatar from "@mui/material/Avatar";
+import Avatar from "../Avatar";
 import { store } from "../../MyContext";
 import CloseIcon from "@material-ui/icons/Close";
 import {getDisplayName} from "../../utils";
@@ -19,38 +19,10 @@ const SimpleList = ({ list,xAction,type="threads",showAvatars=true }) => {
       {list.map((x) => (
         <div className="simpleListRow">
           <Link to={`/${type}/${x.uuid}`}>
-            {showAvatars && <Avatar
-              alt=" "
-              className="simpleListAvatar"
-              sx={{ bgcolor: x.color ? x.color : "grey" }}
-              src={
-                homedir +
-                "\\.silky\\" +
-                globalState.state.project +
-                "\\" +
-                x.uuid +
-                ".png"
-              }
-            />}
-
-{!showAvatars && x.type === "element" && (
-            <HiPuzzle className="avatar" />
-          )}
-          {!showAvatars && (x.type === "fact" || x.type === "link") && (
-            <GiLightBulb className="avatar" />
-          )}
-          {!showAvatars && x.type === "snippet" && (
-            <TiScissors className="avatar" />
-          )}
-          {!showAvatars && x.type === "thread" && (
-            <GiSewingString className="avatar" />
-          )}
-          {!showAvatars && x.type === "web" && (
-            <GiSpiderWeb className="avatar" />
-          )}
-          {!showAvatars && x.type === "tag" && <HiTag className="avatar" />}
-
-            {getDisplayName(x.uuid,globalState)}
+         <Avatar small={true} actor={x}/>
+          <span className="value">
+          {getDisplayName(x.uuid,globalState)}
+          </span>
           </Link>
           {xAction && <CloseIcon className="simpleListXAction" onClick={() => xAction(x.uuid)} />}
         </div>

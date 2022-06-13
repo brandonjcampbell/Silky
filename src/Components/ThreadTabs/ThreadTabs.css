@@ -4,13 +4,6 @@
 }
 
 
-.ColorPicker-MuiButton-label,
-.ColorPicker-MuiButton-label div {
-  height: 70px !important;
-  width: 70px !important;
-  border-radius: 70px!important;
-  display: inline-block;
-}
 
 .MuiBox-root.css-1{
     position: relative;

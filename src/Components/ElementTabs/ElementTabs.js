@@ -2,14 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import TextField from "@material-ui/core/TextField";
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
-import Avatar from "@mui/material/Avatar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
 import FormDialog from "../FormDialog";
@@ -165,7 +161,6 @@ const ElementTabs = ({ actorUuid }) => {
             <h2 className="ExtraHeader">Facts</h2>
             <SimpleList
               type="facts"
-              showAvatars={false}
               xAction={(uuid) => {
                 removeFrom(uuid, "facts");
               }}
@@ -227,7 +222,6 @@ const ElementTabs = ({ actorUuid }) => {
 
             <SimpleList
               type="links"
-              showAvatars={false}
               xAction={(uuid) => {
                 removeFrom(uuid, "links");
               }}

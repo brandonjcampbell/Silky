@@ -14,6 +14,7 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import TabPanel from "../TabPanel";
 import Thread from "../Thread";
+import TitleBar from "../TitleBar";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CgDuplicate } from "react-icons/cg";
 import { uploadPic } from "../../utils";
@@ -149,46 +150,8 @@ const ThreadTabs = ({ actorUuid }) => {
     <div className="rootThreadDiv">
       {actor && (
         <div>
-          <h2 className="threadspaceHeader">
-            <div className="colorPicker">
-              <ColorPicker
-                value={actor.color}
-                hideTextfield
-                onChange={(e) => {
-                  updateColor(e);
-                }}
-              />
-            </div>
-
-            <span className="title">
-              <span
-                onClick={() => {
-                  setEditTitle(!editTitle);
-                  setTitle(actor.name);
-                }}
-              >
-                {!editTitle && actor.name}
-              </span>
-              {editTitle && (
-                <TextField
-                  autoFocus
-                  sx={{ bgcolor: "white" }}
-                  id="outlined-basic"
-                  value={title}
-                  onKeyDown={keyPress}
-                  onBlur={() => {
-                    saveTitle();
-                  }}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              )}
-            </span>
-            <span className="delete">
-              <DeleteIcon onClick={remove} />
-              <CgDuplicate onClick={duplicate} />
-            </span>
-          </h2>
-
+          <TitleBar actor={actor}/>
+       
           <Box>
             <Tabs
               value={currentTab}
