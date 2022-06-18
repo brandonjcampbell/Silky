@@ -17,6 +17,7 @@ import {
   App,
   Graph,
   GraphSpace,
+  LinkGraphSpace,
   SnippetTabs,
   Workspace,
   FactTabs,
@@ -32,6 +33,8 @@ import {
   GiSewingString,
   GiLightBulb,
   GiPendulumSwing,
+  GiBreakingChain,
+  GiLongLeggedSpider
 } from "react-icons/gi";
 import { HiPuzzle, HiTag } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
@@ -57,6 +60,8 @@ ReactDOM.render(
             <GiLightBulb className="menuItem" />
           </Link>
 
+ 
+
           <Link to="/snippets/">
             <span className="menuLabel">Snippets</span>{" "}
             <TiScissors className="menuItem" />
@@ -76,6 +81,11 @@ ReactDOM.render(
             <span className="menuLabel">Tags</span>{" "}
             <HiTag className="menuItem" />
           </Link>
+
+          <Link to="/spider/">
+            <span className="menuLabel">Spider Mode</span>{" "}
+            <GiLongLeggedSpider className="menuItem" />
+          </Link>
         </div>
 
         <div className="App">
@@ -92,7 +102,7 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="element" />
+                        <ActorList {...props} type="element" actorUuid={props.match.params.uuid} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -130,6 +140,7 @@ ReactDOM.render(
                               {...props}
                               type="fact"
                               showAvatar={false}
+                              actorUuid={props.match.params.uuid}
                             />
                           </div>
                         </ReflexElement>
@@ -140,6 +151,7 @@ ReactDOM.render(
                               {...props}
                               type="link"
                               showAvatar={false}
+                              actorUuid={props.match.params.uuid}
                             />
                           </div>
                         </ReflexElement>
@@ -183,6 +195,7 @@ ReactDOM.render(
                               {...props}
                               type="fact"
                               showAvatar={false}
+                              actorUuid={props.match.params.uuid}
                             />
                           </div>
                         </ReflexElement>
@@ -193,6 +206,7 @@ ReactDOM.render(
                               {...props}
                               type="link"
                               showAvatar={false}
+                              actorUuid={props.match.params.uuid}
                             />
                           </div>
                         </ReflexElement>
@@ -231,6 +245,7 @@ ReactDOM.render(
                           {...props}
                           type="snippet"
                           showAvatar={false}
+                          actorUuid={props.match.params.uuid}
                         />
                       </div>
                     </ReflexElement>
@@ -266,7 +281,8 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="thread" />
+                        <ActorList {...props} type="thread"
+                        actorUuid={props.match.params.uuid} />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -290,7 +306,7 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="web" />
+                        <ActorList {...props} type="web" actorUuid={props.match.params.uuid}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -317,19 +333,42 @@ ReactDOM.render(
               )}
             />
 
+
+
+
+<Route
+              path={["/Spider/"]}
+              exact
+              render={(props) => (
+                <div className="View">
+
+               
+                          <LinkGraphSpace
+                            showAvatar={false}
+                          />
+                 
+                  
+             
+
+                </div>
+              )}
+            />
+
+
+
             <Route
               path={["/Tags/", "/Tags/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
+                    <ReflexElement className="left-pane" flex={0.15}>
                       <div className="List">
-                        <ActorList {...props} type="tag" showAvatar={false} />
+                        <ActorList {...props} type="tag" showAvatar={false} actorUuid={props.match.params.uuid}/>
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.5}>
+                    <ReflexElement className="middle-pane" flex={0.15}>
         
 
                       <div className="Extras">
@@ -338,12 +377,13 @@ ReactDOM.render(
                             {...props}
                             tag={props.match.params.uuid}
                             showAvatar={false}
+                            actorUuid={props.match.params.uuid}
                           />
                         )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.25}>
+                    <ReflexElement className="right-pane" flex={0.70}>
                     <div className="Workspace">
                         {props.match.params.uuid && (
                           <Workspace

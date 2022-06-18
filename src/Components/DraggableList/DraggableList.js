@@ -23,6 +23,7 @@ const DraggableList = ({
   action,
   showCharacterCount = 100,
   showAvatar = true,
+  actorUuid
 }) => {
   const globalState = useContext(store);
 
@@ -84,6 +85,7 @@ const DraggableList = ({
           <Draggable key={x.uuid} draggableId={x.uuid} index={index}>
             {(provided) => (
               <div
+                className={x.uuid===actorUuid?"selectedRow":""}
                 uuid={x.uuid}
                 ref={provided.innerRef}
                 {...provided.draggableProps}

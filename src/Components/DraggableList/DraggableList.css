@@ -26,6 +26,9 @@
     left:6px;
     
 }
+.selectedRow{
+    background-color: tomato;
+}
 .draggableRemove{
     color:white;
     position: relative;

@@ -20,7 +20,8 @@ import Thread from "./Thread";
 import ThreadTabs from "./ThreadTabs";
 import Timeline from "./Timeline";
 import Web from "./Web";
-import LinkSpace from "./LinkSpace"
+import LinkSpace from "./LinkSpace";
+import LinkGraphSpace from "./LinkGraphSpace";
 
 import Workspace from "./Workspace";
 export {
@@ -31,6 +32,7 @@ export {
   LinkSpace,
   ElementTabs,
   LinkTabs,
+  LinkGraphSpace,
   FactTabs,
   FormDialog,
   Graph,

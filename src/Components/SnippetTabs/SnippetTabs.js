@@ -122,10 +122,10 @@ const SnippetTabs = ({ actorUuid }) => {
                 {...a11yProps(0)}
               />
 
-              <Tab
+              {/* <Tab
                 label={<HiPuzzle className="menuItem" />}
                 {...a11yProps(1)}
-              />
+              /> */}
               <Tab
                 label={<GiSewingString className="menuItem" />}
                 {...a11yProps(2)}
@@ -260,7 +260,7 @@ const SnippetTabs = ({ actorUuid }) => {
             </FormControl>
           </TabPanel>
 
-          <TabPanel className="tabPanel" value={currentTab} index={1}>
+          {/* <TabPanel className="tabPanel" value={currentTab} index={1}>
             <SimpleList
               type="elements"
               xAction={(uuid) => {
@@ -331,7 +331,7 @@ const SnippetTabs = ({ actorUuid }) => {
                 }}
               />
             </FormControl>
-          </TabPanel>
+          </TabPanel> */}
 
           <TabPanel value={currentTab} index={2}>
             <SimpleList
