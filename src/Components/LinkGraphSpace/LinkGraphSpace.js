@@ -10,16 +10,12 @@ import klay from "cytoscape-klay";
 import spread from "cytoscape-spread";
 import cise from "cytoscape-cise";
 import avsdf from "cytoscape-avsdf";
+import FormDialog from "../FormDialog/";
 import { actorToCyto } from "../../utils";
-import TextField from "@material-ui/core/TextField";
-import DeleteIcon from "@material-ui/icons/Delete";
-import { confirmAlert } from "react-confirm-alert"; // Import
 import contextMenus from "cytoscape-context-menus";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
-//import options from "./contextMenuOptions";
 
 import _ from "lodash";
-import TitleBar from "../TitleBar";
 
 import { useState, useContext, useEffect } from "react";
 
@@ -49,9 +45,6 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   }
 
   const globalState = useContext(store);
-  const { dispatch } = globalState;
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState("");
 
   const defaultLayout = {
     name: "dagre",
@@ -63,6 +56,11 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
 
   const [showNodeText, setShowNodeText] = useState(true);
   const [showEdgeText, setShowEdgeText] = useState(true);
+  const [addNodeFlag, setAddNodeFlag] = useState(false);
+  const [mostRecentId, setMostRecentId] = useState(false);
+  const [mouseX, setMouseX] = useState(false);
+  const [mouseY, setMouseY] = useState(false);
+
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
@@ -78,110 +76,148 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    refetch();
+    recalibrate();
+
+
+
+  }, [globalState.state.actors]);
+
   const handleCy = (cy) => {
     var options = {
       evtType: "cxttap",
       menuItems: [
         {
-          id: "add-link",
-          content: "causes",
+          id: "log-id",
+          content: "log id",
           tooltipText: "link to",
           image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
           selector: "node",
+          coreAsWell: false,
+          onClickFunction: function (e) {
+            console.log(e, cy.getElementById(e.target._private.data.id).position());
+          },
+        },
+        {
+          id: "add-fact",
+          content: "Add Fact",
+          tooltipText: "link to",
+          image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
+          selector: "core",
           coreAsWell: true,
           onClickFunction: function (e) {
-            console.log("WHHERE?", linking);
-            if (linking) {
-              const unpack = JSON.parse(linking);
-              let link;
+            setAddNodeFlag(true);
+            console.log(e,"Check it out now")
+            setMouseX(e.position.x);
+            setMouseY(e.position.y);
+            console.log("Partaaaay");
+          },
+        },
+        {
+          id: "add-link",
+          content: "Add CAUSES Link",
+          tooltipText: "link to",
+          image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
+          selector: "node",
+          coreAsWell: false,
+          onClickFunction: function (e) {
+            console.log("WHHERE?", e.target._private.data);
+            if (e.target._private.data.id) {
+              if (linking) {
+                const unpack = JSON.parse(linking);
+                let link;
 
-              if (
-                (unpack && unpack.data && unpack.data.label === "CAUSES") ||
-                e.target._private.data.label === "CAUSES"
-              ) {
-                console.log(link);
-                const res = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    source: unpack.data.id,
-                    target: e.target._private.data.id,
-                    linkLeader: e.target._private.data.label === "CAUSES" ? "true":false,
-                    label: "",
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
+                if (
+                  (unpack && unpack.data && unpack.data.label === "CAUSES") ||
+                  e.target._private.data.label === "CAUSES"
+                ) {
+                  console.log(link);
+                  const res = {
+                    data: {
+                      uuid:
+                        unpack.data.id +
+                        e.target._private.data.id +
+                        100 * Math.random(),
+                      source: unpack.data.id,
+                      target: e.target._private.data.id,
+                      linkLeader:
+                        e.target._private.data.label === "CAUSES"
+                          ? "true"
+                          : false,
+                      label: "",
+                      arrow: "circle",
+                      color: "#ccc",
+                    },
+                  };
 
-                axioms.push(res);
+                  axioms.push(res);
+                } else {
+                  link = {
+                    data: {
+                      id:
+                        unpack.data.id +
+                        e.target._private.data.id +
+                        100 * Math.random(),
+                      name: "CAUSES",
+                      label: "CAUSES",
+                    },
+                    position: {
+                      x: (unpack.position.x + e.target._private.position.x) / 2,
+                      y: (unpack.position.y + e.target._private.position.y) / 2,
+                    },
+                  };
+
+                  console.log(link);
+                  const res1 = {
+                    data: {
+                      uuid:
+                        unpack.data.id +
+                        e.target._private.data.id +
+                        100 * Math.random(),
+                      source: link.data.id,
+                      target: e.target._private.data.id,
+                      label: "",
+
+                      arrow: "circle",
+                      color: "#ccc",
+                    },
+                  };
+
+                  const res2 = {
+                    data: {
+                      uuid:
+                        unpack.data.id +
+                        e.target._private.data.id +
+                        1000 * Math.random(),
+                      source: unpack.data.id,
+                      target: link.data.id,
+                      linkLeader: "true",
+                      label: "",
+                      arrow: "circle",
+                      color: "#ccc",
+                    },
+                  };
+
+                  axioms.push(res1);
+                  axioms.push(res2);
+                  content.push(link);
+                }
+
+                recalibrate();
+                cy.$("#" + unpack.data.id).removeClass("foo");
+                setLinking(false);
               } else {
-                link = {
-                  data: {
-                    id:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    name: "CAUSES",
-                    label: "CAUSES",
-                  },
-                  position: {
-                    x: (unpack.position.x + e.target._private.position.x) / 2,
-                    y: (unpack.position.y + e.target._private.position.y) / 2,
-                  },
-                };
+                console.log(e.target._private);
 
-                console.log(link);
-                const res1 = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    source: link.data.id,
-                    target: e.target._private.data.id,
-                    label: "",
-             
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
-
-                const res2 = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      1000 * Math.random(),
-                    source: unpack.data.id,
-                    target: link.data.id,
-                    linkLeader:"true",
-                    label: "",
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
-
-                axioms.push(res1);
-                axioms.push(res2);
-                content.push(link);
+                setLinking(
+                  JSON.stringify({
+                    data: e.target._private.data,
+                    position: e.target._private.position,
+                  })
+                );
+                cy.$("#" + e.target._private.data.id).addClass("foo");
               }
-
-              recalibrate();
-              cy.$("#" + unpack.data.id).removeClass("foo");
-              setLinking(false);
-            } else {
-              console.log(e.target._private);
-
-              setLinking(
-                JSON.stringify({
-                  data: e.target._private.data,
-                  position: e.target._private.position,
-                })
-              );
-              //console.log(linking,"OOOOGH")
-              cy.$("#" + e.target._private.data.id).addClass("foo");
             }
           },
         },
@@ -198,79 +234,108 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
     var instance = cy.contextMenus(options);
 
     setCy(cy);
+
+
+
   };
-
-
 
   let axioms = [];
 
   globalState.state.actors.map((node) => {
     // This BECAUSE That
 
-    if(node.subjects){
-    node.subjects.forEach((f) => {
-
+    if (node.subjects) {
+      node.subjects.forEach((f) => {
         const res = {
           data: {
             uuid: node.uuid + node.uuid,
             source: node.uuid,
             target: f.uuid,
             label: "",
-           
+
             arrow: "circle",
             color: node.color ? node.color : "#ccc",
           },
         };
         axioms.push(res);
-      
-    });}
-    if(node.targets){
-    node.targets.forEach((f) => {
-
+      });
+    }
+    if (node.targets) {
+      node.targets.forEach((f) => {
         const res = {
           data: {
             uuid: node.uuid + node.uuid,
             target: node.uuid,
             source: f.uuid,
             label: "",
-            linkLeader:'true',
+            linkLeader: "true",
             arrow: "none",
             color: node.color ? node.color : "#ccc",
           },
         };
         axioms.push(res);
-      
-    });}
+      });
+    }
   });
 
-  const content = actorToCyto(
-    globalState.state.actors
-      .filter((a) => a.type === "fact" || a.type==="link")
-      .map((a) => {
-        if (a.type === "link") {
-          let temp = _.cloneDeep(a);
-          temp.name = "CAUSES";
-          return temp;
-        } else {
-          return a;
-        }
-      })
-  );
+  const refetch = function () {
+   let val = actorToCyto(
+      globalState.state.actors
+        .filter((a) => a.type === "fact" || a.type === "link")
+        .map((a) => {
+          if (a.type === "link") {
+            let temp = _.cloneDeep(a);
+            temp.name = "CAUSES";
+            return temp;
+          } else {
+            return a;
+          }
+        })
+    );
 
-  const recalibrate = function () {
-    setElements([
-      ...content,
-      ...axioms,
-    ]);
+    if(mostRecentId){
+      console.log()
+      const record = val.find(x=>x.data.id===mostRecentId)
+      record.position = {x:mouseX,y:mouseY}
+      console.log(record)
+      //console.log("GO FOR IT MAN", mostRecentId,mouseX,mouseY,cy.getElementById(mostRecentId))
+     // cy.getElementById(mostRecentId).position("x", mouseX);
+      //cy.getElementById(mostRecentId).position("y", mouseY);
+      //  setMostRecentId(false)
+    }
+
+
+
+  return val;
   };
 
-  const [elements, setElements] = useState([
-    ...content,
-    ...axioms,
-  ]);
+  const content = refetch();
+
+  const recalibrate = function () {
+    setElements([...content, ...axioms]);
+
+    
+  };
+
+  const [elements, setElements] = useState([...content, ...axioms]);
 
   return (
     <div>
+      {mostRecentId} - {mouseX} , {mouseY}
+      {
+        <FormDialog
+          type={"fact"}
+          button={false}
+          passOpen={addNodeFlag}
+          specialOp={(e) => {
+            setMostRecentId(e);
+      
+          }}
+          handleCloseExtra={(newFact) => {
+            setAddNodeFlag(false);
+          }}
+        />
+      }
       <CytoscapeComponent
         layout={layout}
         cy={handleCy}
@@ -334,9 +399,7 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
           {
             selector: "edge[linkLeader='true']",
             style: {
-   
               "target-arrow-shape": "none",
-             
             },
           },
           {
