@@ -1,23 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
 import { store } from "../../MyContext";
 import _ from "lodash";
-import TextField from "@material-ui/core/TextField";
-import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import { makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Chip from "@material-ui/core/Chip";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
-import FormDialog from "../FormDialog";
 
 import Linker from "../Linker";
 
-import FormControl from "@material-ui/core/FormControl";
-import { getDisplayName } from "../../utils";
-import Autocomplete from "@mui/material/Autocomplete";
 import "./FactTabs.css";
 
 import { TiScissors } from "react-icons/ti";
@@ -117,22 +109,52 @@ const FactTabs = ({ actorUuid }) => {
           </TabPanel>
 
           <TabPanel className="tabPanel" value={currentTab} index={1}>
-           //SOME GRAPH VIEW
+            <div className="readOnlyListTab">
+            <h2 className="subtitle">Causes</h2>
+            <SimpleList
+              type="fact"
+              list={globalState.state.actors.filter((x) =>
+                globalState.state.actors.find(
+                  (y) =>
+                    y.type === "link" &&
+                    y.name === "CAUSES" &&
+                    y.subjects &&
+                    y.subjects.includes(actor.uuid) &&
+                    y.targets &&
+                    y.targets.includes(x.uuid)
+                )
+              )}
+            />
+            <h2 className="subtitle">Because</h2>
+            <SimpleList
+              type="fact"
+              list={globalState.state.actors.filter((x) =>
+                globalState.state.actors.find(
+                  (y) =>
+                    y.type === "link" &&
+                    y.name === "CAUSES" &&
+                    y.subjects &&
+                    y.subjects.includes(x.uuid) &&
+                    y.targets &&
+                    y.targets.includes(actor.uuid)
+                )
+              )}
+            />
+            </div>
+            
           </TabPanel>
 
           <TabPanel value={currentTab} index={2}>
-     
-          <Linker
+            <Linker
               actor={actor}
               side="target"
               linkType="REVEALS"
               guestType="snippet"
             />
-
           </TabPanel>
 
           <TabPanel value={currentTab} index={3}>
-          <Linker
+            <Linker
               actor={actor}
               side="subject"
               linkType="TAGS"
