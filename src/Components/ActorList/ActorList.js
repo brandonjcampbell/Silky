@@ -96,14 +96,23 @@ const ActorList = ({
       </div>
 
       <div className="content">
+        {search}
         <DraggableList
           showAvatar={showAvatar}
           actorUuid={actorUuid}
           list={globalState.state.actors.filter(
             (x) =>
-              ((type && x.type === type) || !type) &&
+              (!type || (type && x.type === type)) &&
+              (!tag ||
+                globalState.state.actors.find(
+                  (y) =>
+                    Array.isArray(y.subjects) &&
+                    y.subjects.includes(tag) &&
+                    Array.isArray(y.targets) &&
+                    y.targets.includes(x.uuid)
+                )) &&
               (!search ||
-                x.name.includes(search) ||
+                _.toLower(x.name).includes(_.toLower(search)) ||
                 globalState.state.actors.find(
                   (y) =>
                     y.type === "link" &&
@@ -111,9 +120,10 @@ const ActorList = ({
                     y.targets &&
                     Array.isArray(y.targets) &&
                     y.targets.includes(x.uuid) &&
+                    Array.isArray(y.subjects) &&
                     globalState.state.actors.find(
                       (z) =>
-                        z.uuid === y.subjects[0] &&
+                        y.subjects.includes(z.uuid) &&
                         _.toLower(z.name).includes(_.toLower(search))
                     )
                 ))

@@ -305,7 +305,7 @@ ReactDOM.render(
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.15}>
-                      <div className="Extras">
+                      <div className="Extras" style={{"margin-top":"-5px"}}>
                         {props.match.params.uuid && (
                           <ActorList
                             {...props}
