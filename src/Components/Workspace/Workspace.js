@@ -2,11 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import _ from "lodash";
-import TextField from "@material-ui/core/TextField";
-import DeleteIcon from "@material-ui/icons/Delete";
-import Avatar from "@mui/material/Avatar";
-import { uploadPic } from "../../utils";
-import { confirmAlert } from "react-confirm-alert"; // Import
+import TitleBar from "../TitleBar";
+
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 
 import "./Workspace.css";
@@ -16,9 +13,7 @@ const homedir = window.require("os").homedir();
 const Workspace = ({ actorUuid, showAvatar = true }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const [freshener, setFreshener] = useState("");
-  const [editTitle, setEditTitle] = useState(false);
-  const [title, setTitle] = useState("");
+
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
 
@@ -42,109 +37,13 @@ const Workspace = ({ actorUuid, showAvatar = true }) => {
     });
   };
 
-  const remove = () => {
-    confirmAlert({
-      title: "Confirm to remove",
-      message:
-        "Are you sure you want to remove " +
-        actor.type +
-        " " +
-        actor.name +
-        "? You won't be able to undo this action.",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: () => {
-            dispatch({
-              action: "removeActor",
-              payload: { uuid: actorUuid },
-            });
-          },
-        },
-        {
-          label: "No",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
-
-  const keyPress = (e) => {
-    if (e.keyCode === 13) {
-      saveTitle();
-    }
-    if (e.keyCode === 27) {
-      setEditTitle(false);
-    }
-  };
-
-  const saveTitle = () => {
-    setEditTitle(false);
-    let clone = _.cloneDeep(actor);
-    clone.name = title;
-    dispatch({
-      action: "saveActor",
-      for: "thread",
-      payload: { actor: clone },
-    });
-  };
-
   return (
-    <div className="workspace">
-      {actor && (
-        <h2 className="workspaceHeader">
-          {showAvatar && (
-            <Avatar
-              className="avatar"
-              alt=" "
-              sx={{ width: 100, height: 100 }}
-              onClick={() => {
-                uploadPic(actorUuid, globalState, setFreshener);
-              }}
-              src={
-                homedir +
-                "\\.silky\\" +
-                globalState.state.project +
-                "\\" +
-                actorUuid +
-                ".png?" +
-                freshener
-              }
-            />
-          )}
-          
-          <span className={showAvatar?"title showAvatar":"title"}>
-            <span
-              onClick={() => {
-                setEditTitle(!editTitle);
-                setTitle(actor.name);
-              }}
-            >
-              {!editTitle && actor.name}
-            </span>
-            {editTitle && (
-              <TextField
-                autoFocus
-                sx={{ bgcolor: "white" }}
-                id="outlined-basic"
-                value={title}
-                onKeyDown={keyPress}
-                onBlur={() => {
-                  saveTitle();
-                }}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            )}
-          </span>
-          <span className="delete">
-            <DeleteIcon onClick={remove} />
-          </span>
-        </h2>
-      )}
+    <div className="workspace"> 
+      <TitleBar actor={actor} />
       {actor && (
         <div className="editor">
           <TextEditor
-          showAvatar={showAvatar}
+            showAvatar={showAvatar}
             save={save}
             data={
               globalState.state.actors.find((x) => x.uuid === actorUuid).content

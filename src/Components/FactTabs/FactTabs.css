@@ -3,13 +3,6 @@
     min-width: 200px;
 }
 
-.ColorPicker-MuiButton-label,
-.ColorPicker-MuiButton-label div {
-  height: 70px !important;
-  width: 70px !important;
-  border-radius: 70px!important;
-  display: inline-block;
-}
 .readOnlyListTab{
     margin-left:25px;
 }
@@ -22,4 +15,7 @@
 .tabPanel{
     height: calc( 100vh - 200px);
     overflow: auto;
+}
+.subtitle{
+    color:white;
 }

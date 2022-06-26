@@ -1,4 +1,4 @@
-.simpleListRow{
+.lopsidedListRow{
     display: flex;
     vertical-align: middle;
 
@@ -7,20 +7,20 @@
     overflow-y: hidden;
 
 }
-.simpleListRow.showAvatar{
+.lopsidedListRow.showAvatar{
     height:50px;
     line-height: 40px;
 }
-.simpleListRow > *{
+.lopsidedListRow > *{
     display: flex;
 }
 
-.simpleListRow > * {
+.lopsidedListRow > * {
     text-decoration: none;
     color:white;
     font-weight: normal;
 }
-.simpleListAvatar{
+.lopsidedListAvatar{
     margin-right: 0px;
 
 }
@@ -28,10 +28,10 @@
     display: inline-block;
     margin-left:20px;
 }
-.simpleListXAction{
+.lopsidedListXAction{
     position: relative;
     left:0px;
 }
-.showAvatar .simpleListXAction{
+.showAvatar .lopsidedListXAction{
     top:10px;
 }

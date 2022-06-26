@@ -8,7 +8,7 @@
     overflow-y: hidden;
 
 }
-.row.showAvatar{
+.row{
     line-height: 40px;
     height:46px;
 
@@ -20,11 +20,14 @@
     color:white;
     text-decoration: none;
 }
-.avatar{
+.row .avatar{
     margin-right: 13px;
     position:relative;
     left:6px;
     
+}
+.selectedRow{
+    background-color: tomato;
 }
 .draggableRemove{
     color:white;

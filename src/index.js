@@ -12,19 +12,18 @@ import "react-pro-sidebar/dist/css/styles.css";
 import "./index.css";
 import {
   ActorList,
-  Web,
   CurrentProjectLink,
   App,
   Graph,
   GraphSpace,
+  LinkGraphSpace,
   SnippetTabs,
   Workspace,
   FactTabs,
   ThreadTabs,
   ElementTabs,
-  LinkTabs,
   GraphTabs,
-  LinkSpace,
+
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {
@@ -32,6 +31,8 @@ import {
   GiSewingString,
   GiLightBulb,
   GiPendulumSwing,
+  GiBreakingChain,
+  GiLongLeggedSpider,
 } from "react-icons/gi";
 import { HiPuzzle, HiTag } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
@@ -53,7 +54,7 @@ ReactDOM.render(
           </Link>
 
           <Link to="/facts/">
-            <span className="menuLabel">Reveals</span>{" "}
+            <span className="menuLabel">Facts</span>{" "}
             <GiLightBulb className="menuItem" />
           </Link>
 
@@ -76,6 +77,11 @@ ReactDOM.render(
             <span className="menuLabel">Tags</span>{" "}
             <HiTag className="menuItem" />
           </Link>
+
+          <Link to="/spider/">
+            <span className="menuLabel">Spider Mode</span>{" "}
+            <GiLongLeggedSpider className="menuItem" />
+          </Link>
         </div>
 
         <div className="App">
@@ -92,7 +98,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="element" />
+                        <ActorList
+                          {...props}
+                          type="element"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -123,27 +133,16 @@ ReactDOM.render(
                 <div className="View">
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
+                      <ReflexElement className="left-pane" flex={0.25}>
+                        <div className="List">
+                          <ActorList
+                            {...props}
+                            type="fact"
+                            showAvatar={false}
+                            actorUuid={props.match.params.uuid}
+                          />
+                        </div>
+                      </ReflexElement>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
@@ -170,56 +169,6 @@ ReactDOM.render(
             />
 
             <Route
-              path="/Links/:uuid"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
-                        {props.match.params.uuid && (
-                          <LinkSpace actorUuid={props.match.params.uuid} />
-                        )}
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.25}>
-                      <div className="Extras">
-                        {props.match.params.uuid && (
-                          <LinkTabs actorUuid={props.match.params.uuid} />
-                        )}
-                      </div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-
-            <Route
               path={["/Snippets/", "/Snippets/:uuid"]}
               exact
               render={(props) => (
@@ -231,6 +180,7 @@ ReactDOM.render(
                           {...props}
                           type="snippet"
                           showAvatar={false}
+                          actorUuid={props.match.params.uuid}
                         />
                       </div>
                     </ReflexElement>
@@ -266,7 +216,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="thread" />
+                        <ActorList
+                          {...props}
+                          type="thread"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -290,7 +244,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="web" />
+                        <ActorList
+                          {...props}
+                          type="web"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -317,40 +275,53 @@ ReactDOM.render(
               )}
             />
 
+            <Route
+              path={["/Spider/"]}
+              exact
+              render={(props) => (
+                <div className="View">
+                  <LinkGraphSpace showAvatar={false} />
+                </div>
+              )}
+            />
 
-
-<Route
+            <Route
               path={["/Tags/", "/Tags/:uuid"]}
               exact
               render={(props) => (
                 <div className="View">
                   <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane" flex={0.25}>
+                    <ReflexElement className="left-pane" flex={0.15}>
                       <div className="List">
                         <ActorList
                           {...props}
                           type="tag"
                           showAvatar={false}
+                          actorUuid={props.match.params.uuid}
                         />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
-
+                    <ReflexElement className="middle-pane" flex={0.15}>
+                      <div className="Extras" style={{"margin-top":"-5px"}}>
+                        {props.match.params.uuid && (
+                          <ActorList
+                            {...props}
+                            tag={props.match.params.uuid}
+                            showAvatar={false}
+                            actorUuid={props.match.params.uuid}
+                          />
+                        )}
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.25}>
-                      <div className="Extras">
-                      {props.match.params.uuid && (
-              
-              <ActorList
-              {...props}
-        tag={props.match.params.uuid}
-              showAvatar={false}
-            />
-
+                    <ReflexElement className="right-pane" flex={0.7}>
+                      <div className="Workspace">
+                        {props.match.params.uuid && (
+                          <Workspace
+                            actorUuid={props.match.params.uuid}
+                            showAvatar={false}
+                          />
                         )}
                       </div>
                     </ReflexElement>
@@ -358,7 +329,6 @@ ReactDOM.render(
                 </div>
               )}
             />
-
           </div>
         </div>
       </BrowserRouter>

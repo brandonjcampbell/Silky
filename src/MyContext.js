@@ -118,6 +118,9 @@ const add = (state, action) => {
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
+  if (action.payload.type === "fact") {
+     newState = autoLink(newState, action);
+  }
   if (action.payload.callback) {
     action.payload.callback(action.payload.uuid);
   }
@@ -184,27 +187,25 @@ const saveActors = (state, action) => {
 };
 
 const removeActor = (state, action) => {
-
-    let newState = _.cloneDeep(state);
-    newState.actors = state.actors
-      .filter((x) => x.uuid !== action.payload.uuid)
-      .map((actorx) => {
-        let actory = _.cloneDeep(actorx);
-        if (actory.sequence) {
-          actory.sequence = [
-            ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
-          ];
-        }
-        if (actory.elements) {
-          actory.elements = [
-            ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
-          ];
-        }
-        return actory;
-      });
-    saveProject(newState);
-    return newState;
-
+  let newState = _.cloneDeep(state);
+  newState.actors = state.actors
+    .filter((x) => x.uuid !== action.payload.uuid)
+    .map((actorx) => {
+      let actory = _.cloneDeep(actorx);
+      if (actory.sequence) {
+        actory.sequence = [
+          ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      if (actory.elements) {
+        actory.elements = [
+          ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      return actory;
+    });
+  saveProject(newState);
+  return newState;
 };
 
 const duplicate = (state, action) => {
@@ -221,6 +222,37 @@ const duplicate = (state, action) => {
     return newState;
   }
   return null;
+};
+
+const autoLink = (state, action) => {
+
+  let subject = state.actors.find((x) => x.uuid === action.payload.uuid);
+  if (subject && subject.type === "fact") {
+    const elements = state.actors
+      .filter((x) => x.type === "element")
+      .filter((x) => subject.name.includes(x.name))
+      .filter(
+        (x) =>
+          !state.actors.find(
+            (y) =>
+              y.type === "link" &&
+              y.subjects.includes(subject.uuid) &&
+              y.targets.includes(x.uuid)
+          )
+      );
+    elements.forEach((x) => {
+      state = add(state, {
+        for: "link",
+        class: "actor",
+        payload: {
+          subjects: [subject.uuid],
+          targets: [x.uuid],
+          name: "INVOLVES",
+        },
+      });
+    });
+  }
+  return state;
 };
 
 const StateProvider = ({ children }) => {
@@ -244,6 +276,8 @@ const StateProvider = ({ children }) => {
         return reorderActors(state, action);
       case "duplicate":
         return duplicate(state, action);
+      case "autoLink":
+        return autoLink(state, action);
       default:
         throw new Error();
     }

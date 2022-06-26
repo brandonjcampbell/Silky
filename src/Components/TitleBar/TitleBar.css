@@ -1,0 +1,29 @@
+.workspaceHeader {
+    display: flex;
+    vertical-align: bottom;
+    line-height: 35px;
+    position: relative;
+    position: relative;
+    top: -20px;
+  }
+
+  
+ .title {
+    position: relative;
+  
+    top: 25px;
+    left: 10px;
+    margin-left: 5px;
+    color: white;
+  }
+  
+ .delete {
+    color: white;
+  
+    position: relative;
+    top: 30px;
+    left: 15px;
+    height:15px;
+    width: 15px;
+  }
+  

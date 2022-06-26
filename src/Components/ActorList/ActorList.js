@@ -9,10 +9,15 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import { Redirect } from "react-router-dom";
 import "./ActorList.css";
-const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
+const ActorList = ({
+  match,
+  type,
+  actorUuid,
+  showAvatar = true,
+  tag = null,
+}) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const content = globalState.state.actors;
   const [name, setName] = useState("");
   const [search, setSearch] = useState("");
   const [active, setActive] = useState(
@@ -89,13 +94,34 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
       <div className="content">
         <DraggableList
           showAvatar={showAvatar}
-          list={content.filter(
+          actorUuid={actorUuid}
+          list={globalState.state.actors.filter(
             (x) =>
-              ((type && x.type === type) || !type) &&
+              (!type || (type && x.type === type)) &&
+              (!tag ||
+                globalState.state.actors.find(
+                  (y) =>
+                    Array.isArray(y.subjects) &&
+                    y.subjects.includes(tag) &&
+                    Array.isArray(y.targets) &&
+                    y.targets.includes(x.uuid)
+                )) &&
               (!search ||
-                x.name.includes(search) ||
-                (x.tags && globalState.state.actors.filter(y=>x.tags.find(z=>z.uuid===y.uuid)).find(y=>y.name.includes(search)))) &&
-              ((tag && x.tags && Array.isArray(x.tags) && x.tags.map(z=>z.uuid).includes(tag)) || !tag)
+                _.toLower(x.name).includes(_.toLower(search)) ||
+                globalState.state.actors.find(
+                  (y) =>
+                    y.type === "link" &&
+                    y.name === "TAGS" &&
+                    y.targets &&
+                    Array.isArray(y.targets) &&
+                    y.targets.includes(x.uuid) &&
+                    Array.isArray(y.subjects) &&
+                    globalState.state.actors.find(
+                      (z) =>
+                        y.subjects.includes(z.uuid) &&
+                        _.toLower(z.name).includes(_.toLower(search))
+                    )
+                ))
           )}
           handleClick={handleRowClick}
           saveList={(e) => {
@@ -106,7 +132,9 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
               action: "saveActors",
               for: type,
               payload: {
-                actors: search ? content.filter((x) => x.type === type) : e,
+                actors: search
+                  ? globalState.state.actors.filter((x) => x.type === type)
+                  : e,
               },
             });
           }}
@@ -122,7 +150,9 @@ const ActorList = ({ match, type, showAvatar = true, tag = null }) => {
               action: "reorderActors",
               for: type,
               payload: {
-                actors: search ? content.filter((x) => x.type === type) : e,
+                actors: search
+                  ? globalState.state.actors.filter((x) => x.type === type)
+                  : e,
               },
             });
           }}

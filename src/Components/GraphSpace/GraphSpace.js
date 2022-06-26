@@ -14,13 +14,12 @@ import { actorToCyto } from "../../utils";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { confirmAlert } from "react-confirm-alert"; // Import
-import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
+import contextMenus from "cytoscape-context-menus";
+import "cytoscape-context-menus/cytoscape-context-menus.css";
+//import options from "./contextMenuOptions";
+
 import _ from "lodash";
-import LinearScaleIcon from "@material-ui/icons/LinearScale";
-import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
+import TitleBar from "../TitleBar";
 
 import { useState, useContext, useEffect } from "react";
 
@@ -45,10 +44,15 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
   Cytoscape.use(cise);
   Cytoscape.use(avsdf);
 
+  if (!Cytoscape("core", "contextMenus")) {
+    Cytoscape.use(contextMenus);
+  }
+
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState("");
+
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
 
   const defaultLayout = {
@@ -68,9 +72,8 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
   );
   const [layout, setLayout] = useState(defaultLayout);
   const [cy, setCy] = useState(null);
-
+  const [linking, setLinking] = useState(false);
   useEffect(() => {
-    console.log(cy);
     if (cy) {
       cy.layout(defaultLayout).run();
       cy.center();
@@ -84,10 +87,12 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
         cy.center();
       }
     }
-  }, [actor.show,actor.showAxiom,actor.repositionNodes,actor.hideDisconnectedNodes]);
-
-
-
+  }, [
+    actor.show,
+    actor.showAxiom,
+    actor.repositionNodes,
+    actor.hideDisconnectedNodes,
+  ]);
 
   useEffect(() => {
     function handleResize() {
@@ -101,7 +106,6 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
     setCy(cy);
   };
 
-  
   const keyPress = (e) => {
     if (e.keyCode === 13) {
       saveTitle();
@@ -124,255 +128,74 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
 
   let axioms = [];
 
-  globalState.state.actors
-    .map((node) => {
-      // REVEALS
+  globalState.state.actors.map((node) => {
 
-      if (
-        actor.showAxiom && 
-        actor.showAxiom.includes("reveals") &&
-        node.type === "snippet" &&
-        node.facts &&
-        node.facts.length > 0 &&
-        actor.show
 
-      ) {
-        node.facts.forEach((f) => {
-          if (actor.show.find((a) => a === node.uuid) && actor.show.find((a) => a === f.uuid)) {
-            const res = {
-              data: {
-                uuid: node.uuid + node.uuid,
-                source: node.uuid,
-                target: f.uuid,
-                label: "REVEALS",
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
-        });
-      }
+    if (node.type==="link" && node.targets && node.subjects) {
+      node.targets.forEach((f) => {
+        const res = {
+          data: {
+            source: node.subjects[0],
+            target: f,
+            id: node.uuid,
+            label: node.name,
+            color: node.color ? node.color : "#ccc",
+          },
+        };
+        axioms.push(res);
+      });
+    }
+   
 
-      // INVOLVED IN
-      if (
-        actor.showAxiom && 
-        actor.showAxiom.includes("involvedIn") &&
-        node.type !== "snippet" &&
-        node.facts &&
-        node.facts.length > 0 &&
-        actor.show
-
-      ) {
-        node.facts.forEach((f) => {
-          if (actor.show.find((a) => a === node.uuid) && actor.show.find((a) => a === f.uuid)) {
-            const res = {
-              data: {
-                uuid: node.uuid + node.uuid,
-                source: node.uuid,
-                target: f.uuid,
-                label: "INVOLVED IN",
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
-        });
-      }
-
-      // This BECAUSE That
-      if (
-        actor.showAxiom && 
-        actor.showAxiom.includes("because") &&
-        node.subjects &&
-        node.subjects.length > 0 &&
-        node.targets &&
-        node.targets.length > 0 &&
-        actor.show
-
-      ) {
-        node.subjects.forEach((f) => {
-          if (actor.show.find((a) => a === node.uuid) && actor.show.find((a) => a === f.uuid)) {
-            const res = {
-              data: {
-                uuid: node.uuid + node.uuid,
-                source: node.uuid,
-                target: f.uuid,
-                label: "THIS",
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
-        });
-        node.targets.forEach((f) => {
-          if (actor.show.find((a) => a === node.uuid) && actor.show.find((a) => a === f.uuid)) {
-            const res = {
-              data: {
-                uuid: node.uuid + node.uuid,
-                source: node.uuid,
-                target: f.uuid,
-                label: "THAT",
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
-        });
-      }
-
-      // x INVOLVES element
-      if (
-        actor.showAxiom && 
-        actor.showAxiom.includes("involves") &&
-        node.elements &&
-        node.elements.length > 0 &&
-        actor.show
-
-      ) {
-        node.elements.forEach((f) => {
-          if (actor.show.find((a) => a === node.uuid) && actor.show.find((a) => a === f.uuid)) {
-            const res = {
-              data: {
-                uuid: node.uuid + node.uuid,
-                source: node.uuid,
-                target: f.uuid,
-                label: "INVOLVES",
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
-        });
-      }
-
-      //Thread Sequence
-      if (
-        actor.showAxiom && 
-        actor.showAxiom.includes("thread") &&
-        actor.thread &&
-        actor.thread.map(x=>x.uuid).includes(node.uuid) &&
-        node.type == "thread" &&
-        node.sequence 
-      ) {
-        for (let i = 1; i < node.sequence.length; i++) {
-          const source = node.sequence[i - 1];
-          const target = node.sequence[i];
-          if (actor.show.includes(source.uuid) && actor.show.includes(target.uuid)) {
-            const res = {
-              data: {
-                uuid: source.uuid + target.uuid + i,
-                source: source.uuid,
-                target: target.uuid,
-                label: node.name,
-                arrow: "circle",
-                color: node.color ? node.color : "#ccc",
-              },
-            };
-            axioms.push(res);
-          }
+    //Thread Sequence
+    if (
+      actor.showAxiom &&
+      actor.showAxiom.includes("thread") &&
+      actor.thread &&
+      actor.thread.map((x) => x.uuid).includes(node.uuid) &&
+      node.type == "thread" &&
+      node.sequence
+    ) {
+      for (let i = 1; i < node.sequence.length; i++) {
+        const source = node.sequence[i - 1];
+        const target = node.sequence[i];
+        if (
+          actor.show.includes(source.uuid) &&
+          actor.show.includes(target.uuid)
+        ) {
+          const res = {
+            data: {
+              uuid: source.uuid + target.uuid + i,
+              source: source.uuid,
+              target: target.uuid,
+              label: node.name,
+              arrow: "circle",
+              color: node.color ? node.color : "#ccc",
+            },
+          };
+          axioms.push(res);
         }
       }
-    });
+    }
+  });
 
   const content = actorToCyto(
     globalState.state.actors
-      .filter((a) => a.type !== "web" && a.type !== "thread")
-      .filter((a) => actor.show && actor.show.includes(a.uuid))
-      .map((a) => {
-        if (a.type === "link") {
-          let temp = _.cloneDeep(a);
-          temp.name = "BECAUSE";
-          return temp;
-        } else {
-          return a;
-        }
-      })
-  );
+      .filter((a) => a.type !== "web" && a.type !== "thread" && a.type !== "link")     
+  )
 
-
-  
-  const remove = () => {
-    confirmAlert({
-      title: "Confirm to remove",
-      message:
-        "Are you sure you want to remove " +
-        actor.type +
-        " " +
-        actor.name +
-        "? You won't be able to undo this action.",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: () => {
-            dispatch({
-              action: "removeActor",
-              payload: { uuid: actorUuid },
-            });
-          },
-        },
-        {
-          label: "No",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
+  const [elements, setElements] = useState([
+    ...content,
+    ...axioms,
+  ]);
 
   return (
     <div>
-      <h1>
-
-      <span className={showAvatar?"title showAvatar":"title"}>
-            <span
-              onClick={() => {
-                setEditTitle(!editTitle);
-                setTitle(actor.name);
-              }}
-            >
-              {!editTitle && actor.name}
-            </span>
-            {editTitle && (
-              <TextField
-                autoFocus
-                sx={{ bgcolor: "white" }}
-                id="outlined-basic"
-                value={title}
-                onKeyDown={keyPress}
-                onBlur={() => {
-                  saveTitle();
-                }}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            )}
-          </span>
-
-          <span className="delete">
-            <DeleteIcon onClick={remove} />
-          </span>
-      </h1>
-
+      <TitleBar actor={actor} />
       <CytoscapeComponent
         layout={layout}
         cy={handleCy}
-
-        elements={[
-          ...content.filter(
-            (x) =>
-              !actor.hideDisconnectedNodes  ||
-              axioms.filter(
-                (y) =>
-                  y.data.source === x.data.id ||
-                  y.data.target === x.data.id
-              ).length > 0
-          ),
-          ...axioms,
-        ]}
-
+        elements={elements}
         style={{
           height: windowDimensions.height + 20,
           width: windowDimensions.width - 400,
@@ -394,6 +217,12 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
               color: "white",
               "text-outline-color": "black",
               "text-outline-width": 2,
+            },
+          },
+          {
+            selector: ".foo",
+            style: {
+              backgroundColor: "red",
             },
           },
           {
