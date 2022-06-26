@@ -9,7 +9,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import { Redirect } from "react-router-dom";
 import "./ActorList.css";
-const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) => {
+const ActorList = ({
+  match,
+  type,
+  actorUuid,
+  showAvatar = true,
+  tag = null,
+}) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [name, setName] = useState("");
@@ -21,9 +27,9 @@ const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) =>
   );
   const [count, setCount] = useState(1);
 
-// useEffect(()=>{
-// console.log(globalState.state.actors)
-// },[globalState.state.actors])
+  // useEffect(()=>{
+  // console.log(globalState.state.actors)
+  // },[globalState.state.actors])
 
   const {
     params: { userId },
@@ -98,8 +104,19 @@ const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) =>
               ((type && x.type === type) || !type) &&
               (!search ||
                 x.name.includes(search) ||
-                (x.tags && Array.isArray(x.tags)  && globalState.state.actors.filter(y=>x.tags.find(z=>z.uuid===y.uuid)).find(y=>y.name.includes(search)))) &&
-              ((tag && x.tags && Array.isArray(x.tags) && x.tags.map(z=>z.uuid).includes(tag)) || !tag)
+                globalState.state.actors.find(
+                  (y) =>
+                    y.type === "link" &&
+                    y.name === "TAGS" &&
+                    y.targets &&
+                    Array.isArray(y.targets) &&
+                    y.targets.includes(x.uuid) &&
+                    globalState.state.actors.find(
+                      (z) =>
+                        z.uuid === y.subjects[0] &&
+                        _.toLower(z.name).includes(_.toLower(search))
+                    )
+                ))
           )}
           handleClick={handleRowClick}
           saveList={(e) => {
@@ -110,7 +127,9 @@ const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) =>
               action: "saveActors",
               for: type,
               payload: {
-                actors: search ? globalState.state.actors.filter((x) => x.type === type) : e,
+                actors: search
+                  ? globalState.state.actors.filter((x) => x.type === type)
+                  : e,
               },
             });
           }}
@@ -126,7 +145,9 @@ const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) =>
               action: "reorderActors",
               for: type,
               payload: {
-                actors: search ? globalState.state.actors.filter((x) => x.type === type) : e,
+                actors: search
+                  ? globalState.state.actors.filter((x) => x.type === type)
+                  : e,
               },
             });
           }}
