@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import TabPanel from "../TabPanel";
 import SimpleList from "../SimpleList";
 import FormDialog from "../FormDialog";
+import Linker from "../Linker";
 
 import FormControl from "@material-ui/core/FormControl";
 import { getDisplayName } from "../../utils";
@@ -57,8 +58,8 @@ const ElementTabs = ({ actorUuid }) => {
 
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
-  if(!actor.facts){
-    actor.facts=[]
+  if (!actor.facts) {
+    actor.facts = [];
   }
 
   const tagSave = (newTags) => {
@@ -139,269 +140,42 @@ const ElementTabs = ({ actorUuid }) => {
             >
               <Tab
                 label={<GiLightBulb className="menuItem" />}
-                {...a11yProps(1)}
-              />
-              <Tab
-                label={<TiScissors className="menuItem" />}
                 {...a11yProps(0)}
               />
 
               <Tab
                 label={<GiSewingString className="menuItem" />}
-                {...a11yProps(2)}
+                {...a11yProps(1)}
               />
               <Tab
                 label={<AiFillTag className="menuItem" />}
-                {...a11yProps(3)}
+                {...a11yProps(2)}
               />
             </Tabs>
           </Box>
-         
+
           <TabPanel className="tabPanel" value={currentTab} index={0}>
-            <h2 className="ExtraHeader">Facts</h2>
-            <SimpleList
-              type="facts"
-              xAction={(uuid) => {
-                removeFrom(uuid, "facts");
-              }}
-              list={globalState.state.actors.filter(
-                (a) =>
-                  a.type === "fact" &&
-                  actor &&
-                  actor.facts &&
-                  actor.facts.map((x) => x.uuid).includes(a.uuid)
-              )}
+            <Linker
+              actor={actor}
+              side="subject"
+              linkType="INVOLVES"
+              guestType="fact"
             />
-            <FormControl variant="filled">
-              <Autocomplete
-                disablePortal
-                clearOnBlur
-                selectOnFocus
-                blurOnSelect
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.elements
-                    ? option.elements
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
-                }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "fact" &&
-                    (!actor.facts ||
-                      (actor.facts &&
-                        !actor.facts.map((y) => y.uuid).includes(x.uuid)))
-                )}
-                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addTo(newValue.uuid, "facts");
-                  }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <span>
-                      {props.key.split("@tags:")[0]}
-                    </span>
-                  </div>
-                )}
-                renderInput={(params) => {
-                  console.log("PARAMS!",params)
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
-                  }
-                  return <TextField {...params} label="Then..." value={null} />;
-                }}
-              />
-            </FormControl>
-            <h2 className="ExtraHeader">Links</h2>
-
-            <SimpleList
-              type="links"
-              xAction={(uuid) => {
-                removeFrom(uuid, "links");
-              }}
-              list={globalState.state.actors.filter(
-                (a) =>
-                  a.type === "link" &&
-                  actor &&
-                  actor.links &&
-                  actor.links.map((x) => x.uuid).includes(a.uuid)
-              )}
-            />
-            <FormControl variant="filled">
-              <Autocomplete
-                disablePortal
-                clearOnBlur
-                selectOnFocus
-                blurOnSelect
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.elements
-                    ? option.elements
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
-                }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "link" &&
-                    (!actor.links ||
-                      (actor.links &&
-                        !actor.links.map((y) => y.uuid).includes(x.uuid)))
-                )}
-                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addTo(newValue.uuid, "links");
-                  }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <span>
-                      {props.key.split("@tags:")[0]}
-                    </span>
-                  </div>
-                )}
-                renderInput={(params) => {
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
-                  }
-                  return <TextField {...params} label="Then..." value={null} />;
-                }}
-              />
-            </FormControl>
-
           </TabPanel>
-         
-         
+
           <TabPanel value={currentTab} index={1}>
-            <div className="readOnlyListTab">
-            <SimpleList
-              type="snippets"
-              showAvatars={false}
-              list={globalState.state.actors.filter(
-                (a) =>
-                  a.type === "snippet" &&
-                  a.elements &&
-                  a.elements.map((x) => x.uuid).includes(actor.uuid)
-              )}
-            />
-            </div>
-          </TabPanel>
-
-          <TabPanel value={currentTab} index={2}>
             <SimpleList list={getThreads()} />
           </TabPanel>
 
-
-
-          <TabPanel className="tabPanel" value={currentTab} index={3}>
-            <SimpleList
-              type="tags"
-              showAvatars={false}
-              xAction={(uuid) => {
-                removeFrom(uuid, "tags");
-              }}
-              list={globalState.state.actors.filter(
-                (a) =>
-                  a.type === "tag" &&
-                  actor &&
-                  actor.tags &&
-                  actor.tags.map((x) => x.uuid).includes(a.uuid)
-              )}
+          <TabPanel className="tabPanel" value={currentTab} index={2}>
+            TAGS
+            <Linker
+              actor={actor}
+              side="subject"
+              linkType="TAGS"
+              guestType="tag"
             />
-            <FormControl variant="filled">
-              <Autocomplete
-                disablePortal
-                clearOnBlur
-                selectOnFocus
-                blurOnSelect
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.elements
-                    ? option.elements
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
-                }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "tag" &&
-                    (!actor.tags ||
-                      (actor.tags &&
-                        !actor.tags.map((y) => y.uuid).includes(x.uuid)))
-                )}
-                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addTo(newValue.uuid, "tags");
-                  }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <span>
-                      {props.key.split("@tags:")[0]}
-                    </span>
-                  </div>
-                )}
-                renderInput={(params) => {
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
-                  }
-                  return <TextField {...params} label="Then..." value={null} />;
-                }}
-              />
-            </FormControl>
-            <FormDialog
-              type={"tag"}
-              specialOp={(uuid) => {
-                addTo(uuid, "tag");
-              }}
-            />
-        
           </TabPanel>
-         
-         
-
-          {/* <TabPanel value={currentTab} index={3}>
-            <TextField
-              aria-label="empty textarea"
-              placeholder="Enter tags as a comma separated list"
-              className={classes.root}
-              value={tags}
-              onChange={(e) => {
-                tagSave(e.target.value);
-              }}
-            />
-            <div>
-              {tags.split(",").map((tag) => {
-                if (tag) {
-                  return (
-                    <Chip
-                      className="tag"
-                      label={tag}
-                      icon={<LocalOfferIcon />}
-                    />
-                  );
-                }
-              })}
-            </div>
-          </TabPanel>
-       
-        */}
-       
-       
         </div>
       )}
     </div>

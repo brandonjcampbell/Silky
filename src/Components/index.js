@@ -21,7 +21,9 @@ import ThreadTabs from "./ThreadTabs";
 import Timeline from "./Timeline";
 import Web from "./Web";
 import LinkSpace from "./LinkSpace";
+import Linker from "./Linker"
 import LinkGraphSpace from "./LinkGraphSpace";
+import LopsidedList from "./LopsidedList"
 
 import Workspace from "./Workspace";
 export {
@@ -30,6 +32,7 @@ export {
   CurrentProjectLink,
   DraggableList,
   LinkSpace,
+  Linker,
   ElementTabs,
   LinkTabs,
   LinkGraphSpace,
@@ -42,6 +45,7 @@ export {
   Reports,
   SnippetTabs,
   SimpleList,
+  LopsidedList,
   TabPanel,
   Tags,
   TextEditor,

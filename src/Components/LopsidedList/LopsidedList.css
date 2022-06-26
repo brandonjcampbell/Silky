@@ -1,0 +1,37 @@
+.lopsidedListRow{
+    display: flex;
+    vertical-align: middle;
+
+    margin:4px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+}
+.lopsidedListRow.showAvatar{
+    height:50px;
+    line-height: 40px;
+}
+.lopsidedListRow > *{
+    display: flex;
+}
+
+.lopsidedListRow > * {
+    text-decoration: none;
+    color:white;
+    font-weight: normal;
+}
+.lopsidedListAvatar{
+    margin-right: 0px;
+
+}
+.value{
+    display: inline-block;
+    margin-left:20px;
+}
+.lopsidedListXAction{
+    position: relative;
+    left:0px;
+}
+.showAvatar .lopsidedListXAction{
+    top:10px;
+}

@@ -104,121 +104,6 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
   }, []);
 
   const handleCy = (cy) => {
-    var options = {
-      evtType: "cxttap",
-      menuItems: [
-        {
-          id: "add-link",
-          content: "causes",
-          tooltipText: "link to",
-          image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
-          selector: "node",
-          coreAsWell: true,
-          onClickFunction: function (e) {
-            console.log("WHHERE?", linking);
-            if (linking) {
-              const unpack = JSON.parse(linking);
-              let link;
-
-              if ((unpack && unpack.data &&
-                unpack.data.label === "CAUSES") ||
-                e.target._private.data.label === "CAUSES"
-              ) {
-                console.log(link);
-                const res = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    source: unpack.data.id,
-                    target: e.target._private.data.id,
-                    label: "",
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
-
-                axioms.push(res);
-              } else {
-                link = {
-                  data: {
-                    id:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    name: "CAUSES",
-                    label: "CAUSES",
-                  },
-                  position: {
-                    x: (unpack.position.x + e.target._private.position.x) / 2,
-                    y: (unpack.position.y + e.target._private.position.y) / 2,
-                  },
-                };
-
-                console.log(link);
-                const res1 = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      100 * Math.random(),
-                    source: link.data.id,
-                    target: e.target._private.data.id,
-                    label: "",
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
-
-                const res2 = {
-                  data: {
-                    uuid:
-                      unpack.data.id +
-                      e.target._private.data.id +
-                      1000 * Math.random(),
-                    source: unpack.data.id,
-                    target: link.data.id,
-                    label: "",
-                    arrow: "circle",
-                    color: "#ccc",
-                  },
-                };
-
-                axioms.push(res1);
-                axioms.push(res2);
-                content.push(link);
-              }
-
-              recalibrate();
-              cy.$("#" + unpack.data.id).removeClass("foo");
-              setLinking(false);
-            } else {
-              console.log(e.target._private);
-
-              setLinking(
-                JSON.stringify({
-                  data: e.target._private.data,
-                  position: e.target._private.position,
-                })
-              );
-              //console.log(linking,"OOOOGH")
-              cy.$("#" + e.target._private.data.id).addClass("foo");
-            }
-          },
-        },
-      ],
-      menuItemClasses: [],
-      contextMenuClasses: [],
-      submenuIndicator: {
-        src: "assets/submenu-indicator-default.svg",
-        width: 12,
-        height: 12,
-      },
-    };
-
-    var instance = cy.contextMenus(options);
-
     setCy(cy);
   };
 
@@ -245,140 +130,24 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
   let axioms = [];
 
   globalState.state.actors.map((node) => {
-    // REVEALS
 
-    if (
-      actor.showAxiom &&
-      actor.showAxiom.includes("reveals") &&
-      node.type === "snippet" &&
-      node.facts &&
-      node.facts.length > 0 &&
-      actor.show
-    ) {
-      node.facts.forEach((f) => {
-        if (
-          actor.show.find((a) => a === node.uuid) &&
-          actor.show.find((a) => a === f.uuid)
-        ) {
-          const res = {
-            data: {
-              uuid: node.uuid + node.uuid,
-              source: node.uuid,
-              target: f.uuid,
-              label: "REVEALS",
-              arrow: "circle",
-              color: node.color ? node.color : "#ccc",
-            },
-          };
-          axioms.push(res);
-        }
-      });
-    }
 
-    // INVOLVED IN
-    if (
-      actor.showAxiom &&
-      actor.showAxiom.includes("involvedIn") &&
-      node.type !== "snippet" &&
-      node.facts &&
-      node.facts.length > 0 &&
-      actor.show
-    ) {
-      node.facts.forEach((f) => {
-        if (
-          actor.show.find((a) => a === node.uuid) &&
-          actor.show.find((a) => a === f.uuid)
-        ) {
-          const res = {
-            data: {
-              uuid: node.uuid + node.uuid,
-              source: node.uuid,
-              target: f.uuid,
-              label: "INVOLVED IN",
-              arrow: "circle",
-              color: node.color ? node.color : "#ccc",
-            },
-          };
-          axioms.push(res);
-        }
-      });
-    }
-
-    // This BECAUSE That
-    if (
-      actor.showAxiom &&
-      actor.showAxiom.includes("because") &&
-      node.subjects &&
-      node.subjects.length > 0 &&
-      node.targets &&
-      node.targets.length > 0 &&
-      actor.show
-    ) {
-      node.subjects.forEach((f) => {
-        if (
-          actor.show.find((a) => a === node.uuid) &&
-          actor.show.find((a) => a === f.uuid)
-        ) {
-          const res = {
-            data: {
-              uuid: node.uuid + node.uuid,
-              source: node.uuid,
-              target: f.uuid,
-              label: "",
-              arrow: "circle",
-              color: node.color ? node.color : "#ccc",
-            },
-          };
-          axioms.push(res);
-        }
-      });
+    if (node.type==="link" && node.targets && node.subjects) {
+      console.log(node.name,"boogyboard", node.subjects)
       node.targets.forEach((f) => {
-        if (
-          actor.show.find((a) => a === node.uuid) &&
-          actor.show.find((a) => a === f.uuid)
-        ) {
-          const res = {
-            data: {
-              uuid: node.uuid + node.uuid,
-              target: node.uuid,
-              source: f.uuid,
-              label: "",
-              arrow: "circle",
-              color: node.color ? node.color : "#ccc",
-            },
-          };
-          axioms.push(res);
-        }
+        const res = {
+          data: {
+            source: node.subjects[0],
+            target: f,
+            id: node.uuid,
+            label: node.name,
+            color: node.color ? node.color : "#ccc",
+          },
+        };
+        axioms.push(res);
       });
     }
-
-    // x INVOLVES element
-    if (
-      actor.showAxiom &&
-      actor.showAxiom.includes("involves") &&
-      node.elements &&
-      node.elements.length > 0 &&
-      actor.show
-    ) {
-      node.elements.forEach((f) => {
-        if (
-          actor.show.find((a) => a === node.uuid) &&
-          actor.show.find((a) => a === f.uuid)
-        ) {
-          const res = {
-            data: {
-              uuid: node.uuid + node.uuid,
-              source: node.uuid,
-              target: f.uuid,
-              label: "INVOLVES",
-              arrow: "circle",
-              color: node.color ? node.color : "#ccc",
-            },
-          };
-          axioms.push(res);
-        }
-      });
-    }
+   
 
     //Thread Sequence
     if (
@@ -414,75 +183,17 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
 
   const content = actorToCyto(
     globalState.state.actors
-      .filter((a) => a.type !== "web" && a.type !== "thread")
-      .filter((a) => actor.show && actor.show.includes(a.uuid))
-      .map((a) => {
-        if (a.type === "link") {
-          let temp = _.cloneDeep(a);
-          temp.name = "CAUSES";
-          return temp;
-        } else {
-          return a;
-        }
-      })
-  );
-
-  const remove = () => {
-    confirmAlert({
-      title: "Confirm to remove",
-      message:
-        "Are you sure you want to remove " +
-        actor.type +
-        " " +
-        actor.name +
-        "? You won't be able to undo this action.",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: () => {
-            dispatch({
-              action: "removeActor",
-              payload: { uuid: actorUuid },
-            });
-          },
-        },
-        {
-          label: "No",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
-
-  const recalibrate = function () {
-    console.log("CONTENT", content);
-    setElements([
-      ...content.filter(
-        (x) =>
-          !actor.hideDisconnectedNodes ||
-          axioms.filter(
-            (y) => y.data.source === x.data.id || y.data.target === x.data.id
-          ).length > 0
-      ),
-      ...axioms,
-    ]);
-  };
+      .filter((a) => a.type !== "web" && a.type !== "thread" && a.type !== "link")     
+  )
 
   const [elements, setElements] = useState([
-    ...content.filter(
-      (x) =>
-        !actor.hideDisconnectedNodes ||
-        axioms.filter(
-          (y) => y.data.source === x.data.id || y.data.target === x.data.id
-        ).length > 0
-    ),
+    ...content,
     ...axioms,
   ]);
 
   return (
     <div>
       <TitleBar actor={actor} />
-      {linking}
       <CytoscapeComponent
         layout={layout}
         cy={handleCy}

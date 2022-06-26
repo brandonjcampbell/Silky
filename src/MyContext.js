@@ -118,7 +118,10 @@ const add = (state, action) => {
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
-  autoLink(newState,action)
+  if (action.payload.type === "fact") {
+    console.log("HERE WE GO!!")
+     newState = autoLink(newState, action);
+  }
   if (action.payload.callback) {
     action.payload.callback(action.payload.uuid);
   }
@@ -223,15 +226,33 @@ const duplicate = (state, action) => {
 };
 
 const autoLink = (state, action) => {
-  let target = state.actors.find((x) => x.uuid === action.payload.uuid);
-  console.log(target, "that is waht I found", action)
-  if (target && target.type === "fact") {
-    let newState = _.cloneDeep(state);
-    const elements = newState.actors.filter((x) => x.type === "element").filter((x) => target.name.includes(x.name));
-    elements.forEach((x) => x.facts.push({ uuid: target.uuid }));
-    console.log(elements.length, "did we make it here?")
-    saveProject(newState);
-    return newState;
+
+  let subject = state.actors.find((x) => x.uuid === action.payload.uuid);
+  if (subject && subject.type === "fact") {
+    const elements = state.actors
+      .filter((x) => x.type === "element")
+      .filter((x) => subject.name.includes(x.name))
+      .filter(
+        (x) =>
+          !state.actors.find(
+            (y) =>
+              y.type === "link" &&
+              y.subjects.includes(subject.uuid) &&
+              y.targets.includes(x.uuid)
+          )
+      );
+    elements.forEach((x) => {
+      console.log("lets link ", subject, "to", x);
+      state = add(state, {
+        for: "link",
+        class: "actor",
+        payload: {
+          subjects: [subject.uuid],
+          targets: [x.uuid],
+          name: "INVOLVES",
+        },
+      });
+    });
   }
   return state;
 };

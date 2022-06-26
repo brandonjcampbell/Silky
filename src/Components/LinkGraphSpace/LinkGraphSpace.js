@@ -153,8 +153,8 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
                 ) {
                   handleAdd({
                     name: "CAUSES",
-                    subjects: [{ uuid: unpack.data.id }],
-                    targets: [{ uuid: e.target._private.data.id }],
+                    subjects: [unpack.data.id ],
+                    targets: [ e.target._private.data.id ],
                   });
                 }
                 cy.$("#" + unpack.data.id).removeClass("foo");
@@ -193,12 +193,12 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   globalState.state.actors.map((node) => {
     // This BECAUSE That
 
-    if (node.targets) {
+    if (node.type==="link" && node.name==="CAUSES" && node.targets) {
       node.targets.forEach((f) => {
         const res = {
           data: {
-            source: node.subjects[0].uuid,
-            target: f.uuid,
+            source: node.subjects[0],
+            target: f,
             id: node.uuid,
             label: "CAUSES",
             arrow: "none",
