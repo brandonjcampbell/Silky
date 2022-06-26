@@ -77,7 +77,7 @@ const GraphTabs = ({ actorUuid }) => {
   if (!actor.types) {
     actor.types = [];
   }
-  console.log(actor);
+
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
   const [layout, setLayout] = useState(defaultLayout);
 
@@ -223,7 +223,6 @@ const GraphTabs = ({ actorUuid }) => {
 
   function recalculateShow() {
     const masterList = [...actor.element,...actor.fact,...actor.snippet].map(y=>y.uuid)
-    console.log(masterList)
     actor.show = globalState.state.actors
       .filter(x=>masterList.includes(x.uuid) || x.type==="link")
       .filter((x) => actor.showActor.includes(x.type))

@@ -73,12 +73,6 @@ const Linker = ({ actor, guestType, linkType, side = "target" }) => {
           sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
           onChange={(e, newValue) => {
             if (newValue && newValue !== "Select") {
-              console.log(
-                "what are we up to?",
-                actor.name,
-                linkType,
-                newValue.name
-              );
               link(
                 side === "target" ? actor.uuid : newValue.uuid,
                 side === "target" ? newValue.uuid : actor.uuid,

@@ -119,7 +119,6 @@ const add = (state, action) => {
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
   if (action.payload.type === "fact") {
-    console.log("HERE WE GO!!")
      newState = autoLink(newState, action);
   }
   if (action.payload.callback) {
@@ -242,7 +241,6 @@ const autoLink = (state, action) => {
           )
       );
     elements.forEach((x) => {
-      console.log("lets link ", subject, "to", x);
       state = add(state, {
         for: "link",
         class: "actor",

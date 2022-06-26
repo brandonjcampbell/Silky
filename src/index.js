@@ -12,7 +12,6 @@ import "react-pro-sidebar/dist/css/styles.css";
 import "./index.css";
 import {
   ActorList,
-  Web,
   CurrentProjectLink,
   App,
   Graph,
@@ -23,9 +22,8 @@ import {
   FactTabs,
   ThreadTabs,
   ElementTabs,
-  LinkTabs,
   GraphTabs,
-  LinkSpace,
+
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import {

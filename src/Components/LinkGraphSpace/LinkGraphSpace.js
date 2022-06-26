@@ -87,17 +87,6 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
     var options = {
       evtType: "cxttap",
       menuItems: [
-        // {
-        //   id: "log-id",
-        //   content: "log id",
-        //   tooltipText: "link to",
-        //   image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
-        //   selector: "node",
-        //   coreAsWell: false,
-        //   onClickFunction: function (e) {
-        //     console.log(e, cy.getElementById(e.target._private.data.id).position());
-        //   },
-        // },
         {
           id: "delete-node",
           content: "Delete",
@@ -106,10 +95,8 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
           selector: "node,link",
           coreAsWell: false,
           onClickFunction: function (e) {
-            console.log(e)
             const actor = globalState.state.actors.find((x) => x.uuid === e.target._private.data.id);
             if (actor) {
-              console.log("waht?", e)
               remove(actor,dispatch,()=>{
                 refetch();
                 recalibrate();
@@ -126,10 +113,8 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
           coreAsWell: true,
           onClickFunction: function (e) {
             setAddNodeFlag(true);
-            console.log(e, "Check it out now");
             setMouseX(e.position.x);
             setMouseY(e.position.y);
-            console.log("Partaaaay");
           },
         },
         {
@@ -160,7 +145,6 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
                 cy.$("#" + unpack.data.id).removeClass("foo");
                 setLinking(false);
               } else {
-                console.log(e.target._private);
 
                 setLinking(
                   JSON.stringify({

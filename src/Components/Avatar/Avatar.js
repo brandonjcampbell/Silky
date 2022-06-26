@@ -20,11 +20,6 @@ const Avatar = ({ actor, clickable = false, small = false }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [color, setColor] = useState({ hex: actor.color });
 
-
-//   useEffect(() => {
-//     console.log(actor.color);
-//   }, [actor.color]);
-
   const handleClick = () => {
     if (clickable) {
       setDisplayColorPicker(!displayColorPicker);
@@ -41,7 +36,6 @@ const Avatar = ({ actor, clickable = false, small = false }) => {
   };
 
   function updateColor(test) {
-      console.log("changin the color", test, actor.color)
     let cloned = _.cloneDeep(actor);
     cloned.color = test.hex;
     dispatch({

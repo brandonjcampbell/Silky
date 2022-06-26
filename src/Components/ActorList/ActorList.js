@@ -27,10 +27,6 @@ const ActorList = ({
   );
   const [count, setCount] = useState(1);
 
-  // useEffect(()=>{
-  // console.log(globalState.state.actors)
-  // },[globalState.state.actors])
-
   const {
     params: { userId },
   } = match;

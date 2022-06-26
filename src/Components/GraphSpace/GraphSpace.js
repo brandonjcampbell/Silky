@@ -74,7 +74,6 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
   const [cy, setCy] = useState(null);
   const [linking, setLinking] = useState(false);
   useEffect(() => {
-    console.log(cy);
     if (cy) {
       cy.layout(defaultLayout).run();
       cy.center();
@@ -133,7 +132,6 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
 
 
     if (node.type==="link" && node.targets && node.subjects) {
-      console.log(node.name,"boogyboard", node.subjects)
       node.targets.forEach((f) => {
         const res = {
           data: {

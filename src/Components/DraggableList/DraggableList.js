@@ -1,4 +1,4 @@
-import React, { useContext,useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
 import { Link } from "react-router-dom";
@@ -23,7 +23,7 @@ const DraggableList = ({
   action,
   showCharacterCount = 100,
   showAvatar = true,
-  actorUuid
+  actorUuid,
 }) => {
   const globalState = useContext(store);
 
@@ -35,19 +35,11 @@ const DraggableList = ({
     onDrop();
   }
 
-
-  // useEffect(() => {
-  //   console.log(list);
-  // }, [list]);
-
   function remove(uuid) {
     let clone = _.cloneDeep(list);
     clone = clone.filter((x) => x.uuid !== uuid);
     saveList(clone);
   }
-
-
-
 
   function goRenderLabel(x, index) {
     const displayName = getDisplayName(x.uuid, globalState);
@@ -85,7 +77,7 @@ const DraggableList = ({
           <Draggable key={x.uuid} draggableId={x.uuid} index={index}>
             {(provided) => (
               <div
-                className={x.uuid===actorUuid?"selectedRow":""}
+                className={x.uuid === actorUuid ? "selectedRow" : ""}
                 uuid={x.uuid}
                 ref={provided.innerRef}
                 {...provided.draggableProps}
