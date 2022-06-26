@@ -13,6 +13,7 @@ import avsdf from "cytoscape-avsdf";
 import FormDialog from "../FormDialog/";
 import { actorToCyto } from "../../utils";
 import contextMenus from "cytoscape-context-menus";
+import remove from "../../utils/remove";
 import "cytoscape-context-menus/cytoscape-context-menus.css";
 
 import _ from "lodash";
@@ -45,6 +46,7 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   }
 
   const globalState = useContext(store);
+  const { dispatch } = globalState;
 
   const defaultLayout = {
     name: "dagre",
@@ -79,24 +81,40 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   useEffect(() => {
     refetch();
     recalibrate();
-
-
-
   }, [globalState.state.actors]);
 
   const handleCy = (cy) => {
     var options = {
       evtType: "cxttap",
       menuItems: [
+        // {
+        //   id: "log-id",
+        //   content: "log id",
+        //   tooltipText: "link to",
+        //   image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
+        //   selector: "node",
+        //   coreAsWell: false,
+        //   onClickFunction: function (e) {
+        //     console.log(e, cy.getElementById(e.target._private.data.id).position());
+        //   },
+        // },
         {
-          id: "log-id",
-          content: "log id",
-          tooltipText: "link to",
+          id: "delete-node",
+          content: "Delete",
+          tooltipText: "delete",
           image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
-          selector: "node",
+          selector: "node,link",
           coreAsWell: false,
           onClickFunction: function (e) {
-            console.log(e, cy.getElementById(e.target._private.data.id).position());
+            console.log(e)
+            const actor = globalState.state.actors.find((x) => x.uuid === e.target._private.data.id);
+            if (actor) {
+              console.log("waht?", e)
+              remove(actor,dispatch,()=>{
+                refetch();
+                recalibrate();
+              });
+            }
           },
         },
         {
@@ -104,11 +122,11 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
           content: "Add Fact",
           tooltipText: "link to",
           image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
-          selector: "core",
+          selector: "",
           coreAsWell: true,
           onClickFunction: function (e) {
             setAddNodeFlag(true);
-            console.log(e,"Check it out now")
+            console.log(e, "Check it out now");
             setMouseX(e.position.x);
             setMouseY(e.position.y);
             console.log("Partaaaay");
@@ -116,95 +134,29 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
         },
         {
           id: "add-link",
-          content: "Add CAUSES Link",
+          content: "CAUSES",
           tooltipText: "link to",
           image: { src: "add.svg", width: 12, height: 12, x: 6, y: 4 },
           selector: "node",
           coreAsWell: false,
           onClickFunction: function (e) {
-            console.log("WHHERE?", e.target._private.data);
             if (e.target._private.data.id) {
               if (linking) {
                 const unpack = JSON.parse(linking);
                 let link;
 
                 if (
-                  (unpack && unpack.data && unpack.data.label === "CAUSES") ||
-                  e.target._private.data.label === "CAUSES"
+                  !(
+                    (unpack && unpack.data && unpack.data.label === "CAUSES") ||
+                    e.target._private.data.label === "CAUSES"
+                  )
                 ) {
-                  console.log(link);
-                  const res = {
-                    data: {
-                      uuid:
-                        unpack.data.id +
-                        e.target._private.data.id +
-                        100 * Math.random(),
-                      source: unpack.data.id,
-                      target: e.target._private.data.id,
-                      linkLeader:
-                        e.target._private.data.label === "CAUSES"
-                          ? "true"
-                          : false,
-                      label: "",
-                      arrow: "circle",
-                      color: "#ccc",
-                    },
-                  };
-
-                  axioms.push(res);
-                } else {
-                  link = {
-                    data: {
-                      id:
-                        unpack.data.id +
-                        e.target._private.data.id +
-                        100 * Math.random(),
-                      name: "CAUSES",
-                      label: "CAUSES",
-                    },
-                    position: {
-                      x: (unpack.position.x + e.target._private.position.x) / 2,
-                      y: (unpack.position.y + e.target._private.position.y) / 2,
-                    },
-                  };
-
-                  console.log(link);
-                  const res1 = {
-                    data: {
-                      uuid:
-                        unpack.data.id +
-                        e.target._private.data.id +
-                        100 * Math.random(),
-                      source: link.data.id,
-                      target: e.target._private.data.id,
-                      label: "",
-
-                      arrow: "circle",
-                      color: "#ccc",
-                    },
-                  };
-
-                  const res2 = {
-                    data: {
-                      uuid:
-                        unpack.data.id +
-                        e.target._private.data.id +
-                        1000 * Math.random(),
-                      source: unpack.data.id,
-                      target: link.data.id,
-                      linkLeader: "true",
-                      label: "",
-                      arrow: "circle",
-                      color: "#ccc",
-                    },
-                  };
-
-                  axioms.push(res1);
-                  axioms.push(res2);
-                  content.push(link);
+                  handleAdd({
+                    name: "CAUSES",
+                    subjects: [{ uuid: unpack.data.id }],
+                    targets: [{ uuid: e.target._private.data.id }],
+                  });
                 }
-
-                recalibrate();
                 cy.$("#" + unpack.data.id).removeClass("foo");
                 setLinking(false);
               } else {
@@ -234,9 +186,6 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
     var instance = cy.contextMenus(options);
 
     setCy(cy);
-
-
-
   };
 
   let axioms = [];
@@ -244,31 +193,14 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   globalState.state.actors.map((node) => {
     // This BECAUSE That
 
-    if (node.subjects) {
-      node.subjects.forEach((f) => {
-        const res = {
-          data: {
-            uuid: node.uuid + node.uuid,
-            source: node.uuid,
-            target: f.uuid,
-            label: "",
-
-            arrow: "circle",
-            color: node.color ? node.color : "#ccc",
-          },
-        };
-        axioms.push(res);
-      });
-    }
     if (node.targets) {
       node.targets.forEach((f) => {
         const res = {
           data: {
-            uuid: node.uuid + node.uuid,
-            target: node.uuid,
-            source: f.uuid,
-            label: "",
-            linkLeader: "true",
+            source: node.subjects[0].uuid,
+            target: f.uuid,
+            id: node.uuid,
+            label: "CAUSES",
             arrow: "none",
             color: node.color ? node.color : "#ccc",
           },
@@ -279,45 +211,41 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
   });
 
   const refetch = function () {
-   let val = actorToCyto(
-      globalState.state.actors
-        .filter((a) => a.type === "fact" || a.type === "link")
-        .map((a) => {
-          if (a.type === "link") {
-            let temp = _.cloneDeep(a);
-            temp.name = "CAUSES";
-            return temp;
-          } else {
-            return a;
-          }
-        })
+    let val = actorToCyto(
+      globalState.state.actors.filter((a) => a.type === "fact")
     );
 
-    if(mostRecentId){
-      console.log()
-      const record = val.find(x=>x.data.id===mostRecentId)
-      record.position = {x:mouseX,y:mouseY}
-      console.log(record)
-      //console.log("GO FOR IT MAN", mostRecentId,mouseX,mouseY,cy.getElementById(mostRecentId))
-     // cy.getElementById(mostRecentId).position("x", mouseX);
-      //cy.getElementById(mostRecentId).position("y", mouseY);
-      //  setMostRecentId(false)
+    if (mostRecentId) {
+      console.log();
+      const record = val.find((x) => x.data.id === mostRecentId);
+      record.position = { x: mouseX, y: mouseY };
     }
 
-
-
-  return val;
+    return val;
   };
 
   const content = refetch();
 
   const recalibrate = function () {
     setElements([...content, ...axioms]);
-
-    
   };
 
   const [elements, setElements] = useState([...content, ...axioms]);
+
+  const handleAdd = (newObject) => {
+    dispatch({
+      action: "add",
+      for: "link",
+      class: "actor",
+      payload: newObject,
+      callback: (e) => {
+        console.log(e);
+        setMostRecentId(e);
+        refetch();
+        recalibrate();
+      },
+    });
+  };
 
   return (
     <div>
@@ -329,7 +257,6 @@ const LinkGraphSpace = ({ showAvatar, type }) => {
           passOpen={addNodeFlag}
           specialOp={(e) => {
             setMostRecentId(e);
-      
           }}
           handleCloseExtra={(newFact) => {
             setAddNodeFlag(false);

@@ -7,6 +7,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "../Avatar";
 import Swatch from "../Swatch";
 import { confirmAlert } from "react-confirm-alert"; // Import
+import remove from "../../utils/remove"
 
 const TitleBar = ({ actor }) => {
   const globalState = useContext(store);
@@ -35,33 +36,7 @@ const TitleBar = ({ actor }) => {
     });
   };
 
-  const remove = () => {
-    confirmAlert({
-      title: "Confirm to remove",
-      message:
-        "Are you sure you want to remove " +
-        actor.type +
-        " " +
-        actor.name +
-        "? You won't be able to undo this action.",
-      buttons: [
-        {
-          label: "Yes",
-          onClick: () => {
-            dispatch({
-              action: "removeActor",
-              payload: { uuid: actor.uuid },
-            });
-          },
-        },
-        {
-          label: "No",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
-
+  
 
   return (
     <h2 className="workspaceHeader">
@@ -90,7 +65,7 @@ const TitleBar = ({ actor }) => {
           />
         )}
       </span>
-      <DeleteIcon className="delete" onClick={remove} />
+      <DeleteIcon className="delete" onClick={()=>{remove(actor,dispatch)}} />
     </h2>
   );
 };

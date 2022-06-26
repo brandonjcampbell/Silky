@@ -98,7 +98,7 @@ const ActorList = ({ match, type, actorUuid, showAvatar = true, tag = null }) =>
               ((type && x.type === type) || !type) &&
               (!search ||
                 x.name.includes(search) ||
-                (x.tags && globalState.state.actors.filter(y=>x.tags.find(z=>z.uuid===y.uuid)).find(y=>y.name.includes(search)))) &&
+                (x.tags && Array.isArray(x.tags)  && globalState.state.actors.filter(y=>x.tags.find(z=>z.uuid===y.uuid)).find(y=>y.name.includes(search)))) &&
               ((tag && x.tags && Array.isArray(x.tags) && x.tags.map(z=>z.uuid).includes(tag)) || !tag)
           )}
           handleClick={handleRowClick}

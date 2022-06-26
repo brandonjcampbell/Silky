@@ -155,6 +155,14 @@ const FactTabs = ({ actorUuid }) => {
     });
   }
 
+  function autoLink(){
+    dispatch({
+      action: "autoLink",
+      for: "fact",
+      payload: actor,
+    });
+  }
+
   return (
     <div>
       {actor && (
@@ -263,6 +271,8 @@ const FactTabs = ({ actorUuid }) => {
                 addTo(uuid, "element");
               }}
             />
+
+           <button onClick={()=>{autoLink()}}> AUTOLINK Elements </button> 
           </TabPanel>
 
           <TabPanel className="tabPanel" value={currentTab} index={1}>

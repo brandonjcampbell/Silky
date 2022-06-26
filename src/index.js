@@ -34,7 +34,7 @@ import {
   GiLightBulb,
   GiPendulumSwing,
   GiBreakingChain,
-  GiLongLeggedSpider
+  GiLongLeggedSpider,
 } from "react-icons/gi";
 import { HiPuzzle, HiTag } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
@@ -56,11 +56,9 @@ ReactDOM.render(
           </Link>
 
           <Link to="/facts/">
-            <span className="menuLabel">Reveals</span>{" "}
+            <span className="menuLabel">Facts</span>{" "}
             <GiLightBulb className="menuItem" />
           </Link>
-
- 
 
           <Link to="/snippets/">
             <span className="menuLabel">Snippets</span>{" "}
@@ -102,7 +100,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="element" actorUuid={props.match.params.uuid} />
+                        <ActorList
+                          {...props}
+                          type="element"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -133,8 +135,8 @@ ReactDOM.render(
                 <div className="View">
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
+          
+                        <ReflexElement className="left-pane" flex={0.25}>
                           <div className="List">
                             <ActorList
                               {...props}
@@ -144,18 +146,8 @@ ReactDOM.render(
                             />
                           </div>
                         </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                              actorUuid={props.match.params.uuid}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
+                       
+          
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
@@ -281,8 +273,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="thread"
-                        actorUuid={props.match.params.uuid} />
+                        <ActorList
+                          {...props}
+                          type="thread"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -306,7 +301,11 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.25}>
                       <div className="List">
-                        <ActorList {...props} type="web" actorUuid={props.match.params.uuid}/>
+                        <ActorList
+                          {...props}
+                          type="web"
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
@@ -333,28 +332,15 @@ ReactDOM.render(
               )}
             />
 
-
-
-
-<Route
+            <Route
               path={["/Spider/"]}
               exact
               render={(props) => (
                 <div className="View">
-
-               
-                          <LinkGraphSpace
-                            showAvatar={false}
-                          />
-                 
-                  
-             
-
+                  <LinkGraphSpace showAvatar={false} />
                 </div>
               )}
             />
-
-
 
             <Route
               path={["/Tags/", "/Tags/:uuid"]}
@@ -364,13 +350,16 @@ ReactDOM.render(
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane" flex={0.15}>
                       <div className="List">
-                        <ActorList {...props} type="tag" showAvatar={false} actorUuid={props.match.params.uuid}/>
+                        <ActorList
+                          {...props}
+                          type="tag"
+                          showAvatar={false}
+                          actorUuid={props.match.params.uuid}
+                        />
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.15}>
-        
-
                       <div className="Extras">
                         {props.match.params.uuid && (
                           <ActorList
@@ -383,8 +372,8 @@ ReactDOM.render(
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.70}>
-                    <div className="Workspace">
+                    <ReflexElement className="right-pane" flex={0.7}>
+                      <div className="Workspace">
                         {props.match.params.uuid && (
                           <Workspace
                             actorUuid={props.match.params.uuid}

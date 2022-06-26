@@ -106,7 +106,6 @@ const LinkSpace = ({ actorUuid }) => {
       {actor && (
         <div>
           <h2 className="workspaceHeader">
-
             <span className="title">
               <span
                 onClick={() => {
@@ -139,70 +138,70 @@ const LinkSpace = ({ actorUuid }) => {
             <SimpleList
               type="facts"
               showAvatars={false}
-
               xAction={(uuid) => {
                 removeFromX(uuid, "subjects");
               }}
-              list={actor.subjects ? actor.subjects:[]}
+              list={actor.subjects ? actor.subjects : []}
             />
-    
-            <FormControl variant="filled">
-              <Autocomplete
-                disablePortal
-                clearOnBlur
-                selectOnFocus
-                blurOnSelect
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.facts
-                    ? option.facts
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
-                }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "fact" &&
-                    ((actor.subjects &&
-                      !actor.subjects.map((y) => y.uuid).includes(x.uuid)) ||
-                      !actor.subjects)
-                )}
-                sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addToX(newValue.uuid, "subjects");
+
+            {actor.subjects.length === 0 && (
+              <FormControl variant="filled">
+                <Autocomplete
+                  disablePortal
+                  clearOnBlur
+                  selectOnFocus
+                  blurOnSelect
+                  id="combo-box-demo"
+                  getOptionLabel={(option) =>
+                    option.name +
+                    "@tags:" +
+                    option.tags +
+                    (option.facts
+                      ? option.facts
+                          .map((m) => getDisplayName(m.uuid, globalState))
+                          .toString()
+                      : "")
                   }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <span>
-                      {props.key.split("@tags:")[0]}
-                    </span>
-                  </div>
-                )}
-                renderInput={(params) => {
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
-                  }
-                  return <TextField {...params} label="Then..." value={null} />;
-                }}
-              />
-            </FormControl>
+                  options={globalState.state.actors.filter(
+                    (x) =>
+                      x.type === "fact" &&
+                      ((actor.subjects &&
+                        !actor.subjects.map((y) => y.uuid).includes(x.uuid)) ||
+                        !actor.subjects)
+                  )}
+                  sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
+                  onChange={(e, newValue) => {
+                    if (newValue && newValue !== "Select") {
+                      addToX(newValue.uuid, "subjects");
+                    }
+                  }}
+                  renderOption={(props, option) => (
+                    <div {...props}>
+                      <span>{props.key.split("@tags:")[0]}</span>
+                    </div>
+                  )}
+                  renderInput={(params) => {
+                    if (params && params.inputProps) {
+                      params.inputProps.value = null;
+                    }
+                    return (
+                      <TextField {...params} label="Then..." value={null} />
+                    );
+                  }}
+                />
+              </FormControl>
+            )}
           </div>
 
-          <div className="relationshipBox">BECAUSE</div>
+          <div className="relationshipBox">CAUSES</div>
           <div className="targetBox">
             <SimpleList
               type="facts"
               showAvatars={false}
-
               xAction={(uuid) => {
                 removeFromX(uuid, "targets");
               }}
-              list={actor.targets ? actor.targets:[]}
+              list={actor.targets ? actor.targets : []}
             />
             <FormControl variant="filled">
               <Autocomplete
@@ -236,14 +235,12 @@ const LinkSpace = ({ actorUuid }) => {
                 }}
                 renderOption={(props, option) => (
                   <div {...props}>
-                    <span>
-                      {props.key.split("@tags:")[0]}
-                    </span>
+                    <span>{props.key.split("@tags:")[0]}</span>
                   </div>
                 )}
                 renderInput={(params) => {
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
+                  if (params && params.inputProps) {
+                    params.inputProps.value = null;
                   }
                   return <TextField {...params} label="Then..." value={null} />;
                 }}

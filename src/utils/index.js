@@ -6,6 +6,7 @@ import makeDir from "./makeDir";
 import saveFile from "./saveFile";
 import useMousePosition from "./useMousePosition";
 import uploadPic from "./uploadPic";
+import remove from "./remove";
 export {
   actorToCyto,
   getDisplayName,
@@ -15,4 +16,5 @@ export {
   saveFile,
   useMousePosition,
   uploadPic,
+  remove,
 };

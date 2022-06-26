@@ -118,6 +118,7 @@ const add = (state, action) => {
   }
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
+  autoLink(newState,action)
   if (action.payload.callback) {
     action.payload.callback(action.payload.uuid);
   }
@@ -184,27 +185,25 @@ const saveActors = (state, action) => {
 };
 
 const removeActor = (state, action) => {
-
-    let newState = _.cloneDeep(state);
-    newState.actors = state.actors
-      .filter((x) => x.uuid !== action.payload.uuid)
-      .map((actorx) => {
-        let actory = _.cloneDeep(actorx);
-        if (actory.sequence) {
-          actory.sequence = [
-            ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
-          ];
-        }
-        if (actory.elements) {
-          actory.elements = [
-            ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
-          ];
-        }
-        return actory;
-      });
-    saveProject(newState);
-    return newState;
-
+  let newState = _.cloneDeep(state);
+  newState.actors = state.actors
+    .filter((x) => x.uuid !== action.payload.uuid)
+    .map((actorx) => {
+      let actory = _.cloneDeep(actorx);
+      if (actory.sequence) {
+        actory.sequence = [
+          ...actorx.sequence.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      if (actory.elements) {
+        actory.elements = [
+          ...actorx.elements.filter((y) => y.uuid !== action.payload.uuid),
+        ];
+      }
+      return actory;
+    });
+  saveProject(newState);
+  return newState;
 };
 
 const duplicate = (state, action) => {
@@ -221,6 +220,20 @@ const duplicate = (state, action) => {
     return newState;
   }
   return null;
+};
+
+const autoLink = (state, action) => {
+  let target = state.actors.find((x) => x.uuid === action.payload.uuid);
+  console.log(target, "that is waht I found", action)
+  if (target && target.type === "fact") {
+    let newState = _.cloneDeep(state);
+    const elements = newState.actors.filter((x) => x.type === "element").filter((x) => target.name.includes(x.name));
+    elements.forEach((x) => x.facts.push({ uuid: target.uuid }));
+    console.log(elements.length, "did we make it here?")
+    saveProject(newState);
+    return newState;
+  }
+  return state;
 };
 
 const StateProvider = ({ children }) => {
@@ -244,6 +257,8 @@ const StateProvider = ({ children }) => {
         return reorderActors(state, action);
       case "duplicate":
         return duplicate(state, action);
+      case "autoLink":
+        return autoLink(state, action);
       default:
         throw new Error();
     }
