@@ -16,6 +16,8 @@ const Linker = ({ actor, guestType, linkType, side = "target" }) => {
       <LopsidedList
         type="link"
         side={side}
+        guestType={guestType}
+        hostType={actor.type}
         xAction={(uuid) => {
           dispatch({
             action: "removeActor",
