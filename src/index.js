@@ -135,19 +135,16 @@ ReactDOM.render(
                 <div className="View">
                   <ReflexContainer orientation="vertical">
                     <ReflexElement className="left-pane">
-          
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                              actorUuid={props.match.params.uuid}
-                            />
-                          </div>
-                        </ReflexElement>
-                       
-          
+                      <ReflexElement className="left-pane" flex={0.25}>
+                        <div className="List">
+                          <ActorList
+                            {...props}
+                            type="fact"
+                            showAvatar={false}
+                            actorUuid={props.match.params.uuid}
+                          />
+                        </div>
+                      </ReflexElement>
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.5}>
@@ -165,58 +162,6 @@ ReactDOM.render(
                       <div className="Extras">
                         {props.match.params.uuid && (
                           <FactTabs actorUuid={props.match.params.uuid} />
-                        )}
-                      </div>
-                    </ReflexElement>
-                  </ReflexContainer>
-                </div>
-              )}
-            />
-
-            <Route
-              path="/Links/:uuid"
-              exact
-              render={(props) => (
-                <div className="View">
-                  <ReflexContainer orientation="vertical">
-                    <ReflexElement className="left-pane">
-                      <ReflexContainer orientation="horizontal">
-                        <ReflexElement className="left-pane" flex={0.75}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="fact"
-                              showAvatar={false}
-                              actorUuid={props.match.params.uuid}
-                            />
-                          </div>
-                        </ReflexElement>
-                        <ReflexSplitter />
-                        <ReflexElement className="left-pane" flex={0.25}>
-                          <div className="List">
-                            <ActorList
-                              {...props}
-                              type="link"
-                              showAvatar={false}
-                              actorUuid={props.match.params.uuid}
-                            />
-                          </div>
-                        </ReflexElement>
-                      </ReflexContainer>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.5}>
-                      <div className="Workspace">
-                        {props.match.params.uuid && (
-                          <LinkSpace actorUuid={props.match.params.uuid} />
-                        )}
-                      </div>
-                    </ReflexElement>
-                    <ReflexSplitter />
-                    <ReflexElement className="right-pane" flex={0.25}>
-                      <div className="Extras">
-                        {props.match.params.uuid && (
-                          <LinkTabs actorUuid={props.match.params.uuid} />
                         )}
                       </div>
                     </ReflexElement>

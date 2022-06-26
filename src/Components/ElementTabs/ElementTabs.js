@@ -62,15 +62,6 @@ const ElementTabs = ({ actorUuid }) => {
     actor.facts = [];
   }
 
-  const tagSave = (newTags) => {
-    actor.tags = newTags;
-    setTags(newTags);
-    dispatch({
-      action: "saveActor",
-      payload: { actor: actor },
-    });
-  };
-
   const getThreads = () => {
     const snippets = globalState.state.actors
       .filter(
@@ -96,35 +87,6 @@ const ElementTabs = ({ actorUuid }) => {
 
     return _.uniqBy(threads, "uuid");
   };
-
-  function addTo(uuid, type) {
-    let clone = _.cloneDeep(actor);
-    console.log(clone);
-    if (!clone[type]) {
-      clone[type] = [];
-    }
-    console.log(clone);
-
-    clone[type].push({ uuid: uuid });
-    dispatch({
-      action: "saveActor",
-      for: "snippet",
-      payload: { actor: clone },
-    });
-  }
-
-  function removeFrom(uuid, type) {
-    let clone = _.cloneDeep(actor);
-    if (!clone[type]) {
-      clone[type] = [];
-    }
-    clone[type] = clone[type].filter((x) => x.uuid !== uuid);
-    dispatch({
-      action: "saveActor",
-      for: "snippet",
-      payload: { actor: clone },
-    });
-  }
 
   return (
     <div>
@@ -168,7 +130,6 @@ const ElementTabs = ({ actorUuid }) => {
           </TabPanel>
 
           <TabPanel className="tabPanel" value={currentTab} index={2}>
-            TAGS
             <Linker
               actor={actor}
               side="subject"

@@ -5,8 +5,6 @@ import "./TitleBar.css";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "../Avatar";
-import Swatch from "../Swatch";
-import { confirmAlert } from "react-confirm-alert"; // Import
 import remove from "../../utils/remove"
 
 const TitleBar = ({ actor }) => {
