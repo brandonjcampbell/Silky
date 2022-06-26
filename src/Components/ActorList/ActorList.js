@@ -96,7 +96,6 @@ const ActorList = ({
       </div>
 
       <div className="content">
-        {search}
         <DraggableList
           showAvatar={showAvatar}
           actorUuid={actorUuid}
