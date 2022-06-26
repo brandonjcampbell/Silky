@@ -39,7 +39,25 @@ const Linker = ({ actor, guestType, linkType, side = "target" }) => {
           selectOnFocus
           blurOnSelect
           id="combo-box-demo"
-          getOptionLabel={(option) => option.name}
+          getOptionLabel={(option) =>
+            option.name +
+            "@tags:" +
+            JSON.stringify(
+              globalState.state.actors
+                .filter(
+                  (x) =>
+                    x.type === "tag" &&
+                    globalState.state.actors.find(
+                      (y) =>
+                        y.subjects &&
+                        y.subjects.includes(x.uuid) &&
+                        y.targets &&
+                        y.targets.includes(option.uuid)
+                    )
+                )
+                .map((x) => x.name + " ")
+            )
+          }
           options={globalState.state.actors.filter(
             (x) =>
               x.type === guestType &&
@@ -55,13 +73,23 @@ const Linker = ({ actor, guestType, linkType, side = "target" }) => {
           sx={{ width: 200, bgcolor: "white", borderRadius: "4px" }}
           onChange={(e, newValue) => {
             if (newValue && newValue !== "Select") {
-                console.log("what are we up to?",actor.name, linkType, newValue.name)
-              link(side==="target"?actor.uuid:newValue.uuid, side==="target"?newValue.uuid:actor.uuid, linkType, dispatch);
+              console.log(
+                "what are we up to?",
+                actor.name,
+                linkType,
+                newValue.name
+              );
+              link(
+                side === "target" ? actor.uuid : newValue.uuid,
+                side === "target" ? newValue.uuid : actor.uuid,
+                linkType,
+                dispatch
+              );
             }
           }}
           renderOption={(props, option) => (
             <div {...props}>
-              <span>{props.key.split("@tags:")[0]}</span>
+              <span> {props.key.split("@tags:")[0]}</span>
             </div>
           )}
           renderInput={(params) => {
