@@ -21,11 +21,8 @@ const Workspace = ({ actorUuid, showAvatar = true }) => {
     setTags(actor && actor.tags ? actor.tags : "");
   }, [actorUuid]);
 
-  const save = (newContent, key) => {
-    newContent.blocks = newContent.blocks.map((x, index) => {
-      x.key = actorUuid + ":" + index;
-      return x;
-    });
+  const save = (newContent) => {
+
     actor.content = newContent;
     if (tags) {
       actor.tags = tags;
