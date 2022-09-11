@@ -21,6 +21,7 @@ import {
   Workspace,
   FactTabs,
   ThreadTabs,
+  Thread,
   ElementTabs,
   GraphTabs,
 
@@ -224,11 +225,19 @@ ReactDOM.render(
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
+                    <ReflexElement className="middle-pane" flex={0.50}>
                       <div className="Workspace">
                         {props.match.params.uuid && (
-                          <ThreadTabs actorUuid={props.match.params.uuid} />
+                          <Thread actorUuid={props.match.params.uuid} />
                         )}
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.25}>
+                      <div className="Extras">
+                        {props.match.params.uuid && (
+                          <ThreadTabs actorUuid={props.match.params.uuid} />
+                          )}
                       </div>
                     </ReflexElement>
                   </ReflexContainer>

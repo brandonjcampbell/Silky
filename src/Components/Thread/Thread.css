@@ -1,0 +1,4 @@
+.editor{
+    overflow-y: scroll;
+    max-height:calc(100vh - 158px);
+}

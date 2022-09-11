@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { Editor } from "react-draft-wysiwyg";
 import { store } from "../../MyContext";
-import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import { AiFillSave } from "react-icons/ai";
 import "./TextEditor.css";
 import { getDisplayName } from "../../utils";
-import empty from "./empty.json";
 
 function usePrevious(value) {
   const ref = useRef();
@@ -69,7 +65,7 @@ const TextEditor = ({ data, save, actorUuid, showAvatar }) => {
 
   const goForIt = ()=>{
 
-      save(current);
+      save(current,actorUuid);
       setDirty(null);
   }
   
@@ -80,20 +76,27 @@ const TextEditor = ({ data, save, actorUuid, showAvatar }) => {
   };
 
   return (
-    <div>
-      <div style={{ backgroundColor: "rgb(69, 68, 71)" }}>
-        <div className="editingBlockBanner">
-         {currentBlock && <span>Currently Editing: <strong>{getDisplayName(currentBlock,globalState)}</strong></span>}
+    <div className={"contentBlock"}>
+              <div className="editingBlockBanner">
+     
+         <strong>{getDisplayName(actorUuid,globalState)}</strong>
         </div>
+        {dirty && <AiFillSave className="unsaved"  onClick={()=>{goForIt()}}/>}
+            
+      <div style={{ backgroundColor: "rgb(69, 68, 71)" }}>
+
         {/* <textarea value={editorState} onChange={onEditorStateChange}></textarea> */}
         <p contenteditable="true"  style={{
-            height: showAvatar? "calc(100vh - 218px)" : "calc(100vh - 178px)",
-            paddingRight: "15px",
+            maxHeight: "none",//showAvatar? "calc(100vh - 218px)" : "calc(100vh - 208px)",
+            padding:"10px",
+            paddingRight: "10px",
             paddingLeft: "20px",
             color: "rgb(300, 300, 300)",
-            backgroundColor: "rgb(69, 68, 71)",
             overflowY:"scroll",
-            marginBottom: "0px",
+            margin:"0px",
+            borderRadius:"2px"
+          
+          
           }} onInput={onEditorStateChange} dangerouslySetInnerHTML={{__html:initial}}></p>
         {/* <Editor
           editorStyle={{
@@ -110,7 +113,7 @@ const TextEditor = ({ data, save, actorUuid, showAvatar }) => {
           }
           blockStyleFn={myBlockStyleFn}
         ></Editor> */}
-        {dirty && <AiFillSave className="unsaved"  onClick={()=>{goForIt()}}/>}
+
       
       </div>
     </div>
