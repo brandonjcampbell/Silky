@@ -68,15 +68,15 @@ const SnippetTabs = ({ actorUuid }) => {
               aria-label="basic tabs example"
             >
               <Tab
-                label={<GiLightBulb className="menuItem" />}
+                label={<span className="menuItemLabel">Reveals<GiLightBulb className="menuItem" /></span>}
                 {...a11yProps(0)}
               />
               <Tab
-                label={<GiSewingString className="menuItem" />}
+                label={<span className="menuItemLabel">Threads <GiSewingString className="menuItem" /></span>}
                 {...a11yProps(1)}
               />
               <Tab
-                label={<AiFillTag className="menuItem" />}
+                label={<span className="menuItemLabel">Tags<AiFillTag className="menuItem" /></span>}
                 {...a11yProps(2)}
               />
             </Tabs>

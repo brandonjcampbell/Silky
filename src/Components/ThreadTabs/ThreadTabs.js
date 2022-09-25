@@ -134,102 +134,94 @@ const ThreadTabs = ({ actorUuid }) => {
     <div className="rootThreadDiv">
       {actor && (
         <div>
-       
-
-
-
-            <DraggableList
-              list={actor.sequence}
-              saveList={(e) => {
-                let clone = _.cloneDeep(actor);
-                clone.sequence = e;
-                clone.totalSequenceLength = 0;
-                clone.sequence.forEach((x, index) => {
-                  x.consecutive = 0;
-                  if (
-                    x.incomingEdgeWeight === "0" &&
-                    clone.sequence[index - 1]
-                  ) {
-                    x.consecutive = clone.sequence[index - 1].consecutive + 1;
-                  }
-                  clone.totalSequenceLength += parseInt(
-                    (x.incomingEdgeWeight ? x.incomingEdgeWeight : 0) + ""
-                  );
-                });
-                dispatch({
-                  action: "saveActor",
-                  for: "thread",
-                  payload: { actor: clone },
-                });
-              }}
-              showAvatar={false}
-              showCharacterCount={150}
-              showEdgeWeights={true}
-              action="remove"
-              handleClick={(e) => {
-                console.log("handled Click", e);
-              }}
-              getType={(x) => {
-                return (
-                  globalState.state.actors.find((y) => x.uuid === y.uuid).type +
-                  "s"
-                );
-              }}
-              onDrop={() => {}}
-            ></DraggableList>
-            <br />
-            <FormControl variant="filled">
-              <Autocomplete
-                showAvatar={false}
-                clearOnBlur={true}
-                selectOnFocus={true}
-                id="combo-box-demo"
-                getOptionLabel={(option) =>
-                  option.name +
-                  "@tags:" +
-                  option.tags +
-                  (option.elements
-                    ? option.elements
-                        .map((m) => getDisplayName(m.uuid, globalState))
-                        .toString()
-                    : "")
+          <DraggableList
+            list={actor.sequence}
+            saveList={(e) => {
+              let clone = _.cloneDeep(actor);
+              clone.sequence = e;
+              clone.totalSequenceLength = 0;
+              clone.sequence.forEach((x, index) => {
+                x.consecutive = 0;
+                if (x.incomingEdgeWeight === "0" && clone.sequence[index - 1]) {
+                  x.consecutive = clone.sequence[index - 1].consecutive + 1;
                 }
-                options={globalState.state.actors.filter(
-                  (x) =>
-                    x.type === "snippet" &&
-                    x.uuid !== actor.uuid &&
-                    (!actor.sequence ||
-                      !actor.sequence.map((y) => y.uuid).includes(x.uuid))
-                )}
-                sx={{
-                  minWidth: 200,
-                  width: "100%",
-                  bgcolor: "white",
-                  borderRadius: "4px",
-                }}
-                onChange={(e, newValue) => {
-                  if (newValue && newValue !== "Select") {
-                    addToThread(newValue.uuid);
-                  }
-                }}
-                renderOption={(props, option) => (
-                  <div {...props}>
-                    <div className="autoCompleteRow">
-                      {props.key.split("@tags:")[0]}
-                    </div>
-                  </div>
-                )}
-                renderInput={(params) => {
-                  if(params && params.inputProps ){
-                  params.inputProps.value=null;
-                  }
-                  return <TextField {...params} label="Then..." value={null} />;
-                }}
-              />
-              <br />
-              <FormDialog type={"snippet"} specialOp={addToThread} />
-            </FormControl>
+                clone.totalSequenceLength += parseInt(
+                  (x.incomingEdgeWeight ? x.incomingEdgeWeight : 0) + ""
+                );
+              });
+              dispatch({
+                action: "saveActor",
+                for: "thread",
+                payload: { actor: clone },
+              });
+            }}
+            showAvatar={true}
+            showCharacterCount={150}
+            showEdgeWeights={true}
+            action="remove"
+            handleClick={(e) => {
+              console.log("handled Click", e);
+            }}
+            getType={(x) => {
+              return (
+                globalState.state.actors.find((y) => x.uuid === y.uuid).type +
+                "s"
+              );
+            }}
+            onDrop={() => {}}
+          ></DraggableList>
 
+          <FormControl variant="filled">
+            <Autocomplete
+              showAvatar={false}
+              clearOnBlur={true}
+              selectOnFocus={true}
+              id="combo-box-demo"
+              getOptionLabel={(option) =>
+                option.name +
+                "@tags:" +
+                option.tags +
+                (option.elements
+                  ? option.elements
+                      .map((m) => getDisplayName(m.uuid, globalState))
+                      .toString()
+                  : "")
+              }
+              options={globalState.state.actors.filter(
+                (x) =>
+                  x.type === "snippet" &&
+                  x.uuid !== actor.uuid &&
+                  (!actor.sequence ||
+                    !actor.sequence.map((y) => y.uuid).includes(x.uuid))
+              )}
+              sx={{
+                minWidth: 200,
+                width: "100%",
+                bgcolor: "white",
+                borderRadius: "4px",
+              }}
+              onChange={(e, newValue) => {
+                if (newValue && newValue !== "Select") {
+                  addToThread(newValue.uuid);
+                }
+              }}
+              renderOption={(props, option) => (
+                <div {...props}>
+                  <div className="autoCompleteRow">
+                    {props.key.split("@tags:")[0]}
+                  </div>
+                </div>
+              )}
+              renderInput={(params) => {
+                if (params && params.inputProps) {
+                  params.inputProps.value = null;
+                }
+                return <TextField {...params} label="Then..." value={null} />;
+              }}
+            />
+            <br />
+            <FormDialog type={"snippet"} specialOp={addToThread} />
+          </FormControl>
         </div>
       )}
     </div>

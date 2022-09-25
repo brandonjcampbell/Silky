@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect,useRef } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import TitleBar from "../TitleBar";
@@ -24,11 +24,7 @@ const Thread = ({ actorUuid }) => {
     if (actor && actor.sequence) {
       actor.sequence.forEach((x, index) => {
         const result = globalState.state.actors.find((y) => y.uuid === x.uuid);
-        const xz = result
-          ? result.content
-            ? result.content
-            : []
-          : [];
+        const xz = result ? (result.content ? result.content : []) : [];
 
         output = output + xz;
       });
@@ -38,27 +34,28 @@ const Thread = ({ actorUuid }) => {
   };
 
   const [output, setOutput] = useState(determineOutput());
-  console.log("output,",output)
+  console.log("output,", output);
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
   }, [actorUuid]);
 
   useEffect(() => {
-    if((prevActor && actor.uuid===prevActor.uuid && actor.color !== prevActor.color)){
+    if (
+      prevActor &&
+      actor &&
+      actor.uuid === prevActor.uuid &&
+      actor.color !== prevActor.color
+    ) {
+    } else {
+      setOutput(determineOutput());
 
-    }else{
-    setOutput(determineOutput());
-
-  
-    setToggle(false);
-    setTimeout((x) => {
-      setToggle(true);
-    }, 0.1);
-  }
-
+      setToggle(false);
+      setTimeout((x) => {
+        setToggle(true);
+      }, 0.1);
+    }
   }, [actor, saveCounter]);
-
 
   function usePrevious(value) {
     const ref = useRef();
@@ -68,10 +65,7 @@ const Thread = ({ actorUuid }) => {
     return ref.current;
   }
 
-  const prevActor = usePrevious(actor)
-
-
-
+  const prevActor = usePrevious(actor);
 
   const save = (newContent, actorUuid) => {
     const result = globalState.state.actors.find((y) => y.uuid === actorUuid);
@@ -83,29 +77,28 @@ const Thread = ({ actorUuid }) => {
     });
   };
 
-
   const renderTextEditor = () => {
     if (actor && toggle === true) {
       return (
-       <div>
-
-  
-        <TitleBar actor={actor}/>
+        <div>
+          <TitleBar actor={actor} />
 
           <div className="editor">
-            {actor && actor.sequence && actor.sequence.map(x=>
-              <TextEditor
-                save={save}
-                data={ globalState.state.actors.find((y) => y.uuid === x.uuid).content
-           
-                }
-                actorUuid={x.uuid}
-              ></TextEditor>
-            )}
+            {actor &&
+              actor.sequence &&
+              actor.sequence.map((x) => (
+                <TextEditor
+                  save={save}
+                  data={
+                    globalState.state.actors.find((y) => y.uuid === x.uuid)
+                      .content
+                  }
+                  actorUuid={x.uuid}
+                ></TextEditor>
+              ))}
             {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}
           </div>
-          </div>
-       
+        </div>
       );
     } else {
       return <div></div>;

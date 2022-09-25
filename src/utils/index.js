@@ -1,5 +1,5 @@
 import actorToCyto from "./actorToCyto";
-import getDisplayName from "./getDisplayName"
+import getDisplayName from "./getDisplayName";
 import loadDir from "./loadDir";
 import loadFile from "./loadFile";
 import makeDir from "./makeDir";
