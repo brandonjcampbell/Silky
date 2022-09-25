@@ -1,2 +1,2 @@
-import Workspace from "./Workspace"
-export default Workspace
+import Workspace from "./Workspace";
+export default Workspace;

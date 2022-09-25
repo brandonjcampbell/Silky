@@ -7,11 +7,7 @@
 .ExtraHeader{
     color:white;
 }
-.MuiBox-root.css-1{
-    position: relative;
-    left:85px;
-    top:-10px;
-}
+
 .tabPanel{
     height: calc( 100vh - 200px);
     overflow: auto;

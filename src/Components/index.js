@@ -16,9 +16,9 @@ import TextEditor from "./TextEditor";
 import Thread from "./Thread";
 import ThreadTabs from "./ThreadTabs";
 import Web from "./Web";
-import Linker from "./Linker"
+import Linker from "./Linker";
 import LinkGraphSpace from "./LinkGraphSpace";
-import LopsidedList from "./LopsidedList"
+import LopsidedList from "./LopsidedList";
 
 import Workspace from "./Workspace";
 export {

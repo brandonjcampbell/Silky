@@ -21,11 +21,7 @@ const Workspace = ({ actorUuid, showAvatar = true }) => {
     setTags(actor && actor.tags ? actor.tags : "");
   }, [actorUuid]);
 
-  const save = (newContent, key) => {
-    newContent.blocks = newContent.blocks.map((x, index) => {
-      x.key = actorUuid + ":" + index;
-      return x;
-    });
+  const save = (newContent) => {
     actor.content = newContent;
     if (tags) {
       actor.tags = tags;
@@ -38,18 +34,23 @@ const Workspace = ({ actorUuid, showAvatar = true }) => {
   };
 
   return (
-    <div className="workspace"> 
-      <TitleBar actor={actor} />
+    <div className="workspace">
+      {!actor && <span>The item you are looking for does not exist</span>}
+
       {actor && (
-        <div className="editor">
-          <TextEditor
-            showAvatar={showAvatar}
-            save={save}
-            data={
-              globalState.state.actors.find((x) => x.uuid === actorUuid).content
-            }
-            actorUuid={actorUuid}
-          ></TextEditor>
+        <div>
+          <TitleBar actor={actor} />
+          <div className="editor">
+            <TextEditor
+              showAvatar={showAvatar}
+              save={save}
+              data={
+                globalState.state.actors.find((x) => x.uuid === actorUuid)
+                  .content
+              }
+              actorUuid={actorUuid}
+            ></TextEditor>
+          </div>
         </div>
       )}
     </div>

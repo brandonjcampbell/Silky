@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { BrowserRouter, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Link } from "react-router-dom";
 
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 
@@ -21,19 +21,12 @@ import {
   Workspace,
   FactTabs,
   ThreadTabs,
+  Thread,
   ElementTabs,
   GraphTabs,
-
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
-import {
-  GiSpiderWeb,
-  GiSewingString,
-  GiLightBulb,
-  GiPendulumSwing,
-  GiBreakingChain,
-  GiLongLeggedSpider,
-} from "react-icons/gi";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle, HiTag } from "react-icons/hi";
 import { StateProvider } from "./MyContext";
 
@@ -68,11 +61,6 @@ ReactDOM.render(
             <GiSewingString className="menuItem" />
           </Link>
 
-          <Link to="/webs/">
-            <span className="menuLabel">Webs</span>{" "}
-            <GiSpiderWeb className="menuItem" />
-          </Link>
-
           <Link to="/tags/">
             <span className="menuLabel">Tags</span>{" "}
             <HiTag className="menuItem" />
@@ -80,7 +68,7 @@ ReactDOM.render(
 
           <Link to="/spider/">
             <span className="menuLabel">Spider Mode</span>{" "}
-            <GiLongLeggedSpider className="menuItem" />
+            <GiSpiderWeb className="menuItem" />
           </Link>
         </div>
 
@@ -224,8 +212,16 @@ ReactDOM.render(
                       </div>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement className="middle-pane" flex={0.75}>
+                    <ReflexElement className="middle-pane" flex={0.5}>
                       <div className="Workspace">
+                        {props.match.params.uuid && (
+                          <Thread actorUuid={props.match.params.uuid} />
+                        )}
+                      </div>
+                    </ReflexElement>
+                    <ReflexSplitter />
+                    <ReflexElement className="right-pane" flex={0.25}>
+                      <div className="Extras">
                         {props.match.params.uuid && (
                           <ThreadTabs actorUuid={props.match.params.uuid} />
                         )}
@@ -303,7 +299,7 @@ ReactDOM.render(
                     </ReflexElement>
                     <ReflexSplitter />
                     <ReflexElement className="middle-pane" flex={0.15}>
-                      <div className="Extras" style={{"margin-top":"-5px"}}>
+                      <div className="Extras" style={{ "margin-top": "-5px" }}>
                         {props.match.params.uuid && (
                           <ActorList
                             {...props}

@@ -58,7 +58,7 @@ const ElementTabs = ({ actorUuid }) => {
 
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
-  if (!actor.facts) {
+  if (actor && !actor.facts) {
     actor.facts = [];
   }
 
@@ -101,17 +101,20 @@ const ElementTabs = ({ actorUuid }) => {
               aria-label="basic tabs example"
             >
               <Tab
-                label={<GiLightBulb className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Facts <GiLightBulb className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(0)}
               />
-
               <Tab
-                label={<GiSewingString className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Tags <AiFillTag className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(1)}
-              />
-              <Tab
-                label={<AiFillTag className="menuItem" />}
-                {...a11yProps(2)}
               />
             </Tabs>
           </Box>
@@ -124,12 +127,7 @@ const ElementTabs = ({ actorUuid }) => {
               guestType="fact"
             />
           </TabPanel>
-
-          <TabPanel value={currentTab} index={1}>
-            <SimpleList list={getThreads()} />
-          </TabPanel>
-
-          <TabPanel className="tabPanel" value={currentTab} index={2}>
+          <TabPanel className="tabPanel" value={currentTab} index={1}>
             <Linker
               actor={actor}
               side="subject"

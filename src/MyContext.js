@@ -119,7 +119,7 @@ const add = (state, action) => {
   newState.actors = [action.payload, ...state.actors];
   saveProject(newState);
   if (action.payload.type === "fact") {
-     newState = autoLink(newState, action);
+    newState = autoLink(newState, action);
   }
   if (action.payload.callback) {
     action.payload.callback(action.payload.uuid);
@@ -225,7 +225,6 @@ const duplicate = (state, action) => {
 };
 
 const autoLink = (state, action) => {
-
   let subject = state.actors.find((x) => x.uuid === action.payload.uuid);
   if (subject && subject.type === "fact") {
     const elements = state.actors

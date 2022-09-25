@@ -1,48 +1,41 @@
-.autoCompleteRow{
-    display: flex;
-    min-width: 200px;
+.autoCompleteRow {
+  display: flex;
 }
 
-
-
-.MuiBox-root.css-1{
-    position: relative;
-    left:85px;
-    top:-10px;
+#simple-tabpanel-0 {
+  max-height: calc(100vh - 200px);
+  overflow: auto;
+  padding: 0px;
 }
-#simple-tabpanel-0{
-    max-height: calc( 100vh - 200px);
-    overflow: auto;
-    padding:0px;
+#simple-tabpanel-1 div {
+  padding-left: 0px;
+  padding-right: 0px;
 }
-#simple-tabpanel-1 div{
-    padding-left:0px;
-    padding-right:0px;
-}
-.threadspaceHeader{
-    display: flex;
-    vertical-align: bottom;
-    line-height: 35px;
-    color:white;
-    position: relative;
-    top:10px;
-    left:50px;
+.threadspaceHeader {
+  display: flex;
+  vertical-align: bottom;
+  line-height: 35px;
+  color: white;
+  position: relative;
+  top: 10px;
+  left: 50px;
 }
 .threadspaceHeader .colorPicker {
-    position: relative;
-    right:22px;
+  position: relative;
+  right: 22px;
 }
-.threadspaceHeader .title{
+.threadspaceHeader .title {
 }
 
 .threadspace .delete {
-    color:white;
-    position: relative;
-    top:10px; 
-    left:12px;  
-
+  color: white;
+  position: relative;
+  top: 10px;
+  left: 12px;
 }
 
-.rootThreadDiv{
-    height: 100%;
+.rootThreadDiv {
+  height: 100%;
+  margin-top: -10px;
+  background-color: none;
 }

@@ -126,6 +126,14 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
     });
   };
 
+  function isValid (testId){
+    if(globalState.state.actors.find(x=>x.uuid===testId) && actor.show.find(x=>x===testId)){
+    return true
+    }
+    else return false
+  }
+
+
   let axioms = [];
 
   globalState.state.actors.map((node) => {
@@ -142,7 +150,9 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
             color: node.color ? node.color : "#ccc",
           },
         };
-        axioms.push(res);
+        if(isValid(res.data.source) && isValid(res.data.target)){
+          axioms.push(res);
+        }
       });
     }
    
@@ -173,20 +183,28 @@ const GraphSpace = ({ actorUuid, showAvatar, type }) => {
               color: node.color ? node.color : "#ccc",
             },
           };
-          axioms.push(res);
+          if(isValid(res.data.source) && isValid(res.data.target)){
+            axioms.push(res);
+          }
         }
       }
     }
   });
 
+  // const content = actorToCyto(
+  //   globalState.state.actors
+  //     .filter((a) => a.type !== "web" && a.type !== "thread" && a.type !== "link" && (actor.show.includes(a.uuid)))     
+  // )
+
+  
   const content = actorToCyto(
     globalState.state.actors
-      .filter((a) => a.type !== "web" && a.type !== "thread" && a.type !== "link")     
+      .filter((a) =>(actor.show.includes(a.uuid)))     
   )
 
   const [elements, setElements] = useState([
-    ...content,
-    ...axioms,
+     ...content,
+     ...axioms,
   ]);
 
   return (

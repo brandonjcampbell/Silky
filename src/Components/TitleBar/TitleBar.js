@@ -5,7 +5,7 @@ import "./TitleBar.css";
 import TextField from "@material-ui/core/TextField";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Avatar from "../Avatar";
-import remove from "../../utils/remove"
+import remove from "../../utils/remove";
 
 const TitleBar = ({ actor }) => {
   const globalState = useContext(store);
@@ -34,13 +34,11 @@ const TitleBar = ({ actor }) => {
     });
   };
 
-  
-
   return (
     <h2 className="workspaceHeader">
       <Avatar actor={actor} clickable={true} />
 
-      <span className= "title">
+      <span className="title">
         <span
           onClick={() => {
             setEditTitle(!editTitle);
@@ -63,7 +61,12 @@ const TitleBar = ({ actor }) => {
           />
         )}
       </span>
-      <DeleteIcon className="delete" onClick={()=>{remove(actor,dispatch)}} />
+      <DeleteIcon
+        className="delete"
+        onClick={() => {
+          remove(actor, dispatch);
+        }}
+      />
     </h2>
   );
 };

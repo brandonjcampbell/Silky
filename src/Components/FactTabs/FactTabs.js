@@ -69,26 +69,82 @@ const FactTabs = ({ actorUuid }) => {
               aria-label="basic tabs example"
             >
               <Tab
-                label={<HiPuzzle className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Cause & Effect
+                    <GiLightBulb className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(0)}
               />
               <Tab
-                label={<GiLightBulb className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Elements
+                    <HiPuzzle className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(1)}
               />
+
               <Tab
-                label={<TiScissors className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Snippets
+                    <TiScissors className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(2)}
               />
 
               <Tab
-                label={<AiFillTag className="menuItem" />}
+                label={
+                  <span className="menuItemLabel">
+                    Tags
+                    <AiFillTag className="menuItem" />
+                  </span>
+                }
                 {...a11yProps(3)}
               />
             </Tabs>
           </Box>
 
           <TabPanel className="tabPanel" value={currentTab} index={0}>
+            <div className="readOnlyListTab">
+              <h2 className="subtitle">Causes:</h2>
+              <SimpleList
+                type="facts"
+                list={globalState.state.actors.filter((x) =>
+                  globalState.state.actors.find(
+                    (y) =>
+                      y.type === "link" &&
+                      y.name === "CAUSES" &&
+                      y.subjects &&
+                      y.subjects.includes(x.uuid) &&
+                      y.targets &&
+                      y.targets.includes(actor.uuid)
+                  )
+                )}
+              />
+
+              <h2 className="subtitle">Consequences:</h2>
+              <SimpleList
+                type="facts"
+                list={globalState.state.actors.filter((x) =>
+                  globalState.state.actors.find(
+                    (y) =>
+                      y.type === "link" &&
+                      y.name === "CAUSES" &&
+                      y.subjects &&
+                      y.subjects.includes(actor.uuid) &&
+                      y.targets &&
+                      y.targets.includes(x.uuid)
+                  )
+                )}
+              />
+            </div>
+          </TabPanel>
+          <TabPanel className="tabPanel" value={currentTab} index={1}>
             <Linker
               actor={actor}
               side="target"
@@ -106,42 +162,6 @@ const FactTabs = ({ actorUuid }) => {
             >
               AUTOLINK Elements
             </button>
-          </TabPanel>
-
-          <TabPanel className="tabPanel" value={currentTab} index={1}>
-            <div className="readOnlyListTab">
-            <h2 className="subtitle">Causes</h2>
-            <SimpleList
-              type="fact"
-              list={globalState.state.actors.filter((x) =>
-                globalState.state.actors.find(
-                  (y) =>
-                    y.type === "link" &&
-                    y.name === "CAUSES" &&
-                    y.subjects &&
-                    y.subjects.includes(actor.uuid) &&
-                    y.targets &&
-                    y.targets.includes(x.uuid)
-                )
-              )}
-            />
-            <h2 className="subtitle">Because</h2>
-            <SimpleList
-              type="fact"
-              list={globalState.state.actors.filter((x) =>
-                globalState.state.actors.find(
-                  (y) =>
-                    y.type === "link" &&
-                    y.name === "CAUSES" &&
-                    y.subjects &&
-                    y.subjects.includes(x.uuid) &&
-                    y.targets &&
-                    y.targets.includes(actor.uuid)
-                )
-              )}
-            />
-            </div>
-            
           </TabPanel>
 
           <TabPanel value={currentTab} index={2}>
