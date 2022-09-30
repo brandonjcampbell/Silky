@@ -126,6 +126,16 @@ const ElementTabs = ({ actorUuid }) => {
               linkType="INVOLVES"
               guestType="fact"
             />
+
+            <button
+              onClick={() => {
+                dispatch({
+                  action: "obliterateOrphans",
+                });
+              }}
+            >
+              Obliterate Orphans!
+            </button>
           </TabPanel>
           <TabPanel className="tabPanel" value={currentTab} index={1}>
             <Linker
