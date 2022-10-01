@@ -7,6 +7,7 @@ import saveFile from "./saveFile";
 import useMousePosition from "./useMousePosition";
 import uploadPic from "./uploadPic";
 import remove from "./remove";
+import actorIsValid from "./actorIsValid";
 import link from "./link";
 export {
   actorToCyto,
@@ -14,6 +15,7 @@ export {
   loadDir,
   loadFile,
   makeDir,
+  actorIsValid,
   saveFile,
   useMousePosition,
   uploadPic,

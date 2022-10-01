@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import {useParams} from "react-router-dom";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
@@ -43,11 +44,13 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-const FactTabs = ({ actorUuid }) => {
+const FactTabs = () => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [currentTab, setCurrentTab] = useState(0);
   const classes = useStyles();
+  const {uuid} = useParams();
+  const actorUuid= uuid;
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
@@ -59,7 +62,7 @@ const FactTabs = ({ actorUuid }) => {
   return (
     <div>
       {actor && (
-        <div>
+        <>
           <Box>
             <Tabs
               value={currentTab}
@@ -71,7 +74,6 @@ const FactTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Cause & Effect
                     <GiLightBulb className="menuItem" />
                   </span>
                 }
@@ -80,7 +82,6 @@ const FactTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Elements
                     <HiPuzzle className="menuItem" />
                   </span>
                 }
@@ -90,7 +91,6 @@ const FactTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Snippets
                     <TiScissors className="menuItem" />
                   </span>
                 }
@@ -100,7 +100,6 @@ const FactTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Tags
                     <AiFillTag className="menuItem" />
                   </span>
                 }
@@ -108,7 +107,6 @@ const FactTabs = ({ actorUuid }) => {
               />
             </Tabs>
           </Box>
-
           <TabPanel className="tabPanel" value={currentTab} index={0}>
             <div className="readOnlyListTab">
               <h2 className="subtitle">Causes:</h2>
@@ -163,7 +161,6 @@ const FactTabs = ({ actorUuid }) => {
               AUTOLINK Elements
             </button>
           </TabPanel>
-
           <TabPanel value={currentTab} index={2}>
             <Linker
               actor={actor}
@@ -172,7 +169,6 @@ const FactTabs = ({ actorUuid }) => {
               guestType="snippet"
             />
           </TabPanel>
-
           <TabPanel value={currentTab} index={3}>
             <Linker
               actor={actor}
@@ -181,7 +177,7 @@ const FactTabs = ({ actorUuid }) => {
               guestType="tag"
             />
           </TabPanel>
-        </div>
+        </>
       )}
     </div>
   );

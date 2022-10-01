@@ -4,14 +4,10 @@ import _ from "lodash";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
-import TextField from "@material-ui/core/TextField";
 import Avatar from "../Avatar";
 import { store } from "../../MyContext";
-import { getDisplayName } from "../../utils";
+import { getDisplayName ,actorIsValid} from "../../utils";
 import "./DraggableList.css";
-import { TiScissors } from "react-icons/ti";
-import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
-import { HiPuzzle, HiTag } from "react-icons/hi";
 
 const homedir = window.require("os").homedir();
 
@@ -43,8 +39,9 @@ const DraggableList = ({
 
   function goRenderLabel(x, index) {
     const displayName = getDisplayName(x.uuid, globalState);
-
+    if(actorIsValid(globalState,x.uuid)){
     return (
+
       <div
         className={showAvatar ? "row showAvatar" : "row"}
         onClick={() => {
@@ -67,7 +64,8 @@ const DraggableList = ({
         )}
         {action === "delete" && <DeleteIcon />}
       </div>
-    );
+         
+    )};
   }
 
   function content() {

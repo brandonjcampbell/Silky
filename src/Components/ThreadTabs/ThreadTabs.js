@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
@@ -41,13 +42,17 @@ function a11yProps(index) {
   };
 }
 
-const ThreadTabs = ({ actorUuid }) => {
+const ThreadTabs = () => {
+  const {uuid} = useParams();
+  const actorUuid= uuid;
+
   const globalState = useContext(store);
   const actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const { dispatch } = globalState;
   const [toggle, setToggle] = useState(true);
   const [editTitle, setEditTitle] = useState(false);
   const [title, setTitle] = useState("");
+
 
   const [currentTab, setCurrentTab] = useState(0);
   const classes = useStyles();
@@ -133,7 +138,7 @@ const ThreadTabs = ({ actorUuid }) => {
   return (
     <div className="rootThreadDiv">
       {actor && (
-        <div>
+        <>
           <DraggableList
             list={actor.sequence}
             saveList={(e) => {
@@ -222,7 +227,7 @@ const ThreadTabs = ({ actorUuid }) => {
             <br />
             <FormDialog type={"snippet"} specialOp={addToThread} />
           </FormControl>
-        </div>
+        </>
       )}
     </div>
   );

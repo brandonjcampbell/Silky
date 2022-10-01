@@ -52,6 +52,7 @@
     "react-icons": "^4.3.1",
     "react-pro-sidebar": "^0.6.0",
     "react-reflex": "^4.0.9",
+    "react-router-dom": "^6.4.1",
     "react-scripts": "4.0.3",
     "styled-components": "^5.3.0",
     "uuid": "^8.3.2",

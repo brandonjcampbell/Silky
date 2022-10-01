@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
@@ -41,10 +42,13 @@ function a11yProps(index) {
   };
 }
 
-const SnippetTabs = ({ actorUuid }) => {
+const SnippetTabs = () => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [currentTab, setCurrentTab] = useState(0);
+
+  const {uuid} = useParams();
+  const actorUuid= uuid;
 
   const classes = useStyles();
 
@@ -68,15 +72,15 @@ const SnippetTabs = ({ actorUuid }) => {
               aria-label="basic tabs example"
             >
               <Tab
-                label={<span className="menuItemLabel">Reveals<GiLightBulb className="menuItem" /></span>}
+                label={<span className="menuItemLabel"><GiLightBulb className="menuItem" /></span>}
                 {...a11yProps(0)}
               />
               <Tab
-                label={<span className="menuItemLabel">Threads <GiSewingString className="menuItem" /></span>}
+                label={<span className="menuItemLabel"><GiSewingString className="menuItem" /></span>}
                 {...a11yProps(1)}
               />
               <Tab
-                label={<span className="menuItemLabel">Tags<AiFillTag className="menuItem" /></span>}
+                label={<span className="menuItemLabel"><AiFillTag className="menuItem" /></span>}
                 {...a11yProps(2)}
               />
             </Tabs>

@@ -2,15 +2,7 @@
   display: flex;
 }
 
-#simple-tabpanel-0 {
-  max-height: calc(100vh - 200px);
-  overflow: auto;
-  padding: 0px;
-}
-#simple-tabpanel-1 div {
-  padding-left: 0px;
-  padding-right: 0px;
-}
+
 .threadspaceHeader {
   display: flex;
   vertical-align: bottom;
@@ -24,18 +16,15 @@
   position: relative;
   right: 22px;
 }
-.threadspaceHeader .title {
-}
 
 .threadspace .delete {
   color: white;
   position: relative;
-  top: 10px;
-  left: 12px;
+
 }
 
 .rootThreadDiv {
-  height: 100%;
-  margin-top: -10px;
-  background-color: none;
+  height: calc(100% - 10px);
+  padding:10px;
+  padding-top: 0px;
 }

@@ -1,6 +1,13 @@
 .addButton{
-    width:100%;
-    color:white;
+ 
+    border-radius: 20px;
+    padding:2px;
+    width: 20px;
+    margin-top:10px;
+    margin-left:5px;
+    display: inline-block;
+    color:rgb(19, 18, 18);
+    background:rgb(47, 43, 43);
 }
 .dialog{
     width:500px;

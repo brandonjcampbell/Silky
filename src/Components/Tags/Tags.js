@@ -5,7 +5,7 @@ import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 import CreateIcon from "@material-ui/icons/Create";
 import LinearScaleIcon from "@material-ui/icons/LinearScale";
 import ExtensionIcon from "@material-ui/icons/Extension";
-import {Redirect } from "react-router-dom";
+import {Navigate } from "react-router-dom";
 
 
 
@@ -39,7 +39,7 @@ const Tags = ({ actorUuid }) => {
 
   return (
     <div div style={{ padding: "10px" }}>
-                  {globalState.state.project==="Silky" && <Redirect to="/" />}
+                  {globalState.state.project==="Silky" && <Navigate to="/" />}
 
       <div style={{ padding: "10px" }}>
         {tags.map((x) => (

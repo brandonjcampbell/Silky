@@ -2,14 +2,16 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import TitleBar from "../TitleBar";
-
+import {useParams} from "react-router-dom"
 import _ from "lodash";
 
 import "./Thread.css";
 
 const homedir = window.require("os").homedir();
 
-const Thread = ({ actorUuid }) => {
+const Thread = () => {
+  const {uuid} = useParams();
+  const actorUuid = uuid;
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [freshener, setFreshener] = useState("");
@@ -94,6 +96,7 @@ const Thread = ({ actorUuid }) => {
                       .content
                   }
                   actorUuid={x.uuid}
+                  showTitle={true}
                 ></TextEditor>
               ))}
             {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}

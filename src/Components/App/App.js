@@ -7,6 +7,7 @@ import Card from "@material-ui/core/Card";
 import TextField from "@material-ui/core/TextField";
 import { Link } from "react-router-dom";
 
+
 import "./App.css"
 
 
@@ -15,6 +16,8 @@ const App = () => {
   const { dispatch } = globalState;
   const [makingNewDir, setMakingNewDir] = useState(false);
   const [name, setName] = useState("");
+
+
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
@@ -28,7 +31,7 @@ const App = () => {
   const dirs = loadDir();
 
   return (
-    <div className="projectTray">
+    <div className="projectTray"> 
       {dirs.map((x) => {
         return (
           <Link to={"/elements/"}>
