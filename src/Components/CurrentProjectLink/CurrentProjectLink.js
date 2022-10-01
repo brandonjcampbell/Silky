@@ -11,9 +11,9 @@ const CurrentProjectLink = ({ type }) => {
 
   return (
     <div className="wrapper">
-      {location.pathname}
-      {/* {globalState.state.project === "Silky" && <Navigate to="/" />}
-      {globalState.state.project} */}
+      {/* {location.pathname} */}
+      {globalState.state.project === "Silky" && <Navigate to="/" />}
+      {globalState.state.project}
     </div>
   );
 };

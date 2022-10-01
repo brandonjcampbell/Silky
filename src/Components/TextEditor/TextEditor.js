@@ -46,6 +46,14 @@ const TextEditor = ({ data, save, actorUuid, showAvatar, showTitle=false }) => {
     setDirty(null);
   };
 
+  const checkKey = (e) => {
+    if (e.ctrlKey && e.key === 's') {
+      //e.preventDefault();
+      console.log("Ididit")
+      goForIt()
+    }
+  };
+
   return (
     <div className={"contentBlock"}>
       {showTitle && <div className="editingBlockBanner">
@@ -66,6 +74,7 @@ const TextEditor = ({ data, save, actorUuid, showAvatar, showTitle=false }) => {
           contenteditable="true"
           onInput={onEditorStateChange}
           dangerouslySetInnerHTML={{ __html: initial }}
+          onKeyDown={checkKey}
         ></p>
       </div>
     </div>

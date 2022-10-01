@@ -20,8 +20,6 @@ import {
   ActorList,
   CurrentProjectLink,
   App,
-  Graph,
-  GraphSpace,
   LinkGraphSpace,
   SnippetTabs,
   Workspace,
@@ -29,11 +27,10 @@ import {
   ThreadTabs,
   Thread,
   ElementTabs,
-  GraphTabs,
 } from "./Components/";
 import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
-import { HiPuzzle, HiTag } from "react-icons/hi";
+import { HiPuzzle} from "react-icons/hi";
 import { StateProvider } from "./MyContext";
 
 ReactDOM.render(
