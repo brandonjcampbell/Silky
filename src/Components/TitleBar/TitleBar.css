@@ -17,12 +17,23 @@
     color: white;
   }
   
+.titleEditor{
+
+  color:Red;
+}
+
+.workspaceHeader p{
+  color:white;
+  margin-left:15px;
+  margin-top: 10px;
+}
+
  .delete {
     color: white;
   
-    position: relative;
-    top: 30px;
-    left: 15px;
+    position: absolute;
+    top: 10px;
+    right: 15px;
     height:15px;
     width: 15px;
   }

@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: rgb(39, 38, 41);
+  background: rgb(30, 29, 30);
 }
 
 code {
@@ -14,7 +14,7 @@ code {
 }
 .Topbar {
   height: 50px;
-  background-color: black;
+  background-color: rgb(19, 18, 18);
   text-decoration: none;
   color: white;
   padding-left: 100px;

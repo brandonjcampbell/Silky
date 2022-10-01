@@ -1,14 +1,13 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { store } from "../../MyContext";
 import _ from "lodash";
-import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import TabPanel from "../TabPanel";
-import SimpleList from "../SimpleList";
-import FormDialog from "../FormDialog";
+
 import Linker from "../Linker";
 
 import FormControl from "@material-ui/core/FormControl";
@@ -16,8 +15,7 @@ import { getDisplayName } from "../../utils";
 import Autocomplete from "@mui/material/Autocomplete";
 import "./ElementTabs.css";
 
-import { TiScissors } from "react-icons/ti";
-import { GiSewingString, GiLightBulb } from "react-icons/gi";
+import { GiLightBulb } from "react-icons/gi";
 import { AiFillTag } from "react-icons/ai";
 
 const homedir = window.require("os").homedir();
@@ -46,11 +44,14 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-const ElementTabs = ({ actorUuid }) => {
+const ElementTabs = () => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [currentTab, setCurrentTab] = useState(0);
   const classes = useStyles();
+
+  const {uuid} = useParams();
+  const actorUuid= uuid;
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
@@ -62,36 +63,10 @@ const ElementTabs = ({ actorUuid }) => {
     actor.facts = [];
   }
 
-  const getThreads = () => {
-    const snippets = globalState.state.actors
-      .filter(
-        (snippet) =>
-          snippet.type === "snippet" &&
-          snippet.elements &&
-          snippet.elements
-            .map((y) => {
-              return y.uuid;
-            })
-            .includes(actor.uuid)
-      )
-      .map((y) => y.uuid);
-
-    const threads = globalState.state.actors.filter(
-      (thread) =>
-        thread.type === "thread" &&
-        thread.sequence &&
-        thread.sequence.filter((z) => {
-          return snippets.includes(z.uuid);
-        }).length > 0
-    );
-
-    return _.uniqBy(threads, "uuid");
-  };
-
   return (
-    <div>
+    <>
       {actor && (
-        <div>
+        <>
           <Box>
             <Tabs
               value={currentTab}
@@ -103,7 +78,7 @@ const ElementTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Facts <GiLightBulb className="menuItem" />
+                    <GiLightBulb className="menuItem" />
                   </span>
                 }
                 {...a11yProps(0)}
@@ -111,7 +86,7 @@ const ElementTabs = ({ actorUuid }) => {
               <Tab
                 label={
                   <span className="menuItemLabel">
-                    Tags <AiFillTag className="menuItem" />
+                    <AiFillTag className="menuItem" />
                   </span>
                 }
                 {...a11yProps(1)}
@@ -127,15 +102,6 @@ const ElementTabs = ({ actorUuid }) => {
               guestType="fact"
             />
 
-            <button
-              onClick={() => {
-                dispatch({
-                  action: "obliterateOrphans",
-                });
-              }}
-            >
-              Obliterate Orphans!
-            </button>
           </TabPanel>
           <TabPanel className="tabPanel" value={currentTab} index={1}>
             <Linker
@@ -145,9 +111,9 @@ const ElementTabs = ({ actorUuid }) => {
               guestType="tag"
             />
           </TabPanel>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 };
 

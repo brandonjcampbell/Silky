@@ -61,20 +61,8 @@ export default function FormDialog({
   };
 
   return (
-    <div>
-      {button && (
-        <div>
-          <Button
-            className="addButton"
-            color="primary"
-            size="small"
-            aria-label="add"
-            onClick={handleClickOpen}
-          >
-            <AddIcon /> {type}
-          </Button>
-        </div>
-      )}
+    <>
+      {button && <AddIcon class="addButton" onClick={handleClickOpen} />}
 
       <Dialog open={open || passOpen} onClose={handleClose}>
         <DialogContent className="dialog">
@@ -95,6 +83,6 @@ export default function FormDialog({
           <Button onClick={handleAdd}>Create {type}</Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </>
   );
 }

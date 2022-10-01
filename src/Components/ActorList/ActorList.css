@@ -2,6 +2,7 @@
 .ActorList{
   /* background-color: #1b1818; */
 
+
 }
 .content{
     overflow-y: auto;
@@ -9,10 +10,15 @@
   }
   .controls{
       margin:4px;
+  
   }
   .listSearch{
-      width:calc(100% - 40px);
-      
+      width:calc(100% - 50px);
+      border-color:white;
+      display: inline-block;
+      position: relative;
+      top:5px;
+      left:5px;   
   }
   .listSearch > * {
     color:white!important;

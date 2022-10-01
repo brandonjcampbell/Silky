@@ -185,22 +185,6 @@ const saveActors = (state, action) => {
   saveProject(newState);
   return newState;
 };
-const obliterateOrphans = (state) => {
-  let newState = _.cloneDeep(state);
-  newState.actors = newState.actors.map((x) => {
-    let keys = Object.keys(x);
-    for (let i = 0; i < keys.length; i++) {
-      if (Array.isArray(x[keys[i]])) {
-        console.log("filtering" ,keys[i])
-        x[keys[i]] = x[keys[i]].filter((y) => state.actors.find((z) => z.uuid === y || z.uuid === y.uuid));
-      }
-    }
-    return x;
-  });
-  console.log("newState",newState.actors)
-  saveProject(newState);
-  return newState;
-};
 
 const removeActor = (state, action) => {
   let newState = _.cloneDeep(state);
@@ -293,8 +277,6 @@ const StateProvider = ({ children }) => {
         return duplicate(state, action);
       case "autoLink":
         return autoLink(state, action);
-      case "obliterateOrphans":
-        return obliterateOrphans(state);
       default:
         throw new Error();
     }

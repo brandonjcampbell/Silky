@@ -7,15 +7,17 @@ import _ from "lodash";
 import FormDialog from "../FormDialog";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
-import { Redirect } from "react-router-dom";
+import { Navigate, useParams} from "react-router-dom";
 import "./ActorList.css";
 const ActorList = ({
   match,
   type,
-  actorUuid,
   showAvatar = true,
   tag = null,
 }) => {
+  const {uuid} = useParams();
+  const actorUuid= uuid;
+  
   const globalState = useContext(store);
   const { dispatch } = globalState;
   const [name, setName] = useState("");
@@ -27,9 +29,7 @@ const ActorList = ({
   );
   const [count, setCount] = useState(1);
 
-  const {
-    params: { userId },
-  } = match;
+
 
   const handleRowClick = (row) => {
     setActive(row);
@@ -77,18 +77,17 @@ const ActorList = ({
 
   return (
     <div className="ActorList">
-      {globalState.state.project === "Silky" && <Redirect to="/" />}
+      {globalState.state.project === "Silky" && <Navigate to="/" />}
       <div className="controls">
         {type && <FormDialog type={type} />}
-        <div>
-          <SearchIcon />
+   
           <TextField
             className="listSearch"
             id="outlined-basic"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-        </div>
+    
       </div>
 
       <div className="content">
