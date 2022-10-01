@@ -84,7 +84,7 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.150}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="element" />
                         </div>
@@ -99,7 +99,7 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.150}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="fact" />
                         </div>
@@ -114,7 +114,7 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.2}>
                         <div className="List">
                           <ActorList type="snippet" />
                         </div>
@@ -129,7 +129,7 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.2}>
                         <div className="List">
                           <ActorList type="thread" />
                         </div>
@@ -145,13 +145,13 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="element" />
                         </div>
                       </ReflexElement>
                       <ReflexSplitter />
-                      <ReflexElement className="middle-pane" flex={0.6}>
+                      <ReflexElement className="middle-pane" flex={0.55}>
                         <div className="Workspace">
                           <Workspace />
                         </div>
@@ -173,13 +173,13 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="fact" />
                         </div>
                       </ReflexElement>
                       <ReflexSplitter />
-                      <ReflexElement className="middle-pane" flex={0.6}>
+                      <ReflexElement className="middle-pane" flex={0.55}>
                         <div className="Workspace">
                           <Workspace />
                         </div>
@@ -201,13 +201,13 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="snippet" />
                         </div>
                       </ReflexElement>
                       <ReflexSplitter />
-                      <ReflexElement className="middle-pane" flex={0.6}>
+                      <ReflexElement className="middle-pane" flex={0.55}>
                         <div className="Workspace">
                           <Workspace />
                         </div>
@@ -229,13 +229,13 @@ ReactDOM.render(
                 element={
                   <div className="View">
                     <ReflexContainer orientation="vertical">
-                      <ReflexElement className="left-pane" flex={0.15}>
+                      <ReflexElement className="left-pane" flex={0.20}>
                         <div className="List">
                           <ActorList type="thread" />
                         </div>
                       </ReflexElement>
                       <ReflexSplitter />
-                      <ReflexElement className="middle-pane" flex={0.6}>
+                      <ReflexElement className="middle-pane" flex={0.55}>
                         <div className="Workspace">
                           <Thread />
                         </div>

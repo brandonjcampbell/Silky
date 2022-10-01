@@ -25,12 +25,12 @@
   color: white;
   position: absolute;
   display: inline-block;
-  top: 10px;
+  top: 5px;
   right: 15px;
-  font-size: 30px;
+  font-size: 15px;
   animation: wiggle 2.5s infinite;
   background: rgb(184, 35, 35);
-  padding: 10px;
+  padding: 4px;
   border-radius: 100px;
   cursor: pointer;
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import { makeStyles } from "@material-ui/core/styles";
@@ -49,8 +49,8 @@ const FactTabs = () => {
   const { dispatch } = globalState;
   const [currentTab, setCurrentTab] = useState(0);
   const classes = useStyles();
-  const {uuid} = useParams();
-  const actorUuid= uuid;
+  const { uuid } = useParams();
+  const actorUuid = uuid;
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
@@ -95,15 +95,6 @@ const FactTabs = () => {
                   </span>
                 }
                 {...a11yProps(2)}
-              />
-
-              <Tab
-                label={
-                  <span className="menuItemLabel">
-                    <AiFillTag className="menuItem" />
-                  </span>
-                }
-                {...a11yProps(3)}
               />
             </Tabs>
           </Box>
@@ -167,14 +158,6 @@ const FactTabs = () => {
               side="target"
               linkType="REVEALS"
               guestType="snippet"
-            />
-          </TabPanel>
-          <TabPanel value={currentTab} index={3}>
-            <Linker
-              actor={actor}
-              side="subject"
-              linkType="TAGS"
-              guestType="tag"
             />
           </TabPanel>
         </>

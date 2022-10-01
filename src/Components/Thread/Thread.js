@@ -82,7 +82,7 @@ const Thread = () => {
   const renderTextEditor = () => {
     if (actor && toggle === true) {
       return (
-        <div>
+        <>
           <TitleBar actor={actor} />
 
           <div className="editor">
@@ -101,7 +101,7 @@ const Thread = () => {
               ))}
             {actor && !actor.sequence && <h3>Add snippets to this thread</h3>}
           </div>
-        </div>
+        </>
       );
     } else {
       return <div></div>;

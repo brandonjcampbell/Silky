@@ -1,40 +1,35 @@
 .workspaceHeader {
-    display: flex;
-    vertical-align: bottom;
-    line-height: 35px;
-    position: relative;
-    position: relative;
-    top: -20px;
-  }
-
-  
- .title {
-    position: relative;
-  
-    top: 25px;
-    left: 10px;
-    margin-left: 5px;
-    color: white;
-  }
-  
-.titleEditor{
-
-  color:Red;
+  display: flex;
+  vertical-align: bottom;
+  line-height: 35px;
+  position: relative;
+  top: -20px;
 }
 
-.workspaceHeader p{
-  color:white;
-  margin-left:15px;
+.title {
+  position: relative;
+
+  top: 25px;
+  left: 10px;
+  margin-left: 5px;
+  color: white;
+}
+
+.titleEditor {
+  color: Red;
+}
+
+.workspaceHeader p {
+  color: white;
+  margin-left: 15px;
   margin-top: 10px;
 }
 
- .delete {
-    color: white;
-  
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    height:15px;
-    width: 15px;
-  }
-  
+.delete {
+  color: white;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  height: 15px;
+  width: 15px;
+}

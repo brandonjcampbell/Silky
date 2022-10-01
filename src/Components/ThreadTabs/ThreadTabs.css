@@ -17,11 +17,6 @@
   right: 22px;
 }
 
-.threadspace .delete {
-  color: white;
-  position: relative;
-
-}
 
 .rootThreadDiv {
   height: calc(100% - 10px);

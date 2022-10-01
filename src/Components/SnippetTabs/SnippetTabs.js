@@ -79,10 +79,6 @@ const SnippetTabs = () => {
                 label={<span className="menuItemLabel"><GiSewingString className="menuItem" /></span>}
                 {...a11yProps(1)}
               />
-              <Tab
-                label={<span className="menuItemLabel"><AiFillTag className="menuItem" /></span>}
-                {...a11yProps(2)}
-              />
             </Tabs>
           </Box>
           <TabPanel className="tabPanel" value={currentTab} index={0}>
@@ -106,14 +102,6 @@ const SnippetTabs = () => {
                     })
                     .includes(actorUuid)
               )}
-            />
-          </TabPanel>
-          <TabPanel value={currentTab} index={2}>
-            <Linker
-              actor={actor}
-              side="subject"
-              linkType="TAGS"
-              guestType="tag"
             />
           </TabPanel>
         </div>

@@ -50,8 +50,8 @@ const ElementTabs = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const classes = useStyles();
 
-  const {uuid} = useParams();
-  const actorUuid= uuid;
+  const { uuid } = useParams();
+  const actorUuid = uuid;
 
   useEffect(() => {
     setTags(actor && actor.tags ? actor.tags : "");
@@ -64,56 +64,16 @@ const ElementTabs = () => {
   }
 
   return (
-    <>
+    <div className="elementFacts"><h3 className="facts">Facts</h3>
       {actor && (
-        <>
-          <Box>
-            <Tabs
-              value={currentTab}
-              onChange={(event, newValue) => {
-                setCurrentTab(newValue);
-              }}
-              aria-label="basic tabs example"
-            >
-              <Tab
-                label={
-                  <span className="menuItemLabel">
-                    <GiLightBulb className="menuItem" />
-                  </span>
-                }
-                {...a11yProps(0)}
-              />
-              <Tab
-                label={
-                  <span className="menuItemLabel">
-                    <AiFillTag className="menuItem" />
-                  </span>
-                }
-                {...a11yProps(1)}
-              />
-            </Tabs>
-          </Box>
-
-          <TabPanel className="tabPanel" value={currentTab} index={0}>
-            <Linker
-              actor={actor}
-              side="subject"
-              linkType="INVOLVES"
-              guestType="fact"
-            />
-
-          </TabPanel>
-          <TabPanel className="tabPanel" value={currentTab} index={1}>
-            <Linker
-              actor={actor}
-              side="subject"
-              linkType="TAGS"
-              guestType="tag"
-            />
-          </TabPanel>
-        </>
+        <Linker
+          actor={actor}
+          side="subject"
+          linkType="INVOLVES"
+          guestType="fact"
+        />
       )}
-    </>
+    </div>
   );
 };
 

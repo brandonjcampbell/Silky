@@ -4,9 +4,7 @@ import TextEditor from "../TextEditor";
 import { store } from "../../MyContext";
 import _ from "lodash";
 import TitleBar from "../TitleBar";
-
-import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
-
+import "react-confirm-alert/src/react-confirm-alert.css";
 import "./Workspace.css";
 
 const homedir = window.require("os").homedir();
@@ -14,8 +12,8 @@ const homedir = window.require("os").homedir();
 const Workspace = ({ showAvatar = true }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const {uuid} = useParams();
-  const actorUuid= uuid;
+  const { uuid } = useParams();
+  const actorUuid = uuid;
 
   let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
   const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
@@ -39,7 +37,6 @@ const Workspace = ({ showAvatar = true }) => {
   return (
     <div className="workspace">
       {!actor && <span>The item you are looking for does not exist</span>}
-
       {actor && (
         <>
           <TitleBar actor={actor} />
