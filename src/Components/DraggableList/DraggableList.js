@@ -27,25 +27,25 @@ const DraggableList = ({
   const globalState = useContext(store);
   const { dispatch } = globalState;
   function handleOnDragEnd(result) {
-    if (result && result.source && result.destination) {
-      const moving = list[result.source.index];
-      const to = list[result.destination.index];
-      if (result.destination.index === 0) {
-        moving.order = to.order - 1;
-      } else if (result.destination.index === list.length - 1) {
-        moving.order = to.order + 1;
-      } else {
-        let toTwo;
-        if (result.source.index > result.destination.index) {
-          toTwo = list[result.destination.index - 1];
-        } else {
-          toTwo = list[result.destination.index + 1];
-        }
-        moving.order = (to.order + toTwo.order) / 2;
-      }
-      saveFile(globalState.state.dir + moving.file, moving);
-    }
-    onDrop();
+    // if (result && result.source && result.destination) {
+    //   const moving = list[result.source.index];
+    //   const to = list[result.destination.index];
+    //   if (result.destination.index === 0) {
+    //     moving.order = to.order - 1;
+    //   } else if (result.destination.index === list.length - 1) {
+    //     moving.order = to.order + 1;
+    //   } else {
+    //     let toTwo;
+    //     if (result.source.index > result.destination.index) {
+    //       toTwo = list[result.destination.index - 1];
+    //     } else {
+    //       toTwo = list[result.destination.index + 1];
+    //     }
+    //     moving.order = (to.order + toTwo.order) / 2;
+    //   }
+    //   saveFile(globalState.state.dir + moving.file, moving);
+    // }
+    onDrop(result,list);
   }
 
   // function remove(file) {

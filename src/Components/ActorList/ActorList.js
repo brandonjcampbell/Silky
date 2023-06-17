@@ -3,6 +3,7 @@ import { store } from "../../NewContext";
 import "./ActorList.css";
 import loadDir from "../../utils/loadDir";
 import loadFile from "../../utils/loadFile";
+import saveFile from "../../utils/saveFile";
 import DraggableList from "../DraggableList";
 import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
@@ -28,6 +29,28 @@ const ActorList = ({ setRefresh }) => {
 
   function compareOrder(a, b) {
     return a.order - b.order;
+  }
+
+  function handleDrop(result,list){
+    if (result && result.source && result.destination) {
+      const moving = list[result.source.index];
+      const to = list[result.destination.index];
+      if (result.destination.index === 0) {
+        moving.order = to.order - 1;
+      } else if (result.destination.index === list.length - 1) {
+        moving.order = to.order + 1;
+      } else {
+        let toTwo;
+        if (result.source.index > result.destination.index) {
+          toTwo = list[result.destination.index - 1];
+        } else {
+          toTwo = list[result.destination.index + 1];
+        }
+        moving.order = (to.order + toTwo.order) / 2;
+      }
+      saveFile(globalState.state.dir + moving.file, moving);
+      setRefresh(Date.now())
+    }
   }
 
   return (
@@ -72,7 +95,7 @@ const ActorList = ({ setRefresh }) => {
             .map((x) => loadUp(x))
             .filter((y) => type === "" || y.type === type)
             .sort(compareOrder)}
-          onDrop={(x) => setRefresh(Date.now())}
+          onDrop={(result,list) => handleDrop(result,list)}
         ></DraggableList>
       </div>
     </div>
