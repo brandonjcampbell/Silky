@@ -1,54 +1,50 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
-import { store } from "../../MyContext";
-import _ from "lodash";
+import { store } from "../../NewContext";
 import TitleBar from "../TitleBar";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import "./Workspace.css";
+import loadFile from "../../utils/loadFile";
+import moveFile from "../../utils/moveFile";
+import saveFile from "../../utils/saveFile";
 
-const homedir = window.require("os").homedir();
-
-const Workspace = ({ showAvatar = true }) => {
+const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
-  const { dispatch } = globalState;
-  const { uuid } = useParams();
-  const actorUuid = uuid;
+  const { file } = useParams();
+console.log("workspace load")
+  let element = loadFile(globalState.state.dir + file);
 
-  let actor = globalState.state.actors.find((x) => x.uuid === actorUuid);
-  const [tags, setTags] = useState(actor && actor.tags ? actor.tags : "");
+  function saveContent(content) {
+    element.content = content;
+    save(element);
+  }
 
-  useEffect(() => {
-    setTags(actor && actor.tags ? actor.tags : "");
-  }, [actorUuid]);
+  function save(element) {
+    saveFile(globalState.state.dir + element.file, element);
+    setRefresh(Date.now());
+  }
 
-  const save = (newContent) => {
-    actor.content = newContent;
-    if (tags) {
-      actor.tags = tags;
-    }
-
-    dispatch({
-      action: "saveActor",
-      payload: { actor: actor },
-    });
-  };
+  function remove(file) {
+    moveFile(
+      globalState.state.dir + file,
+      globalState.state.dir + "rubbish\\" + file
+    );
+    setRefresh(Date.now());
+  }
 
   return (
     <div className="workspace">
-      {!actor && <span>The item you are looking for does not exist</span>}
-      {actor && (
+      {!element && <span>The item you are looking for does not exist</span>}
+      {element && (
         <>
-          <TitleBar actor={actor} />
+          <TitleBar save={save} remove={remove} element={element} />
           <div className="editor">
             <TextEditor
               showAvatar={showAvatar}
-              save={save}
-              data={
-                globalState.state.actors.find((x) => x.uuid === actorUuid)
-                  .content
-              }
-              actorUuid={actorUuid}
+              save={saveContent}
+              data={element.content}
+              actorUuid={element.uuid}
             ></TextEditor>
           </div>
         </>

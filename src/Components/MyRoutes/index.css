@@ -1,0 +1,133 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: rgb(30, 29, 30);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+.Topbar {
+  height: 50px;
+  background-color: rgb(19, 18, 18);
+  text-decoration: none;
+  color: white;
+  padding-left: 100px;
+}
+.Topbar a {
+  text-decoration: none;
+}
+.App {
+  display: flex;
+}
+.card{
+  background-color: #333030;
+  width:calc(50% - 40px);
+  margin:10px;
+  border-radius: 3px;
+  padding:10px;
+  font-size: 11px;
+}
+
+.smallcard{
+  background-color: #333030;
+  width:calc(20% - 20px);
+  margin:5px;
+  border-radius: 3px;
+  padding:5px;
+  font-size: 11px;
+}
+
+.action{
+  display: inline-block;
+  position: relative;
+  top:8px;
+}
+
+.Topbar .menuItem {
+  padding: 8px;
+  margin: 5px;
+  color: rgb(185, 185, 185);
+  height: 30px;
+}
+.menuLabel {
+  color: rgb(185, 185, 185);
+  position: relative;
+  top: -25px;
+  right: -10px;
+  font-size: 11px;
+  margin-left: 20px;
+}
+
+.View {
+  display: flex;
+  width: 100vw;
+  height: calc(100vh - 50px);
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+.Workspace {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  height: calc(100vh - 50px);
+}
+.left-pane {
+  background-color: #1b1818;
+}
+.List {
+  padding-right: 5px;
+  margin-top: -5px;
+}
+.List > * {
+  color: white;
+}
+.MuiBox-root {
+  padding: 0px !important;
+}
+
+.Extras {
+  height: calc(100vh - 50px);
+  background-color: #1b1818;
+  overflow: hidden;
+}
+
+.Tutorial{
+  color:white;
+  margin:30px;
+}
+
+.reflex-container.vertical > .reflex-splitter {
+  border-right: 0px solid #1b1818;
+  background-color: #1b1818;
+  border-left: 0px solid #1b1818;
+}
+
+.menuItem {
+  font-size: 25px;
+}
+
+.menuItem {
+  color: rgb(107, 107, 107);
+}
+.menuItemLabel {
+  color: rgb(107, 107, 107);
+}
+.tag {
+  margin: 5px;
+}
+*::-webkit-scrollbar {
+  width: 12px; /* width of the entire scrollbar */
+}
+*::-webkit-scrollbar-track {
+  background: transparent; /* color of the tracking area */
+}
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(100, 95, 107); /* color of the scroll thumb */
+  border-radius: 10px; /* roundness of the scroll thumb */
+  border: 3px transparent rgb(39, 38, 41);
+}

@@ -14,7 +14,20 @@
   margin-left: 5px;
   color: white;
 }
-
+.icon{
+  font-size:40px;
+  display: inline-block;
+  padding-top:10px;
+  margin-right:-10px;
+  color: white;
+}
+.typeIcon{
+  font-size:40px;
+  display: inline-block;
+  padding-top:10px;
+  margin-left:10px;
+  color: white;
+}
 .titleEditor {
   color: Red;
 }

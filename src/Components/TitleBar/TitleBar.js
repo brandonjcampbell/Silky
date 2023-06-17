@@ -1,43 +1,56 @@
-import React, { useContext } from "react";
+import React from "react";
 import _ from "lodash";
-import { store } from "../../MyContext";
 import "./TitleBar.css";
 import DeleteIcon from "@material-ui/icons/Delete";
-import Avatar from "../Avatar";
-import remove from "../../utils/remove";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
 
-const TitleBar = ({ actor }) => {
-  const globalState = useContext(store);
-  const { dispatch } = globalState;
-
+const TitleBar = ({ element, save, remove }) => {
   const checkKey = (e) => {
     if (e.keyCode === 13) {
       e.preventDefault();
-      e.currentTarget.blur()
+      e.currentTarget.blur();
     }
   };
 
   const saveTitle = (e) => {
-    let clone = _.cloneDeep(actor);
-    clone.name = e.currentTarget.innerHTML;
-    dispatch({
-      action: "saveActor",
-      for: actor.type,
-      payload: { actor: clone },
-    });
+    element.name = e.currentTarget.innerHTML;
+    save(element);
   };
+
+  function determineIcon(element) {
+    if (element.type === "element") {
+      return <HiPuzzle />;
+    }
+    if (element.type === "fact") {
+      return <GiLightBulb />;
+    }
+    if (element.type === "snippet") {
+      return <TiScissors />;
+    }
+    if (element.type === "thread") {
+      return <GiSewingString />;
+    }
+
+    if (element.type === "web") {
+      return <GiSpiderWeb />;
+    }
+  }
 
   return (
     <h3 className="workspaceHeader">
-      <Avatar actor={actor} clickable={true} />
+      <div className="typeIcon"> {determineIcon(element)} </div>
+
+      <div className="icon">{element.icon}</div>
       <p contenteditable="true" onBlur={saveTitle} onKeyDown={checkKey}>
-        {actor.name}
+        {element.name}
       </p>
 
       <DeleteIcon
         className="delete"
         onClick={() => {
-          remove(actor, dispatch);
+          remove(element.file);
         }}
       />
     </h3>

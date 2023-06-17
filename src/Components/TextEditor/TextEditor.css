@@ -20,25 +20,23 @@
   border-radius: 2px;
   position: relative;
   overflow-x: hidden;
+  z-index: 100;
 }
 .unsaved {
   color: white;
-  position: absolute;
+  background-color: rgba(0, 0, 0, 0.55);
+  position: fixed;
+  z-index: -1;
   display: inline-block;
-  top: 5px;
-  right: 15px;
+  top: 0px;
+  right: 0px;
   font-size: 15px;
-  animation: wiggle 2.5s infinite;
-  background: rgb(184, 35, 35);
-  padding: 4px;
-  border-radius: 100px;
+  height: 100vh;
+  width: 100vw; 
+
   cursor: pointer;
 }
 
-.unsaved:hover {
-  animation: none;
-  transform: rotate(0deg) scale(110%);
-}
 
 .editingBlockBanner {
   color: transparent;
@@ -54,6 +52,17 @@
 [contenteditable="true"]:focus {
   border: none;
   outline: none;
+  caret-color: orange;
+}
+
+.intellisense{
+  position: fixed;
+  right:0px;
+  top:0px;
+  background:black;
+  border: 5px solid white;
+  z-index: 100;
+  padding: 100px;
 }
 
 .page {

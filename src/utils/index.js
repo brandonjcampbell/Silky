@@ -2,6 +2,7 @@ import actorToCyto from "./actorToCyto";
 import getDisplayName from "./getDisplayName";
 import loadDir from "./loadDir";
 import loadFile from "./loadFile";
+import moveFile from "./moveFile";
 import makeDir from "./makeDir";
 import saveFile from "./saveFile";
 import useMousePosition from "./useMousePosition";
@@ -13,6 +14,7 @@ export {
   actorToCyto,
   getDisplayName,
   loadDir,
+  moveFile,
   loadFile,
   makeDir,
   actorIsValid,

@@ -1,160 +1,78 @@
-import React, { useContext, useState, useEffect } from "react";
-import { store } from "../../MyContext";
-import { styled, alpha } from "@mui/material/styles";
-import TextField from "@material-ui/core/TextField";
-import DraggableList from "../DraggableList";
-import _ from "lodash";
-import FormDialog from "../FormDialog";
-import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
-import { Navigate, useParams} from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { store } from "../../NewContext";
 import "./ActorList.css";
-const ActorList = ({
-  match,
-  type,
-  showAvatar = true,
-  tag = null,
-}) => {
-  const {uuid} = useParams();
-  const actorUuid= uuid;
-  
+import loadDir from "../../utils/loadDir";
+import loadFile from "../../utils/loadFile";
+import DraggableList from "../DraggableList";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
+import { HiOutlineGlobeAlt } from "react-icons/hi";
+import { Link } from "react-router-dom";
+import logo from "../../images/logo.svg";
+
+const ActorList = ({ setRefresh }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const [name, setName] = useState("");
-  const [search, setSearch] = useState("");
-  const [active, setActive] = useState(
-    match && match.params && match.params.uuid
-      ? { uuid: match.params.uuid }
-      : null
+  const [filter, setFilter] = useState("");
+  const [type, setType] = useState("element");
+  const dirs = loadDir(globalState.state.dir).filter((x) =>
+    x.includes(".element.")
   );
-  const [count, setCount] = useState(1);
 
 
-
-  const handleRowClick = (row) => {
-    setActive(row);
+  const loadUp = (x) => {
+    const file = loadFile(globalState.state.dir + x);
+    return file;
   };
 
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
-
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  }));
-
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
+  function compareOrder(a, b) {
+    return a.order - b.order;
+  }
 
   return (
     <div className="ActorList">
-      {globalState.state.project === "Silky" && <Navigate to="/" />}
-      <div className="controls">
-        {type && <FormDialog type={type} />}
-   
-          <TextField
-            className="listSearch"
-            id="outlined-basic"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-    
+      <div className="project">
+        <Link to="/">
+          <img className="logo" src={logo} alt="silky"  onClick={() => {
+              dispatch({ action: "setProject", payload: { name: ""} });
+            }}/>
+        </Link>
+        {globalState.state.project}
       </div>
+      <HiOutlineGlobeAlt
+        onClick={() => setType("")}
+        className={type === "" ? "tab selected" : "tab"}
+      />
+      <HiPuzzle
+        onClick={() => setType("element")}
+        className={type === "element" ? "tab selected" : "tab"}
+      />
+      <GiLightBulb
+        onClick={() => setType("fact")}
+        className={type === "fact" ? "tab selected" : "tab"}
+      />
+      <TiScissors
+        onClick={() => setType("snippet")}
+        className={type === "snippet" ? "tab selected" : "tab"}
+      />
+      <GiSewingString
+        onClick={() => setType("thread")}
+        className={type === "thread" ? "tab selected" : "tab"}
+      />
+      <GiSpiderWeb
+        onClick={() => setType("web")}
+        className={type === "web" ? "tab selected" : "tab"}
+      />
 
       <div className="content">
         <DraggableList
-          showAvatar={showAvatar}
-          actorUuid={actorUuid}
-          list={globalState.state.actors.filter(
-            (x) =>
-              (!type || (type && x.type === type)) &&
-              (!tag ||
-                globalState.state.actors.find(
-                  (y) =>
-                    Array.isArray(y.subjects) &&
-                    y.subjects.includes(tag) &&
-                    Array.isArray(y.targets) &&
-                    y.targets.includes(x.uuid)
-                )) &&
-              (!search ||
-                _.toLower(x.name).includes(_.toLower(search)) ||
-                globalState.state.actors.find(
-                  (y) =>
-                    y.type === "link" &&
-                    y.name === "TAGS" &&
-                    y.targets &&
-                    Array.isArray(y.targets) &&
-                    y.targets.includes(x.uuid) &&
-                    Array.isArray(y.subjects) &&
-                    globalState.state.actors.find(
-                      (z) =>
-                        y.subjects.includes(z.uuid) &&
-                        _.toLower(z.name).includes(_.toLower(search))
-                    )
-                ))
-          )}
-          handleClick={handleRowClick}
-          saveList={(e) => {
-            if (search) {
-              alert("Clear your search to re-order the list.");
-            }
-            dispatch({
-              action: "saveActors",
-              for: type,
-              payload: {
-                actors: search
-                  ? globalState.state.actors.filter((x) => x.type === type)
-                  : e,
-              },
-            });
-          }}
-          getType={(x) => {
-            return (
-              globalState.state.actors.find((y) => y.uuid === active.uuid)
-                .type + "s"
-            );
-          }}
-          onDrop={() => {}}
-          reorderList={(e) => {
-            dispatch({
-              action: "reorderActors",
-              for: type,
-              payload: {
-                actors: search
-                  ? globalState.state.actors.filter((x) => x.type === type)
-                  : e,
-              },
-            });
-          }}
+        showAvatar={type===""?true:false}
+          list={dirs
+            .map((x) => loadUp(x))
+            .filter((y) => type === "" || y.type === type)
+            .sort(compareOrder)}
+          onDrop={(x) => setRefresh(Date.now())}
         ></DraggableList>
       </div>
     </div>

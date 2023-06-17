@@ -1,10 +1,28 @@
+a{
+    text-decoration: none;
+}
 .row{
     display: flex;
     vertical-align: middle;
-    padding-top:4px;
     overflow-x: hidden;
     overflow-y: hidden;
+    text-decoration:wavy;
+    color:white;
 
+}
+.row.selectedRow{
+    background-color: rgb(254, 0, 76);
+}
+.row .wasteBasket{
+    display: none;
+    position: absolute;
+    right:0px;
+}
+.row:hover{
+    border-left: 4px solid rgb(254, 0, 76);
+}
+.row:hover .wasteBasket{
+display: inline-block;
 }
 .row > *{
     display: flex;
