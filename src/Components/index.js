@@ -5,11 +5,13 @@ import DraggableList from "./DraggableList";
 import TextEditor from "./TextEditor";
 import MyRoutes from "./MyRoutes";
 import Workspace from "./Workspace";
+import Graph from "./Graph";
 export {
   App,
   ActorList,
   DraggableList,
- // FormDialog,
+  // FormDialog,
+  Graph,
   TextEditor,
   Workspace,
   MyRoutes,

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
 import { store } from "../../NewContext";
@@ -9,10 +9,12 @@ import loadFile from "../../utils/loadFile";
 import moveFile from "../../utils/moveFile";
 import saveFile from "../../utils/saveFile";
 import DraggableList from "../DraggableList";
+import Graph from "../Graph";
 
 const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
   const { file } = useParams();
+
   console.log("workspace load");
   let element = loadFile(globalState.state.dir + file);
 
@@ -38,6 +40,30 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     const file = loadFile(globalState.state.dir + x);
     return file;
   };
+
+  let elements, cytoElements, cytoRelationshps;
+  if (element && element.captures) {
+    elements = element.captures.map((x) => loadUp(x));
+    cytoElements = elements.map((x) => {
+      return { data: { id: x.file, label: x.icon + " " + x.name } };
+    });
+    cytoRelationshps = [];
+    element.expands.forEach((expandedProp) =>
+      elements.forEach((y) => {
+        if (y[expandedProp]) {
+          return y[expandedProp].forEach((z) => {
+            cytoRelationshps.push({data:{
+              source: y.file,
+              target: z,
+              label: expandedProp,
+            }
+            });
+          });
+        }
+      })
+    );
+    console.log(cytoRelationshps);
+  }
 
   return (
     <div className="workspace">
@@ -106,7 +132,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-{element.sequences && (
+          {element.sequences && (
             <div className="editor">
               <h4>Sequences</h4>
               <DraggableList
@@ -116,7 +142,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-{element.sequenced_in && (
+          {element.sequenced_in && (
             <div className="editor">
               <h4>Sequenced In</h4>
               <DraggableList
@@ -126,18 +152,19 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-
-{element.captures && (
+          {element.captures && (
             <div className="editor">
               <h4>Captures</h4>
-              <DraggableList
+              {/* <DraggableList
                 list={element.captures.map((x) => loadUp(x))}
                 onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
+              ></DraggableList> */}
+
+              <Graph elements={[...cytoElements,...cytoRelationshps]}></Graph>
             </div>
           )}
 
-{element.captured_in && (
+          {element.captured_in && (
             <div className="editor">
               <h4>Captured In</h4>
               <DraggableList
@@ -147,8 +174,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-          <br />
-          <div className="editor">{JSON.stringify(element)}</div>
+         
         </>
       )}
     </div>
