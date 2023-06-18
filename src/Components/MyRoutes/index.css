@@ -67,14 +67,14 @@ code {
 .View {
   display: flex;
   width: 100vw;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 0px);
   overflow-y: hidden;
   overflow-x: hidden;
 }
 .Workspace {
   overflow-y: hidden;
   overflow-x: hidden;
-  height: calc(100vh - 50px);
+  height: calc(100vh - 0px);
 }
 .left-pane {
   background-color: #1b1818;
