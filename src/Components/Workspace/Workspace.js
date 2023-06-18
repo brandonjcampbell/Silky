@@ -15,7 +15,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
   const { file } = useParams();
 
-  console.log("workspace load");
+  //console.log("workspace load");
   let element = loadFile(globalState.state.dir + file);
 
   function saveIt(content, property = "content") {
@@ -43,26 +43,33 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
 
   let elements, cytoElements, cytoRelationshps;
   if (element && element.captures) {
-    elements = element.captures.map((x) => loadUp(x));
+    elements = element.captures.map((x) => {
+      let temp = loadUp(x.file);
+      temp.position = { x: x.x, y: x.y };
+      return temp;
+    });
     cytoElements = elements.map((x) => {
-      return { data: { id: x.file, label: x.icon + " " + x.name } };
+      return {
+        data: { id: x.file, label: x.icon + " " + x.name },
+        position: x.position,
+      };
     });
     cytoRelationshps = [];
     element.expands.forEach((expandedProp) =>
       elements.forEach((y) => {
         if (y[expandedProp]) {
           return y[expandedProp].forEach((z) => {
-            cytoRelationshps.push({data:{
-              source: y.file,
-              target: z,
-              label: expandedProp,
-            }
+            cytoRelationshps.push({
+              data: {
+                source: y.file,
+                target: z,
+                label: expandedProp,
+              },
             });
           });
         }
       })
     );
-    console.log(cytoRelationshps);
   }
 
   return (
@@ -112,6 +119,26 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
+{element.causes && (
+            <div className="editor">
+              <h4>Causes</h4>
+              <DraggableList
+                list={element.causes.map((x) => loadUp(x))}
+                onDrop={(x) => setRefresh(Date.now())}
+              ></DraggableList>
+            </div>
+          )}
+
+{element.because && (
+            <div className="editor">
+              <h4>Because</h4>
+              <DraggableList
+                list={element.because.map((x) => loadUp(x))}
+                onDrop={(x) => setRefresh(Date.now())}
+              ></DraggableList>
+            </div>
+          )}
+
           {element.reveals && (
             <div className="editor">
               <h4>Reveals</h4>
@@ -153,15 +180,20 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           )}
 
           {element.captures && (
-            <div className="editor">
-              <h4>Captures</h4>
-              {/* <DraggableList
-                list={element.captures.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList> */}
-
-              <Graph elements={[...cytoElements,...cytoRelationshps]}></Graph>
-            </div>
+            <Graph
+              elements={[...cytoElements, ...cytoRelationshps]}
+              onDrop={(x) => {
+                let temp = element.captures.map((y) => {
+                  if (y.file === x.id) {
+                    y.x = x.position.x;
+                    y.y = x.position.y;
+                  }
+                  return y;
+                });
+                element.captures = temp;
+                save(element);
+              }}
+            ></Graph>
           )}
 
           {element.captured_in && (
@@ -173,8 +205,6 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
               ></DraggableList>
             </div>
           )}
-
-         
         </>
       )}
     </div>

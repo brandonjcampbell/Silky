@@ -5,15 +5,15 @@ import Cytoscape from "cytoscape";
 import CytoscapeComponent from "react-cytoscapejs";
 import cola from "cytoscape-cola";
 
-const Graph = ({ elements }) => {
+const Graph = ({ elements, onDrop }) => {
   const defaultLayout = {
-    name: "cola",
+    name: "preset",
     maxSimulationTime: 2000,
     fit: false,
     nodeDimensionsIncludeLabels: true,
     refresh: 1,
   };
-  Cytoscape.use(cola);
+  //Cytoscape.use(cola);
 
   const [hide, setHide] = useState([]);
   const [layout, setLayout] = useState(defaultLayout);
@@ -42,6 +42,14 @@ const Graph = ({ elements }) => {
   }, []);
 
   const handleCy = (cy) => {
+    cy.one("dragfreeon", function (e) {
+      let temp = e.target._private.data;
+      temp.position = {
+        x: e.target._private.position.x,
+        y: e.target._private.position.y,
+      };
+      onDrop(temp);
+    });
     setCy(cy);
   };
 
@@ -71,7 +79,6 @@ const Graph = ({ elements }) => {
           style: {
             height: showNodeText ? 100 : 15,
             width: showNodeText ? 100 : 15,
-            shape: "circle",
             backgroundColor: "#333",
             label: showNodeText ? "data(label)" : "",
             "text-wrap": "wrap",
@@ -88,8 +95,6 @@ const Graph = ({ elements }) => {
           selector: "edge",
           style: {
             width: 2,
-            "line-color": "data(color)",
-            "target-arrow-color": "data(color)",
             "target-arrow-shape": "triangle",
             "curve-style": "bezier",
             color: "black",
