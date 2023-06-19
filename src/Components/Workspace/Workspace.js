@@ -41,7 +41,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     return file;
   };
 
-  let elements, cytoElements, cytoRelationshps;
+  let elements, cytoElements, cytoRelationships;
   if (element && element.captures) {
     elements = element.captures.map((x) => {
       let temp = loadUp(x.file);
@@ -54,12 +54,32 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
         position: x.position,
       };
     });
-    cytoRelationshps = [];
-    element.expands.forEach((expandedProp) =>
-      elements.forEach((y) => {
+    cytoRelationships = [];
+
+    element.expands.forEach((expandedProp) => {
+  
+      if (expandedProp === "then") {
+        elements
+          .filter((x) => x.type === "thread")
+          .forEach((y) => {
+            y.sequences.forEach((z, index) => {
+              if (index < y.sequences.length) {
+                if(y.sequences[index + 1]){
+                cytoRelationships.push({
+                  data: {
+                    source: z,
+                    target: y.sequences[index + 1],
+                    label: y.name,
+                  }
+                })};
+              }
+            });
+          });
+      }
+      return elements.forEach((y) => {
         if (y[expandedProp]) {
           return y[expandedProp].forEach((z) => {
-            cytoRelationshps.push({
+            cytoRelationships.push({
               data: {
                 source: y.file,
                 target: z,
@@ -68,8 +88,8 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             });
           });
         }
-      })
-    );
+      });
+    });
   }
 
   return (
@@ -119,7 +139,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-{element.causes && (
+          {element.causes && (
             <div className="editor">
               <h4>Causes</h4>
               <DraggableList
@@ -129,7 +149,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-{element.because && (
+          {element.because && (
             <div className="editor">
               <h4>Because</h4>
               <DraggableList
@@ -181,7 +201,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
 
           {element.captures && (
             <Graph
-              elements={[...cytoElements, ...cytoRelationshps]}
+              elements={[...cytoElements, ...cytoRelationships]}
               onDrop={(x) => {
                 let temp = element.captures.map((y) => {
                   if (y.file === x.id) {
