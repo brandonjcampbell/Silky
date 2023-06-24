@@ -9,7 +9,7 @@ import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.svg";
 
 const ActorList = ({ setRefresh }) => {
@@ -20,6 +20,11 @@ const ActorList = ({ setRefresh }) => {
   const dirs = loadDir(globalState.state.dir).filter((x) =>
     x.includes(".element.")
   );
+  console.log("set Refresh type", typeof(setRefresh))
+  //setRefresh()
+  const navigate = useNavigate();
+
+
 
   const loadUp = (x) => {
     const file = loadFile(globalState.state.dir + x);
@@ -52,7 +57,7 @@ const ActorList = ({ setRefresh }) => {
     }
   }
 
-  const newElement = () => {
+  const newElement = (ofType) => {
     const uuid = Date.now();
     const icons = [
       "🍏",
@@ -186,17 +191,43 @@ const ActorList = ({ setRefresh }) => {
     const random = Math.floor(Math.random() * icons.length);
     const icon = icons[random];
 
-    const test = {
-      name: "blank",
+    let test = {
+      name: "New "+ofType,
       file: uuid + ".element.json",
-      type: "element",
+      type: ofType,
       icon: icon,
       order: 0,
-      uuid: uuid,
-      content: "",
-      tags: "",
-      involved_in: [],
+      uuid: uuid}
+if(ofType==="element"){
+      test.content= " "
+      test.involved_in =[]
+      test.captured_in = []
     };
+    if(ofType==="fact"){
+      test.content = []
+      test.causes = []
+      test.because = []
+      test.involves = []  
+      test.revealed_by = []
+      test.captured_in = []
+    }
+    if(ofType==="snippet"){
+      test.content = ""
+      test.reveals = []
+      test.sequenced_in = []
+      test.captured_in = []
+      
+    }
+    if(ofType==="thread"){
+      test.content = "";
+      test.sequences= [];
+      test.captured_in = []
+      
+    }
+    if(ofType==="web"){
+      test.captures = [];
+      test.expands=["reveals", "because", "involves", "then", "sequences"];  
+    }
     return test;
   };
 
@@ -250,15 +281,21 @@ const ActorList = ({ setRefresh }) => {
           onDrop={(result, list) => handleDrop(result, list)}
         ></DraggableList>
 
-        <button
+        {type && <button
           onClick={() => {
-            const el = newElement();
+            const el = newElement(type);
             saveFile(globalState.state.dir + el.uuid + ".element.json", el);
-            setRefresh(Date.now())
+            setFilter(Date.now())
+           navigate('/elements/'+el.file)
+           dispatch({
+            action: "setActiveElement",
+            payload: { file: el.file },
+          })
+
           }}
         >
-          +
-        </button>
+          + {type}
+        </button>}
       </div>
     </div>
   );

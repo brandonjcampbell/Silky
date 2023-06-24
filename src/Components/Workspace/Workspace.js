@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
 import { store } from "../../NewContext";
@@ -14,13 +14,10 @@ import Graph from "../Graph";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
-import { GiWhiteBook } from "react-icons/gi";
-import { update } from "lodash";
 
 const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
   const { file } = useParams();
-  //setRefresh(); // if this isn't here, react doesn't seem to recognize setRefresh as a function
 
   let element = loadFile(globalState.state.dir + file);
 
@@ -56,6 +53,23 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     save(target);
   };
 
+  const addToGraphableList = (
+    subject,
+    target,
+    relationship,
+    reflexiveRelationship
+  ) => {
+    console.log(subject, target);
+
+    subject[relationship].push({ file: target.file, x: 0, y: 0 });
+    if (!target[reflexiveRelationship]) {
+      target[reflexiveRelationship] = [];
+    }
+    target[reflexiveRelationship].push(subject.file);
+    save(subject);
+    save(target);
+  };
+
   const removeFromList = (
     subject,
     target,
@@ -64,10 +78,10 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   ) => {
     if (subject[relationship] && target[reflexiveRelationship]) {
       subject[relationship] = subject[relationship].filter(
-        (x) => x !== target.file
+        (x) => !(x === target.file || x.file === target.file)
       );
       target[reflexiveRelationship] = target[reflexiveRelationship].filter(
-        (x) => x !== subject.file
+        (x) => !(x === subject.file || x.file === subject.file)
       );
     }
 
@@ -79,7 +93,9 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   if (element && element.captures) {
     elements = element.captures.map((x) => {
       let temp = loadUp(x.file);
-      temp.position = { x: x.x, y: x.y };
+      if (temp) {
+        temp.position = { x: x.x, y: x.y };
+      }
       return temp;
     });
     cytoElements = elements.map((x) => {
@@ -98,13 +114,18 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             y.sequences.forEach((z, index) => {
               if (index < y.sequences.length) {
                 if (y.sequences[index + 1]) {
-                  cytoRelationships.push({
-                    data: {
-                      source: z,
-                      target: y.sequences[index + 1],
-                      label: y.name,
-                    },
-                  });
+                  if (
+                    elements.find((x) => x.file === z) &&
+                    elements.find((x) => x.file === y.sequences[index + 1])
+                  ) {
+                    cytoRelationships.push({
+                      data: {
+                        source: z,
+                        target: y.sequences[index + 1],
+                        label: y.name,
+                      },
+                    });
+                  }
                 }
               }
             });
@@ -113,13 +134,18 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       return elements.forEach((y) => {
         if (y[expandedProp]) {
           return y[expandedProp].forEach((z) => {
-            cytoRelationships.push({
-              data: {
-                source: y.file,
-                target: z,
-                label: expandedProp,
-              },
-            });
+            if (
+              elements.find((x) => x.file === z) &&
+              elements.find((x) => x.file === y.file)
+            ) {
+              cytoRelationships.push({
+                data: {
+                  source: y.file,
+                  target: z,
+                  label: expandedProp,
+                },
+              });
+            }
           });
         }
       });
@@ -139,7 +165,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <DraggableList
             list={element[relationship].map((x) => loadUp(x))}
             onDrop={(result, list) =>
-              handleDrop(result, list, element, relationship)
+              handleDrop(result, element[relationship], element, relationship)
             }
             removeFromList={(x) =>
               removeFromList(element, x, relationship, reflexiveRelationship)
@@ -182,14 +208,71 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     }
   };
 
+  const renderGraphableEditList = (
+    relationship,
+    reflexiveRelationship,
+    label
+  ) => {
+    if (element[relationship]) {
+      return (
+        <div className="editor">
+          <h4>{label}</h4>
+          <DraggableList
+            list={element[relationship].map((x) => loadUp(x.file))}
+            onDrop={(result, list) =>
+              handleDrop(result, element[relationship], element, relationship)
+            }
+            removeFromList={(x) =>
+              removeFromList(element, x, relationship, reflexiveRelationship)
+            }
+          ></DraggableList>
+          <br />
+          <Stack spacing={2} sx={{ width: 300 }}>
+            <Autocomplete
+              style={{ background: "white" }}
+              id={relationship + "-fact"}
+              clearOnEscape
+              clearOnBlur
+              onChange={(x, value) => {
+                if (value && value.file) {
+                  addToGraphableList(
+                    element,
+                    loadUp(value.file),
+                    relationship,
+                    reflexiveRelationship
+                  );
+                }
+              }}
+              options={loadDir(globalState.state.dir)
+                .filter((x) => x.includes(".element."))
+                .map((x) => loadUp(x))
+                .filter(
+                  (x) =>
+                    x.file !== element.file &&
+                    x.type !== "web" &&
+                    !element[relationship].find((y) => y.file === x.file)
+                )}
+              getOptionLabel={(x) => x.icon + " " + x.name}
+              renderInput={(params) => {
+                return <TextField {...params} label="search" />;
+              }}
+            />
+          </Stack>
+        </div>
+      );
+    }
+  };
+
   function handleDrop(result, list, element, relationship) {
     list.splice(
       result.destination.index,
       0,
       list.splice(result.source.index, 1)[0]
     );
-    console.log(result.source.index, result.destination.index);
-    element[relationship] = list.map((x) => x.file);
+    console.log(list,"what have we");
+
+    element[relationship] = list.map(x=>x);
+    
     saveFile(globalState.state.dir + element.file, element);
     setRefresh(Date.now());
   }
@@ -200,14 +283,17 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
-          <div className="editor">
-            <TextEditor
-              showAvatar={showAvatar}
-              save={saveIt}
-              data={element.content}
-              actorUuid={element.uuid}
-            ></TextEditor>
-          </div>
+
+          {element.content && (
+            <div className="editor">
+              <TextEditor
+                showAvatar={showAvatar}
+                save={saveIt}
+                data={element.content}
+                actorUuid={element.uuid}
+              ></TextEditor>
+            </div>
+          )}
 
           {element.tags && (
             <div className="editor">
@@ -235,32 +321,28 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             "Sequenced In"
           )}
 
-          {element.captures && (
-            <Graph
-              elements={[...cytoElements, ...cytoRelationships]}
-              onDrop={(x) => {
-                let temp = element.captures.map((y) => {
-                  if (y.file === x.id) {
-                    y.x = x.position.x;
-                    y.y = x.position.y;
-                  }
-                  return y;
-                });
-                element.captures = temp;
-                save(element);
-              }}
-            ></Graph>
-          )}
+          {renderGraphableEditList("captures", "captured_in", "Captures")}
 
-          {element.captured_in && (
-            <div className="editor">
-              <h4>Captured In</h4>
-              <DraggableList
-                list={element.captured_in.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
+          {element.captures && (
+            <div>
+              <Graph
+                elements={[...cytoElements, ...cytoRelationships]}
+                onDrop={(x) => {
+                  let temp = element.captures.map((y) => {
+                    if (y.file === x.id) {
+                      y.x = x.position.x;
+                      y.y = x.position.y;
+                    }
+                    return y;
+                  });
+                  element.captures = temp;
+                  save(element);
+                }}
+              ></Graph>
             </div>
           )}
+
+          
         </>
       )}
     </div>
