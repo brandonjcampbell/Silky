@@ -20,8 +20,8 @@ import { update } from "lodash";
 const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
   const { file } = useParams();
+  //setRefresh(); // if this isn't here, react doesn't seem to recognize setRefresh as a function
 
-  //console.log("workspace load");
   let element = loadFile(globalState.state.dir + file);
 
   function saveIt(content, property = "content") {
@@ -153,13 +153,13 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
               clearOnEscape
               clearOnBlur
               onChange={(x, value) => {
-                if(value && value.file){
-                addToList(
-                  element,
-                  loadUp(value.file),
-                  relationship,
-                  reflexiveRelationship
-                );
+                if (value && value.file) {
+                  addToList(
+                    element,
+                    loadUp(value.file),
+                    relationship,
+                    reflexiveRelationship
+                  );
                 }
               }}
               options={loadDir(globalState.state.dir)
