@@ -4,3 +4,6 @@
   top: -60px;
   color:white;
 }
+.workspace{
+  overflow-y:scroll;
+}

@@ -74,7 +74,7 @@ const DraggableList = ({
   }
   function content() {
     if (list) {
-      return list.map((x, index) => {
+      return list.filter(x=> x && x.uuid && x.file).map((x, index) => {
         return (
           <Draggable key={x.uuid} draggableId={x.uuid + ""} index={index}>
             {(provided) => (

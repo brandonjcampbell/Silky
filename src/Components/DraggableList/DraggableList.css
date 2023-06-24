@@ -8,6 +8,8 @@ a{
     overflow-y: hidden;
     text-decoration:wavy;
     color:white;
+    border-right: 4px solid transparent;
+    border-left:0px;
 }
 .listItem{
     position: relative;
@@ -28,6 +30,7 @@ a{
 }
 .row:hover{
     border-left: 4px solid rgb(254, 0, 76);
+    border-right:0px;
 }
 .row:hover .wasteBasket{
 display: inline-block;
