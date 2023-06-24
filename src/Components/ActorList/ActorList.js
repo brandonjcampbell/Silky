@@ -21,7 +21,6 @@ const ActorList = ({ setRefresh }) => {
     x.includes(".element.")
   );
 
-
   const loadUp = (x) => {
     const file = loadFile(globalState.state.dir + x);
     return file;
@@ -31,7 +30,7 @@ const ActorList = ({ setRefresh }) => {
     return a.order - b.order;
   }
 
-  function handleDrop(result,list){
+  function handleDrop(result, list) {
     if (result && result.source && result.destination) {
       const moving = list[result.source.index];
       const to = list[result.destination.index];
@@ -49,17 +48,170 @@ const ActorList = ({ setRefresh }) => {
         moving.order = (to.order + toTwo.order) / 2;
       }
       saveFile(globalState.state.dir + moving.file, moving);
-      setRefresh(Date.now())
+      setRefresh(Date.now());
     }
   }
+
+  const newElement = () => {
+    const uuid = Date.now();
+    const icons = [
+      "🍏",
+      "🍎",
+      "🍐",
+      "🍊",
+      "🍋",
+      "🍌",
+      "🍉",
+      "🍇",
+      "🍓",
+      "🫐",
+      "🍈",
+      "🍒",
+      "🍑",
+      "🥭",
+      "🍍",
+      "🥥",
+      "🥝",
+      "🍅",
+      "🍆",
+      "🥑",
+      "🥦",
+      "🥬",
+      "🥒",
+      "🌶",
+      "🫑",
+      "🌽",
+      "🥕",
+      "🫒",
+      "🧄",
+      "🧅",
+      "🫚",
+      "🥔",
+      "🍠",
+      "🫘",
+      "🥐",
+      "🥯",
+      "🍞",
+      "🥖",
+      "🥨",
+      "🧀",
+      "🥚",
+      "🍳",
+      "🧈",
+      "🥞",
+      "🧇",
+      "🥓",
+      "🥩",
+      "🍗",
+      "🍖",
+      "🦴",
+      "🌭",
+      "🍔",
+      "🍟",
+      "🍕",
+      "🫓",
+      "🥪",
+      "🥙",
+      "🧆",
+      "🌮",
+      "🌯",
+      "🫔",
+      "🥗",
+      "🥘",
+      "🫕",
+      "🥫",
+      "🍝",
+      "🍜",
+      "🍲",
+      "🍛",
+      "🍣",
+      "🍱",
+      "🥟",
+      "🦪",
+      "🍤",
+      "🍙",
+      "🍚",
+      "🍘",
+      "🍥",
+      "🥠",
+      "🥮",
+      "🍢",
+      "🍡",
+      "🍧",
+      "🍨",
+      "🍦",
+      "🥧",
+      "🧁",
+      "🍰",
+      "🎂",
+      "🍮",
+      "🍭",
+      "🍬",
+      "🍫",
+      "🍿",
+      "🍩",
+      "🍪",
+      "🌰",
+      "🥜",
+      "🍯",
+      "🥛",
+      "🍼",
+      "🫖",
+      "☕️",
+      "🍵",
+      "🧃",
+      "🥤",
+      "🧋",
+      "🫙",
+      "🍶",
+      "🍺",
+      "🍻",
+      "🥂",
+      "🍷",
+      "🫗",
+      "🥃",
+      "🍸",
+      "🍹",
+      "🧉",
+      "🍾",
+      "🧊",
+      "🥄",
+      "🍴",
+      "🍽",
+      "🥣",
+      "🥡",
+      "🥢",
+      "🧂",
+    ];
+    const random = Math.floor(Math.random() * icons.length);
+    const icon = icons[random];
+
+    const test = {
+      name: "blank",
+      file: uuid + ".element.json",
+      type: "element",
+      icon: icon,
+      order: 0,
+      uuid: uuid,
+      content: "",
+      tags: "",
+      involved_in: [],
+    };
+    return test;
+  };
 
   return (
     <div className="ActorList">
       <div className="project">
         <Link to="/">
-          <img className="logo" src={logo} alt="silky"  onClick={() => {
-              dispatch({ action: "setProject", payload: { name: ""} });
-            }}/>
+          <img
+            className="logo"
+            src={logo}
+            alt="silky"
+            onClick={() => {
+              dispatch({ action: "setProject", payload: { name: "" } });
+            }}
+          />
         </Link>
         {globalState.state.project}
       </div>
@@ -90,13 +242,22 @@ const ActorList = ({ setRefresh }) => {
 
       <div className="content">
         <DraggableList
-        showAvatar={type===""?true:false}
+          showAvatar={type === "" ? true : false}
           list={dirs
             .map((x) => loadUp(x))
             .filter((y) => type === "" || y.type === type)
             .sort(compareOrder)}
-          onDrop={(result,list) => handleDrop(result,list)}
+          onDrop={(result, list) => handleDrop(result, list)}
         ></DraggableList>
+
+        <button
+          onClick={() => {
+            const el = newElement();
+            saveFile(globalState.state.dir + el.uuid + ".element.json", el);
+          }}
+        >
+          +
+        </button>
       </div>
     </div>
   );

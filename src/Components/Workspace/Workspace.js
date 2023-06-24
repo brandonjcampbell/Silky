@@ -39,7 +39,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       globalState.state.dir + file,
       globalState.state.dir + "rubbish\\" + file
     );
-    
+
     setRefresh(Date.now());
   }
 
@@ -138,7 +138,9 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <h4>{label}</h4>
           <DraggableList
             list={element[relationship].map((x) => loadUp(x))}
-            onDrop={(result,list) => handleDrop(result,list,element,relationship)}
+            onDrop={(result, list) =>
+              handleDrop(result, list, element, relationship)
+            }
             removeFromList={(x) =>
               removeFromList(element, x, relationship, reflexiveRelationship)
             }
@@ -178,31 +180,16 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     }
   };
 
-  function handleDrop(result,list,element,relationship){
-  
-    list.splice(result.destination.index, 0, list.splice(result.source.index, 1)[0]);
-
-    console.log(result.source.index, result.destination.index)
-    element[relationship] = list.map(x=>x.file)
-    // if (result && result.source && result.destination) {
-    //   const moving = list[result.source.index];
-    //   const to = list[result.destination.index];
-    //   if (result.destination.index === 0) {
-    //     moving.order = to.order - 1;
-    //   } else if (result.destination.index === list.length - 1) {
-    //     moving.order = to.order + 1;
-    //   } else {
-    //     let toTwo;
-    //     if (result.source.index > result.destination.index) {
-    //       toTwo = list[result.destination.index - 1];
-    //     } else {
-    //       toTwo = list[result.destination.index + 1];
-    //     }
-    //     moving.order = (to.order + toTwo.order) / 2;
-    //   }
-       saveFile(globalState.state.dir + element.file, element);
-    //   setRefresh(Date.now())
-    // }
+  function handleDrop(result, list, element, relationship) {
+    list.splice(
+      result.destination.index,
+      0,
+      list.splice(result.source.index, 1)[0]
+    );
+    console.log(result.source.index, result.destination.index);
+    element[relationship] = list.map((x) => x.file);
+    saveFile(globalState.state.dir + element.file, element);
+    setRefresh(Date.now());
   }
 
   return (
@@ -237,10 +224,14 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           {renderEditList("fact", "causes", "because", "Causes")}
           {renderEditList("fact", "because", "causes", "Because")}
           {renderEditList("fact", "reveals", "revealed_by", "Reveals")}
-          {renderEditList("snippet", "revealed_by","reveals",  "Revealed By")}
-          {renderEditList("snippet", "sequences","sequenced_in",  "Sequences")}
-          {renderEditList("thread", "sequenced_in","sequences",  "Sequenced In")}
-
+          {renderEditList("snippet", "revealed_by", "reveals", "Revealed By")}
+          {renderEditList("snippet", "sequences", "sequenced_in", "Sequences")}
+          {renderEditList(
+            "thread",
+            "sequenced_in",
+            "sequences",
+            "Sequenced In"
+          )}
 
           {element.captures && (
             <Graph
