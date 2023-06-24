@@ -89,69 +89,6 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     save(target);
   };
 
-  let elements, cytoElements, cytoRelationships;
-  if (element && element.captures) {
-    elements = element.captures.map((x) => {
-      let temp = loadUp(x.file);
-      if (temp) {
-        temp.position = { x: x.x, y: x.y };
-      }
-      return temp;
-    });
-    cytoElements = elements.map((x) => {
-      return {
-        data: { id: x.file, label: x.icon + " " + x.name },
-        position: x.position,
-      };
-    });
-    cytoRelationships = [];
-
-    element.expands.forEach((expandedProp) => {
-      if (expandedProp === "then") {
-        elements
-          .filter((x) => x.type === "thread")
-          .forEach((y) => {
-            y.sequences.forEach((z, index) => {
-              if (index < y.sequences.length) {
-                if (y.sequences[index + 1]) {
-                  if (
-                    elements.find((x) => x.file === z) &&
-                    elements.find((x) => x.file === y.sequences[index + 1])
-                  ) {
-                    cytoRelationships.push({
-                      data: {
-                        source: z,
-                        target: y.sequences[index + 1],
-                        label: y.name,
-                      },
-                    });
-                  }
-                }
-              }
-            });
-          });
-      }
-      return elements.forEach((y) => {
-        if (y[expandedProp]) {
-          return y[expandedProp].forEach((z) => {
-            if (
-              elements.find((x) => x.file === z) &&
-              elements.find((x) => x.file === y.file)
-            ) {
-              cytoRelationships.push({
-                data: {
-                  source: y.file,
-                  target: z,
-                  label: expandedProp,
-                },
-              });
-            }
-          });
-        }
-      });
-    });
-  }
-
   const renderEditList = (
     elementType,
     relationship,
@@ -277,13 +214,76 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     setRefresh(Date.now());
   }
 
+  let elements, cytoElements, cytoRelationships;
+  if (element && element.captures) {
+    elements = element.captures.map((x) => {
+      let temp = loadUp(x.file);
+      if (temp) {
+        temp.position = { x: x.x, y: x.y };
+      }
+      return temp;
+    });
+    cytoElements = elements.map((x) => {
+      return {
+        data: { id: x.file, label: x.icon + " " + x.name },
+        position: x.position,
+      };
+    });
+    cytoRelationships = [];
+
+    element.expands.forEach((expandedProp) => {
+      if (expandedProp === "then") {
+        elements
+          .filter((x) => x.type === "thread")
+          .forEach((y) => {
+            y.sequences.forEach((z, index) => {
+              if (index < y.sequences.length) {
+                if (y.sequences[index + 1]) {
+                  if (
+                    elements.find((x) => x.file === z) &&
+                    elements.find((x) => x.file === y.sequences[index + 1])
+                  ) {
+                    cytoRelationships.push({
+                      data: {
+                        source: z,
+                        target: y.sequences[index + 1],
+                        label: y.name,
+                      },
+                    });
+                  }
+                }
+              }
+            });
+          });
+      }
+      return elements.forEach((y) => {
+        if (y[expandedProp]) {
+          return y[expandedProp].forEach((z) => {
+            if (
+              elements.find((x) => x.file === z) &&
+              elements.find((x) => x.file === y.file)
+            ) {
+              cytoRelationships.push({
+                data: {
+                  source: y.file,
+                  target: z,
+                  label: expandedProp,
+                },
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+
+
   return (
     <div className="workspace">
       {!element && <span>The item you are looking for does not exist</span>}
       {element && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
-
           {element.content && (
             <div className="editor">
               <TextEditor
@@ -314,13 +314,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           {renderEditList("fact", "reveals", "revealed_by", "Reveals")}
           {renderEditList("snippet", "revealed_by", "reveals", "Revealed By")}
           {renderEditList("snippet", "sequences", "sequenced_in", "Sequences")}
-          {renderEditList(
-            "thread",
-            "sequenced_in",
-            "sequences",
-            "Sequenced In"
-          )}
-
+          {renderEditList("thread","sequenced_in","sequences","Sequenced In")}
           {renderGraphableEditList("captures", "captured_in", "Captures")}
 
           {element.captures && (
@@ -341,8 +335,6 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
               ></Graph>
             </div>
           )}
-
-          
         </>
       )}
     </div>
