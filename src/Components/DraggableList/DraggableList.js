@@ -7,11 +7,7 @@ import saveFile from "../../utils/saveFile";
 import moveFile from "../../utils/moveFile";
 import { Link } from "react-router-dom";
 import { TiScissors } from "react-icons/ti";
-import {
-  GiSpiderWeb,
-  GiSewingString,
-  GiLightBulb,
-} from "react-icons/gi";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 
 const homedir = window.require("os").homedir();
@@ -23,6 +19,7 @@ const DraggableList = ({
   showCharacterCount = 100,
   showAvatar = true,
   actorUuid,
+  removeFromList,
 }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
@@ -45,7 +42,7 @@ const DraggableList = ({
     //   }
     //   saveFile(globalState.state.dir + moving.file, moving);
     // }
-    onDrop(result,list);
+    onDrop(result, list);
   }
 
   // function remove(file) {
@@ -56,52 +53,57 @@ const DraggableList = ({
   //   console.log("time to refresh!");
   //   onDrop();
   // }
-function determineIcon(element){
-  if(!showAvatar) return null
-  if(element.type==="element"){
-    return <HiPuzzle/>
-  }
-  if(element.type==="fact"){
-    return <GiLightBulb/>
-  }
-  if(element.type==="snippet"){
-    return <TiScissors/>
-  }
-  if(element.type==="thread"){
-    return <GiSewingString/>
-  }
+  function determineIcon(element) {
+    if (!showAvatar) return null;
+    if (element.type === "element") {
+      return <HiPuzzle />;
+    }
+    if (element.type === "fact") {
+      return <GiLightBulb />;
+    }
+    if (element.type === "snippet") {
+      return <TiScissors />;
+    }
+    if (element.type === "thread") {
+      return <GiSewingString />;
+    }
 
-  if(element.type==="web"){
-    return <GiSpiderWeb/>
+    if (element.type === "web") {
+      return <GiSpiderWeb />;
+    }
   }
-}
   function content() {
     if (list) {
       return list.map((x, index) => {
         return (
           <Draggable key={x.uuid} draggableId={x.uuid + ""} index={index}>
             {(provided) => (
-              <Link to={`/elements/${x.file}`}>
-                <div
-                  className={
-                    x.file === globalState.state.activeElement
-                      ? "row selectedRow"
-                      : "row"
-                  }
-                  uuid={x.uuid}
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  onClick={() => {
-                    dispatch({
-                      action: "setActiveElement",
-                      payload: { file: x.file },
-                    });
-                  }}
-                >
-                  {determineIcon(x)} {x.icon} {x.name}
-                </div>
-              </Link>
+              <div className="listItem">
+                <Link to={`/elements/${x.file}`}>
+                  <div
+                    className={
+                      x.file === globalState.state.activeElement
+                        ? "row selectedRow"
+                        : "row"
+                    }
+                    uuid={x.uuid}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    onClick={() => {
+                      dispatch({
+                        action: "setActiveElement",
+                        payload: { file: x.file },
+                      });
+                    }}
+                  >
+                    {determineIcon(x)} {x.icon} {x.name}
+                  </div>
+                </Link>
+                {removeFromList && (
+                  <button className="removeButton" onClick={() => removeFromList(x)}>x</button>
+                )}
+              </div>
             )}
           </Draggable>
         );

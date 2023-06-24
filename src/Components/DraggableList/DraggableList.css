@@ -8,7 +8,15 @@ a{
     overflow-y: hidden;
     text-decoration:wavy;
     color:white;
-
+}
+.listItem{
+    position: relative;
+}
+.removeButton{
+    display: inline-block;
+    position: absolute;
+    top:0px;
+    right:0px;
 }
 .row.selectedRow{
     background-color: rgb(254, 0, 76);

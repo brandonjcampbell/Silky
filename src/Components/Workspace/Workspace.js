@@ -8,8 +8,14 @@ import "./Workspace.css";
 import loadFile from "../../utils/loadFile";
 import moveFile from "../../utils/moveFile";
 import saveFile from "../../utils/saveFile";
+import loadDir from "../../utils/loadDir";
 import DraggableList from "../DraggableList";
 import Graph from "../Graph";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import { GiWhiteBook } from "react-icons/gi";
+import { update } from "lodash";
 
 const Workspace = ({ showAvatar = true, setRefresh }) => {
   const globalState = useContext(store);
@@ -41,6 +47,33 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     return file;
   };
 
+  const addToList = (subject, target, relationship, reflexiveRelationship) => {
+    console.log(subject, target);
+    subject[relationship].push(target.file);
+    target[reflexiveRelationship].push(subject.file);
+    save(subject);
+    save(target);
+  };
+
+  const removeFromList = (
+    subject,
+    target,
+    relationship,
+    reflexiveRelationship
+  ) => {
+    if (subject[relationship] && target[reflexiveRelationship]) {
+      subject[relationship] = subject[relationship].filter(
+        (x) => x !== target.file
+      );
+      target[reflexiveRelationship] = target[reflexiveRelationship].filter(
+        (x) => x !== subject.file
+      );
+    }
+
+    save(subject);
+    save(target);
+  };
+
   let elements, cytoElements, cytoRelationships;
   if (element && element.captures) {
     elements = element.captures.map((x) => {
@@ -57,21 +90,21 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     cytoRelationships = [];
 
     element.expands.forEach((expandedProp) => {
-  
       if (expandedProp === "then") {
         elements
           .filter((x) => x.type === "thread")
           .forEach((y) => {
             y.sequences.forEach((z, index) => {
               if (index < y.sequences.length) {
-                if(y.sequences[index + 1]){
-                cytoRelationships.push({
-                  data: {
-                    source: z,
-                    target: y.sequences[index + 1],
-                    label: y.name,
-                  }
-                })};
+                if (y.sequences[index + 1]) {
+                  cytoRelationships.push({
+                    data: {
+                      source: z,
+                      target: y.sequences[index + 1],
+                      label: y.name,
+                    },
+                  });
+                }
               }
             });
           });
@@ -92,6 +125,57 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     });
   }
 
+  const renderEditList = (
+    elementType,
+    relationship,
+    reflexiveRelationship,
+    label
+  ) => {
+    if (element[relationship]) {
+      return (
+        <div className="editor">
+          <h4>{label}</h4>
+          <DraggableList
+            list={element[relationship].map((x) => loadUp(x))}
+            onDrop={(x) => setRefresh(Date.now())}
+            removeFromList={(x) =>
+              removeFromList(element, x, relationship, reflexiveRelationship)
+            }
+          ></DraggableList>
+          <br />
+          <Stack spacing={2} sx={{ width: 300 }}>
+            <Autocomplete
+              style={{ background: "white" }}
+              id={relationship + "-fact"}
+              clearOnEscape={true}
+              clearOnBlur={true}
+              onChange={(x, value) => {
+                addToList(
+                  element,
+                  loadUp(value.file),
+                  relationship,
+                  reflexiveRelationship
+                );
+              }}
+              options={loadDir(globalState.state.dir)
+                .filter((x) => x.includes(".element."))
+                .map((x) => loadUp(x))
+                .filter(
+                  (x) =>
+                    x.file !== element.file &&
+                    x.type === elementType &&
+                    !element[relationship].includes(x.file)
+                )}
+              getOptionLabel={(x) => x.icon + " " + x.name}
+              renderInput={(params) => {
+                return <TextField {...params} label="search" />;
+              }}
+            />
+          </Stack>
+        </div>
+      );
+    }
+  };
   return (
     <div className="workspace">
       {!element && <span>The item you are looking for does not exist</span>}
@@ -119,85 +203,15 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-          {element.involves && (
-            <div className="editor">
-              <h4>Involving</h4>
-              <DraggableList
-                list={element.involves.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
+          {renderEditList("element", "involves", "involved_in", "Involving")}
+          {renderEditList("fact", "involved_in", "involves", "Involved In")}
+          {renderEditList("fact", "causes", "because", "Causes")}
+          {renderEditList("fact", "because", "causes", "Because")}
+          {renderEditList("fact", "reveals", "revealed_by", "Reveals")}
+          {renderEditList("snippet", "revealed_by","reveals",  "Revealed By")}
+          {renderEditList("snippet", "sequences","sequenced_by",  "Sequences")}
+          {renderEditList("thread", "sequenced_by","sequences",  "Sequenced In")}
 
-          {element.involved_in && (
-            <div className="editor">
-              <h4>Involved In</h4>
-              <DraggableList
-                list={element.involved_in.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.causes && (
-            <div className="editor">
-              <h4>Causes</h4>
-              <DraggableList
-                list={element.causes.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.because && (
-            <div className="editor">
-              <h4>Because</h4>
-              <DraggableList
-                list={element.because.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.reveals && (
-            <div className="editor">
-              <h4>Reveals</h4>
-              <DraggableList
-                list={element.reveals.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.revealed_by && (
-            <div className="editor">
-              <h4>Revealed By</h4>
-              <DraggableList
-                list={element.revealed_by.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.sequences && (
-            <div className="editor">
-              <h4>Sequences</h4>
-              <DraggableList
-                list={element.sequences.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
-
-          {element.sequenced_in && (
-            <div className="editor">
-              <h4>Sequenced In</h4>
-              <DraggableList
-                list={element.sequenced_in.map((x) => loadUp(x))}
-                onDrop={(x) => setRefresh(Date.now())}
-              ></DraggableList>
-            </div>
-          )}
 
           {element.captures && (
             <Graph
