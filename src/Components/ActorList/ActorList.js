@@ -226,7 +226,7 @@ if(ofType==="element"){
     }
     if(ofType==="web"){
       test.captures = [];
-      test.expands=["reveals", "because", "involves", "then", "sequences"];  
+      test.expands=["reveals", "because", "involves", "then"];  
     }
     return test;
   };
