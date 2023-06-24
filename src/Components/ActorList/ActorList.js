@@ -254,6 +254,7 @@ const ActorList = ({ setRefresh }) => {
           onClick={() => {
             const el = newElement();
             saveFile(globalState.state.dir + el.uuid + ".element.json", el);
+            setRefresh(Date.now())
           }}
         >
           +

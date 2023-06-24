@@ -150,15 +150,17 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             <Autocomplete
               style={{ background: "white" }}
               id={relationship + "-fact"}
-              clearOnEscape={true}
-              clearOnBlur={true}
+              clearOnEscape
+              clearOnBlur
               onChange={(x, value) => {
+                if(value && value.file){
                 addToList(
                   element,
                   loadUp(value.file),
                   relationship,
                   reflexiveRelationship
                 );
+                }
               }}
               options={loadDir(globalState.state.dir)
                 .filter((x) => x.includes(".element."))
