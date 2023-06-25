@@ -10,6 +10,8 @@ import uploadPic from "./uploadPic";
 import remove from "./remove";
 import actorIsValid from "./actorIsValid";
 import link from "./link";
+import renameDir from "./renameDir";
+import deleteDir from "./deleteDir";
 export {
   actorToCyto,
   getDisplayName,
@@ -23,4 +25,6 @@ export {
   uploadPic,
   remove,
   link,
+  renameDir,
+  deleteDir
 };

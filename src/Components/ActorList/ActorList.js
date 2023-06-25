@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
 import { store } from "../../NewContext";
 import "./ActorList.css";
-import loadDir from "../../utils/loadDir";
-import loadFile from "../../utils/loadFile";
-import saveFile from "../../utils/saveFile";
+
+import { loadDir, loadFile, saveFile, renameDir } from "../../utils/";
 import DraggableList from "../DraggableList";
 import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
@@ -11,7 +10,7 @@ import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.svg";
-import {emojis} from "../TitleBar/emojis.json"
+import { emojis } from "../TitleBar/emojis.json";
 
 const ActorList = ({ setRefresh }) => {
   const globalState = useContext(store);
@@ -21,11 +20,9 @@ const ActorList = ({ setRefresh }) => {
   const dirs = loadDir(globalState.state.dir).filter((x) =>
     x.includes(".element.")
   );
-  console.log("set Refresh type", typeof(setRefresh))
+  console.log("set Refresh type", typeof setRefresh);
   //setRefresh()
   const navigate = useNavigate();
-
-
 
   const loadUp = (x) => {
     const file = loadFile(globalState.state.dir + x);
@@ -65,41 +62,40 @@ const ActorList = ({ setRefresh }) => {
     const icon = emojis[random];
 
     let test = {
-      name: "New "+ofType,
+      name: "New " + ofType,
       file: uuid + ".element.json",
       type: ofType,
       icon: icon,
       order: 0,
-      uuid: uuid}
-if(ofType==="element"){
-      test.content= " "
-      test.involved_in =[]
-      test.captured_in = []
+      uuid: uuid,
     };
-    if(ofType==="fact"){
-      test.content = []
-      test.causes = []
-      test.because = []
-      test.involves = []  
-      test.revealed_by = []
-      test.captured_in = []
+    if (ofType === "element") {
+      test.content = " ";
+      test.involved_in = [];
+      test.captured_in = [];
     }
-    if(ofType==="snippet"){
-      test.content = ""
-      test.reveals = []
-      test.sequenced_in = []
-      test.captured_in = []
-      
+    if (ofType === "fact") {
+      test.content = [];
+      test.causes = [];
+      test.because = [];
+      test.involves = [];
+      test.revealed_by = [];
+      test.captured_in = [];
     }
-    if(ofType==="thread"){
+    if (ofType === "snippet") {
       test.content = "";
-      test.sequences= [];
-      test.captured_in = []
-      
+      test.reveals = [];
+      test.sequenced_in = [];
+      test.captured_in = [];
     }
-    if(ofType==="web"){
+    if (ofType === "thread") {
+      test.content = "";
+      test.sequences = [];
+      test.captured_in = [];
+    }
+    if (ofType === "web") {
       test.captures = [];
-      test.expands=["reveals", "because", "involves", "then"];  
+      test.expands = ["reveals", "because", "involves", "then"];
     }
     return test;
   };
@@ -114,10 +110,22 @@ if(ofType==="element"){
             alt="silky"
             onClick={() => {
               dispatch({ action: "setProject", payload: { name: "" } });
+
             }}
           />
         </Link>
-        {globalState.state.project}
+
+        <div
+          className="projectName"
+          contentEditable
+          onBlur={(e) => {
+            const newName =e.currentTarget.innerHTML.replace(/[/\\?%*:|"<>]/g, '')
+            renameDir(globalState.state.project, newName );
+            dispatch({ action: "setProject", payload: { name: newName } });
+          }}
+        >
+          {globalState.state.project}
+        </div>
       </div>
       <HiOutlineGlobeAlt
         onClick={() => setType("")}
@@ -154,21 +162,22 @@ if(ofType==="element"){
           onDrop={(result, list) => handleDrop(result, list)}
         ></DraggableList>
 
-        {type && <button
-          onClick={() => {
-            const el = newElement(type);
-            saveFile(globalState.state.dir + el.uuid + ".element.json", el);
-            setFilter(Date.now())
-           navigate('/elements/'+el.file)
-           dispatch({
-            action: "setActiveElement",
-            payload: { file: el.file },
-          })
-
-          }}
-        >
-          + {type}
-        </button>}
+        {type && (
+          <button
+            onClick={() => {
+              const el = newElement(type);
+              saveFile(globalState.state.dir + el.uuid + ".element.json", el);
+              setFilter(Date.now());
+              navigate("/elements/" + el.file);
+              dispatch({
+                action: "setActiveElement",
+                payload: { file: el.file },
+              });
+            }}
+          >
+            + {type}
+          </button>
+        )}
       </div>
     </div>
   );

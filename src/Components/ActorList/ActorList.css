@@ -48,3 +48,8 @@ margin-left:10px;
     height: 50px;
     margin-left: -10px;
   }
+  .projectName{
+    overflow-x: hidden;
+    overflow-y: hidden;
+    line-height:auto;
+  }
