@@ -1,161 +1,183 @@
-import React, { useContext, useState, useEffect } from "react";
-import { store } from "../../MyContext";
-import { styled, alpha } from "@mui/material/styles";
-import TextField from "@material-ui/core/TextField";
-import DraggableList from "../DraggableList";
-import _ from "lodash";
-import FormDialog from "../FormDialog";
-import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
-import { Navigate, useParams} from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { store } from "../../NewContext";
 import "./ActorList.css";
-const ActorList = ({
-  match,
-  type,
-  showAvatar = true,
-  tag = null,
-}) => {
-  const {uuid} = useParams();
-  const actorUuid= uuid;
-  
+
+import { loadDir, loadFile, saveFile, renameDir } from "../../utils/";
+import DraggableList from "../DraggableList";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
+import { HiOutlineGlobeAlt } from "react-icons/hi";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../../images/logo.svg";
+import { emojis } from "../TitleBar/emojis.json";
+
+const ActorList = ({ setRefresh }) => {
   const globalState = useContext(store);
   const { dispatch } = globalState;
-  const [name, setName] = useState("");
-  const [search, setSearch] = useState("");
-  const [active, setActive] = useState(
-    match && match.params && match.params.uuid
-      ? { uuid: match.params.uuid }
-      : null
+  const [filter, setFilter] = useState("");
+  const [type, setType] = useState("element");
+  const dirs = loadDir(globalState.state.dir).filter((x) =>
+    x.includes(".element.")
   );
-  const [count, setCount] = useState(1);
+  console.log("set Refresh type", typeof setRefresh);
+  //setRefresh()
+  const navigate = useNavigate();
 
-
-
-  const handleRowClick = (row) => {
-    setActive(row);
+  const loadUp = (x) => {
+    const file = loadFile(globalState.state.dir + x);
+    return file;
   };
 
-  const SearchIconWrapper = styled("div")(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: "100%",
-    position: "absolute",
-    pointerEvents: "none",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }));
+  function compareOrder(a, b) {
+    return a.order - b.order;
+  }
 
-  const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: "100%",
-    [theme.breakpoints.up("sm")]: {
-      marginLeft: theme.spacing(3),
-      width: "auto",
-    },
-  }));
+  function handleDrop(result, list) {
+    if (result && result.source && result.destination) {
+      const moving = list[result.source.index];
+      const to = list[result.destination.index];
+      if (result.destination.index === 0) {
+        moving.order = to.order - 1;
+      } else if (result.destination.index === list.length - 1) {
+        moving.order = to.order + 1;
+      } else {
+        let toTwo;
+        if (result.source.index > result.destination.index) {
+          toTwo = list[result.destination.index - 1];
+        } else {
+          toTwo = list[result.destination.index + 1];
+        }
+        moving.order = (to.order + toTwo.order) / 2;
+      }
+      saveFile(globalState.state.dir + moving.file, moving);
+      setRefresh(Date.now());
+    }
+  }
 
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "inherit",
-    "& .MuiInputBase-input": {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create("width"),
-      width: "100%",
-      [theme.breakpoints.up("md")]: {
-        width: "20ch",
-      },
-    },
-  }));
+  const newElement = (ofType) => {
+    const uuid = Date.now();
+
+    const random = Math.floor(Math.random() * emojis.length);
+    const icon = emojis[random];
+
+    let test = {
+      name: "New " + ofType,
+      file: uuid + ".element.json",
+      type: ofType,
+      icon: icon,
+      order: 0,
+      uuid: uuid,
+    };
+    if (ofType === "element") {
+      test.content = " ";
+      test.involved_in = [];
+      test.captured_in = [];
+    }
+    if (ofType === "fact") {
+      test.content = [];
+      test.causes = [];
+      test.because = [];
+      test.involves = [];
+      test.revealed_by = [];
+      test.captured_in = [];
+    }
+    if (ofType === "snippet") {
+      test.content = "";
+      test.reveals = [];
+      test.sequenced_in = [];
+      test.captured_in = [];
+    }
+    if (ofType === "thread") {
+      test.content = "";
+      test.sequences = [];
+      test.captured_in = [];
+    }
+    if (ofType === "web") {
+      test.captures = [];
+      test.expands = ["reveals", "because", "involves", "then"];
+    }
+    return test;
+  };
 
   return (
     <div className="ActorList">
-      {globalState.state.project === "Silky" && <Navigate to="/" />}
-      <div className="controls">
-        {type && <FormDialog type={type} />}
-   
-          <TextField
-            className="listSearch"
-            id="outlined-basic"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+      <div className="project">
+        <Link to="/">
+          <img
+            className="logo"
+            src={logo}
+            alt="silky"
+            onClick={() => {
+              dispatch({ action: "setProject", payload: { name: "" } });
+
+            }}
           />
-    
+        </Link>
+
+        <div
+          className="projectName"
+          contentEditable
+          onBlur={(e) => {
+            const newName =e.currentTarget.innerHTML.replace(/[/\\?%*:|"<>]/g, '')
+            renameDir(globalState.state.project, newName );
+            dispatch({ action: "setProject", payload: { name: newName } });
+          }}
+        >
+          {globalState.state.project}
+        </div>
       </div>
+      <HiOutlineGlobeAlt
+        onClick={() => setType("")}
+        className={type === "" ? "tab selected" : "tab"}
+      />
+      <HiPuzzle
+        onClick={() => setType("element")}
+        className={type === "element" ? "tab selected" : "tab"}
+      />
+      <GiLightBulb
+        onClick={() => setType("fact")}
+        className={type === "fact" ? "tab selected" : "tab"}
+      />
+      <TiScissors
+        onClick={() => setType("snippet")}
+        className={type === "snippet" ? "tab selected" : "tab"}
+      />
+      <GiSewingString
+        onClick={() => setType("thread")}
+        className={type === "thread" ? "tab selected" : "tab"}
+      />
+      <GiSpiderWeb
+        onClick={() => setType("web")}
+        className={type === "web" ? "tab selected" : "tab"}
+      />
 
       <div className="content">
         <DraggableList
-          showAvatar={showAvatar}
-          actorUuid={actorUuid}
-          list={globalState.state.actors.filter(
-            (x) =>
-              (!type || (type && x.type === type)) &&
-              (!tag ||
-                globalState.state.actors.find(
-                  (y) =>
-                    Array.isArray(y.subjects) &&
-                    y.subjects.includes(tag) &&
-                    Array.isArray(y.targets) &&
-                    y.targets.includes(x.uuid)
-                )) &&
-              (!search ||
-                _.toLower(x.name).includes(_.toLower(search)) ||
-                globalState.state.actors.find(
-                  (y) =>
-                    y.type === "link" &&
-                    y.name === "TAGS" &&
-                    y.targets &&
-                    Array.isArray(y.targets) &&
-                    y.targets.includes(x.uuid) &&
-                    Array.isArray(y.subjects) &&
-                    globalState.state.actors.find(
-                      (z) =>
-                        y.subjects.includes(z.uuid) &&
-                        _.toLower(z.name).includes(_.toLower(search))
-                    )
-                ))
-          )}
-          handleClick={handleRowClick}
-          saveList={(e) => {
-            if (search) {
-              alert("Clear your search to re-order the list.");
-            }
-            dispatch({
-              action: "saveActors",
-              for: type,
-              payload: {
-                actors: search
-                  ? globalState.state.actors.filter((x) => x.type === type)
-                  : e,
-              },
-            });
-          }}
-          getType={(x) => {
-            return (
-              globalState.state.actors.find((y) => y.uuid === active.uuid)
-                .type + "s"
-            );
-          }}
-          onDrop={() => {}}
-          reorderList={(e) => {
-            dispatch({
-              action: "reorderActors",
-              for: type,
-              payload: {
-                actors: search
-                  ? globalState.state.actors.filter((x) => x.type === type)
-                  : e,
-              },
-            });
-          }}
+          showAvatar={type === "" ? true : false}
+          list={dirs
+            .map((x) => loadUp(x))
+            .filter((y) => type === "" || y.type === type)
+            .sort(compareOrder)}
+          onDrop={(result, list) => handleDrop(result, list)}
         ></DraggableList>
+
+        {type && (
+          <button
+            onClick={() => {
+              const el = newElement(type);
+              saveFile(globalState.state.dir + el.uuid + ".element.json", el);
+              setFilter(Date.now());
+              navigate("/elements/" + el.file);
+              dispatch({
+                action: "setActiveElement",
+                payload: { file: el.file },
+              });
+            }}
+          >
+            + {type}
+          </button>
+        )}
       </div>
     </div>
   );

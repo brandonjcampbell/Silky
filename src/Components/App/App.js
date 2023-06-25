@@ -1,69 +1,71 @@
 import React, { useContext, useState } from "react";
-import { store } from "../../MyContext";
-import { makeStyles } from "@material-ui/core/styles";
-import loadDir from "../../utils/loadDir";
-import makeDir from "../../utils/makeDir";
-import Card from "@material-ui/core/Card";
-import TextField from "@material-ui/core/TextField";
-import { Link } from "react-router-dom";
-
-
-import "./App.css"
-
+import { store } from "../../NewContext";
+import { loadDir, makeDir, deleteDir } from "../../utils/";
+import logo from "../../images/logo.svg";
+import { GiTrashCan } from "react-icons/gi";
+import FormDialog from "../FormDialog/FormDialog";
+import "./App.css";
 
 const App = () => {
   const globalState = useContext(store);
+
   const { dispatch } = globalState;
-  const [makingNewDir, setMakingNewDir] = useState(false);
-  const [name, setName] = useState("");
-
-
+  const [newProject, setNewProject] = useState("");
+  const [trashable, setTrashable] = useState();
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
-      makeDir(e.target.value);
-      setName("");
+      newDir();
     }
   };
 
-
+  const newDir = () => {
+    makeDir(newProject);
+    dispatch({ action: "setProject", payload: { name: newProject } });
+  };
 
   const dirs = loadDir();
 
   return (
-    <div className="projectTray"> 
+    <div className="projectTray">
+      <div>
+        <img className="logo" src={logo}></img>
+        <div className="root projectcard">
+          <input
+            value={newProject}
+            onChange={(x) => setNewProject(x.target.value)}
+            onBlur={() => {
+              newDir();
+            }}
+          ></input>{" "}
+          + New Project{" "}
+        </div>
+      </div>
+
       {dirs.map((x) => {
         return (
-          <Link to={"/elements/"}>
-            <Card
-              className="root"
+          <div className="root projectcard">
+            <FormDialog
+              passOpen={trashable}
+              handleClose={() => setTrashable(null)}
+              handleConfirm={() => {
+                deleteDir(trashable);
+              }}
+            ></FormDialog>
+            <div
+              className="folderName"
               onClick={() => {
                 dispatch({ action: "setProject", payload: { name: x } });
               }}
             >
               {x}
-            </Card>
-          </Link>
+            </div>
+            <div className="folderTools">
+              <GiTrashCan onClick={() => setTrashable(x)} />
+            </div>
+          </div>
         );
       })}
-
-      {makingNewDir && (
-        <Card className="root">
-          <TextField
-            id="outlined-basic"
-            variant="outlined"
-            value={name}
-            onKeyDown={keyPress}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </Card>
-      )}
-
-      {!makingNewDir && (
-        <Card className="root" onClick={() => setMakingNewDir(true)}>
-          + New Project
-        </Card>
-      )}
     </div>
   );
 };

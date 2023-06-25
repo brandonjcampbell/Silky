@@ -1,2 +1,2 @@
-import Graph from "./Graph"
-export default Graph
+import Graph from "./Graph";
+export default Graph;

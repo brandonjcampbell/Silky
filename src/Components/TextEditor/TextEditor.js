@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { store } from "../../MyContext";
-import { AiFillSave } from "react-icons/ai";
+//import { store } from "../../MyContext";
 import "./TextEditor.css";
 import { getDisplayName } from "../../utils";
+import _ from "lodash";
 
 function usePrevious(value) {
   const ref = useRef();
@@ -12,26 +12,30 @@ function usePrevious(value) {
   return ref.current;
 }
 
-const TextEditor = ({ data, save, actorUuid, showAvatar, showTitle=false }) => {
-  const globalState = useContext(store);
+const TextEditor = ({
+  data,
+  save,
+  actorUuid,
+  showAvatar,
+  showTitle = false,
+}) => {
+ // const globalState = useContext(store);
   const prevAmount = usePrevious({ actorUuid, data });
   const [currentBlock, setCurrentBlock] = useState(null);
   const [editorState, setEditorState] = useState();
-  const [dirty, setDirty] = useState(null);
+  const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(0);
   const [current, setCurrent] = useState(data + "");
+  const [recommendation, setRecommendation] = useState();
   const initial = data;
 
   useEffect(() => {
     setEditorState(data);
+    setDirty(false);
   }, []);
 
   useEffect(() => {
-  });
-
-  useEffect(() => {
-    if (!prevAmount || (prevAmount && prevAmount.actorUuid !== actorUuid)) {
-      setCurrentBlock(null);
+    if (!prevAmount || (prevAmount && prevAmount.file !== data)) {
       setEditorState(data);
     }
   }, [actorUuid, data]);
@@ -42,39 +46,45 @@ const TextEditor = ({ data, save, actorUuid, showAvatar, showTitle=false }) => {
   };
 
   const goForIt = () => {
-    save(current, actorUuid);
+    save(current);
     setDirty(null);
   };
 
   const checkKey = (e) => {
-    if (e.ctrlKey && e.key === 's') {
-      //e.preventDefault();
-      console.log("Ididit")
-      goForIt()
+    if (e.ctrlKey && e.key === "s") {
+      goForIt();
     }
   };
 
+  const ref = useRef(null);
+
   return (
     <div className={"contentBlock"}>
-      {showTitle && <div className="editingBlockBanner">
-        <strong>{getDisplayName(actorUuid, globalState)}</strong>
-      </div>}
+
       {dirty && (
-        <AiFillSave
+        <div
           className="unsaved"
           onClick={() => {
             goForIt();
           }}
-        />
+        ></div>
       )}
 
       <div>
         <p
           className="page"
+          id="page"
+          ref={ref}
           contenteditable="true"
           onInput={onEditorStateChange}
           dangerouslySetInnerHTML={{ __html: initial }}
           onKeyDown={checkKey}
+          onBlur={() => {
+            if (ref.current.id !== document.activeElement.id) {
+              console.log("you clicked on something else!");
+              goForIt();
+            }
+          }}
         ></p>
       </div>
     </div>

@@ -3,6 +3,18 @@
   /* background-color: #1b1818; */
 
 
+margin-left:10px;
+}
+
+.tab{
+  color:rgb(48, 48, 48);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  margin: 5px;
+  padding:5px;
+}
+.tab.selected{
+  background-color: white;
 }
 .content{
     overflow-y: auto;
@@ -23,4 +35,21 @@
   .listSearch > * {
     color:white!important;
     padding-left:5px;
+  }
+
+  .logo {
+    height: 35px;
+    margin:10px;
+  }
+  .project{
+    display: flex;
+    vertical-align: middle;
+    line-height: 50px;
+    height: 50px;
+    margin-left: -10px;
+  }
+  .projectName{
+    overflow-x: hidden;
+    overflow-y: hidden;
+    line-height:auto;
   }

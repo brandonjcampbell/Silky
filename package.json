@@ -4,6 +4,14 @@
   "private": true,
   "homepage": "./",
   "main": "./electron/main.js",
+  "build": {
+    "appId": "com.siemens.dmv",
+    "asar": true,
+    "win": {
+      "icon": "./build/icon.ico",
+      "title": "Silky"
+    }
+  },
   "dependencies": {
     "@electron/remote": "^2.0.1",
     "@emotion/react": "^11.7.0",
@@ -26,6 +34,7 @@
     "cytoscape-cola": "^2.5.0",
     "cytoscape-context-menus": "^4.1.0",
     "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-cxtmenu": "^3.4.0",
     "cytoscape-dagre": "^2.3.2",
     "cytoscape-fcose": "^2.1.0",
     "cytoscape-klay": "^3.1.4",
@@ -35,6 +44,7 @@
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "electron-builder": "^22.10.5",
+    "electron-context-menu": "^3.5.0",
     "electron-is-dev": "^2.0.0",
     "lodash": "^4.17.21",
     "material-ui-color": "^1.2.0",
@@ -54,6 +64,7 @@
     "react-reflex": "^4.0.9",
     "react-router-dom": "^6.4.1",
     "react-scripts": "4.0.3",
+    "sentiment": "^5.0.2",
     "styled-components": "^5.3.0",
     "uuid": "^8.3.2",
     "wait-on": "^5.3.0",

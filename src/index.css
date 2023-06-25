@@ -25,13 +25,21 @@ code {
 .App {
   display: flex;
 }
-.logo {
-  height: 55px;
-  z-index: 100;
-  position: fixed;
-  top: 2px;
-  left: 20px;
+.card{
+  background-color: #333030;
+  width:calc(50% - 40px);
+  margin:10px;
+  border-radius: 3px;
+  padding:10px;
+  font-size: 11px;
 }
+
+.action{
+  display: inline-block;
+  position: relative;
+  top:8px;
+}
+
 .Topbar .menuItem {
   padding: 8px;
   margin: 5px;
@@ -77,6 +85,11 @@ code {
   height: calc(100vh - 50px);
   background-color: #1b1818;
   overflow: hidden;
+}
+
+.Tutorial{
+  color:white;
+  margin:30px;
 }
 
 .reflex-container.vertical > .reflex-splitter {

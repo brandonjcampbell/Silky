@@ -1,87 +1,108 @@
 import React, { useContext, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
-import { Link } from "react-router-dom";
-import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
-import Avatar from "../Avatar";
-import { store } from "../../MyContext";
-import { getDisplayName ,actorIsValid} from "../../utils";
+import { store } from "../../NewContext";
 import "./DraggableList.css";
+import saveFile from "../../utils/saveFile";
+import moveFile from "../../utils/moveFile";
+import { Link } from "react-router-dom";
+import { TiScissors } from "react-icons/ti";
+import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { HiPuzzle } from "react-icons/hi";
 
 const homedir = window.require("os").homedir();
 
 const DraggableList = ({
   list,
-  saveList,
-  handleClick,
   onDrop,
   action,
   showCharacterCount = 100,
   showAvatar = true,
   actorUuid,
+  removeFromList,
 }) => {
   const globalState = useContext(store);
-
+  const { dispatch } = globalState;
   function handleOnDragEnd(result) {
-    let clone = _.cloneDeep(list);
-    const [reorderedItem] = clone.splice(result.source.index, 1);
-    clone.splice(result.destination.index, 0, reorderedItem);
-    saveList(clone);
-    onDrop();
+    // if (result && result.source && result.destination) {
+    //   const moving = list[result.source.index];
+    //   const to = list[result.destination.index];
+    //   if (result.destination.index === 0) {
+    //     moving.order = to.order - 1;
+    //   } else if (result.destination.index === list.length - 1) {
+    //     moving.order = to.order + 1;
+    //   } else {
+    //     let toTwo;
+    //     if (result.source.index > result.destination.index) {
+    //       toTwo = list[result.destination.index - 1];
+    //     } else {
+    //       toTwo = list[result.destination.index + 1];
+    //     }
+    //     moving.order = (to.order + toTwo.order) / 2;
+    //   }
+    //   saveFile(globalState.state.dir + moving.file, moving);
+    // }
+    onDrop(result, list);
   }
 
-  function remove(uuid) {
-    let clone = _.cloneDeep(list);
-    clone = clone.filter((x) => x.uuid !== uuid);
-    saveList(clone);
+  // function remove(file) {
+  //   moveFile(
+  //     globalState.state.dir + file,
+  //     globalState.state.dir + "rubbish\\" + file
+  //   );
+  //   console.log("time to refresh!");
+  //   onDrop();
+  // }
+  function determineIcon(element) {
+    if (!showAvatar) return null;
+    if (element.type === "element") {
+      return <HiPuzzle />;
+    }
+    if (element.type === "fact") {
+      return <GiLightBulb />;
+    }
+    if (element.type === "snippet") {
+      return <TiScissors />;
+    }
+    if (element.type === "thread") {
+      return <GiSewingString />;
+    }
+
+    if (element.type === "web") {
+      return <GiSpiderWeb />;
+    }
   }
-
-  function goRenderLabel(x, index) {
-    const displayName = getDisplayName(x.uuid, globalState);
-    if(actorIsValid(globalState,x.uuid)){
-    return (
-
-      <div
-        className={showAvatar ? "row showAvatar" : "row"}
-        onClick={() => {
-          handleClick(x);
-        }}
-      >
-        <Link to={"/" + (x.type ? x.type : "snippet") + "s/" + x.uuid}>
-          <Avatar actor={x} small={true} />
-
-          {displayName.slice(0, showCharacterCount)}
-          {displayName.length > showCharacterCount ? "..." : ""}
-        </Link>
-        {action === "remove" && (
-          <CloseIcon
-            className="draggableRemove"
-            onClick={() => {
-              remove(x.uuid);
-            }}
-          />
-        )}
-        {action === "delete" && <DeleteIcon />}
-      </div>
-         
-    )};
-  }
-
   function content() {
     if (list) {
-      return list.map((x, index) => {
+      return list.filter(x=> x && x.uuid && x.file).map((x, index) => {
         return (
-          <Draggable key={x.uuid} draggableId={x.uuid} index={index}>
+          <Draggable key={x.uuid} draggableId={x.uuid + ""} index={index}>
             {(provided) => (
-              <div
-                className={x.uuid === actorUuid ? "selectedRow" : ""}
-                uuid={x.uuid}
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-              >
-                {goRenderLabel(x, index)}
+              <div className="listItem">
+                <Link to={`/elements/${x.file}`}>
+                  <div
+                    className={
+                      x.file === globalState.state.activeElement
+                        ? "row selectedRow"
+                        : "row"
+                    }
+                    uuid={x.uuid}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    onClick={() => {
+                      dispatch({
+                        action: "setActiveElement",
+                        payload: { file: x.file },
+                      });
+                    }}
+                  >
+                    {determineIcon(x)} {x.icon} {x.name}
+                  </div>
+                </Link>
+                {removeFromList && (
+                  <button className="removeButton" onClick={() => removeFromList(x)}>x</button>
+                )}
               </div>
             )}
           </Draggable>

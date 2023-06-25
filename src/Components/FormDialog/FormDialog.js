@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { store } from "../../MyContext";
+import { store } from "../../NewContext";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
@@ -13,7 +13,8 @@ export default function FormDialog({
   specialOp,
   button = true,
   passOpen = false,
-  handleCloseExtra,
+  handleClose,
+  handleConfirm
 }) {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
@@ -21,66 +22,30 @@ export default function FormDialog({
 
   const { dispatch } = globalState;
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
 
-  const handleClose = () => {
-    setName("");
-    setOpen(false);
-    if (handleCloseExtra) {
-      handleCloseExtra();
-    }
-  };
 
-  const handleAdd = () => {
-    dispatch({
-      action: "add",
-      for: type,
-      payload: {
-        name: name,
-        callback: (e) => {
-          if (specialOp) {
-            specialOp(e);
-          }
-        },
-      },
-      class: "actor",
-    });
-    if (specialOp) {
-    }
+
+
+  const handleNativeConfirm = () => {
+   handleConfirm();
     handleClose();
   };
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
-      handleAdd();
-      setName("");
       handleClose();
     }
   };
 
   return (
     <>
-      {button && <AddIcon class="addButton" onClick={handleClickOpen} />}
-
       <Dialog open={open || passOpen} onClose={handleClose}>
         <DialogContent className="dialog">
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            value={name}
-            fullWidth
-            variant="standard"
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={keyPress}
-          />
+          Are you sure?
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAdd}>Create {type}</Button>
+          <Button onClick={handleNativeConfirm}>Confirm</Button>
         </DialogActions>
       </Dialog>
     </>

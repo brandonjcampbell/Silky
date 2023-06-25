@@ -1,0 +1,8 @@
+To deploy, first
+
+npm run build
+
+THEN
+
+//build command
+npx electron-packager  . --overwrite

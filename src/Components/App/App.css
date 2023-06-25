@@ -1,16 +1,12 @@
 .projectTray{
-  padding:5px;
-  display:flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  max-width: calc(100vw - 100px);
+
+width: 100vw;
+height: 100vh;
+  overflow-y: scroll;
 }
 .root{
-  padding:15px;
-  min-height: 100px;
-  min-width:200px;
-  background:green;
-  margin:5px;
+
+  color: white;
 
 }
 .projectTray a {
@@ -19,4 +15,24 @@
 
 .projectTray a div {
   color:black;
+}
+
+.projectcard:hover .folderName{
+  background-color: rgb(254, 0, 76);
+
+}
+
+.folderName{
+  width: calc(100% - 70px);
+  padding:5px;
+
+  margin:5px;
+  color:white;
+  background:rgb(78, 76, 76);
+  border-radius: 3px;
+  display: inline-block;
+}
+.folderTools{
+  width:45px;
+  display: inline-block;
 }

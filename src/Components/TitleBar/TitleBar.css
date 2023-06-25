@@ -14,7 +14,20 @@
   margin-left: 5px;
   color: white;
 }
-
+.icon{
+  font-size:40px;
+  display: inline-block;
+  padding-top:10px;
+  margin-right:-10px;
+  color: white;
+}
+.typeIcon{
+  font-size:40px;
+  display: inline-block;
+  padding-top:10px;
+  margin-left:10px;
+  color: white;
+}
 .titleEditor {
   color: Red;
 }
@@ -24,7 +37,44 @@
   margin-left: 15px;
   margin-top: 10px;
 }
+.emojiSelector{
+  background-color: rgb(27, 27, 27);
+  position: fixed;
+  height: 100vh;
+  left:0px;
+  top:0px;
+  width: 100vw;
+  z-index: 1000;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-top:50px;
+}
+.emojiSelector button{
+  width: 40px;
+  height: 40px;
+  border:0px;
+  background-color: #4646465e;
+  border-radius: 100px;
+  margin:4px;
+  color:white;
+  font-size: 20px;
+}
+.emojiSelector button:hover{
+  font-size:22px;
+}
 
+.emojiSelector .neverMind{
+  position: fixed;
+  top:1px;
+  right:10px;
+  background-color: white;
+  color: black;
+}
+.emojiSelector button.selected{
+  background-color: rgb(254, 0, 76);
+}
 .delete {
   color: white;
   position: absolute;
