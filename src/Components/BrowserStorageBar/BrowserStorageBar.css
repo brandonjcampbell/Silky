@@ -1,0 +1,30 @@
+.storageBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 6px 14px;
+  background: rgb(19, 18, 18);
+  color: #bbb;
+  font-size: 12px;
+  border-bottom: 1px solid #2a2828;
+}
+.storageBar__actions {
+  display: flex;
+  gap: 6px;
+}
+.storageBar button {
+  background: #333030;
+  color: #ddd;
+  border: 1px solid #4a4646;
+  border-radius: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.storageBar button:hover {
+  background: #444040;
+}
+.storageBar__note {
+  color: #8fb58f;
+}

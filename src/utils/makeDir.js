@@ -1,13 +1,10 @@
-const fs = window.require("fs");
-const homedir = window.require("os").homedir();
-
+import { existsSync, mkdirSync, projectDir } from "../storage";
 const makeDir = (name) => {
-
-  if (!fs.existsSync(`${homedir}\\.silky\\${name}`)) {
-    fs.mkdirSync(`${homedir}\\.silky\\${name}`);
-    fs.mkdirSync(`${homedir}\\.silky\\${name}\\rubbish`);
-    
+  if (!name) return;
+  const dir = projectDir(name);
+  if (!existsSync(dir)) {
+    mkdirSync(dir);
+    mkdirSync(`${dir}rubbish`);
   }
 };
-
 export default makeDir;

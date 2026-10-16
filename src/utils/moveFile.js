@@ -1,8 +1,7 @@
-const fs = window.require("fs");
-const moveFile = (filepath,newFilepath) => {
-  if (fs.existsSync(filepath)) {
-    const data = fs.renameSync(filepath,newFilepath);
-    console.log("all done moving!")
+import { existsSync, renameSync } from "../storage";
+const moveFile = (filepath, newFilepath) => {
+  if (existsSync(filepath)) {
+    renameSync(filepath, newFilepath);
     return true;
   } else return false;
 };

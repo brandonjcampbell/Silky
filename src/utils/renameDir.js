@@ -1,10 +1,10 @@
-const fs = window.require("fs");
-const homedir = window.require("os").homedir();
-
-const renameDir = (name,newName) => {
-  if (fs.existsSync(`${homedir}\\.silky\\${name}`) && !fs.existsSync(`${homedir}\\.silky\\${newName}`)) {
-    fs.renameSync(`${homedir}\\.silky\\${name}`,`${homedir}\\.silky\\${newName}`);
+import { existsSync, renameSync, projectDir } from "../storage";
+const renameDir = (name, newName) => {
+  if (!name || !newName) return;
+  const from = projectDir(name);
+  const to = projectDir(newName);
+  if (existsSync(from) && !existsSync(to)) {
+    renameSync(from, to);
   }
 };
-
 export default renameDir;

@@ -9,6 +9,7 @@ import loadFile from "../../utils/loadFile";
 import moveFile from "../../utils/moveFile";
 import saveFile from "../../utils/saveFile";
 import loadDir from "../../utils/loadDir";
+import { SEP } from "../../storage";
 import DraggableList from "../DraggableList";
 import Graph from "../Graph";
 import TextField from "@mui/material/TextField";
@@ -35,7 +36,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   function remove(file) {
     moveFile(
       globalState.state.dir + file,
-      globalState.state.dir + "rubbish\\" + file
+      globalState.state.dir + "rubbish" + SEP + file
     );
 
     setRefresh(Date.now());
