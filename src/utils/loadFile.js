@@ -1,8 +1,7 @@
-const fs = window.require("fs");
+import { existsSync, readFileSync } from "../storage";
 const loadFile = (filepath) => {
-  if (fs.existsSync(filepath)) {
-    const data = fs.readFileSync(filepath);
-    return JSON.parse(data);
+  if (existsSync(filepath)) {
+    return JSON.parse(readFileSync(filepath));
   } else return null;
 };
 export default loadFile;

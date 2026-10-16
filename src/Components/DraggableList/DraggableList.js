@@ -10,7 +10,6 @@ import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 
-const homedir = window.require("os").homedir();
 
 const DraggableList = ({
   list,

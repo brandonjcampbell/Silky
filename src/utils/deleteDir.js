@@ -1,11 +1,9 @@
-const fs = window.require("fs");
-const homedir = window.require("os").homedir();
-
+import { existsSync, rmSync, projectDir } from "../storage";
 const deleteDir = (name) => {
-
-  if (fs.existsSync(`${homedir}\\.silky\\${name}`)) {
-    fs.rmSync(`${homedir}\\.silky\\${name}`, { recursive: true, force: true });
+  if (!name) return;
+  const dir = projectDir(name);
+  if (existsSync(dir)) {
+    rmSync(dir, { recursive: true, force: true });
   }
 };
-
 export default deleteDir;

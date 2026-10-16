@@ -4,7 +4,7 @@
 
 Most writing tools are a stack of pages. Silky is a graph. The things in your story — characters, places, objects, secrets — are nodes. The prose is attached to the graph, not the other way around. You can write the ending first, discover what it needs, and work backwards.
 
-Built for writers who crave dark themes. Shipped as a desktop app (Electron + React).
+Built for writers who crave dark themes. Runs as a desktop app (Electron + React) or straight in the browser — **try it: https://brandonjcampbell.github.io/Silky/**
 
 ## The model
 
@@ -36,27 +36,44 @@ I demoed this at GraphConnect 2022 (*Weaving Tangled Webs: Using Graphs to Autho
 
 ## Running it
 
+**In the browser** (no install, nothing leaves your machine):
+
+Open https://brandonjcampbell.github.io/Silky/ — or run it locally:
+
+```bash
+npm i
+npm start          # opens http://localhost:3000
+```
+
+Projects are stored in the browser's IndexedDB. In Chrome or Edge you can also **Connect a folder** from the bar at the top to mirror every project to a real directory on disk as the same JSON files the desktop app writes; anywhere else, **Export / Import** moves projects around as a single JSON file.
+
+**As a desktop app:**
+
 ```bash
 npm i
 npm run dev        # React dev server + Electron, concurrently
 ```
 
-Build a packaged executable:
+Projects live in `~/.silky/<project>/` as JSON. Build a packaged executable:
 
 ```bash
 npm run build
 npx electron-packager . --overwrite
 ```
 
-Export to Neo4j (edit the bolt URL and credentials at the top of the script first):
+**Export to Neo4j** (edit the bolt URL and credentials at the top of the script first):
 
 ```bash
 node silkyToCypher.js
 ```
 
+## How the browser build works
+
+All file I/O goes through `src/storage/`, which picks a backend at startup: Node `fs` under Electron, or an in-memory mirror of the virtual filesystem persisted to IndexedDB in the browser (with optional one-way sync to a folder via the File System Access API). The components call the same synchronous `loadDir` / `loadFile` / `saveFile` utilities either way; the browser backend hydrates its mirror before React mounts so those calls never have to become async.
+
 ## Status
 
-Silky is a working prototype and a personal tool, not a supported product. It is very much a work in progress — use caution when writing in it, keep backups, and expect rough edges.
+Silky is a working prototype and a personal tool, not a supported product. It is very much a work in progress — use caution when writing in it, keep backups (Export is one click), and expect rough edges.
 
 ## License
 

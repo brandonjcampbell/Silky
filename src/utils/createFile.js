@@ -1,9 +1,5 @@
-const fs = window.require("fs");
+import { writeFileSync } from "../storage";
 const createFile = (filepath, content) => {
-  if (typeof content !== "string") {
-    fs.writeFileSync(filepath, JSON.stringify(content));
-  } else {
-    fs.writeFileSync(filepath, content);
-  }
+  writeFileSync(filepath, typeof content !== "string" ? JSON.stringify(content) : content);
 };
 export default createFile;

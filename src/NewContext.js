@@ -1,9 +1,6 @@
 import React, { createContext, useReducer } from "react";
-import loadDir from "./utils/loadDir";
 import _ from "lodash";
-const homedir = window.require("os").homedir();
-
-console.log("try it");
+import { projectDir } from "./storage";
 
 let initialState = {
   project: "",
@@ -22,10 +19,8 @@ const setProject = (state, action) => {
     newState.project = "";
     newState.dir = ``;
   } else {
-    //const results = loadDir(`${homedir}\\.silky\\${action.payload.name}\\`);
-
     newState.project = action.payload.name;
-    newState.dir = `${homedir}\\.silky\\${action.payload.name}\\`;
+    newState.dir = projectDir(action.payload.name);
 
     if (action.payload.callback) {
       action.payload.callback();
