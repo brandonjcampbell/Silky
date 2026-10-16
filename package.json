@@ -5,7 +5,7 @@
   "homepage": "./",
   "main": "./electron/main.js",
   "build": {
-    "appId": "com.siemens.dmv",
+    "appId": "com.woolylittleguys.silky",
     "asar": true,
     "win": {
       "icon": "./build/icon.ico",
