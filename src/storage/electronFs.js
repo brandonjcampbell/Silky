@@ -3,9 +3,12 @@
  * before the storage layer existed. Only loaded when window.require exists.
  */
 
+// Never call window.require at module scope: this file is imported by the
+// browser bundle too (storage/index.js picks a backend at runtime).
 const req = (m) => window.require(m);
+const hasRequire = () => typeof window !== "undefined" && typeof window.require === "function";
 
-export const SEP = req("path").sep;
+export const SEP = hasRequire() ? req("path").sep : "/";
 
 export const homedir = () => req("os").homedir();
 
