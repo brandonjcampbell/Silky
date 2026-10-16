@@ -6,6 +6,8 @@ Most writing tools are a stack of pages. Silky is a graph. The things in your st
 
 Built for writers who crave dark themes. Runs as a desktop app (Electron + React) or straight in the browser — **try it: https://brandonjcampbell.github.io/Silky/**
 
+![A Silky web: elements, facts, snippets and threads laid out as a graph, with involves / because / reveals edges between them](docs/silky-graph.png)
+
 ## The model
 
 Silky stores a project as four kinds of *actors* and the edges between them:
@@ -20,6 +22,14 @@ Silky stores a project as four kinds of *actors* and the edges between them:
 Because facts depend on facts and snippets reveal facts, the graph can answer questions a page stack can't: *What does the reader know at this point? What has to be established before this scene can land? Which threads touch this character?*
 
 The graph view is Cytoscape with a dozen layout engines; the editor is a rich-text workspace with element references inline.
+
+![Editing a snippet: the prose, the facts it reveals, and the thread it is sequenced in](docs/silky-snippet.png)
+
+*A snippet. The prose is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph.*
+
+![A web's capture list, with every actor in the project pulled into one graph](docs/silky-web.png)
+
+*A **web** captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
 ## Neo4j
 
