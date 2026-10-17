@@ -29,7 +29,7 @@ export const PROVIDERS = [
     name: "Anthropic",
     note: "Claude models via the Messages API.",
     baseUrl: "https://api.anthropic.com",
-    model: "claude-sonnet-4-5",
+    model: "claude-sonnet-5-5",
     needsKey: true,
     jsonMode: false,
   },

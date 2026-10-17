@@ -77,9 +77,10 @@ const errorText = async (r) => {
   } catch (e) {
     try { detail = await r.text(); } catch (e2) { /* ignore */ }
   }
-  if (r.status === 401 || r.status === 403) return "The endpoint rejected the API key (" + r.status + ").";
-  if (r.status === 404) return "Model or endpoint not found (404). Check the base URL and model name.";
-  return "Request failed (" + r.status + ")" + (detail ? ": " + String(detail).slice(0, 300) : "");
+  const d = detail ? " — " + String(detail).slice(0, 300) : "";
+  if (r.status === 401 || r.status === 403) return "The endpoint rejected the API key (" + r.status + ")." + d;
+  if (r.status === 404) return "Not found (404): check the base URL and that the model id is current." + d;
+  return "Request failed (" + r.status + ")" + d;
 };
 
 /** Pull a JSON object out of model output, tolerating fences and chatter. */
