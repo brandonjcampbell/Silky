@@ -10,8 +10,10 @@ import { ready, isElectron } from "./storage";
 import BrowserStorageBar from "./Components/BrowserStorageBar";
 import { applyTheme } from "./theme";
 import ModelStatus from "./Components/ModelStatus";
+import { applyShowAi } from "./provenance";
 
 applyTheme();
+applyShowAi();
 
 // In the browser the storage layer hydrates its in-memory mirror from
 // IndexedDB before anything renders, so the synchronous file utils the

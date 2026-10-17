@@ -307,7 +307,7 @@ export const writeProject = (name, scenes, model) => {
 
   // plot threads the model traced: each sequences a subset of the scenes
   ((model && model.threads) || []).forEach((t) => {
-    const th = mk("thread", t.name, t.icon || "🧵", { content: t.description ? toHtml(t.description) : "", sequences: [] });
+    const th = mk("thread", t.name, t.icon || "🧵", { content: t.description ? toHtml(t.description) : "", sequences: [], origin: "spinner-import" });
     t.scenes.forEach((si) => {
       const sn = snippets[si];
       if (sn) {
@@ -325,11 +325,12 @@ export const writeProject = (name, scenes, model) => {
       const el = mk("element", e.name, e.icon || KIND_ICON[e.kind] || "🔹", {
         content: e.description ? toHtml(e.description) : " ",
         involved_in: [],
+        origin: "spinner-import",
       });
       elementByKey.set(e.key, el);
     });
     model.facts.forEach((f) => {
-      const fact = mk("fact", f.statement, "💡", { content: [], causes: [], because: [], involves: [], revealed_by: [] });
+      const fact = mk("fact", f.statement, "💡", { content: [], causes: [], because: [], involves: [], revealed_by: [], origin: "spinner-import" });
       f.involves.forEach((k) => {
         const el = elementByKey.get(k);
         if (el) {

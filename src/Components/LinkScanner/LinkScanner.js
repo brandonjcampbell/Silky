@@ -98,14 +98,14 @@ const LinkScanner = ({ element, onChange }) => {
   };
   const createElement = ({ name, icon, description }) => {
     const uuid = "element-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-    const a = { name, file: uuid + ".element.json", type: "element", icon: icon || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [] };
+    const a = { name, file: uuid + ".element.json", type: "element", icon: icon || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [], origin: "spinner-scan" };
     save(a); return a;
   };
   const createFact = ({ statement, involves }) => {
     const all = actors();
     const s = fresh();
     const uuid = "fact-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-    const f = { name: statement, file: uuid + ".element.json", type: "fact", icon: "💡", order: Date.now(), uuid, content: [], causes: [], because: [], involves: [], revealed_by: [s.file], captured_in: [] };
+    const f = { name: statement, file: uuid + ".element.json", type: "fact", icon: "💡", order: Date.now(), uuid, content: [], causes: [], because: [], involves: [], revealed_by: [s.file], captured_in: [], origin: "spinner-scan" };
     involves.forEach((n) => {
       const e = all.find((a) => a.type === "element" && a.name.toLowerCase() === String(n).toLowerCase());
       if (e) { f.involves.push(e.file); e.involved_in = e.involved_in || []; e.involved_in.push(f.file); save(e); }

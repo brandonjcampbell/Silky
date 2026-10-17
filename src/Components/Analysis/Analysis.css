@@ -124,3 +124,17 @@
 .chart__line--4 { stroke: #c792ea; background: #c792ea; }
 .chart__line--5 { stroke: #ff9f6b; background: #ff9f6b; }
 .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-muted); margin: 6px 0 0; }
+
+/* AI influence */
+.analysis button.danger { color: var(--accent); border-color: var(--accent); }
+.analysis button.danger:hover:not(:disabled) { color: #fff; background: var(--accent); }
+.insertion__text { font-family: var(--font-prose); font-size: 15px; line-height: 1.55; white-space: pre-wrap; }
+.insertion.is-removed .insertion__text, .insertion.is-unmarked .insertion__text { color: var(--ink-muted); text-decoration: line-through; }
+.insertion.is-unmarked .insertion__text { text-decoration: none; }
+.insertion__orig { font-size: 13px; color: var(--ink-muted); }
+.insertion__orig summary { cursor: pointer; }
+.insertion__orig p { font-family: var(--font-prose); margin: 6px 0 0; }
+.tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); }
+.tag--verbatim { border-color: var(--accent); color: var(--accent); }
+.tag--edited { border-color: #ffc857; color: #ffc857; }
+.tag--removed, .tag--unmarked { color: var(--ink-muted); }

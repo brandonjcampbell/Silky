@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader } from "react-icons/fa";
+import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint } from "react-icons/fa";
+import { loadProvenance, insertionStatus, aiWords, removeFromHtml, unmarkInHtml, getShowAi, setShowAi } from "../../provenance";
+import { saveFile } from "../../utils/";
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
 import { plain, wordCount, styleStats, dialogueRatio, sentences, fmt, pct } from "../../analysis/text";
@@ -13,6 +15,7 @@ export const ANALYSES = [
   { id: "pacing", name: "Pacing", icon: FaTachometerAlt, blurb: "Scene lengths, dialogue and sentence rhythm across the book." },
   { id: "style", name: "Style", icon: FaFeatherAlt, blurb: "Sentence length, dialogue, adverbs, filter words, vocabulary." },
   { id: "reader", name: "Reader", icon: FaBookReader, blurb: "A model reads it cold and tells you how it landed." },
+  { id: "influence", name: "AI influence", icon: FaFingerprint, blurb: "Every passage Spinner wrote, where it is now, and how to take it out." },
 ];
 
 export const analysisById = (id) => ANALYSES.find((a) => a.id === id);
@@ -619,9 +622,123 @@ const MultiLine = ({ series, labels, height = 180 }) => {
   );
 };
 
+/* ── AI influence ─────────────────────────────────────────────────────── */
+
+const Influence = () => {
+  const { dir, actors, snippets, byFile } = useProject();
+  const [tick, setTick] = useState(0);
+  const [showAi, setShow] = useState(getShowAi());
+  const data = useMemo(() => loadProvenance(dir), [dir, tick]); // eslint-disable-line react-hooks/exhaustive-deps
+  const refresh = () => setTick((t) => t + 1);
+
+  const rows = data.insertions.map((ins) => {
+    const s = byFile.get(ins.file);
+    const st = s ? insertionStatus(s.content, ins) : { status: "removed", similarity: 0, words: 0 };
+    return { ins, s, ...st };
+  });
+  const byScene = new Map();
+  rows.forEach((r) => { const k = r.ins.file; if (!byScene.has(k)) byScene.set(k, []); byScene.get(k).push(r); });
+  const sceneTotals = snippets.map((s) => ({ s, ...aiWords(s.content) })).filter((x) => x.ai > 0);
+  const totalAi = sceneTotals.reduce((n, x) => n + x.ai, 0);
+  const totalWords = snippets.reduce((n, x) => n + aiWords(x.content).total, 0);
+  const live = rows.filter((r) => r.status === "verbatim" || r.status === "edited");
+  const aiActors = actors.filter((a) => a.origin && a.origin !== "author");
+
+  const act = (fn, file, id) => {
+    const s = loadFile(dir + file);
+    if (!s) return;
+    s.content = fn(s.content, id);
+    saveFile(dir + s.file, s);
+    refresh();
+  };
+  const removeOne = (file, id) => act(removeFromHtml, file, id);
+  const unmarkOne = (file, id) => act(unmarkInHtml, file, id);
+  const removeScene = (file) => act(removeFromHtml, file, null);
+  const unmarkScene = (file) => act(unmarkInHtml, file, null);
+  const removeAll = () => { snippets.forEach((s) => { if (aiWords(s.content).ai) act(removeFromHtml, s.file, null); }); };
+  const unmarkAll = () => { snippets.forEach((s) => { if (aiWords(s.content).ai) act(unmarkInHtml, s.file, null); }); };
+  const toggleShow = () => { setShowAi(!showAi); setShow(!showAi); };
+
+  return (
+    <div className="analysis">
+      <div className="stats">
+        <Stat label="words traced to Spinner" value={fmt(totalAi)} sub={totalWords ? `${pct(totalAi / totalWords)} of ${fmt(totalWords)} words in scenes` : "no scenes yet"} />
+        <Stat label="insertions still present" value={fmt(live.length)} sub={`${rows.filter((r) => r.status === "verbatim").length} verbatim · ${rows.filter((r) => r.status === "edited").length} rewritten`} />
+        <Stat label="insertions removed" value={fmt(rows.filter((r) => r.status === "removed").length)} sub={`${rows.filter((r) => r.status === "unmarked").length} un-marked (text kept)`} />
+        <Stat label="actors Spinner made" value={fmt(aiActors.length)} sub="facts and elements from import or scans" />
+      </div>
+
+      <div className="reader__bar" style={{ marginTop: 14 }}>
+        <label className="check" style={{ margin: 0 }}><input type="checkbox" checked={showAi} onChange={toggleShow} /> Underline AI text in the editor</label>
+        <span className="spacer" style={{ flex: 1 }} />
+        {totalAi > 0 && <button type="button" onClick={unmarkAll} title="Keep every word, drop the markers everywhere">Un-mark all</button>}
+        {totalAi > 0 && <button type="button" onClick={() => { if (window.confirm(`Remove ${fmt(totalAi)} words of Spinner's prose from ${sceneTotals.length} scene${sceneTotals.length === 1 ? "" : "s"}? This cannot be undone.`)) removeAll(); }} className="danger">Remove all AI text</button>}
+      </div>
+
+      <h3>By scene <small>how much of each scene's wording still traces to Spinner, including passages you have since rewritten</small></h3>
+      {sceneTotals.length === 0 && <p className="muted">No scene contains Spinner's prose{data.insertions.length ? " any more" : ""}.</p>}
+      {sceneTotals.length > 0 && (
+        <table className="analysis__table">
+          <thead><tr><th>Scene</th><th className="num">AI words</th><th className="num">Of scene</th><th className="bar"></th><th></th></tr></thead>
+          <tbody>
+            {sceneTotals.sort((a, b) => b.ai / b.total - a.ai / a.total).map((x) => (
+              <tr key={x.s.file}>
+                <td><Link to={"/elements/" + x.s.file}>{x.s.icon} {x.s.name}</Link></td>
+                <td className="num">{fmt(x.ai)}</td>
+                <td className="num">{pct(x.ai / Math.max(x.total, 1))}</td>
+                <td className="bar"><i style={{ width: `${Math.min(100, (x.ai / Math.max(x.total, 1)) * 100)}%` }} /></td>
+                <td className="num"><button type="button" onClick={() => unmarkScene(x.s.file)}>Un-mark</button> <button type="button" onClick={() => removeScene(x.s.file)}>Remove</button></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      <h3>Every insertion <small>what Spinner wrote, when, and what became of it</small></h3>
+      {rows.length === 0 && <p className="muted">Nothing has been inserted from Spinner yet. Ideas you insert from a scene’s “Ask Spinner for ideas” panel are logged here.</p>}
+      <div className="notes">
+        {[...byScene.entries()].map(([file, list]) => {
+          const s = byFile.get(file);
+          return (
+            <div key={file}>
+              <h4>{s ? <Link to={"/elements/" + s.file}>{s.icon} {s.name}</Link> : <span className="muted">deleted scene</span>}</h4>
+              {list.sort((a, b) => b.ins.at - a.ins.at).map((r) => (
+                <article key={r.ins.id} className={"note insertion is-" + r.status}>
+                  <header>
+                    <span><span className={"tag tag--" + r.status}>{r.status === "verbatim" ? "verbatim" : r.status === "edited" ? `rewritten · ${pct(r.similarity)} original` : r.status === "unmarked" ? "un-marked, text kept" : "removed"}</span> <span className="muted">{new Date(r.ins.at).toLocaleString()} · {r.ins.kind}{r.ins.model ? ` · ${r.ins.model}` : ""} · {r.ins.words} words</span></span>
+                    {(r.status === "verbatim" || r.status === "edited") && s && (
+                      <span className="note__meta">
+                        <button type="button" onClick={() => unmarkOne(file, r.ins.id)} title="Keep the words, drop the mark">Un-mark</button>{" "}
+                        <button type="button" onClick={() => removeOne(file, r.ins.id)} title="Delete this passage from the scene">Remove</button>
+                      </span>
+                    )}
+                  </header>
+                  <p className="insertion__text">{r.status === "edited" && r.now ? r.now : r.ins.text}</p>
+                  {r.status === "edited" && <details className="insertion__orig"><summary>As Spinner wrote it</summary><p>{r.ins.text}</p></details>}
+                  {r.ins.prompt && <p className="muted">Asked: “{r.ins.prompt}”</p>}
+                </article>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+
+      {aiActors.length > 0 && (
+        <>
+          <h3>Actors Spinner created <small>facts and elements from the manuscript import or link scans — the model's reading, not its prose</small></h3>
+          <ul className="plainList">
+            {aiActors.slice(0, 200).map((a) => <li key={a.file}><Link to={"/elements/" + a.file}>{a.icon} {a.name}</Link> <span className="muted">{a.type} · {a.origin}</span></li>)}
+            {aiActors.length > 200 && <li className="muted">…and {fmt(aiActors.length - 200)} more</li>}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+};
+
 /* ── shell ────────────────────────────────────────────────────────────── */
 
-const VIEWS = { wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader };
+const VIEWS = { wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
 
 const Analysis = () => {
   const { id } = useParams();

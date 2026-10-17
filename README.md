@@ -33,6 +33,10 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 *A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
+## Ideas, and knowing what the model wrote
+
+Under a snippet's editor, **Ask Spinner for ideas** offers prompts — what happens next, continue the scene, a line of dialogue, describe the setting, a complication, deepen a character, questions a reader would ask, or anything you type — and returns three suggestions in the manuscript's voice, built only from the scene and the project's facts. **Insert** drops one at the cursor, wrapped as Spinner's and logged. **Show AI text** underlines every such passage in the editor. The **AI influence** analysis reports how many words in each scene still trace to Spinner (including passages you have since rewritten, with how much of the original wording survives), lists every insertion with when and why it was asked for, and can un-mark (keep the words) or remove (delete them) one insertion, one scene, or everything. Facts, elements and threads that Spinner created through import or scans carry an `origin` and are listed there too.
+
 ## Scanning a scene for links
 
 Under a snippet's editor, **Scan for links** reads the scene's text and proposes what it should be connected to: the elements it mentions; facts involving them that the scene plausibly reveals (scored by how many of the fact's elements appear and how much of its wording does, with unplaced facts flagged); threads whose cast overlaps the scene's; webs that capture most of its cast; and capitalised names that aren't elements yet. Each suggestion has an Add or Create button; **Ask Spinner** has the model read the scene to confirm which candidate facts it truly establishes and to list new facts and elements the project doesn't have.
