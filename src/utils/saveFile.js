@@ -16,5 +16,8 @@ const saveFile = (filepath, content) => {
     try { trackProgress(filepath, prev, content); } catch (e) { /* the log is best-effort */ }
   }
   writeFileSync(filepath, typeof out !== "string" ? JSON.stringify(out) : out);
+  if (typeof window !== "undefined" && /\.element\.json$/.test(filepath) && out && typeof out === "object") {
+    try { window.dispatchEvent(new CustomEvent("silky-saved", { detail: { path: filepath, type: out.type, file: out.file } })); } catch (e) { /* ignore */ }
+  }
 };
 export default saveFile;

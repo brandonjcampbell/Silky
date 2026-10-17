@@ -11,6 +11,7 @@ import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
 import Welcome from "../Welcome";
+import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
 import "./Shell.css";
 
@@ -30,6 +31,12 @@ const Shell = () => {
   // on a phone the list shows when nothing is open, and as a drawer otherwise
   const [drawer, setDrawer] = useState(false);
   useEffect(() => { setDrawer(false); }, [pathname]);
+  // Flow mode changes the model behind the scenes; re-render when it does
+  useEffect(() => {
+    const on = () => setRefresh(Date.now());
+    window.addEventListener("silky-flow-changed", on);
+    return () => window.removeEventListener("silky-flow-changed", on);
+  }, []);
 
   const editor = (
     <div className="editorPane">
@@ -51,6 +58,7 @@ const Shell = () => {
   if (mobile) {
     return (
       <div className="View View--mobile">
+        <FlowToasts dir={state.dir} />
         {!hasContent || drawer ? (
           <div
             className={"left-pane mobileList" + (drawer ? " is-drawer" : "")}
@@ -71,6 +79,7 @@ const Shell = () => {
 
   return (
     <div className="View">
+      <FlowToasts dir={state.dir} />
       <ReflexContainer orientation="vertical">
         <ReflexElement className="left-pane" flex={0.2} minSize={200}>
           <div className="List"><ActorList setRefresh={doRefresh} /></div>

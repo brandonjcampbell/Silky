@@ -11,7 +11,8 @@
 .ideas.is-open .ideas__toggle { color: var(--ink); border-color: var(--accent); }
 .ideas__show { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); font-size: 12px; cursor: pointer; }
 .ideas__show input { accent-color: var(--accent); margin: 0; }
-.ideas__report { font-size: 12px; color: var(--ink-muted); text-decoration: underline; margin-left: auto; }
+.ideas__report { font-size: 12px; color: var(--ink-muted); text-decoration: underline; }
+.ideas .flowControl { margin-left: auto; }
 .ideas__report:hover { color: var(--accent); }
 .ideas .muted { color: var(--ink-muted); }
 .ideas__body { margin-top: 10px; padding: 12px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 10px; }

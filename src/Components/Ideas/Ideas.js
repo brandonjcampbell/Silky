@@ -10,6 +10,7 @@ import { newId, wrapForInsert, recordInsertion, getShowAi, setShowAi, applyShowA
 import { reviseScene } from "../../llm/revise";
 import { sceneText, weave } from "../../revise";
 import Revision from "../Revision";
+import FlowControl from "../Flow/FlowControl";
 import "./Ideas.css";
 
 const PAGE_SEL = ".workspace .contentBlock--scene .page[contenteditable]";
@@ -170,6 +171,7 @@ const Ideas = ({ element, onChange }) => {
           <input type="checkbox" checked={showAi} onChange={toggleShow} /> Show AI text
         </label>
         <Link className="ideas__report" to="/analysis/influence">AI influence report</Link>
+        <FlowControl />
       </div>
 
       {open && (
