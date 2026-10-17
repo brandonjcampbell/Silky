@@ -99,7 +99,8 @@
 .page li { margin: 0.2em 0; }
 .page hr {
   border: 0;
-  height: 0;
+  height: auto;
+  overflow: visible;   /* the UA sheet hides overflow on hr, which would clip the glyph */
   margin: 1.8em auto;
   text-align: center;
   color: var(--ink-muted);
