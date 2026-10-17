@@ -67,6 +67,8 @@
   outline: none;
   caret-color: var(--accent);
 }
+/* keyboard focus is shown by the caret and the toolbar; keep the ring quiet */
+.page:focus-visible { outline: 1px solid var(--line); outline-offset: 0; }
 .page:empty::before,
 .page:has(> br:only-child)::before {
   content: attr(data-placeholder);
@@ -103,6 +105,7 @@
   color: var(--ink-muted);
 }
 .page hr::after {
+  display: block;
   content: "* * *";
   font-size: 0.9em;
   letter-spacing: 0.4em;
