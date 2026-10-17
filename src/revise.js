@@ -80,9 +80,10 @@ export const tokenizeText = (text) => {
   return tokens;
 };
 
-// Words match on their core: a changed comma or capital doesn't make the
-// writer's word Spinner's (the new surface form is kept, the provenance isn't).
-const key = (tk) => (tk.t === "¶" ? "\n" : tk.w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "").toLowerCase() || tk.w);
+// Words match on their core: a changed comma doesn't make the writer's word
+// Spinner's (the new surface form is kept, the provenance isn't). Case still
+// counts, so a stray "the" doesn't pair with the "The" that opens a sentence.
+const key = (tk) => (tk.t === "¶" ? "\n" : tk.w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, "") || tk.w);
 
 /** LCS alignment → [{ type: "same"|"del"|"ins", tok, i? }] */
 export const align = (A, B) => {
