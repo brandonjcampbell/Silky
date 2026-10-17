@@ -200,7 +200,7 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
           {result.failed > 0 && (
             <p className="hint">{result.failed} scene{result.failed === 1 ? "" : "s"} couldn’t be read by the model and were imported as text only.</p>
           )}
-          <p className="hint">Everything is a draft: the whole web is in a web called “{result.project} — whole web”, and the scenes run in order in the “Manuscript” thread{result.threads ? `, alongside ${result.threads} plot thread${result.threads === 1 ? "" : "s"} the model traced` : ""}.</p>
+          <p className="hint">Everything is a draft. The scenes run in order in the “Manuscript” thread{result.threads ? `, alongside ${result.threads} plot thread${result.threads === 1 ? "" : "s"} the model traced, each with a web of its own` : ""}; the principal cast has a web, and the whole project does when it is small enough to read.</p>
         </>
       )}
     </Modal>

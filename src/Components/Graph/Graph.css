@@ -1,0 +1,39 @@
+.graph { position: absolute; inset: 0; }
+.graph > div:last-child { position: absolute; inset: 0; }
+
+.graph__tools {
+  position: absolute;
+  z-index: 5;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px;
+  background: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(6px);
+}
+.graph__tools select,
+.graph__tools button {
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 4px 7px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.graph__tools select { padding-right: 4px; }
+.graph__tools select option { background: var(--bg-raised); color: var(--ink); }
+.graph__tools button:hover:not(:disabled) { color: var(--ink); background: var(--bg-hover); }
+.graph__tools button:disabled { opacity: 0.5; cursor: default; }
+.graph__tools button.is-on { color: var(--ink); border-color: var(--line); }
+.graph__tools button.is-accent { color: #fff; background: var(--accent); }
+.graph__tools button.is-accent:hover:not(:disabled) { color: #fff; background: var(--accent); filter: brightness(1.12); }
+.graph__count { font-size: 11px; color: var(--ink-muted); padding: 0 6px 0 4px; font-variant-numeric: tabular-nums; }

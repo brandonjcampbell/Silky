@@ -227,7 +227,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     });
     cytoElements = elements.map((x) => {
       return {
-        data: { id: x.file, label: x.icon + " " + x.name },
+        data: { id: x.file, label: x.icon + " " + x.name, type: x.type },
         position: x.position,
       };
     });
@@ -250,6 +250,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                         source: z,
                         target: y.sequences[index + 1],
                         label: y.name,
+                        kind: "then",
                       },
                     });
                   }
@@ -415,6 +416,12 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                       return y;
                     });
                     element.captures = temp;
+                    save(element);
+                  }}
+                  onPositions={(pos) => {
+                    element.captures = element.captures.map((c) =>
+                      pos[c.file] ? { ...c, x: Math.round(pos[c.file].x), y: Math.round(pos[c.file].y) } : c
+                    );
                     save(element);
                   }}
                 ></Graph>

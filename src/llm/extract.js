@@ -356,22 +356,60 @@ export const writeProject = (name, scenes, model) => {
     });
   }
 
-  // web: everything, laid out in rings
-  const web = mk("web", `${name} — whole web`, "🕸️", { captures: [], expands: ["reveals", "because", "involves", "then"] });
-  const groups = [
-    ["element", 500, 320],
-    ["fact", 330, 210],
-    ["snippet", 170, 100],
-    ["thread", 60, 30],
-  ];
-  groups.forEach(([type, rx, ry]) => {
-    const items = actors.filter((a) => a.type === type);
-    items.forEach((a, i) => {
-      const ang = (2 * Math.PI * i) / Math.max(items.length, 1);
-      web.captures.push({ file: a.file, x: Math.round(600 + rx * Math.cos(ang)), y: Math.round(420 + ry * Math.sin(ang)) });
-      a.captured_in.push(web.file);
+  // webs. Nodes are laid out in rings by type so a web opens readable; the
+  // layout toolbar can rearrange and save them.
+  const ringLayout = (web, members) => {
+    const groups = [
+      ["element", 520, 330],
+      ["fact", 340, 215],
+      ["snippet", 170, 100],
+      ["thread", 60, 30],
+    ];
+    groups.forEach(([type, rx, ry]) => {
+      const items = members.filter((a) => a.type === type);
+      items.forEach((a, i) => {
+        const ang = (2 * Math.PI * i) / Math.max(items.length, 1);
+        web.captures.push({ file: a.file, x: Math.round(600 + rx * Math.cos(ang)), y: Math.round(420 + ry * Math.sin(ang)) });
+        a.captured_in.push(web.file);
+      });
     });
-  });
+  };
+  const makeWeb = (title, members, expands) => {
+    const web = mk("web", title, "🕸️", { captures: [], expands });
+    ringLayout(web, members);
+    return web;
+  };
+  const byFile = new Map(actors.map((a) => [a.file, a]));
+
+  // one web per plot thread: its scenes, the facts they reveal, and the
+  // cast that recurs in those facts
+  actors
+    .filter((a) => a.type === "thread" && a.name !== "Manuscript")
+    .forEach((th) => {
+      const sceneActors = th.sequences.map((f) => byFile.get(f)).filter(Boolean);
+      const factSet = new Map();
+      sceneActors.forEach((sn) => sn.reveals.forEach((f) => factSet.set(f, byFile.get(f))));
+      const factActors = [...factSet.values()].filter(Boolean);
+      const elCount = new Map();
+      factActors.forEach((fa) => fa.involves.forEach((f) => elCount.set(f, (elCount.get(f) || 0) + 1)));
+      const min = factActors.length > 60 ? 2 : 1;
+      const elActors = [...elCount.entries()].filter(([, n]) => n >= min).map(([f]) => byFile.get(f)).filter(Boolean);
+      makeWeb(`${th.name} — web`, [th, ...sceneActors, ...factActors, ...elActors], ["reveals", "because", "involves", "then"]);
+    });
+
+  // principal cast: the most-involved elements and the facts that tie them together
+  const elementsAll = actors.filter((a) => a.type === "element");
+  if (elementsAll.length > 12) {
+    const top = [...elementsAll].sort((a, b) => b.involved_in.length - a.involved_in.length).slice(0, 12);
+    const topSet = new Set(top.map((a) => a.file));
+    const need = elementsAll.length > 60 ? 3 : 2;
+    const ties = actors.filter((a) => a.type === "fact" && a.involves.filter((f) => topSet.has(f)).length >= need);
+    if (ties.length) makeWeb("Principal cast — web", [...top, ...ties], ["involves", "because"]);
+  }
+
+  // the whole thing, only while it is still legible
+  const everything = actors.filter((a) => a.type !== "web");
+  if (everything.length <= 300) makeWeb(`${name} — whole web`, everything, ["reveals", "because", "involves", "then"]);
 
   actors.forEach((a) => writeFileSync(dir + a.file, JSON.stringify(a)));
   return name;
