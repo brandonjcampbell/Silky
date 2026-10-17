@@ -1,24 +1,24 @@
-/* Sidebar: project title, type tabs, the actor list. */
+/* Sidebar: project title across the top; a vertical activity bar of kinds
+   down the left; the list beside it. */
 
 .ActorList {
   height: 100%;
-  padding: 10px 8px 12px 12px;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: auto auto 1fr;
-  grid-template-columns: repeat(6, 32px) 1fr;
-  column-gap: 2px;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 44px 1fr;
 }
-/* row 1: project title spans; row 2: the six type tabs; row 3: the list */
-.ActorList .project { grid-column: 1 / -1; }
-.ActorList .content { grid-column: 1 / -1; }
+.ActorList .project {
+  grid-column: 1 / -1;
+  padding: 10px 8px 6px 12px;
+}
 
 .project {
   display: flex;
   align-items: center;
   gap: 10px;
   min-height: 44px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 .logo { height: 30px; flex: none; }
 .project .themePicker { margin-left: auto; flex: none; }
@@ -38,27 +38,53 @@
 }
 .projectName:focus { outline: none; background: var(--bg-raised); }
 
-/* type tabs: one row of glyphs; the selected one carries the accent */
-.tab {
-  width: 30px;
-  height: 30px;
-  padding: 6px;
-  margin: 0 0 10px;
+/* activity bar: one glyph per kind, stacked; the selected one carries the
+   accent and a bar on its left edge, VS Code style */
+.activityBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  border-right: 1px solid var(--line);
+}
+.ActorList .activityBar .tab {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  padding: 7px;
+  margin: 0;
   box-sizing: border-box;
+  border: 0;
   border-radius: var(--radius);
+  background: transparent;
   color: var(--ink-muted);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
   transition: color 120ms ease, background 120ms ease;
-  vertical-align: middle;
 }
-.tab:hover { color: var(--ink); background: var(--bg-hover); }
-.tab.selected { color: var(--accent); background: var(--accent-soft); }
+.ActorList .activityBar .tab svg { width: 20px; height: 20px; }
+.ActorList .activityBar .tab:hover { color: var(--ink); background: var(--bg-hover); }
+.ActorList .activityBar .tab.selected { color: var(--accent); background: var(--accent-soft); }
+.ActorList .activityBar .tab.selected::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
 
 .content {
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-left: -4px;
+  padding: 4px 8px 12px 6px;
 }
 .content > button {
   margin: 10px 0 0 4px;

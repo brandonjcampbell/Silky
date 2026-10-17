@@ -129,30 +129,27 @@ const ActorList = ({ setRefresh }) => {
         </div>
         <ThemePicker compact />
       </div>
-      <HiOutlineGlobeAlt
-        onClick={() => setType("")}
-        className={type === "" ? "tab selected" : "tab"}
-      />
-      <HiPuzzle
-        onClick={() => setType("element")}
-        className={type === "element" ? "tab selected" : "tab"}
-      />
-      <GiLightBulb
-        onClick={() => setType("fact")}
-        className={type === "fact" ? "tab selected" : "tab"}
-      />
-      <TiScissors
-        onClick={() => setType("snippet")}
-        className={type === "snippet" ? "tab selected" : "tab"}
-      />
-      <GiSewingString
-        onClick={() => setType("thread")}
-        className={type === "thread" ? "tab selected" : "tab"}
-      />
-      <GiSpiderWeb
-        onClick={() => setType("web")}
-        className={type === "web" ? "tab selected" : "tab"}
-      />
+      <nav className="activityBar" aria-label="Kinds">
+        {[
+          ["", HiOutlineGlobeAlt, "Everything"],
+          ["element", HiPuzzle, "Elements"],
+          ["fact", GiLightBulb, "Facts"],
+          ["snippet", TiScissors, "Snippets — the scenes"],
+          ["thread", GiSewingString, "Threads"],
+          ["web", GiSpiderWeb, "Webs"],
+        ].map(([id, Icon, title]) => (
+          <button
+            key={id}
+            type="button"
+            className={type === id ? "tab selected" : "tab"}
+            title={title}
+            aria-pressed={type === id}
+            onClick={() => setType(id)}
+          >
+            <Icon />
+          </button>
+        ))}
+      </nav>
 
       <div className="content">
         <DraggableList

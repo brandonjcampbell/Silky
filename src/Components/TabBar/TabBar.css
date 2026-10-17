@@ -1,0 +1,81 @@
+.tabBar {
+  flex: none;
+  display: flex;
+  align-items: stretch;
+  height: 36px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--bg-side);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: thin;
+}
+.tabBar::-webkit-scrollbar { height: 4px; }
+.tabBar--empty { display: none; }
+
+.tabBar .tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  max-width: 220px;
+  padding: 0 6px 0 12px;
+  font-size: 13px;
+  color: var(--ink-muted);
+  border-right: 1px solid var(--line);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+}
+.tabBar .tab:hover { color: var(--ink-soft); background: var(--bg-hover); }
+.tabBar .tab.is-active {
+  color: var(--ink);
+  background: var(--bg);
+}
+.tabBar .tab.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.tabBar .tab.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  background: var(--bg);
+}
+.tab__type { display: inline-flex; font-size: 12px; opacity: 0.7; }
+.tab__icon { font-size: 13px; }
+.tab__name { overflow: hidden; text-overflow: ellipsis; }
+.tab__close {
+  flex: none;
+  margin-left: 2px;
+  width: 20px;
+  height: 20px;
+  line-height: 1;
+  font: inherit;
+  font-size: 15px;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+  opacity: 0;
+}
+.tabBar .tab:hover .tab__close, .tabBar .tab.is-active .tab__close { opacity: 0.7; }
+.tab__close:hover { opacity: 1 !important; background: var(--bg-hover); }
+
+.editorPane { height: 100%; display: flex; flex-direction: column; min-width: 0; }
+.editorPane > .Workspace { flex: 1; min-height: 0; }
+.editorPane__empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--ink-muted);
+  font-size: 14px;
+  text-align: center;
+  padding: 24px;
+}
+.editorPane__empty .logo { height: 72px; opacity: 0.25; margin-bottom: 14px; display: block; margin-inline: auto; }

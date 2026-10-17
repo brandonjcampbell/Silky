@@ -1,6 +1,6 @@
 import React, { createContext, useReducer } from "react";
 import _ from "lodash";
-import { projectDir } from "./storage";
+import { projectDir, existsSync } from "./storage";
 
 let initialState = {
   project: "",
@@ -9,11 +9,33 @@ let initialState = {
   content: [],
 };
 
+const PROJECT_KEY = "silky:project";
+
+// Reopen the project that was open last time, if it still exists.
+const restoreProject = () => {
+  try {
+    const name = localStorage.getItem(PROJECT_KEY);
+    if (name && existsSync(projectDir(name))) {
+      return { ..._.cloneDeep(initialState), project: name, dir: projectDir(name) };
+    }
+  } catch (e) {
+    /* storage unavailable */
+  }
+  return initialState;
+};
+
 const store = createContext(initialState);
 const { Provider } = store;
 
 const setProject = (state, action) => {
   let newState = _.cloneDeep(initialState);
+
+  try {
+    if (action.payload.name === "") localStorage.removeItem(PROJECT_KEY);
+    else localStorage.setItem(PROJECT_KEY, action.payload.name);
+  } catch (e) {
+    /* per-browser convenience only */
+  }
 
   if (action.payload.name === "") {
     newState.project = "";
@@ -54,7 +76,7 @@ const StateProvider = ({ children }) => {
       default:
         throw new Error();
     }
-  }, initialState);
+  }, undefined, restoreProject);
 
   return <Provider value={{ state, dispatch, find }}>{children}</Provider>;
 };
