@@ -1,0 +1,34 @@
+.readAloud__wrap { position: absolute; right: 56px; top: 14px; z-index: 3; }
+.readAloud__btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; font-size: 15px; color: var(--ink-muted); background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius); cursor: pointer; transition: color 120ms ease, background 120ms ease;
+}
+.readAloud__btn:hover { color: var(--ink); background: var(--bg-hover); }
+.readAloud__btn.is-playing { color: var(--accent); }
+
+.readAloud {
+  position: sticky; top: 0; z-index: 6;
+  margin: 0 24px 10px; max-width: 72ch;
+  padding: 8px 12px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 13px;
+}
+.readAloud__row { display: flex; align-items: center; gap: 6px; }
+.readAloud button {
+  display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer;
+}
+.readAloud button:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-muted); background: var(--bg-hover); }
+.readAloud button:disabled { opacity: 0.4; cursor: default; }
+.readAloud button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+.readAloud__now { flex: 1; min-width: 0; display: flex; flex-direction: column; margin-left: 6px; }
+.readAloud__scene { font-size: 11px; color: var(--ink-muted); }
+.readAloud__text { font-family: var(--font-prose); font-size: 14px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.readAloud__count { color: var(--ink-muted); font-variant-numeric: tabular-nums; font-size: 12px; white-space: nowrap; }
+.readAloud__bar { height: 4px; margin: 8px 0 6px; background: var(--line); border-radius: 2px; overflow: hidden; cursor: pointer; }
+.readAloud__bar > i { display: block; height: 100%; background: var(--accent); transition: width 160ms ease; }
+.readAloud__prefs { gap: 16px; font-size: 12px; color: var(--ink-muted); flex-wrap: wrap; }
+.readAloud__prefs label { display: inline-flex; align-items: center; gap: 6px; }
+.readAloud__prefs select { font: inherit; font-size: 12px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 3px 6px; max-width: 220px; }
+.readAloud__prefs input[type="range"] { accent-color: var(--accent); width: 110px; }
+.readAloud__prefs b { color: var(--ink-soft); font-weight: 500; font-variant-numeric: tabular-nums; }

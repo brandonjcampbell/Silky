@@ -33,6 +33,10 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 *A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
+## Read aloud
+
+The speaker button in a scene's or thread's header reads it with the browser's own voices — no network, no key. It starts from the cursor if the cursor is in the text, speaks a sentence at a time with a player showing the current sentence and position, and offers previous/next, a scrub bar, voice and speed. A thread reads its scenes in order.
+
 ## Change tracking and impact
 
 Every save that changes an actor's name or text leaves a version (saves within two minutes collapse into one, forty are kept per actor). The **History** panel under any actor lists them with word deltas, shows a word-level diff against the version before, and restores. The **Impact** panel shows what depends on the actor — for a fact, the scenes that state it and the facts that follow from it (and the scenes stating those); for an element, its facts, the scenes where they are stated, its threads, and every mention in the prose; for a scene, the facts stated here, the later facts and scenes that rest on them, and its threads — and flags what to re-check: scenes last edited before a fact they state changed, reader notes and wiki entries written before the last edit. Rename an element and Impact offers to carry the new name into every scene and fact that used the old one.

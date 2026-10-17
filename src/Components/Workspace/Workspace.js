@@ -19,6 +19,7 @@ import LinkScanner from "../LinkScanner";
 import Ideas from "../Ideas";
 import Impact from "../Impact";
 import History from "../History";
+import ReadAloud from "../ReadAloud";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -303,6 +304,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && isThread && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
+          <ReadAloud element={element} />
           <div className="threadView">
             <div className="threadView__doc" ref={threadDocRef}>
               <EditorToolbar scopeRef={threadDocRef} />
@@ -372,6 +374,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && !isThread && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
+          {element.type === "snippet" && <ReadAloud element={element} />}
           {typeof element.content === "string" && (
             <div className="editor">
               <TextEditor

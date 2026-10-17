@@ -1,10 +1,12 @@
 /* The workspace: header, prose, relationship sections, graph. */
 
 .workspace {
+  position: relative;
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
 }
+.workspace--split .readAloud { flex: none; margin-top: 10px; }
 .storageBar ~ .View .workspace { height: 100%; }
 .middle-pane { height: 100%; }
 
