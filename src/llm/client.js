@@ -58,7 +58,6 @@ const anthropic = async (c, { system, user, json, maxTokens, signal }) => {
     body: JSON.stringify({
       model: c.model,
       max_tokens: maxTokens,
-      temperature: 0.2,
       ...(jsonNudge(system, json) ? { system: jsonNudge(system, json) } : {}),
       messages: [{ role: "user", content: user }],
     }),
