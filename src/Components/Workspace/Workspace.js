@@ -17,6 +17,7 @@ import Graph from "../Graph";
 import SceneAnalysis from "../SceneAnalysis";
 import LinkScanner from "../LinkScanner";
 import Ideas from "../Ideas";
+import PrintExport from "../PrintExport";
 import Impact from "../Impact";
 import History from "../History";
 import ReadAloud from "../ReadAloud";
@@ -310,6 +311,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <TitleBar save={save} remove={remove} element={element} />
           <TalkAbout element={element} />
           <ReadAloud element={element} />
+          <PrintExport element={element} />
           <div className="threadView">
             <div className="threadView__doc" ref={threadDocRef}>
               <EditorToolbar scopeRef={threadDocRef} />
@@ -381,6 +383,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <TitleBar save={save} remove={remove} element={element} />
           <TalkAbout element={element} />
           {element.type === "snippet" && <ReadAloud element={element} />}
+          {element.type === "snippet" && <PrintExport element={element} />}
           {typeof element.content === "string" && (
             <div className="editor">
               <TextEditor

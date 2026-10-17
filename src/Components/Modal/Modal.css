@@ -22,6 +22,7 @@
   max-height: 84vh;
 }
 .modal--wide { width: min(100%, 760px); }
+.modal--xl { width: min(100%, 1100px); }
 
 .modal__head {
   display: flex;

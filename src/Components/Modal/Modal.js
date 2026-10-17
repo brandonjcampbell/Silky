@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./Modal.css";
 
 /** A plain dialog on Silky's tokens. Closes on Escape or backdrop click. */
-const Modal = ({ title, onClose, children, footer, wide = false }) => {
+const Modal = ({ title, onClose, children, footer, wide = false, xl = false }) => {
   useEffect(() => {
     const esc = (e) => e.key === "Escape" && onClose && onClose();
     document.addEventListener("keydown", esc);
@@ -11,7 +11,7 @@ const Modal = ({ title, onClose, children, footer, wide = false }) => {
 
   return (
     <div className="modal__backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose && onClose()}>
-      <div className={"modal" + (wide ? " modal--wide" : "")} role="dialog" aria-modal="true" aria-label={title}>
+      <div className={"modal" + (wide ? " modal--wide" : "") + (xl ? " modal--xl" : "")} role="dialog" aria-modal="true" aria-label={title}>
         <header className="modal__head">
           <h3>{title}</h3>
           <button type="button" className="modal__close" aria-label="Close" onClick={onClose}>×</button>
