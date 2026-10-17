@@ -20,17 +20,14 @@
   color: var(--ink);
 }
 
-/* a relationship section: a quiet heading with a hairline above */
+/* a relationship section: a quiet heading, spaced from the one before */
 .editor h4 {
-  margin: 26px 0 6px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+  margin: 28px 0 6px;
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: var(--ink-muted);
 }
-.editor > h4:first-child { border-top: 0; padding-top: 0; }
 
 /* lists inside sections sit flush with the heading */
 .editor .snippets { margin-left: -10px; }
