@@ -22,13 +22,13 @@ export const analysisById = (id) => ANALYSES.find((a) => a.id === id);
 
 /* ── data helpers ─────────────────────────────────────────────────────── */
 
-const useProject = () => {
+const useProject = (tick = 0) => {
   const { state } = useContext(store);
   const dir = state.dir;
   const actors = useMemo(
     () => loadDir(dir).filter((f) => f.includes(".element.")).map((f) => loadFile(dir + f)).filter(Boolean),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dir, state.project]
+    [dir, state.project, tick]
   );
   const threads = actors.filter((a) => a.type === "thread").sort((a, b) => b.sequences.length - a.sequences.length);
   const snippets = actors.filter((a) => a.type === "snippet").sort((a, b) => a.order - b.order);
@@ -625,8 +625,8 @@ const MultiLine = ({ series, labels, height = 180 }) => {
 /* ── AI influence ─────────────────────────────────────────────────────── */
 
 const Influence = () => {
-  const { dir, actors, snippets, byFile } = useProject();
   const [tick, setTick] = useState(0);
+  const { dir, actors, snippets, byFile } = useProject(tick);
   const [showAi, setShow] = useState(getShowAi());
   const data = useMemo(() => loadProvenance(dir), [dir, tick]); // eslint-disable-line react-hooks/exhaustive-deps
   const refresh = () => setTick((t) => t + 1);

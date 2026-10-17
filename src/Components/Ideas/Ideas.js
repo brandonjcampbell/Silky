@@ -47,23 +47,35 @@ const Ideas = ({ element, onChange }) => {
     }
   };
 
-  /** Insert at the caret if it is in this scene's editor, else at the end. */
+  /**
+   * Insert as new paragraphs after the paragraph holding the caret (or at the
+   * end). Done with DOM nodes, not execCommand, because Chrome strips the
+   * wrapper span when it merges inserted HTML into an existing paragraph.
+   */
   const insert = (idea, i) => {
     const page = document.querySelector(".workspace .contentBlock--scene .page[contenteditable]");
     if (!page) return;
     const id = newId();
-    const html = `<p>${wrapForInsert(idea.text, id)}</p>`;
+    const frag = document.createRange().createContextualFragment(`<p>${wrapForInsert(idea.text, id)}</p>`);
+    const nodes = [...frag.childNodes];
     const sel = window.getSelection();
-    const inside = sel && sel.rangeCount && page.contains(sel.anchorNode);
-    page.focus();
-    if (!inside) {
-      const r = document.createRange();
-      r.selectNodeContents(page);
-      r.collapse(false);
-      sel.removeAllRanges();
-      sel.addRange(r);
+    let anchor = null;
+    if (sel && sel.rangeCount && page.contains(sel.anchorNode)) {
+      let n = sel.anchorNode;
+      while (n && n.parentNode !== page) n = n.parentNode;
+      anchor = n && n !== page ? n : null;
     }
-    document.execCommand("insertHTML", false, html);
+    if (anchor) anchor.after(...nodes);
+    else page.append(...nodes);
+    // caret after the insertion
+    const last = nodes[nodes.length - 1];
+    const r = document.createRange();
+    r.selectNodeContents(last);
+    r.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(r);
+    page.focus();
+    page.dispatchEvent(new Event("input", { bubbles: true }));
     const c = getConfig() || {};
     recordInsertion(dir, { id, file: element.file, kind, prompt: question.trim(), text: idea.text, provider: c.provider, model: c.model });
     setInserted((s) => new Set([...s, i]));
