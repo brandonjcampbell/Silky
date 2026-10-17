@@ -52,7 +52,14 @@ const Shell = () => {
     return (
       <div className="View View--mobile">
         {!hasContent || drawer ? (
-          <div className={"left-pane mobileList" + (drawer ? " is-drawer" : "")}>
+          <div
+            className={"left-pane mobileList" + (drawer ? " is-drawer" : "")}
+            onClick={(e) => {
+              // any pick from the drawer closes it — including re-picking what is already open
+              const a = e.target.closest && e.target.closest("a[href]");
+              if (a && drawer && !a.closest(".activityBar")) setDrawer(false);
+            }}
+          >
             <div className="List"><ActorList setRefresh={doRefresh} /></div>
           </div>
         ) : null}
