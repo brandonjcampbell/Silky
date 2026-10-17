@@ -91,11 +91,25 @@ const keepTypingHuman = (e, root) => {
     anchor = before || null;
     parent = c;
   } else if (range.collapsed && range.startContainer.nodeType === 3) {
-    // at the very end of a text node directly before an AI span, or start after one
+    // at the very end of a text node directly before an AI span, or its start
+    // right after one: extend the text node itself rather than let the
+    // browser reach into the span
     const t = range.startContainer;
     const atEnd = range.startOffset === t.length && isAi(t.nextSibling);
     const atStart = range.startOffset === 0 && isAi(t.previousSibling);
     if (!atEnd && !atStart) return;
+    if (e.inputType === "insertText") {
+      e.preventDefault();
+      const data = e.data || "";
+      const r = document.createRange();
+      if (atEnd) { t.nodeValue += data; r.setStart(t, t.length); }
+      else { t.nodeValue = data + t.nodeValue; r.setStart(t, data.length); }
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+      root.dispatchEvent(new Event("input", { bubbles: true }));
+      return;
+    }
     anchor = atEnd ? t : t.previousSibling;
     parent = t.parentNode;
   } else return;
@@ -111,10 +125,10 @@ const keepTypingHuman = (e, root) => {
     sel.addRange(r);
   };
   if (e.inputType === "insertText") {
-    // a trailing plain space would collapse at a block end; Chrome itself uses nbsp here
-    const data = e.data === " " ? "\u00a0" : e.data || "";
-    const text = document.createTextNode(data);
+    const text = document.createTextNode(e.data || "");
     if (anchor) anchor.after(text); else parent.prepend(text);
+    // a lone trailing space at a block end would collapse; Chrome itself uses nbsp there
+    if (text.nodeValue === " " && !text.nextSibling) text.nodeValue = "\u00a0";
     placeIn(text);
   } else {
     // a paragraph or line break: a zero-width anchor keeps the caret outside the
