@@ -34,3 +34,44 @@
 
 .editor br { display: none; }
 .editor .MuiStack-root { margin-top: 10px; }
+
+/* ── web view: the graph owns the space, the capture list sits beside it ── */
+
+.workspace--web {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.workspace--web .workspaceHeader { flex: none; }
+
+.webView {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.webView__graph {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+.webView__graph > div { position: absolute; inset: 0; }
+
+.webView__aside {
+  flex: none;
+  width: 320px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+  padding: 6px 14px 20px;
+  background: var(--bg-side);
+}
+.webView__aside .editor { padding: 0; }
+.webView__aside .editor h4 { margin-top: 10px; }
+.webView__aside .editor .snippets { margin-left: -6px; }
+.webView__aside .editor .MuiStack-root { width: 100% !important; }
+
+@media (max-width: 900px) {
+  .webView { flex-direction: column; }
+  .webView__graph { flex: none; height: 60vh; }
+  .webView__aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
+}

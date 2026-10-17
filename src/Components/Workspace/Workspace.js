@@ -278,8 +278,10 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   }
 
 
+  const isWeb = !!(element && element.captures);
+
   return (
-    <div className="workspace">
+    <div className={isWeb ? "workspace workspace--web" : "workspace"}>
       {!element && <span>The item you are looking for does not exist</span>}
       {element && (
         <>
@@ -315,24 +317,27 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           {renderEditList("snippet", "revealed_by", "reveals", "Revealed By")}
           {renderEditList("snippet", "sequences", "sequenced_in", "Sequences")}
           {renderEditList("thread","sequenced_in","sequences","Sequenced In")}
-          {renderGraphableEditList("captures", "captured_in", "Captures")}
-
-          {element.captures && (
-            <div>
-              <Graph
-                elements={[...cytoElements, ...cytoRelationships]}
-                onDrop={(x) => {
-                  let temp = element.captures.map((y) => {
-                    if (y.file === x.id) {
-                      y.x = x.position.x;
-                      y.y = x.position.y;
-                    }
-                    return y;
-                  });
-                  element.captures = temp;
-                  save(element);
-                }}
-              ></Graph>
+          {isWeb && (
+            <div className="webView">
+              <div className="webView__graph">
+                <Graph
+                  elements={[...cytoElements, ...cytoRelationships]}
+                  onDrop={(x) => {
+                    let temp = element.captures.map((y) => {
+                      if (y.file === x.id) {
+                        y.x = x.position.x;
+                        y.y = x.position.y;
+                      }
+                      return y;
+                    });
+                    element.captures = temp;
+                    save(element);
+                  }}
+                ></Graph>
+              </div>
+              <aside className="webView__aside">
+                {renderGraphableEditList("captures", "captured_in", "Captures")}
+              </aside>
             </div>
           )}
         </>

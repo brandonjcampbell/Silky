@@ -53,16 +53,15 @@ const Graph = ({ elements, onDrop }) => {
     setCy(cy);
   };
 
+  // The canvas fills whatever container it is given; the container decides
+  // the size. We still listen for resizes so Cytoscape re-measures.
   function getWindowDimensions() {
-    let { innerWidth: width, innerHeight: height } = window;
-
-    let returnHeight = height - 70;
-    let returnWidth = width;
-    return {
-      width: returnWidth,
-      height: returnHeight,
-    };
+    return { width: "100%", height: "100%" };
   }
+
+  useEffect(() => {
+    if (cy) cy.resize();
+  }, [cy, windowDimensions]);
 
   return (
     <CytoscapeComponent
