@@ -1,6 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import TextEditor from "../TextEditor";
+import EditorToolbar from "../TextEditor/EditorToolbar";
+import { Link } from "react-router-dom";
 import { store } from "../../NewContext";
 import TitleBar from "../TitleBar";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -279,11 +281,85 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
 
 
   const isWeb = !!(element && element.captures);
+  const isThread = !!(element && element.type === "thread" && Array.isArray(element.sequences));
+  const threadDocRef = useRef(null);
+  const [sceneStatus, setSceneStatus] = useState({});
+
+  // Save a scene edited inside the thread document back to its own file.
+  const saveScene = (snippet) => (html) => {
+    snippet.content = html;
+    saveFile(globalState.state.dir + snippet.file, snippet);
+  };
 
   return (
-    <div className={isWeb ? "workspace workspace--web" : "workspace"}>
+    <div className={"workspace" + (isWeb || isThread ? " workspace--split" : "")}>
       {!element && <span>The item you are looking for does not exist</span>}
-      {element && (
+      {element && isThread && (
+        <>
+          <TitleBar save={save} remove={remove} element={element} />
+          <div className="threadView">
+            <div className="threadView__doc" ref={threadDocRef}>
+              <EditorToolbar scopeRef={threadDocRef} />
+              <div className="threadDoc">
+                {element.sequences.length === 0 && (
+                  <p className="threadDoc__empty">
+                    No scenes in this thread yet. Add one from the list.
+                  </p>
+                )}
+                {element.sequences.map((f) => {
+                  const snip = loadUp(f);
+                  if (!snip) return null;
+                  const st = sceneStatus[snip.file];
+                  return (
+                    <section className="threadScene" key={snip.file} id={"scene-" + snip.uuid}>
+                      <h2 className="threadScene__title">
+                        <Link to={"/elements/" + snip.file} title="Open this scene on its own">
+                          <span className="threadScene__icon">{snip.icon}</span> {snip.name}
+                        </Link>
+                        {st && (
+                          <span className={"threadScene__status is-" + st.status}>
+                            {st.status === "dirty" ? "Unsaved changes" : st.words + " words"}
+                          </span>
+                        )}
+                      </h2>
+                      <TextEditor
+                        variant="scene"
+                        chrome={false}
+                        data={snip.content}
+                        actorUuid={snip.uuid}
+                        save={saveScene(snip)}
+                        onStatus={(x) =>
+                          setSceneStatus((prev) =>
+                            prev[snip.file] && prev[snip.file].status === x.status && prev[snip.file].words === x.words
+                              ? prev
+                              : { ...prev, [snip.file]: x }
+                          )
+                        }
+                      />
+                    </section>
+                  );
+                })}
+              </div>
+            </div>
+            <aside className="threadView__aside">
+              {renderEditList("snippet", "sequences", "sequenced_in", "Scenes in order")}
+              {typeof element.content === "string" && (
+                <div className="editor">
+                  <h4>Notes</h4>
+                  <TextEditor
+                    save={saveIt}
+                    data={element.content}
+                    actorUuid={element.uuid}
+                    variant="notes"
+                    placeholder="Notes about this thread."
+                  />
+                </div>
+              )}
+            </aside>
+          </div>
+        </>
+      )}
+      {element && !isThread && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
           {typeof element.content === "string" && (

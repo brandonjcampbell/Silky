@@ -37,12 +37,12 @@
 
 /* ── web view: the graph owns the space, the capture list sits beside it ── */
 
-.workspace--web {
+.workspace--split {
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
-.workspace--web .workspaceHeader { flex: none; }
+.workspace--split .workspaceHeader { flex: none; }
 
 .webView {
   flex: 1;
@@ -74,4 +74,89 @@
   .webView { flex-direction: column; }
   .webView__graph { flex: none; height: 60vh; }
   .webView__aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ── thread view: the scenes as one manuscript, the sequence beside it ── */
+
+.threadView {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.threadView__doc {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 0 32px 64px 24px;
+}
+.threadView__doc > .editorToolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  max-width: 72ch;
+  margin: 14px 0 0;
+}
+.threadDoc {
+  max-width: 72ch;
+  margin-top: 10px;
+  padding: 36px 40px 48px;
+  border-radius: var(--radius);
+  background: var(--bg-page);
+}
+.threadDoc__empty {
+  margin: 0;
+  color: var(--ink-muted);
+  font-family: var(--font-prose);
+  font-size: 17px;
+}
+
+.threadScene + .threadScene { margin-top: 2.6em; }
+.threadScene__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 10px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
+}
+.threadScene__title a { color: inherit; }
+.threadScene__title a:hover { color: var(--ink); }
+.threadScene__icon { margin-right: 2px; }
+.threadScene__status { font-weight: 400; white-space: nowrap; }
+.threadScene__status.is-dirty { color: var(--ink-soft); }
+
+/* scenes inside the manuscript have no chrome of their own */
+.threadDoc .contentBlock { margin: 0; max-width: none; }
+.threadDoc .page {
+  background: transparent;
+  padding: 0;
+  min-height: 3em;
+  border-radius: 0;
+}
+.threadDoc .page:focus-visible { outline: none; }
+
+.threadView__aside {
+  flex: none;
+  width: 320px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  border-left: 1px solid var(--line);
+  padding: 6px 14px 20px;
+  background: var(--bg-side);
+}
+.threadView__aside .editor { padding: 0; }
+.threadView__aside .editor h4 { margin-top: 10px; }
+.threadView__aside .editor .snippets { margin-left: -6px; }
+.threadView__aside .editor .MuiStack-root { width: 100% !important; }
+.threadView__aside .contentBlock { max-width: none; }
+.threadView__aside .editorToolbar { padding: 4px 6px; }
+
+@media (max-width: 900px) {
+  .threadView { flex-direction: column; }
+  .threadView__doc { flex: none; padding-right: 16px; }
+  .threadView__aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
 }
