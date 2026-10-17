@@ -27,7 +27,11 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 ![Writing a snippet: formatting toolbar, the scene in a serif, word count and save state](docs/silky-snippet.png)
 
-*A snippet. The scene is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
+*A snippet. The scene is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph.*
+
+![A thread: its scenes read as one continuous manuscript, with the sequence list and thread notes in a side panel](docs/silky-thread.png)
+
+*A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
 ## Neo4j
 
