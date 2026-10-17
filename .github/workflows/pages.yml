@@ -24,9 +24,24 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm install   # not `npm ci`: lockfile predates the cross-env dependency; run `npm install` locally and commit the lock to switch back
-      - run: npm run build
+      - name: Build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee build.log
         env:
           CI: false   # react-scripts 4 treats lint warnings as errors when CI=true
+      # On failure, keep the compiler output somewhere plain git can fetch it
+      # (the Actions log download sits behind blob storage some networks block).
+      - name: Publish build log on failure
+        if: failure()
+        run: |
+          mkdir -p cilog && cp build.log cilog/build.log && cd cilog
+          git init -q -b ci-log
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Build log for ${GITHUB_SHA::7}"
+          git push -q --force "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" ci-log:ci-log
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build
