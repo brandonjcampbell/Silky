@@ -6,8 +6,8 @@ export { uniqueProjectName } from "../storage/projectIO";
    1. Split a manuscript into scenes. Deterministic; no model involved.
    ──────────────────────────────────────────────────────────────────────── */
 
-const BREAK_RE = /^\s*(?:#{1,4}\s+.+|(?:\*\s*){3,}|(?:-\s*){3,}|(?:_\s*){3,}|(?:chapter|part|book|scene|prologue|epilogue|interlude)\b[^\n]{0,60})\s*$/i;
-const HEADING_RE = /^\s*(?:#{1,4}\s+(.+)|((?:chapter|part|book|scene|prologue|epilogue|interlude)\b[^\n]{0,60}))\s*$/i;
+const BREAK_RE = /^\s*(?:#{1,4}\s+.+|(?:\*\s*){3,}|(?:-\s*){3,}|(?:_\s*){3,}|(?:chapter|part|book|scene|stave|canto|prologue|epilogue|interlude)\b[^\n]{0,60})\s*$/i;
+const HEADING_RE = /^\s*(?:#{1,4}\s+(.+)|((?:chapter|part|book|scene|stave|canto|prologue|epilogue|interlude)\b[^\n]{0,60}))\s*$/i;
 const TARGET_WORDS = 1500;
 
 const wc = (s) => (s.trim() ? s.trim().split(/\s+/).length : 0);
@@ -32,7 +32,33 @@ export const splitManuscript = (raw) => {
     cur = { title: null, paras: [] };
   };
 
-  for (const line of lines) {
+  // A table of contents is a run of three or more heading lines with no body
+  // between them, each of which appears again later as the real heading.
+  // Drop those first occurrences (and a bare "Contents" line) so the last
+  // one can't become the title of the text that follows.
+  // laterCount[i]: how many times line i's text appears after position i
+  const laterCount = new Array(lines.length).fill(0);
+  const tally = new Map();
+  for (let i = lines.length - 1; i >= 0; i -= 1) {
+    const k = lines[i].trim();
+    if (k) { laterCount[i] = tally.get(k) || 0; tally.set(k, laterCount[i] + 1); }
+  }
+  const kept = [];
+  let run = [];
+  const flushRun = () => {
+    const heads = run.filter((l) => BREAK_RE.test(l));
+    if (heads.length < 3) kept.push(...run);
+    run = [];
+  };
+  lines.forEach((line, i) => {
+    if (/^\s*contents\s*$/i.test(line)) return;
+    if (BREAK_RE.test(line) && laterCount[i] >= 1) run.push(line);
+    else if (run.length && !line.trim()) run.push(line);
+    else { flushRun(); kept.push(line); }
+  });
+  flushRun();
+
+  for (const line of kept) {
     if (BREAK_RE.test(line)) {
       flushScene();
       const m = line.match(HEADING_RE);
@@ -46,6 +72,10 @@ export const splitManuscript = (raw) => {
     para.push(line.trim());
   }
   flushScene();
+
+  // Title pages and other short untitled scraps before the first real
+  // chapter aren't story.
+  while (scenes.length > 1 && !scenes[0].title && scenes[0].paras.reduce((n, p) => n + wc(p), 0) < 40) scenes.shift();
 
   // Long unbroken stretches get chunked at paragraph boundaries.
   const out = [];
@@ -76,6 +106,49 @@ export const splitManuscript = (raw) => {
     text: s.paras.join("\n\n"),
     words: s.paras.reduce((n, p) => n + wc(p), 0),
   }));
+};
+
+/** Trim Project Gutenberg boilerplate; returns { title, text }. */
+export const stripGutenberg = (raw) => {
+  let text = String(raw || "").replace(/\r\n?/g, "\n");
+  const titleM = text.match(/^Title:\s*(.+)$/m);
+  const start = text.search(/\*\*\*\s*START OF (?:THE|THIS) PROJECT GUTENBERG EBOOK[^\n]*\*\*\*/i);
+  const end = text.search(/\*\*\*\s*END OF (?:THE|THIS) PROJECT GUTENBERG EBOOK/i);
+  if (start >= 0) text = text.slice(text.indexOf("\n", start) + 1);
+  if (end >= 0) {
+    const e = text.search(/\*\*\*\s*END OF (?:THE|THIS) PROJECT GUTENBERG EBOOK/i);
+    if (e >= 0) text = text.slice(0, e);
+  }
+  // drop a leading "[Illustration]" line or produced-by credits
+  text = text.replace(/^\s*(?:\[Illustration[^\]]*\]\s*)+/i, "").replace(/^(?:Produced by|E-text prepared by|This etext was)[^\n]*\n+/i, "");
+  return { title: titleM ? titleM[1].trim() : "", text: text.trim() };
+};
+
+/** Fetch a Gutenberg book by number or URL, in the browser (gutenberg.org allows it). */
+export const fetchGutenberg = async (idOrUrl, signal) => {
+  const m = String(idOrUrl).match(/(\d{2,6})/);
+  if (!m) throw new Error("Give a Project Gutenberg book number (e.g. 2852) or a gutenberg.org link.");
+  const id = m[1];
+  const urls = [
+    `https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`,
+    `https://www.gutenberg.org/files/${id}/${id}-0.txt`,
+    `https://www.gutenberg.org/ebooks/${id}.txt.utf-8`,
+  ];
+  let lastErr = null;
+  for (const url of urls) {
+    try {
+      const r = await fetch(url, { signal });
+      if (r.ok) {
+        const raw = await r.text();
+        if (raw.length > 1000) return { id, ...stripGutenberg(raw) };
+      }
+      lastErr = new Error(`Gutenberg answered ${r.status} for ${url}`);
+    } catch (e) {
+      if (e && e.name === "AbortError") throw e;
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error("Could not fetch that book.");
 };
 
 /* ────────────────────────────────────────────────────────────────────────

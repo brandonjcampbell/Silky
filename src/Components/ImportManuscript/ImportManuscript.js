@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Modal from "../Modal/Modal";
 import { isConfigured } from "../../llm/config";
-import { splitManuscript, extractModel, writeProject, uniqueProjectName } from "../../llm/extract";
+import { splitManuscript, extractModel, writeProject, uniqueProjectName, fetchGutenberg } from "../../llm/extract";
 
 const stripExt = (n) => n.replace(/\.[^.]+$/, "");
 const wc = (s) => (s.trim() ? s.trim().split(/\s+/).length : 0);
@@ -19,6 +19,9 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
   const [over, setOver] = useState(false);
+  const [gut, setGut] = useState("");
+  const [fetching, setFetching] = useState(false);
+  const [fetchErr, setFetchErr] = useState(null);
   const abortRef = useRef(null);
   const configured = isConfigured();
 
@@ -32,6 +35,20 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
       if (!name) setName(stripExt(file.name));
     };
     reader.readAsText(file);
+  };
+
+  const loadGutenberg = async () => {
+    setFetching(true);
+    setFetchErr(null);
+    try {
+      const book = await fetchGutenberg(gut);
+      setText(book.text);
+      if (!name && book.title) setName(book.title);
+    } catch (e) {
+      setFetchErr(e.message || String(e));
+    } finally {
+      setFetching(false);
+    }
   };
 
   const toPreview = () => {
@@ -148,6 +165,18 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
               <input type="file" accept=".txt,.md,.markdown,text/plain,text/markdown" onChange={(e) => readFile(e.target.files[0])} />
             </label>
           </div>
+          <div className="gutenberg">
+            <input
+              type="text"
+              value={gut}
+              onChange={(e) => setGut(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && gut.trim() && !fetching && loadGutenberg()}
+              placeholder="…or a Project Gutenberg book number or link (Hound of the Baskervilles is 2852, A Christmas Carol is 46)"
+              spellCheck={false}
+            />
+            <button type="button" onClick={loadGutenberg} disabled={!gut.trim() || fetching}>{fetching ? "Fetching…" : "Fetch"}</button>
+          </div>
+          {fetchErr && <p className="hint" style={{ color: "var(--accent)" }}>{fetchErr}</p>}
           <label className="field">
             <span>Project name</span>
             <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Imported manuscript" />

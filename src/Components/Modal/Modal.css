@@ -149,3 +149,6 @@
 
 /* the same form, embedded in a page rather than floating */
 .modal--inline { max-height: none; box-shadow: none; width: min(100%, 640px); background: var(--bg-raised); }
+
+.gutenberg { display: flex; gap: 6px; margin: -2px 0 10px; }
+.gutenberg input { flex: 1; }
