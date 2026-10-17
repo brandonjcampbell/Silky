@@ -126,6 +126,17 @@ Return JSON: { "links": [{ "cause": <number>, "effect": <number> }] }`;
 
 const norm = (s) => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 
+/** First grapheme of a string (keeps ZWJ/skin-tone emoji whole), or "". */
+const firstGlyph = (s) => {
+  const t = typeof s === "string" ? s.trim() : "";
+  if (!t) return "";
+  if (typeof Intl !== "undefined" && Intl.Segmenter) {
+    const it = new Intl.Segmenter(undefined, { granularity: "grapheme" }).segment(t)[Symbol.iterator]().next();
+    return it.done ? "" : it.value.segment;
+  }
+  return Array.from(t).slice(0, 8).join("");
+};
+
 /**
  * Run extraction over scenes. Calls onProgress({step, index, total, message}).
  * Returns { scenes, elements, facts, links }.
@@ -148,7 +159,7 @@ export const extractModel = async (scenes, { onProgress = () => {}, signal } = {
       key,
       name: String(e.name).trim(),
       kind: e.kind || "thing",
-      icon: typeof e.icon === "string" && e.icon.trim() ? e.icon.trim().slice(0, 4) : "",
+      icon: firstGlyph(e.icon),
       description: e.description ? String(e.description).trim() : "",
     };
     byKey.set(key, el);
