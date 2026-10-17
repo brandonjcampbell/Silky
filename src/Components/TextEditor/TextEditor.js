@@ -35,6 +35,90 @@ const tidy = (root) => {
   root.querySelectorAll("hr[id]").forEach((el) => el.removeAttribute("id"));
 };
 
+/* ── keep typed text out of AI-marked spans ────────────────────────────────
+   Chrome extends an inline span when you type inside or at the end of it,
+   which would mark your own words as Spinner's. Before the browser inserts
+   text, split the span at the caret and put the text between the halves. */
+const aiSpanOf = (node) => {
+  let n = node && node.nodeType === 3 ? node.parentNode : node;
+  while (n && n.nodeType === 1) {
+    if (n.hasAttribute && n.hasAttribute("data-ai")) return n;
+    if (n.classList && n.classList.contains("page")) return null;
+    n = n.parentNode;
+  }
+  return null;
+};
+const isAi = (n) => !!(n && n.nodeType === 1 && n.hasAttribute("data-ai"));
+
+/** Split `span` at (container, offset); returns the node after which plain text should go. */
+const splitAiSpan = (span, container, offset) => {
+  const r = document.createRange();
+  r.setStart(container, offset);
+  r.setEndAfter(span);
+  const tail = r.extractContents(); // partially-contained span is cloned with its attributes
+  span.after(tail);
+  if (!span.textContent) { const prev = span.previousSibling; span.remove(); return prev; }
+  const next = span.nextSibling;
+  if (isAi(next) && !next.textContent) next.remove();
+  return span;
+};
+
+/** Where would the browser put the text? If inside/at the edge of an AI span, do it ourselves. */
+const keepTypingHuman = (e, root) => {
+  if (!["insertText", "insertParagraph", "insertLineBreak"].includes(e.inputType)) return;
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return;
+  let range = sel.getRangeAt(0);
+  if (!root.contains(range.startContainer)) return;
+  let span = aiSpanOf(range.startContainer);
+  let anchor = null; // node after which to insert
+  let parent = null;
+  if (span) {
+    if (!range.collapsed) { range.deleteContents(); range = sel.getRangeAt(0); }
+    anchor = splitAiSpan(span, range.startContainer, range.startOffset);
+    parent = anchor ? anchor.parentNode : span.parentNode;
+  } else if (range.collapsed && range.startContainer.nodeType === 1) {
+    // caret sits between siblings; the browser would extend a neighbouring span
+    const c = range.startContainer;
+    const before = c.childNodes[range.startOffset - 1];
+    const after = c.childNodes[range.startOffset];
+    if (!isAi(before) && !isAi(after)) return;
+    anchor = before || null;
+    parent = c;
+  } else if (range.collapsed && range.startContainer.nodeType === 3) {
+    // at the very end of a text node directly before an AI span, or start after one
+    const t = range.startContainer;
+    const atEnd = range.startOffset === t.length && isAi(t.nextSibling);
+    const atStart = range.startOffset === 0 && isAi(t.previousSibling);
+    if (!atEnd && !atStart) return;
+    anchor = atEnd ? t : t.previousSibling;
+    parent = t.parentNode;
+  } else return;
+
+  e.preventDefault();
+  const place = (node) => {
+    const r = document.createRange();
+    r.setStartAfter(node);
+    r.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(r);
+  };
+  if (e.inputType === "insertText") {
+    const text = document.createTextNode(e.data || "");
+    if (anchor) anchor.after(text); else parent.prepend(text);
+    place(text);
+  } else {
+    // a paragraph or line break: a zero-width anchor keeps the caret outside the span
+    const marker = document.createTextNode("\u200b");
+    if (anchor) anchor.after(marker); else parent.prepend(marker);
+    place(marker);
+    document.execCommand(e.inputType === "insertParagraph" ? "insertParagraph" : "insertLineBreak");
+    // drop the marker if it survived
+    if (marker.parentNode && marker.textContent === "\u200b") marker.remove();
+  }
+  root.dispatchEvent(new Event("input", { bubbles: true }));
+};
+
 const TextEditor = ({
   data,
   save,
@@ -100,6 +184,15 @@ const TextEditor = ({
     clearTimeout(timer.current);
     timer.current = setTimeout(commit, SAVE_DELAY);
   }, [commit]);
+
+  // Native beforeinput (React's synthetic one lacks inputType in this version).
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const h = (e) => keepTypingHuman(e, el);
+    el.addEventListener("beforeinput", h);
+    return () => el.removeEventListener("beforeinput", h);
+  }, []);
 
   // Flush a pending save when leaving the editor.
   useEffect(() => () => {
