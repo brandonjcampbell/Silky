@@ -1,0 +1,60 @@
+.sceneAnalysis {
+  margin: 4px 24px 8px;
+  max-width: 72ch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+  font-size: 13px;
+}
+.sceneAnalysis__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.sceneAnalysis__head:hover { color: var(--ink); }
+.sceneAnalysis__summary { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-muted); }
+.sceneAnalysis__chev { margin-left: auto; color: var(--ink-muted); }
+.sceneAnalysis__body { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 12px; }
+.sceneAnalysis .muted { color: var(--ink-muted); }
+
+.measures { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+.measure { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 10px; }
+.measure b { display: block; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
+.measure span { display: block; font-size: 11px; color: var(--ink-muted); }
+.measure small { display: block; font-size: 11px; margin-top: 4px; color: var(--ink-muted); line-height: 1.3; }
+.measure.is-hi small, .measure.is-lo small { color: var(--ink-soft); }
+.measure.is-hi { border-left: 2px solid var(--accent); }
+.measure.is-lo { border-left: 2px solid var(--ink-muted); }
+
+.sceneAnalysis__row { display: flex; flex-direction: column; gap: 6px; }
+.sceneAnalysis__filters, .sceneAnalysis__long { margin: 0; line-height: 1.6; color: var(--ink-soft); }
+.sceneAnalysis__long { font-family: var(--font-prose); font-size: 13px; }
+.pill { display: inline-block; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin: 0 4px 2px 0; }
+.pill b { color: var(--ink-muted); font-weight: 500; }
+
+.sceneNotes { display: flex; flex-direction: column; gap: 8px; }
+.sceneNote { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px 12px; line-height: 1.5; }
+.sceneNote header { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.sceneNote__who { font-weight: 600; color: var(--ink); }
+.sceneNote__meta { font-size: 12px; color: var(--ink-muted); }
+.sceneNote p { margin: 4px 0 0; color: var(--ink-soft); }
+.sceneNote ul { margin: 4px 0 0; padding-left: 18px; color: var(--ink-muted); font-size: 12px; }
+.sceneNote__mem { font-family: var(--font-prose); font-style: italic; color: var(--ink); }
+.stars { color: var(--accent); letter-spacing: 1px; font-size: 10px; }
+.stars span { color: var(--line); }
+
+.sceneAnalysis__foot { margin: 0; font-size: 12px; color: var(--ink-muted); }
+.sceneAnalysis__foot a { color: var(--ink-soft); }
+.sceneAnalysis__foot a:hover { color: var(--accent); }
