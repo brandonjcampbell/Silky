@@ -4,7 +4,7 @@ import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader } from "react-i
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
 import { plain, wordCount, styleStats, dialogueRatio, sentences, fmt, pct } from "../../analysis/text";
-import { loadReader, runReader, clearReader } from "../../analysis/reader";
+import { loadReader, runReader, clearReader, READERS, allReaders, readerById, addCustomReader, removeReader } from "../../analysis/reader";
 import { isConfigured } from "../../llm/config";
 import "./Analysis.css";
 
@@ -281,12 +281,46 @@ const Style = () => {
 
 const Stars = ({ n }) => <span className="stars" title={`${n} of 5`}>{"●".repeat(n)}<span>{"●".repeat(5 - n)}</span></span>;
 
+const NewReaderForm = ({ onAdd, onCancel }) => {
+  const [name, setName] = useState("");
+  const [icon, setIcon] = useState("🙂");
+  const [persona, setPersona] = useState("");
+  return (
+    <form
+      className="newReader"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (name.trim() && persona.trim()) onAdd({ name, icon, persona });
+      }}
+    >
+      <div className="newReader__row">
+        <input type="text" value={icon} onChange={(e) => setIcon(e.target.value)} className="newReader__icon" aria-label="Emoji" maxLength={4} />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Reader’s name — “My agent”, “Book club”, “Mum”" aria-label="Name" />
+      </div>
+      <textarea
+        value={persona}
+        onChange={(e) => setPersona(e.target.value)}
+        placeholder="Who are they? Finish the sentence “You are …” — their tastes, what they read, what loses them, what they’re hoping for."
+        rows={3}
+        aria-label="Persona"
+      />
+      <div className="newReader__row">
+        <button type="submit" className="primary" disabled={!name.trim() || !persona.trim()}>Add reader</button>
+        <button type="button" onClick={onCancel}>Cancel</button>
+      </div>
+    </form>
+  );
+};
+
 const Reader = () => {
   const { dir, threads, snippets, byFile } = useProject();
   const [choice, setChoice] = useThreadChoice(threads);
   const thread = byFile.get(choice);
   const scenes = scenesOf(thread, snippets, byFile);
   const [data, setData] = useState(() => loadReader(dir));
+  const [readerId, setReaderId] = useState("first-time");
+  const [adding, setAdding] = useState(false);
+  const [compare, setCompare] = useState(false);
   const [busy, setBusy] = useState(null);
   const [err, setErr] = useState(null);
   const abortRef = useRef(null);
@@ -294,7 +328,10 @@ const Reader = () => {
   useEffect(() => { setData(loadReader(dir)); }, [dir]);
   useEffect(() => () => abortRef.current && abortRef.current.abort(), []);
 
-  const reviewed = scenes.filter((s) => data.scenes[s.file]).length;
+  const readers = allReaders(data);
+  const reader = readerById(readerId, data) || READERS[0];
+  const mine = data.readers[reader.id] || { scenes: {}, overall: null };
+  const reviewed = scenes.filter((s) => mine.scenes[s.file]).length;
   const pending = scenes.length - reviewed;
 
   const run = async (force) => {
@@ -304,6 +341,7 @@ const Reader = () => {
     setBusy({ message: "Starting", pct: 0 });
     try {
       const out = await runReader(dir, scenes, {
+        readerId: reader.id,
         force,
         signal: ctrl.signal,
         onProgress: ({ index, total, message }) => {
@@ -320,81 +358,210 @@ const Reader = () => {
     }
   };
 
-  const notes = scenes.map((s) => ({ s, n: data.scenes[s.file] })).filter((x) => x.n);
-  const avgEng = notes.length ? notes.reduce((a, x) => a + x.n.engagement, 0) / notes.length : 0;
+  const notesFor = (rid) => {
+    const d = data.readers[rid];
+    return d ? scenes.map((s) => ({ s, n: d.scenes[s.file] })).filter((x) => x.n) : [];
+  };
+  const notes = notesFor(reader.id);
+  const avg = (ns) => (ns.length ? ns.reduce((a, x) => a + x.n.engagement, 0) / ns.length : 0);
   const dips = [...notes].sort((a, b) => a.n.engagement - b.n.engagement || a.n.clarity - b.n.clarity).slice(0, 5);
+  const withNotes = readers.filter((r) => notesFor(r.id).length);
 
   return (
     <div className="analysis">
       <ThreadPicker threads={threads} value={choice} onChange={setChoice} />
-      <div className="reader__bar">
-        {!configured && <span className="muted">Connect a model (the <b>Model</b> button on the project tray) to run a reader.</span>}
-        {configured && !busy && (
-          <>
-            <button type="button" className="primary" onClick={() => run(false)} disabled={!pending}>
-              {pending ? `Read ${pending} unread scene${pending === 1 ? "" : "s"}` : "All scenes read"}
-            </button>
-            {reviewed > 0 && <button type="button" onClick={() => run(true)}>Re-read everything</button>}
-            {reviewed > 0 && <button type="button" onClick={() => { clearReader(dir); setData(loadReader(dir)); }}>Forget notes</button>}
-            <span className="muted">One call per scene, then one for the whole. Notes are saved in the project.</span>
-          </>
-        )}
-        {busy && (
-          <>
-            <span>{busy.message}…</span>
-            <div className="bar"><i style={{ width: `${busy.pct}%` }} /></div>
-            <button type="button" onClick={() => abortRef.current && abortRef.current.abort()}>Stop</button>
-          </>
-        )}
-        {err && <span className="err">{err}</span>}
-      </div>
 
-      {data.overall && (
-        <section className="letter">
-          <h3>After finishing <small>{data.overall.scenes} scenes · {data.overall.wouldRecommend ? "would recommend" : "would not recommend yet"}</small></h3>
-          <p>{data.overall.verdict}</p>
-          <div className="twoCol">
-            <div><h4>What worked</h4><ul>{data.overall.strongest.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
-            <div><h4>What held it back</h4><ul>{data.overall.weakest.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
-          </div>
-          <h4>Pacing</h4><p>{data.overall.pacing}</p>
-          {data.overall.threads.length > 0 && <><h4>Dropped or under-served</h4><ul>{data.overall.threads.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
-        </section>
+      <div className="readers" role="tablist" aria-label="Readers">
+        {readers.map((r) => {
+          const has = notesFor(r.id).length;
+          return (
+            <button
+              key={r.id}
+              type="button"
+              role="tab"
+              aria-selected={r.id === reader.id && !compare}
+              className={"readerChip" + (r.id === reader.id && !compare ? " is-active" : "") + (has ? " has-notes" : "")}
+              title={r.blurb}
+              onClick={() => { setReaderId(r.id); setCompare(false); }}
+            >
+              <span>{r.icon}</span> {r.name}
+              {has > 0 && <small>{has}</small>}
+            </button>
+          );
+        })}
+        <button type="button" className="readerChip readerChip--add" onClick={() => setAdding((a) => !a)} title="Describe a reader of your own">+ Reader</button>
+        {withNotes.length >= 2 && (
+          <button type="button" className={"readerChip readerChip--compare" + (compare ? " is-active" : "")} onClick={() => setCompare((c) => !c)}>Compare {withNotes.length}</button>
+        )}
+      </div>
+      {adding && (
+        <NewReaderForm
+          onAdd={(r) => { const id = addCustomReader(dir, r); setData(loadReader(dir)); setReaderId(id); setAdding(false); setCompare(false); }}
+          onCancel={() => setAdding(false)}
+        />
       )}
 
-      {notes.length > 0 && (
+      {compare ? (
         <>
-          <div className="stats">
-            <Stat label="engagement, mean" value={fmt(avgEng, 1) + " / 5"} sub={`${notes.length} scene${notes.length === 1 ? "" : "s"} read`} />
-            <Stat label="felt slow" value={fmt(notes.filter((x) => x.n.pace === "slow").length)} sub="scenes" />
-            <Stat label="felt rushed" value={fmt(notes.filter((x) => x.n.pace === "rushed").length)} sub="scenes" />
-            <Stat label="open questions" value={fmt(notes.reduce((a, x) => a + x.n.questions.length, 0))} sub="things the reader was left wondering" />
-          </div>
-          <h3>Engagement, scene by scene</h3>
-          <Chart series={notes.map((x) => x.n.engagement)} labels={notes.map((x, i) => `${i + 1}. ${x.s.name}`)} format={(v) => fmt(v, 0)} height={120} max={5} />
-          {dips.length > 0 && (
-            <>
-              <h3>Where attention dipped</h3>
-              <ol className="plainList">{dips.map((x) => <li key={x.s.file}><Link to={"/elements/" + x.s.file}>{x.s.icon} {x.s.name}</Link> <Stars n={x.n.engagement} /> <span className="muted">{x.n.pace}</span></li>)}</ol>
-            </>
-          )}
-          <h3>Notes</h3>
-          <div className="notes">
-            {notes.map((x, i) => (
-              <article key={x.s.file} className="note">
-                <header>
-                  <Link to={"/elements/" + x.s.file}><span className="muted">{i + 1}.</span> {x.s.icon} {x.s.name}</Link>
-                  <span className="note__meta"><Stars n={x.n.engagement} /> engagement · <Stars n={x.n.clarity} /> clarity · {x.n.pace}</span>
-                </header>
-                <p>{x.n.reaction}</p>
-                {x.n.questions.length > 0 && <ul className="note__q">{x.n.questions.map((q, j) => <li key={j}>{q}</li>)}</ul>}
-                {x.n.memorable && <p className="note__mem">“{x.n.memorable}”</p>}
+          <h3>Side by side <small>{withNotes.length} readers on {scenes.length} scenes</small></h3>
+          <table className="analysis__table">
+            <thead><tr><th>Reader</th><th className="num">Scenes read</th><th className="num">Engagement</th><th className="num">Clarity</th><th className="num">Felt slow</th><th className="num">Questions</th><th>Verdict</th></tr></thead>
+            <tbody>
+              {withNotes.map((r) => {
+                const ns = notesFor(r.id);
+                const ov = data.readers[r.id].overall;
+                return (
+                  <tr key={r.id}>
+                    <td><button type="button" className="linkish" onClick={() => { setReaderId(r.id); setCompare(false); }}>{r.icon} {r.name}</button></td>
+                    <td className="num">{ns.length}</td>
+                    <td className="num">{fmt(avg(ns), 1)}</td>
+                    <td className="num">{fmt(ns.reduce((a, x) => a + x.n.clarity, 0) / ns.length, 1)}</td>
+                    <td className="num">{ns.filter((x) => x.n.pace === "slow").length}</td>
+                    <td className="num">{ns.reduce((a, x) => a + x.n.questions.length, 0)}</td>
+                    <td className="muted">{ov ? (ov.wouldRecommend ? "would recommend" : "would not, yet") : "—"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <h3>Engagement by scene <small>one line per reader</small></h3>
+          <MultiLine
+            series={withNotes.map((r) => ({ name: `${r.icon} ${r.name}`, values: scenes.map((s) => (data.readers[r.id].scenes[s.file] || {}).engagement || null) }))}
+            labels={scenes.map((s, i) => `${i + 1}. ${s.name}`)}
+          />
+
+          <h3>Where readers disagree <small>scenes with the widest spread of engagement</small></h3>
+          <ol className="plainList">
+            {scenes
+              .map((s) => {
+                const vals = withNotes.map((r) => ({ r, v: (data.readers[r.id].scenes[s.file] || {}).engagement })).filter((x) => x.v);
+                if (vals.length < 2) return null;
+                const hi = vals.reduce((a, b) => (b.v > a.v ? b : a));
+                const lo = vals.reduce((a, b) => (b.v < a.v ? b : a));
+                return { s, spread: hi.v - lo.v, hi, lo };
+              })
+              .filter((x) => x && x.spread >= 2)
+              .sort((a, b) => b.spread - a.spread)
+              .slice(0, 6)
+              .map((x) => (
+                <li key={x.s.file}>
+                  <Link to={"/elements/" + x.s.file}>{x.s.icon} {x.s.name}</Link>{" "}
+                  <span className="muted">{x.hi.r.icon} {x.hi.v}/5 vs {x.lo.r.icon} {x.lo.v}/5</span>
+                </li>
+              ))}
+          </ol>
+
+          <h3>Verdicts</h3>
+          <div className="verdicts">
+            {withNotes.filter((r) => data.readers[r.id].overall).map((r) => (
+              <article key={r.id} className="note">
+                <header><span>{r.icon} {r.name}</span><span className="note__meta">{data.readers[r.id].overall.wouldRecommend ? "would recommend" : "would not recommend yet"}</span></header>
+                <p>{data.readers[r.id].overall.verdict}</p>
               </article>
             ))}
           </div>
         </>
+      ) : (
+        <>
+          <p className="readerIntro"><span className="readerIntro__icon">{reader.icon}</span> <b>{reader.name}</b> — {reader.persona}.</p>
+          <div className="reader__bar">
+            {!configured && <span className="muted">Connect a model (the <b>Model</b> button on the project tray) to run a reader.</span>}
+            {configured && !busy && (
+              <>
+                <button type="button" className="primary" onClick={() => run(false)} disabled={!pending}>
+                  {pending ? `Read ${pending} unread scene${pending === 1 ? "" : "s"}` : "All scenes read"}
+                </button>
+                {reviewed > 0 && <button type="button" onClick={() => run(true)}>Re-read everything</button>}
+                {reviewed > 0 && <button type="button" onClick={() => { clearReader(dir, reader.id); setData(loadReader(dir)); }}>Forget notes</button>}
+                {reader.custom && <button type="button" onClick={() => { removeReader(dir, reader.id); setData(loadReader(dir)); setReaderId("first-time"); }}>Remove reader</button>}
+                <span className="muted">One call per scene, then one for the whole.</span>
+              </>
+            )}
+            {busy && (
+              <>
+                <span>{busy.message}…</span>
+                <div className="bar"><i style={{ width: `${busy.pct}%` }} /></div>
+                <button type="button" onClick={() => abortRef.current && abortRef.current.abort()}>Stop</button>
+              </>
+            )}
+            {err && <span className="err">{err}</span>}
+          </div>
+
+          {mine.overall && (
+            <section className="letter">
+              <h3>After finishing <small>{mine.overall.scenes} scenes · {mine.overall.wouldRecommend ? "would recommend" : "would not recommend yet"}</small></h3>
+              <p>{mine.overall.verdict}</p>
+              <div className="twoCol">
+                <div><h4>What worked</h4><ul>{mine.overall.strongest.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
+                <div><h4>What held it back</h4><ul>{mine.overall.weakest.map((x, i) => <li key={i}>{x}</li>)}</ul></div>
+              </div>
+              <h4>Pacing</h4><p>{mine.overall.pacing}</p>
+              {mine.overall.threads.length > 0 && <><h4>Dropped or under-served</h4><ul>{mine.overall.threads.map((x, i) => <li key={i}>{x}</li>)}</ul></>}
+            </section>
+          )}
+
+          {notes.length > 0 && (
+            <>
+              <div className="stats">
+                <Stat label="engagement, mean" value={fmt(avg(notes), 1) + " / 5"} sub={`${notes.length} scene${notes.length === 1 ? "" : "s"} read`} />
+                <Stat label="felt slow" value={fmt(notes.filter((x) => x.n.pace === "slow").length)} sub="scenes" />
+                <Stat label="felt rushed" value={fmt(notes.filter((x) => x.n.pace === "rushed").length)} sub="scenes" />
+                <Stat label="open questions" value={fmt(notes.reduce((a, x) => a + x.n.questions.length, 0))} sub="things this reader was left wondering" />
+              </div>
+              <h3>Engagement, scene by scene</h3>
+              <Chart series={notes.map((x) => x.n.engagement)} labels={notes.map((x, i) => `${i + 1}. ${x.s.name}`)} format={(v) => fmt(v, 0)} height={120} max={5} />
+              {dips.length > 0 && (
+                <>
+                  <h3>Where attention dipped</h3>
+                  <ol className="plainList">{dips.map((x) => <li key={x.s.file}><Link to={"/elements/" + x.s.file}>{x.s.icon} {x.s.name}</Link> <Stars n={x.n.engagement} /> <span className="muted">{x.n.pace}</span></li>)}</ol>
+                </>
+              )}
+              <h3>Notes</h3>
+              <div className="notes">
+                {notes.map((x, i) => (
+                  <article key={x.s.file} className="note">
+                    <header>
+                      <Link to={"/elements/" + x.s.file}><span className="muted">{i + 1}.</span> {x.s.icon} {x.s.name}</Link>
+                      <span className="note__meta"><Stars n={x.n.engagement} /> engagement · <Stars n={x.n.clarity} /> clarity · {x.n.pace}</span>
+                    </header>
+                    <p>{x.n.reaction}</p>
+                    {x.n.questions.length > 0 && <ul className="note__q">{x.n.questions.map((q, j) => <li key={j}>{q}</li>)}</ul>}
+                    {x.n.memorable && <p className="note__mem">“{x.n.memorable}”</p>}
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
+          {!notes.length && !busy && configured && <p className="muted">{reader.name} hasn’t read anything yet.</p>}
+        </>
       )}
-      {!notes.length && !busy && configured && <p className="muted">Nothing read yet.</p>}
+    </div>
+  );
+};
+
+/** Several readers' engagement over the same scenes, as lines. */
+const MultiLine = ({ series, labels, height = 180 }) => {
+  const w = 900, padL = 30, padR = 12, padT = 12, padB = 24;
+  const n = labels.length;
+  const x = (i) => padL + ((w - padL - padR) * (n > 1 ? i / (n - 1) : 0.5));
+  const y = (v) => padT + (height - padT - padB) * (1 - (v - 1) / 4);
+  return (
+    <div>
+      <svg className="chart" viewBox={`0 0 ${w} ${height}`} preserveAspectRatio="none" role="img">
+        {[1, 2, 3, 4, 5].map((t) => (
+          <g key={t}><line x1={padL} x2={w - padR} y1={y(t)} y2={y(t)} className="chart__grid" /><text x={padL - 6} y={y(t) + 4} className="chart__tick" textAnchor="end">{t}</text></g>
+        ))}
+        {series.map((s, k) => {
+          const pts = s.values.map((v, i) => (v ? `${x(i)},${y(v)}` : null));
+          const segs = []; let cur = [];
+          pts.forEach((p) => { if (p) cur.push(p); else { if (cur.length) segs.push(cur); cur = []; } });
+          if (cur.length) segs.push(cur);
+          return segs.map((seg, j) => <polyline key={k + "-" + j} points={seg.join(" ")} className={"chart__line chart__line--" + (k % 6)} />);
+        })}
+        <text x={w - padR} y={height - 6} className="chart__tick" textAnchor="end">scenes in order →</text>
+      </svg>
+      <p className="legend">{series.map((s, k) => <span key={k}><i className={"chart__swatch chart__line--" + (k % 6)} /> {s.name}</span>)}</p>
     </div>
   );
 };

@@ -7,18 +7,66 @@ import { plain } from "./text";
 
 const FILE = "analysis.reader.json";
 
+/** Readers the model can play. Each gets its own notes and letter. */
+export const READERS = [
+  { id: "first-time", name: "First-time reader", icon: "📖", blurb: "Attentive, open-minded, reading for the story.",
+    persona: "an attentive first-time reader of this novel, reading for pleasure with no agenda, who notices when the story grips and when it lets go" },
+  { id: "impatient", name: "Impatient commuter", icon: "🚆", blurb: "Reads on the train. Skims. Puts books down.",
+    persona: "a busy commuter reading on a crowded train, who skims anything that feels like throat-clearing, loses patience with description and backstory, and will abandon a book that does not keep moving — you say plainly where you would have stopped" },
+  { id: "genre", name: "Genre devotee", icon: "🧛", blurb: "Has read everything in this genre. Knows the tropes.",
+    persona: "a devoted reader of this book's genre who has read hundreds like it, knows every trope and convention, spots the familiar move a page early, and lights up at a genuine turn or a rule bent well" },
+  { id: "critic", name: "Literary critic", icon: "🖋️", blurb: "Reads for sentence, image, structure, theme.",
+    persona: "a literary critic reading for the sentence and the structure: voice, image, point of view, what the book is about underneath what happens, and whether the prose earns its effects — exacting but fair" },
+  { id: "editor", name: "Acquiring editor", icon: "🏢", blurb: "Could I sell this? Where would I cut?",
+    persona: "an acquiring editor at a publishing house reading a submission, asking whether this would sell and to whom, where the market hook is, what you would cut or move, and whether you would ask for the full manuscript" },
+  { id: "young", name: "Teen reader", icon: "🎧", blurb: "Sixteen, reads a lot, no patience for being talked down to.",
+    persona: "a sixteen-year-old who reads constantly, cares most about characters they can feel for and about honesty of emotion, hates being talked down to or lectured, and says so in your own voice" },
+  { id: "continuity", name: "Continuity nitpicker", icon: "🔍", blurb: "Tracks every detail. Catches contradictions.",
+    persona: "a meticulous reader who tracks every name, date, place and object across scenes and flags anything that contradicts what came before, anything unexplained, and any question the book seems to have forgotten it raised" },
+  { id: "aloud", name: "Reads aloud", icon: "🎙️", blurb: "Hears the prose. Trips on clunky sentences.",
+    persona: "someone reading the book aloud to a partner each night, who hears every sentence, trips over clumsy rhythm, repeated words and tangled clauses, and knows which passages made the listener lean in" },
+];
+
+export const readerById = (id, data) =>
+  READERS.find((r) => r.id === id) || (data && data.custom && data.custom.find((r) => r.id === id)) || null;
+
+/** All readers available for a project: presets plus any custom ones saved in it. */
+export const allReaders = (data) => [...READERS, ...((data && data.custom) || [])];
+
+const empty = () => ({ version: 2, readers: {}, custom: [] });
+
 export const loadReader = (dir) => {
   try {
-    if (existsSync(dir + FILE)) return JSON.parse(readFileSync(dir + FILE));
+    if (existsSync(dir + FILE)) {
+      const d = JSON.parse(readFileSync(dir + FILE));
+      // v1 held a single anonymous reader; fold it into "first-time"
+      if (!d.version) return { ...empty(), readers: { "first-time": { scenes: d.scenes || {}, overall: d.overall || null } } };
+      return { ...empty(), ...d };
+    }
   } catch (e) {
     /* corrupt or missing */
   }
-  return { scenes: {}, overall: null };
+  return empty();
 };
 
 export const saveReader = (dir, data) => writeFileSync(dir + FILE, JSON.stringify(data));
 
-const SCENE_SYSTEM = `You are an attentive first-time reader of a novel in progress, giving the author candid notes. You have read the earlier scenes (summarised) and are now reading the next one. Be specific and honest; praise only what earns it. Write in the first person as a reader ("I lost the thread when…"), not as an editor issuing rules.`;
+export const addCustomReader = (dir, { name, icon, persona }) => {
+  const data = loadReader(dir);
+  const id = "custom-" + Date.now().toString(36);
+  data.custom.push({ id, name: name.trim(), icon: (icon || "🙂").trim(), blurb: persona.trim().slice(0, 80), persona: persona.trim(), custom: true });
+  saveReader(dir, data);
+  return id;
+};
+
+export const removeReader = (dir, id) => {
+  const data = loadReader(dir);
+  delete data.readers[id];
+  data.custom = data.custom.filter((r) => r.id !== id);
+  saveReader(dir, data);
+};
+
+const sceneSystem = (persona) => `You are ${persona}. You are giving the author candid notes on a novel in progress. You have read the earlier scenes (summarised) and are now reading the next one. Stay in character throughout — your tastes, your patience, your blind spots. Be specific; praise only what earns it. Write in the first person as this reader ("I lost the thread when…"), not as an editor issuing rules.`;
 
 const sceneUser = (scene, i, total, priorNotes) => `Earlier scenes, as I experienced them:
 ${priorNotes.length ? priorNotes.map((n) => `- ${n}`).join("\n") : "(this is the first scene)"}
@@ -39,7 +87,7 @@ Return JSON:
   "summary": "one sentence summary of what happened, to carry forward"
 }`;
 
-const OVERALL_SYSTEM = `You are an attentive first-time reader who has just finished a novel in progress, writing the author a candid, specific letter about the whole. First person, as a reader.`;
+const overallSystem = (persona) => `You are ${persona}, and you have just finished a novel in progress. Write the author a candid, specific letter about the whole, in character. First person.`;
 
 const overallUser = (notes) => `My scene-by-scene notes, in order:
 ${notes.map((n, i) => `${i + 1}. [${n.engagement}/5, ${n.pace}] ${n.summary} — ${n.reaction}`).join("\n")}
@@ -58,8 +106,12 @@ Return JSON:
  * Review the given scenes ({file, name, content}). Skips scenes already in
  * `data` unless force. Calls onProgress({index,total,message}).
  */
-export const runReader = async (dir, scenes, { force = false, onProgress = () => {}, signal } = {}) => {
-  const data = loadReader(dir);
+export const runReader = async (dir, scenes, { readerId = "first-time", force = false, onProgress = () => {}, signal } = {}) => {
+  const all = loadReader(dir);
+  const reader = readerById(readerId, all);
+  if (!reader) throw new Error("Unknown reader.");
+  if (!all.readers[readerId]) all.readers[readerId] = { scenes: {}, overall: null };
+  const data = all.readers[readerId];
   const prior = [];
   for (let i = 0; i < scenes.length; i += 1) {
     if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
@@ -71,9 +123,9 @@ export const runReader = async (dir, scenes, { force = false, onProgress = () =>
       continue;
     }
     if (!text.trim()) continue;
-    onProgress({ index: i, total: scenes.length, message: `Reading “${s.name}” (${i + 1} of ${scenes.length})` });
+    onProgress({ index: i, total: scenes.length, message: `${reader.name} is reading “${s.name}” (${i + 1} of ${scenes.length})` });
     const out = await complete({
-      system: SCENE_SYSTEM,
+      system: sceneSystem(reader.persona),
       user: sceneUser({ name: s.name, text: text.slice(0, 24000) }, i, scenes.length, prior.slice(-12)),
       json: true,
       signal,
@@ -91,12 +143,12 @@ export const runReader = async (dir, scenes, { force = false, onProgress = () =>
     };
     data.scenes[s.file] = note;
     prior.push(note.summary);
-    saveReader(dir, data);
+    saveReader(dir, all);
   }
   const notes = scenes.map((s) => data.scenes[s.file]).filter(Boolean);
   if (notes.length >= 2) {
-    onProgress({ index: scenes.length, total: scenes.length, message: "Writing the letter about the whole" });
-    const out = await complete({ system: OVERALL_SYSTEM, user: overallUser(notes), json: true, maxTokens: 2048, signal });
+    onProgress({ index: scenes.length, total: scenes.length, message: `${reader.name} is writing the letter about the whole` });
+    const out = await complete({ system: overallSystem(reader.persona), user: overallUser(notes), json: true, maxTokens: 2048, signal });
     data.overall = {
       verdict: String(out.verdict || "").trim(),
       strongest: Array.isArray(out.strongest) ? out.strongest.map(String) : [],
@@ -107,9 +159,14 @@ export const runReader = async (dir, scenes, { force = false, onProgress = () =>
       at: Date.now(),
       scenes: notes.length,
     };
-    saveReader(dir, data);
+    saveReader(dir, all);
   }
-  return data;
+  return all;
 };
 
-export const clearReader = (dir) => saveReader(dir, { scenes: {}, overall: null });
+export const clearReader = (dir, readerId) => {
+  const all = loadReader(dir);
+  if (readerId) all.readers[readerId] = { scenes: {}, overall: null };
+  else all.readers = {};
+  saveReader(dir, all);
+};

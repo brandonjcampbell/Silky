@@ -66,3 +66,38 @@
 .note p { margin: 6px 0 0; color: var(--ink-soft); }
 .note__q { margin: 6px 0 0; padding-left: 18px; color: var(--ink-muted); font-size: 13px; }
 .note__mem { font-family: var(--font-prose); font-style: italic; color: var(--ink); }
+
+/* readers */
+.readers { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+.analysis .readerChip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px 5px 8px; font-size: 13px; border-radius: 999px;
+}
+.analysis .readerChip.is-active { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
+.analysis .readerChip small { font-size: 10px; color: var(--ink-muted); background: var(--bg); border-radius: 999px; padding: 1px 6px; }
+.analysis .readerChip.is-active small { color: var(--ink); }
+.analysis .readerChip--add, .analysis .readerChip--compare { border-style: dashed; }
+.readerIntro { font-size: 13px; color: var(--ink-muted); margin: 0 0 10px; line-height: 1.5; }
+.readerIntro b { color: var(--ink-soft); }
+.readerIntro__icon { font-size: 16px; }
+.newReader { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; max-width: 640px; }
+.newReader__row { display: flex; gap: 8px; }
+.newReader input, .newReader textarea {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 9px; flex: 1; min-width: 0;
+}
+.newReader textarea { resize: vertical; line-height: 1.45; }
+.newReader input:focus, .newReader textarea:focus { outline: none; border-color: var(--accent); }
+.newReader__icon { flex: none !important; width: 48px; text-align: center; }
+.analysis button.linkish { border: 0; padding: 0; color: var(--ink); background: transparent; }
+.analysis button.linkish:hover { color: var(--accent); background: transparent; }
+.verdicts { display: flex; flex-direction: column; gap: 10px; }
+.chart__line { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.chart__swatch { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 4px; border-radius: 2px; }
+.chart__line--0 { stroke: var(--accent); background: var(--accent); }
+.chart__line--1 { stroke: #5ab0ff; background: #5ab0ff; }
+.chart__line--2 { stroke: #7fd18b; background: #7fd18b; }
+.chart__line--3 { stroke: #ffc857; background: #ffc857; }
+.chart__line--4 { stroke: #c792ea; background: #c792ea; }
+.chart__line--5 { stroke: #ff9f6b; background: #ff9f6b; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-muted); margin: 6px 0 0; }
