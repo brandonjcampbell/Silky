@@ -69,9 +69,13 @@ export const similarity = (a, b) => {
 export const insertionStatus = (html, ins) => {
   const now = currentText(html, ins.id);
   if (now === null) {
-    const plain = parse(html).textContent || "";
-    const still = ins.text.trim().length > 20 && plain.includes(ins.text.trim().slice(0, 60));
-    return { status: still ? "unmarked" : "removed", similarity: still ? 1 : 0, words: still ? ins.words : 0 };
+    // markers gone: is the wording still in the scene? Check the distinctive
+    // words of the original against the scene's text.
+    const plain = (parse(html).textContent || "").toLowerCase();
+    const distinct = [...new Set((ins.text.toLowerCase().match(/[a-z\u00C0-\u024F'’]{5,}/g) || []))];
+    const present = distinct.filter((w) => plain.includes(w)).length;
+    const still = distinct.length >= 3 && present / distinct.length >= 0.8;
+    return { status: still ? "unmarked" : "removed", similarity: still ? present / distinct.length : 0, words: still ? ins.words : 0 };
   }
   const sim = similarity(ins.text, now);
   return { status: sim >= 0.97 ? "verbatim" : "edited", similarity: sim, words: words(now), now };
