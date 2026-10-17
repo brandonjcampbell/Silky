@@ -203,7 +203,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 )}
               getOptionLabel={(x) => x.icon + " " + x.name}
               renderInput={(params) => {
-                return <TextField {...params} label={"Add " + kindName} />;
+                return <TextField {...params} label="Add to the web" />;
               }}
             />
           </Stack>
