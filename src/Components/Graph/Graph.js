@@ -50,11 +50,19 @@ const Graph = ({ elements, onDrop }) => {
       };
       onDrop(temp);
     });
-    // Fit once on first mount so a web opens showing all of its nodes,
-    // whatever screen it was laid out on. Stored positions are untouched.
-    cy.one("render", () => cy.fit(undefined, 40));
     setCy(cy);
   };
+
+  // Fit once after the first layout settles so a web opens showing all of
+  // its nodes, whatever screen it was laid out on. Stored positions are
+  // untouched; only the viewport moves.
+  useEffect(() => {
+    if (!cy) return;
+    const fit = () => cy.fit(undefined, 40);
+    cy.one("layoutstop", fit);
+    const t = setTimeout(fit, 150);
+    return () => clearTimeout(t);
+  }, [cy]);
 
   // The canvas fills whatever container it is given; the container decides
   // the size. We still listen for resizes so Cytoscape re-measures.
