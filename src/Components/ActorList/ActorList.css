@@ -1,12 +1,17 @@
 /* Sidebar: project title, type tabs, the actor list. */
 
 .ActorList {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   padding: 10px 8px 12px 12px;
   box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  grid-template-columns: repeat(6, 32px) 1fr;
+  column-gap: 2px;
 }
+/* row 1: project title spans; row 2: the six type tabs; row 3: the list */
+.ActorList .project { grid-column: 1 / -1; }
+.ActorList .content { grid-column: 1 / -1; }
 
 .project {
   display: flex;
@@ -34,7 +39,7 @@
   width: 30px;
   height: 30px;
   padding: 6px;
-  margin: 0 2px 10px 0;
+  margin: 0 0 10px;
   box-sizing: border-box;
   border-radius: var(--radius);
   color: var(--ink-muted);
@@ -46,7 +51,7 @@
 .tab.selected { color: var(--accent); background: var(--accent-soft); }
 
 .content {
-  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   margin-left: -4px;
