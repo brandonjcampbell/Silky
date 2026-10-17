@@ -88,9 +88,21 @@ const TextEditor = ({ data, save, actorUuid }) => {
     }
   }, []);
 
+  // Tidy the artifacts the native editing commands leave behind, in place so
+  // the selection (which lives on text nodes) survives.
+  const tidy = (root) => {
+    root.querySelectorAll("span[style]").forEach((el) => {
+      if (/^\s*font-weight:\s*normal;?\s*$/i.test(el.getAttribute("style") || "")) {
+        el.replaceWith(...el.childNodes);
+      }
+    });
+    root.querySelectorAll("hr[id]").forEach((el) => el.removeAttribute("id"));
+  };
+
   const commit = useCallback(() => {
     clearTimeout(timer.current);
     if (!ref.current) return;
+    tidy(ref.current);
     const html = ref.current.innerHTML;
     if (html !== lastSaved.current) {
       lastSaved.current = html;
@@ -110,8 +122,9 @@ const TextEditor = ({ data, save, actorUuid }) => {
   useEffect(() => () => {
     if (timer.current) {
       clearTimeout(timer.current);
-      if (ref.current && ref.current.innerHTML !== lastSaved.current) {
-        save(ref.current.innerHTML);
+      if (ref.current) {
+        tidy(ref.current);
+        if (ref.current.innerHTML !== lastSaved.current) save(ref.current.innerHTML);
       }
     }
   }, [save]);
@@ -142,8 +155,10 @@ const TextEditor = ({ data, save, actorUuid }) => {
     if (tool.cmd === "clear") {
       document.execCommand("removeFormat", false, null);
       document.execCommand("formatBlock", false, "p");
+    } else if (tool.arg) {
+      document.execCommand(tool.cmd, false, tool.arg);
     } else {
-      document.execCommand(tool.cmd, false, tool.arg || null);
+      document.execCommand(tool.cmd, false);
     }
     scheduleSave();
     refreshFmt();
