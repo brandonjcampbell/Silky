@@ -15,6 +15,7 @@ import { SEP } from "../../storage";
 import DraggableList from "../DraggableList";
 import Graph from "../Graph";
 import SceneAnalysis from "../SceneAnalysis";
+import LinkScanner from "../LinkScanner";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -381,6 +382,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
               ></TextEditor>
             </div>
           )}
+          {element.type === "snippet" && <LinkScanner element={element} onChange={() => setRefresh(Date.now())} />}
           {element.type === "snippet" && <SceneAnalysis element={element} />}
 
           {element.tags && (

@@ -1,0 +1,29 @@
+.linkScan { margin: 6px 24px 10px; max-width: 72ch; font-size: 13px; }
+.linkScan__bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.linkScan button {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent;
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer;
+}
+.linkScan button:hover:not(:disabled) { color: var(--ink); border-color: var(--ink-muted); background: var(--bg-hover); }
+.linkScan button:disabled { opacity: 0.5; cursor: default; }
+.linkScan__summary, .linkScan__busy { color: var(--ink-muted); font-size: 12px; }
+.linkScan__err { color: var(--accent); font-size: 12px; }
+.linkScan .muted { color: var(--ink-muted); }
+.linkScan__body { margin-top: 10px; padding: 10px 12px 6px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); }
+.linkScan__mentions { margin: 0 0 6px; line-height: 1.9; }
+.linkScan .pill { display: inline-block; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin: 0 4px 2px 0; color: var(--ink-soft); }
+.linkScan .pill:hover { border-color: var(--accent); color: var(--ink); }
+.linkScan .pill b { color: var(--ink-muted); font-weight: 500; }
+.linkScan h4 { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); margin: 14px 0 6px; }
+.linkScan h4 small { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.linkScan__all { margin-left: auto; }
+.linkScan__list { list-style: none; margin: 0; padding: 0; }
+.linkScan__list li { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
+.linkScan__list li:first-child { border-top: 0; }
+.linkScan__list li.is-dim { opacity: 0.55; }
+.linkScan__list li.is-done .linkScan__text { color: var(--ink-muted); }
+.linkScan__text { color: var(--ink-soft); line-height: 1.4; }
+.linkScan__text a { color: inherit; }
+.linkScan__text a:hover { color: var(--accent); }
+.linkScan__meta { color: var(--ink-muted); font-size: 11px; white-space: nowrap; }
