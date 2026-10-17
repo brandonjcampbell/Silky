@@ -4,7 +4,7 @@ import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader } from "react-i
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
 import { plain, wordCount, styleStats, dialogueRatio, sentences, fmt, pct } from "../../analysis/text";
-import { loadReader, runReader, clearReader, READERS, allReaders, readerById, addCustomReader, removeReader } from "../../analysis/reader";
+import { loadReader, runReader, clearReader, READERS, allReaders, readerById, addCustomReader, removeReader, updateReader, resetReader, hideReader, unhideAll, duplicateReader, personaText, EMPTY_PROFILE } from "../../analysis/reader";
 import { isConfigured } from "../../llm/config";
 import "./Analysis.css";
 
@@ -281,32 +281,65 @@ const Style = () => {
 
 const Stars = ({ n }) => <span className="stars" title={`${n} of 5`}>{"●".repeat(n)}<span>{"●".repeat(5 - n)}</span></span>;
 
-const NewReaderForm = ({ onAdd, onCancel }) => {
-  const [name, setName] = useState("");
-  const [icon, setIcon] = useState("🙂");
-  const [persona, setPersona] = useState("");
+/** Create or edit a reader profile. */
+const ReaderForm = ({ initial, mode, onSave, onCancel, onDuplicate, onReset, onRemove, onHide, hasNotes }) => {
+  const [f, setF] = useState(() => ({
+    name: initial.name || "",
+    icon: initial.icon || "🙂",
+    persona: initial.persona || "",
+    blurb: initial.blurb || "",
+    profile: { ...EMPTY_PROFILE, ...(initial.profile || {}) },
+  }));
+  const set = (k) => (e) => setF({ ...f, [k]: e.target.value });
+  const setP = (k) => (e) => setF({ ...f, profile: { ...f.profile, [k]: e.target.type === "range" ? Number(e.target.value) : e.target.value } });
+  const ok = f.name.trim() && f.persona.trim();
+  const preview = personaText({ ...f });
+  const PAT = ["gives up fast", "little patience", "average", "will stay for good writing", "savours slowness"];
+  const STR = ["generous", "easy to please", "fair", "hard to impress", "severe"];
+
   return (
-    <form
-      className="newReader"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (name.trim() && persona.trim()) onAdd({ name, icon, persona });
-      }}
-    >
-      <div className="newReader__row">
-        <input type="text" value={icon} onChange={(e) => setIcon(e.target.value)} className="newReader__icon" aria-label="Emoji" maxLength={4} />
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Reader’s name — “My agent”, “Book club”, “Mum”" aria-label="Name" />
+    <form className="readerForm" onSubmit={(e) => { e.preventDefault(); if (ok) onSave(f); }}>
+      <div className="readerForm__row">
+        <input type="text" value={f.icon} onChange={set("icon")} className="readerForm__icon" aria-label="Emoji" maxLength={4} />
+        <input type="text" value={f.name} onChange={set("name")} placeholder="Reader’s name — “My agent”, “Book club”, “Mum”" aria-label="Name" />
       </div>
-      <textarea
-        value={persona}
-        onChange={(e) => setPersona(e.target.value)}
-        placeholder="Who are they? Finish the sentence “You are …” — their tastes, what they read, what loses them, what they’re hoping for."
-        rows={3}
-        aria-label="Persona"
-      />
-      <div className="newReader__row">
-        <button type="submit" className="primary" disabled={!name.trim() || !persona.trim()}>Add reader</button>
+      <label className="readerForm__field">
+        <span>Who they are <small>finish “You are …”</small></span>
+        <textarea value={f.persona} onChange={set("persona")} rows={3} placeholder="a retired schoolteacher who reads two novels a week, mostly crime, and has no time for prologues" />
+      </label>
+      <div className="readerForm__grid">
+        <label className="readerForm__field"><span>Mostly reads</span><input type="text" value={f.profile.reads} onChange={setP("reads")} placeholder="literary fiction, the occasional thriller" /></label>
+        <label className="readerForm__field"><span>Cares most about</span><input type="text" value={f.profile.cares} onChange={setP("cares")} placeholder="characters I believe in, a voice I can hear" /></label>
+        <label className="readerForm__field"><span>Loses them</span><input type="text" value={f.profile.loses} onChange={setP("loses")} placeholder="backstory dumps, more than three names a page" /></label>
+        <label className="readerForm__field"><span>Hoping for</span><input type="text" value={f.profile.hopes} onChange={setP("hopes")} placeholder="to be frightened in a way that stays with me" /></label>
+      </div>
+      <div className="readerForm__grid">
+        <label className="readerForm__field readerForm__range">
+          <span>Patience <small>{PAT[f.profile.patience - 1]}</small></span>
+          <input type="range" min={1} max={5} value={f.profile.patience} onChange={setP("patience")} />
+        </label>
+        <label className="readerForm__field readerForm__range">
+          <span>Scoring <small>{STR[f.profile.strictness - 1]}</small></span>
+          <input type="range" min={1} max={5} value={f.profile.strictness} onChange={setP("strictness")} />
+        </label>
+      </div>
+      <label className="readerForm__field">
+        <span>Short description <small>shown on the chip’s tooltip</small></span>
+        <input type="text" value={f.blurb} onChange={set("blurb")} placeholder="(from the persona if blank)" />
+      </label>
+      <details className="readerForm__preview">
+        <summary>What the model will be told</summary>
+        <p>You are {preview}</p>
+      </details>
+      {hasNotes && <p className="readerForm__warn">This reader already has notes, taken under the previous profile. Re-read to refresh them.</p>}
+      <div className="readerForm__row readerForm__actions">
+        <button type="submit" className="primary" disabled={!ok}>{mode === "new" ? "Add reader" : "Save"}</button>
         <button type="button" onClick={onCancel}>Cancel</button>
+        <span className="spacer" />
+        {mode === "edit" && onDuplicate && <button type="button" onClick={onDuplicate}>Duplicate</button>}
+        {mode === "edit" && onReset && initial.edited && <button type="button" onClick={onReset}>Reset to default</button>}
+        {mode === "edit" && onHide && <button type="button" onClick={onHide} title="Hide from this project; notes are kept">Hide</button>}
+        {mode === "edit" && onRemove && <button type="button" onClick={onRemove}>Remove</button>}
       </div>
     </form>
   );
@@ -319,7 +352,7 @@ const Reader = () => {
   const scenes = scenesOf(thread, snippets, byFile);
   const [data, setData] = useState(() => loadReader(dir));
   const [readerId, setReaderId] = useState("first-time");
-  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState(null); // null | "new" | "edit"
   const [compare, setCompare] = useState(false);
   const [busy, setBusy] = useState(null);
   const [err, setErr] = useState(null);
@@ -329,7 +362,8 @@ const Reader = () => {
   useEffect(() => () => abortRef.current && abortRef.current.abort(), []);
 
   const readers = allReaders(data);
-  const reader = readerById(readerId, data) || READERS[0];
+  const hiddenCount = READERS.length - readers.filter((r) => r.preset).length;
+  const reader = readerById(readerId, data) || readers[0] || READERS[0];
   const mine = data.readers[reader.id] || { scenes: {}, overall: null };
   const reviewed = scenes.filter((s) => mine.scenes[s.file]).length;
   const pending = scenes.length - reviewed;
@@ -389,15 +423,32 @@ const Reader = () => {
             </button>
           );
         })}
-        <button type="button" className="readerChip readerChip--add" onClick={() => setAdding((a) => !a)} title="Describe a reader of your own">+ Reader</button>
+        <button type="button" className="readerChip readerChip--add" onClick={() => { setForm(form === "new" ? null : "new"); setCompare(false); }} title="Describe a reader of your own">+ Reader</button>
+        {hiddenCount > 0 && <button type="button" className="readerChip readerChip--add" onClick={() => { unhideAll(dir); setData(loadReader(dir)); }} title="Show the hidden preset readers again">Show {hiddenCount} hidden</button>}
         {withNotes.length >= 2 && (
           <button type="button" className={"readerChip readerChip--compare" + (compare ? " is-active" : "")} onClick={() => setCompare((c) => !c)}>Compare {withNotes.length}</button>
         )}
       </div>
-      {adding && (
-        <NewReaderForm
-          onAdd={(r) => { const id = addCustomReader(dir, r); setData(loadReader(dir)); setReaderId(id); setAdding(false); setCompare(false); }}
-          onCancel={() => setAdding(false)}
+      {form === "new" && (
+        <ReaderForm
+          mode="new"
+          initial={{}}
+          onSave={(f) => { const id = addCustomReader(dir, f); setData(loadReader(dir)); setReaderId(id); setForm(null); setCompare(false); }}
+          onCancel={() => setForm(null)}
+        />
+      )}
+      {form === "edit" && !compare && (
+        <ReaderForm
+          key={reader.id}
+          mode="edit"
+          initial={reader}
+          hasNotes={reviewed > 0}
+          onSave={(f) => { updateReader(dir, reader.id, f); setData(loadReader(dir)); setForm(null); }}
+          onCancel={() => setForm(null)}
+          onDuplicate={() => { const id = duplicateReader(dir, reader.id); setData(loadReader(dir)); setReaderId(id); setForm("edit"); }}
+          onReset={reader.preset ? () => { resetReader(dir, reader.id); setData(loadReader(dir)); setForm(null); } : undefined}
+          onHide={reader.preset ? () => { hideReader(dir, reader.id); setData(loadReader(dir)); setReaderId("first-time"); setForm(null); } : undefined}
+          onRemove={reader.custom ? () => { removeReader(dir, reader.id); setData(loadReader(dir)); setReaderId("first-time"); setForm(null); } : undefined}
         />
       )}
 
@@ -464,7 +515,10 @@ const Reader = () => {
         </>
       ) : (
         <>
-          <p className="readerIntro"><span className="readerIntro__icon">{reader.icon}</span> <b>{reader.name}</b> — {reader.persona}.</p>
+          <p className="readerIntro">
+            <span className="readerIntro__icon">{reader.icon}</span> <b>{reader.name}</b>{reader.edited && <span className="readerIntro__tag">edited</span>}{reader.custom && <span className="readerIntro__tag">yours</span>} — {personaText(reader)}
+            {form !== "edit" && <button type="button" className="linkish readerIntro__edit" onClick={() => setForm("edit")}>Edit profile</button>}
+          </p>
           <div className="reader__bar">
             {!configured && <span className="muted">Connect a model (the <b>Model</b> button on the project tray) to run a reader.</span>}
             {configured && !busy && (
@@ -474,7 +528,6 @@ const Reader = () => {
                 </button>
                 {reviewed > 0 && <button type="button" onClick={() => run(true)}>Re-read everything</button>}
                 {reviewed > 0 && <button type="button" onClick={() => { clearReader(dir, reader.id); setData(loadReader(dir)); }}>Forget notes</button>}
-                {reader.custom && <button type="button" onClick={() => { removeReader(dir, reader.id); setData(loadReader(dir)); setReaderId("first-time"); }}>Remove reader</button>}
                 <span className="muted">One call per scene, then one for the whole.</span>
               </>
             )}

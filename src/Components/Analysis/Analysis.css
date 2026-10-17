@@ -80,6 +80,29 @@
 .readerIntro { font-size: 13px; color: var(--ink-muted); margin: 0 0 10px; line-height: 1.5; }
 .readerIntro b { color: var(--ink-soft); }
 .readerIntro__icon { font-size: 16px; }
+.readerForm { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+.readerForm__row { display: flex; gap: 8px; align-items: center; }
+.readerForm__actions .spacer { flex: 1; }
+.readerForm__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 800px) { .readerForm__grid { grid-template-columns: 1fr; } }
+.readerForm__field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.readerForm__field > span { font-size: 12px; color: var(--ink-muted); }
+.readerForm__field > span small { color: var(--ink-muted); opacity: 0.8; margin-left: 6px; }
+.readerForm input[type="text"], .readerForm textarea {
+  font: inherit; font-size: 13px; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 9px; min-width: 0; width: 100%; box-sizing: border-box;
+}
+.readerForm__row > input[type="text"] { flex: 1; }
+.readerForm textarea { resize: vertical; line-height: 1.45; }
+.readerForm input:focus, .readerForm textarea:focus { outline: none; border-color: var(--accent); }
+.readerForm__icon { flex: none !important; width: 48px !important; text-align: center; }
+.readerForm__range input[type="range"] { accent-color: var(--accent); width: 100%; }
+.readerForm__preview { font-size: 13px; color: var(--ink-muted); }
+.readerForm__preview summary { cursor: pointer; }
+.readerForm__preview p { margin: 6px 0 0; padding: 8px 10px; background: var(--bg); border-radius: var(--radius); line-height: 1.5; color: var(--ink-soft); }
+.readerForm__warn { margin: 0; font-size: 12px; color: var(--accent); }
+.readerIntro__tag { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 6px; margin: 0 6px; vertical-align: 1px; }
+.analysis .readerIntro__edit { margin-left: 8px; font-size: 12px; color: var(--ink-soft); text-decoration: underline; }
 .newReader { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; max-width: 640px; }
 .newReader__row { display: flex; gap: 8px; }
 .newReader input, .newReader textarea {

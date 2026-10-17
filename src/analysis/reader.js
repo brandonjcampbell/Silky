@@ -27,13 +27,46 @@ export const READERS = [
     persona: "someone reading the book aloud to a partner each night, who hears every sentence, trips over clumsy rhythm, repeated words and tangled clauses, and knows which passages made the listener lean in" },
 ];
 
+/* A reader's profile: the free-text persona plus structured traits that are
+   folded into the prompt. Presets can be edited per project (stored as
+   overrides) and reset; custom readers are stored whole. */
+export const EMPTY_PROFILE = { reads: "", cares: "", loses: "", hopes: "", patience: 3, strictness: 3 };
+
+const PATIENCE = ["You give up on a scene the moment it slows.", "You have little patience for anything that does not move the story.", "", "You will stay with a slow passage if the writing rewards it.", "You savour slowness and are happy to dwell."];
+const STRICT = ["You are generous: a scene has to fail badly before you score it below 3.", "You are easy to please and quick to say so.", "", "You are hard to impress; 4 and 5 are reserved for scenes you would reread.", "You are severe: most published fiction would get a 2 or 3 from you, and you say exactly why."];
+
+/** The full text the model is told it is. */
+export const personaText = (r) => {
+  const p = { ...EMPTY_PROFILE, ...(r.profile || {}) };
+  const parts = [r.persona.trim().replace(/\.$/, "")];
+  if (p.reads.trim()) parts.push(`You mostly read ${p.reads.trim().replace(/\.$/, "")}`);
+  if (p.cares.trim()) parts.push(`What you care about most in a book: ${p.cares.trim().replace(/\.$/, "")}`);
+  if (p.loses.trim()) parts.push(`What loses you: ${p.loses.trim().replace(/\.$/, "")}`);
+  if (p.hopes.trim()) parts.push(`What you are hoping this book will give you: ${p.hopes.trim().replace(/\.$/, "")}`);
+  const pat = PATIENCE[Math.max(0, Math.min(4, Number(p.patience) - 1))];
+  const str = STRICT[Math.max(0, Math.min(4, Number(p.strictness) - 1))];
+  if (pat) parts.push(pat.replace(/\.$/, ""));
+  if (str) parts.push(str.replace(/\.$/, ""));
+  return parts.join(". ") + ".";
+};
+
+const applyOverride = (preset, data) => {
+  const o = data && data.overrides && data.overrides[preset.id];
+  return o ? { ...preset, ...o, id: preset.id, preset: true, edited: true } : { ...preset, preset: true };
+};
+
+/** All readers available for a project: presets (with any edits) plus custom ones. */
+export const allReaders = (data) => [
+  ...READERS.map((r) => applyOverride(r, data)).filter((r) => !r.hidden),
+  ...((data && data.custom) || []),
+];
+
 export const readerById = (id, data) =>
-  READERS.find((r) => r.id === id) || (data && data.custom && data.custom.find((r) => r.id === id)) || null;
+  (READERS.some((r) => r.id === id) ? applyOverride(READERS.find((r) => r.id === id), data) : null) ||
+  (data && data.custom && data.custom.find((r) => r.id === id)) ||
+  null;
 
-/** All readers available for a project: presets plus any custom ones saved in it. */
-export const allReaders = (data) => [...READERS, ...((data && data.custom) || [])];
-
-const empty = () => ({ version: 2, readers: {}, custom: [] });
+const empty = () => ({ version: 2, readers: {}, custom: [], overrides: {} });
 
 export const loadReader = (dir) => {
   try {
@@ -51,12 +84,64 @@ export const loadReader = (dir) => {
 
 export const saveReader = (dir, data) => writeFileSync(dir + FILE, JSON.stringify(data));
 
-export const addCustomReader = (dir, { name, icon, persona }) => {
+const clean = ({ name, icon, persona, blurb, profile }) => ({
+  name: String(name || "").trim(),
+  icon: String(icon || "🙂").trim() || "🙂",
+  persona: String(persona || "").trim(),
+  blurb: String(blurb || "").trim() || String(persona || "").trim().slice(0, 80),
+  profile: { ...EMPTY_PROFILE, ...(profile || {}) },
+});
+
+export const addCustomReader = (dir, fields) => {
   const data = loadReader(dir);
   const id = "custom-" + Date.now().toString(36);
-  data.custom.push({ id, name: name.trim(), icon: (icon || "🙂").trim(), blurb: persona.trim().slice(0, 80), persona: persona.trim(), custom: true });
+  data.custom.push({ id, ...clean(fields), custom: true });
   saveReader(dir, data);
   return id;
+};
+
+/** Edit any reader. A preset becomes an override; a custom one is replaced. */
+export const updateReader = (dir, id, fields) => {
+  const data = loadReader(dir);
+  if (READERS.some((r) => r.id === id)) {
+    data.overrides = data.overrides || {};
+    data.overrides[id] = { ...(data.overrides[id] || {}), ...clean(fields) };
+  } else {
+    data.custom = data.custom.map((r) => (r.id === id ? { ...r, ...clean(fields) } : r));
+  }
+  saveReader(dir, data);
+};
+
+/** Drop a preset's edits (and un-hide it). */
+export const resetReader = (dir, id) => {
+  const data = loadReader(dir);
+  if (data.overrides) delete data.overrides[id];
+  saveReader(dir, data);
+};
+
+/** Hide a preset from this project's row (its notes stay). */
+export const hideReader = (dir, id) => {
+  const data = loadReader(dir);
+  data.overrides = data.overrides || {};
+  data.overrides[id] = { ...(data.overrides[id] || {}), hidden: true };
+  saveReader(dir, data);
+};
+
+export const unhideAll = (dir) => {
+  const data = loadReader(dir);
+  Object.values(data.overrides || {}).forEach((o) => { delete o.hidden; });
+  saveReader(dir, data);
+};
+
+/** Copy a reader (preset or custom) into a new custom one. */
+export const duplicateReader = (dir, id) => {
+  const data = loadReader(dir);
+  const src = readerById(id, data);
+  if (!src) return null;
+  const nid = "custom-" + Date.now().toString(36);
+  data.custom.push({ id: nid, ...clean({ ...src, name: src.name + " (copy)" }), custom: true });
+  saveReader(dir, data);
+  return nid;
 };
 
 export const removeReader = (dir, id) => {
@@ -125,7 +210,7 @@ export const runReader = async (dir, scenes, { readerId = "first-time", force = 
     if (!text.trim()) continue;
     onProgress({ index: i, total: scenes.length, message: `${reader.name} is reading “${s.name}” (${i + 1} of ${scenes.length})` });
     const out = await complete({
-      system: sceneSystem(reader.persona),
+      system: sceneSystem(personaText(reader)),
       user: sceneUser({ name: s.name, text: text.slice(0, 24000) }, i, scenes.length, prior.slice(-12)),
       json: true,
       signal,
@@ -148,7 +233,7 @@ export const runReader = async (dir, scenes, { readerId = "first-time", force = 
   const notes = scenes.map((s) => data.scenes[s.file]).filter(Boolean);
   if (notes.length >= 2) {
     onProgress({ index: scenes.length, total: scenes.length, message: `${reader.name} is writing the letter about the whole` });
-    const out = await complete({ system: overallSystem(reader.persona), user: overallUser(notes), json: true, maxTokens: 2048, signal });
+    const out = await complete({ system: overallSystem(personaText(reader)), user: overallUser(notes), json: true, maxTokens: 2048, signal });
     data.overall = {
       verdict: String(out.verdict || "").trim(),
       strongest: Array.isArray(out.strongest) ? out.strongest.map(String) : [],
