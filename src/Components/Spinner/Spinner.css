@@ -29,3 +29,5 @@
 .spinnerView--talk { display: flex; flex-direction: column; overflow: hidden; }
 .spinnerView--talk .workspaceHeader { flex: none; }
 .spinnerView--talk .talk { flex: 1; min-height: 0; }
+
+.spinner__connectHint { font-size: 12px; font-weight: 400; color: var(--accent); margin-left: 10px; }

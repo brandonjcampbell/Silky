@@ -195,7 +195,7 @@ const ActorList = ({ setRefresh }) => {
         <NavLink
           to="/spinner"
           className={({ isActive }) => "tab tab--link" + (isActive ? " selected" : "")}
-          title={"Spinner — the language model" + (isConfigured() ? " (connected)" : " (not connected)")}
+          title={"Spinner — talk about the book, talk to your characters, connection" + (isConfigured() ? " (connected)" : " (not connected)")}
         >
           <GiSpinningWheel />
           {isConfigured() && <i className="activityBar__dot" />}

@@ -35,6 +35,7 @@ const Spinner = () => {
         <nav className="spinner__modes">
           <NavLink to="/spinner" end className={({ isActive }) => (isActive ? "is-active" : "")}>Talk</NavLink>
           <NavLink to="/spinner/settings" className={({ isActive }) => (isActive ? "is-active" : "")}>Connection{on ? "" : " · not connected"}</NavLink>
+          {!on && !settings && <Link to="/spinner/settings" className="spinner__connectHint">Connect Spinner to start talking →</Link>}
         </nav>
       </h1>
 
