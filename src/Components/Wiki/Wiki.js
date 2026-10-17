@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaBook, FaDownload, FaFeatherAlt } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
@@ -33,6 +33,15 @@ const useActors = () => {
 const Wiki = () => {
   const { "*": pageId = PAGE.home } = useParams();
   const { dir, project, actors } = useActors();
+  const navigate = useNavigate();
+  // wiki pages are HTML strings; send their in-app links through the router
+  const onClick = (e) => {
+    const a = e.target.closest && e.target.closest("a[href^='#/']");
+    if (a) {
+      e.preventDefault();
+      navigate(a.getAttribute("href").slice(1));
+    }
+  };
   const [articleData, setArticleData] = useState(() => loadArticles(dir));
   const [busy, setBusy] = useState(null);
   const [err, setErr] = useState(null);
@@ -116,7 +125,7 @@ const Wiki = () => {
       <div className="wikiView__page">
         <article className="wiki">
           <h1>{page.title}</h1>
-          <div dangerouslySetInnerHTML={{ __html: page.html }} />
+          <div onClick={onClick} dangerouslySetInnerHTML={{ __html: page.html }} />
         </article>
       </div>
     </div>
