@@ -105,7 +105,8 @@ const read = async (sceneFile) => {
     });
     // 2. new elements
     const names = new Set(actors.filter((a) => a.type === "element").map((a) => a.name.toLowerCase()));
-    out.newElements.slice(0, 3).forEach((e) => {
+    out.newElements.slice(0, 3).forEach((e0) => {
+      const e = { ...e0, description: String(e0.description || "").replace(/[.\s]+$/, "") };
       const key = `name:${e.name.toLowerCase()}`;
       if (names.has(e.name.toLowerCase()) || dismissed(dir, key)) return;
       if (level === "auto") {

@@ -36,3 +36,5 @@
 .progress__recent a:hover { color: var(--accent); }
 .progress .muted { color: var(--ink-muted); font-size: 12px; }
 .progress__note { margin-top: 20px; }
+.progress__axis { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-muted); margin-top: 4px; }
+.progress__ring span { white-space: nowrap; }

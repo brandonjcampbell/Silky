@@ -120,6 +120,7 @@ const Progress = () => {
         ))}
         {daily > 0 && <div className="progress__goalLine" style={{ bottom: `${(daily / maxBar) * 100}%` }} />}
       </div>
+      <div className="progress__axis"><span>{niceDay(last30[0].key)}</span><span>today</span></div>
 
       <h3>Sixteen weeks <small>every day you wrote; darker is more</small></h3>
       <div className="heat">

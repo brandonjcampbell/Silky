@@ -88,7 +88,9 @@ ${headerOn ? `<div class="running"><span>${esc(o.headerLeft)}</span><span>${esc(
 ${o.titlePage ? `<div class="titlePage"><h1>${esc(o.title || title)}</h1>${o.author ? `<div class="by">${esc(o.author)}</div>` : ""}</div>` : ""}
 <div class="content">
 ${body}
-</div></div></body></html>`;
+</div></div>
+<script>(function(){var m=window.matchMedia("print");function fit(){if(m.matches){document.body.style.zoom="";return;}var s=document.querySelector(".sheet");if(!s)return;var z=Math.min(1,(window.innerWidth-24)/s.offsetWidth);document.body.style.zoom=z<1?String(z):"";}fit();window.addEventListener("resize",fit);window.addEventListener("beforeprint",function(){document.body.style.zoom="";});window.addEventListener("afterprint",fit);})();</script>
+</body></html>`;
 };
 
 /** Open the typeset document in a new window and summon the print dialog. */
