@@ -1,10 +1,12 @@
 ![Silky](./src/images/lightLogo.svg)
 
-**A graph-native word processor for writers who plan stories non-linearly.**
+**A graph-native word processor for writers who plan stories non-linearly. Runs in your browser — nothing to install.**
+
+**→ https://brandonjcampbell.github.io/Silky/**
 
 Most writing tools are a stack of pages. Silky is a graph. The things in your story — characters, places, objects, secrets — are nodes. The prose is attached to the graph, not the other way around. You can write the ending first, discover what it needs, and work backwards.
 
-Built for writers who crave dark themes. Runs as a desktop app (Electron + React) or straight in the browser — **try it: https://brandonjcampbell.github.io/Silky/**
+Built for writers who crave dark themes. Your projects stay in your browser (or in a folder you choose); nothing is uploaded anywhere.
 
 ![A Silky web: elements, facts, snippets and threads laid out as a graph, with involves / because / reveals edges between them](docs/silky-graph.png)
 
@@ -46,40 +48,37 @@ I demoed this at GraphConnect 2022 (*Weaving Tangled Webs: Using Graphs to Autho
 
 ## Running it
 
-**In the browser** (no install, nothing leaves your machine):
+**Just open it:** https://brandonjcampbell.github.io/Silky/
 
-Open https://brandonjcampbell.github.io/Silky/ — or run it locally:
+Projects are saved in your browser (IndexedDB). In Chrome or Edge, **Connect a folder** from the bar at the top to also mirror every project to a real directory on disk as plain JSON files; anywhere else, **Export / Import** moves projects around as a single JSON file. Nothing leaves your machine either way.
 
-```bash
-npm i
-npm start          # opens http://localhost:3000
-```
-
-Projects are stored in the browser's IndexedDB. In Chrome or Edge you can also **Connect a folder** from the bar at the top to mirror every project to a real directory on disk as the same JSON files the desktop app writes; anywhere else, **Export / Import** moves projects around as a single JSON file.
-
-**As a desktop app:**
+**Run it locally:**
 
 ```bash
 npm i
-npm run dev        # React dev server + Electron, concurrently
+npm start          # http://localhost:3000
 ```
 
-Projects live in `~/.silky/<project>/` as JSON. Build a packaged executable:
-
-```bash
-npm run build
-npx electron-packager . --overwrite
-```
-
-**Export to Neo4j** (edit the bolt URL and credentials at the top of the script first):
+**Export a project to Neo4j** (edit the bolt URL and credentials at the top of the script first):
 
 ```bash
 node silkyToCypher.js
 ```
 
-## How the browser build works
+### Desktop app (optional)
 
-All file I/O goes through `src/storage/`, which picks a backend at startup: Node `fs` under Electron, or an in-memory mirror of the virtual filesystem persisted to IndexedDB in the browser (with optional one-way sync to a folder via the File System Access API). The components call the same synchronous `loadDir` / `loadFile` / `saveFile` utilities either way; the browser backend hydrates its mirror before React mounts so those calls never have to become async.
+Silky began as an Electron app and still builds as one. Projects then live in `~/.silky/<project>/` as the same JSON files.
+
+```bash
+npm run electron   # React dev server + Electron, concurrently
+npm run build && npx electron-packager . --overwrite   # packaged executable
+```
+
+## How storage works
+
+All file I/O goes through `src/storage/`, which picks a backend at startup. In the browser that is an in-memory mirror of a virtual filesystem, hydrated from IndexedDB before React mounts and written through after every change, with optional one-way sync to a real folder via the File System Access API. Under Electron it is Node `fs`. The components call the same synchronous `loadDir` / `loadFile` / `saveFile` utilities either way, so the two builds share every line above the storage layer.
+
+The compiled app is also published to the [`build`](https://github.com/brandonjcampbell/Silky/tree/build) branch on every push, so `git clone -b build` and opening `index.html` works with no npm at all.
 
 ## Status
 
