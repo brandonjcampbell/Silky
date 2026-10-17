@@ -24,6 +24,14 @@ const ActorList = ({ setRefresh }) => {
   const [type, setType] = useState("element");
   const [query, setQuery] = useState("");
   const searchRef = useRef(null);
+  const [, setLlmTick] = useState(0);
+
+  // the Spinner glyph's dot follows the connection
+  useEffect(() => {
+    const on = () => setLlmTick((t) => t + 1);
+    window.addEventListener("silky-llm", on);
+    return () => window.removeEventListener("silky-llm", on);
+  }, []);
 
   // Ctrl/Cmd+Shift+F focuses the list search from anywhere.
   useEffect(() => {
