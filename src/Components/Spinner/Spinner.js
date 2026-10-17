@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import Talk from "../Talk";
 import { GiSpinningWheel } from "react-icons/gi";
 import { FaFileImport, FaBookReader, FaBook, FaPlug } from "react-icons/fa";
 import LlmSettings from "../LlmSettings";
@@ -13,6 +14,7 @@ import "./Spinner.css";
  */
 const Spinner = () => {
   const [, setTick] = useState(0);
+  const settings = useLocation().pathname.endsWith("/settings");
   useEffect(() => {
     const on = () => setTick((t) => t + 1);
     window.addEventListener("silky-llm", on);
@@ -26,13 +28,18 @@ const Spinner = () => {
   const modelName = local ? ((WEBLLM_MODELS.find((m) => m.id === cfg.model) || {}).name || cfg.model) : cfg && cfg.model;
 
   return (
-    <div className="workspace spinnerView">
+    <div className={"workspace spinnerView" + (settings ? "" : " spinnerView--talk")}>
       <h1 className="workspaceHeader">
         <span className="typeIcon"><GiSpinningWheel /></span>
         <p>Spinner</p>
-        <span className="workspaceHeader__blurb">The model that reads for you, spins thread from a manuscript, and writes the wiki.</span>
+        <nav className="spinner__modes">
+          <NavLink to="/spinner" end className={({ isActive }) => (isActive ? "is-active" : "")}>Talk</NavLink>
+          <NavLink to="/spinner/settings" className={({ isActive }) => (isActive ? "is-active" : "")}>Connection{on ? "" : " · not connected"}</NavLink>
+        </nav>
       </h1>
 
+      {!settings && <Talk />}
+      {settings && (
       <div className="spinner">
         <section className={"spinner__status" + (on ? " is-on" : "")}>
           <span className="spinner__dot" />
@@ -52,6 +59,10 @@ const Spinner = () => {
           <aside className="spinner__uses">
             <h3>What Spinner does</h3>
             <ul>
+              <li>
+                <GiSpinningWheel />
+                <div><b>Talk about the book</b><span>A conversation to break a block: bring in the scene you’re stuck on and Spinner asks the right questions. <Link to="/spinner">Open Talk</Link></span></div>
+              </li>
               <li>
                 <FaFileImport />
                 <div><b>Import a manuscript</b><span>Splits it into scenes, extracts elements and facts, traces plot threads and lays out webs. From the project tray.</span></div>
@@ -73,6 +84,7 @@ const Spinner = () => {
           </aside>
         </div>
       </div>
+      )}
     </div>
   );
 };

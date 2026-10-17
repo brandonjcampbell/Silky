@@ -8,16 +8,23 @@ import { webllmComplete } from "./webllm";
  * always reinforced in the prompt) and parses it; the parsed object is
  * returned instead of text.
  */
-export const complete = async ({ system, user, json = false, maxTokens = 4096, signal, config }) => {
+export const complete = async ({ system, user, json = false, maxTokens = 4096, signal, config, history = [] }) => {
   const c = config || getConfig();
   if (!c) throw new Error("No LLM connection configured.");
   const text =
     c.provider === "anthropic"
-      ? await anthropic(c, { system, user, json, maxTokens, signal })
+      ? await anthropic(c, { system, user, json, maxTokens, signal, history })
       : c.provider === "webllm"
-      ? await webllmComplete(c, { messages: messagesFor(system, user, json), json, maxTokens, signal })
-      : await openaiCompatible(c, { system, user, json, maxTokens, signal });
+      ? await webllmComplete(c, { messages: messagesFor(system, user, json, history), json, maxTokens, signal })
+      : await openaiCompatible(c, { system, user, json, maxTokens, signal, history });
   return json ? parseJson(text) : text;
+};
+
+/** A multi-turn chat: `messages` is [{role:"user"|"assistant", content}], the last one from the user. */
+export const chat = async ({ system, messages, maxTokens = 1500, signal, config }) => {
+  const history = messages.slice(0, -1).map((m) => ({ role: m.role, content: m.content }));
+  const last = messages[messages.length - 1];
+  return complete({ system, user: last.content, history, maxTokens, signal, config });
 };
 
 const jsonNudge = (system, json) =>
@@ -26,12 +33,13 @@ const jsonNudge = (system, json) =>
       "Respond with a single JSON object and nothing else: no prose, no code fences."
     : system;
 
-const messagesFor = (system, user, json) => [
+const messagesFor = (system, user, json, history = []) => [
   ...(jsonNudge(system, json) ? [{ role: "system", content: jsonNudge(system, json) }] : []),
+  ...history,
   { role: "user", content: user },
 ];
 
-const openaiCompatible = async (c, { system, user, json, maxTokens, signal }) => {
+const openaiCompatible = async (c, { system, user, json, maxTokens, signal, history = [] }) => {
   const url = c.baseUrl.replace(/\/+$/, "") + "/chat/completions";
   const headers = { "Content-Type": "application/json" };
   if (c.apiKey) headers.Authorization = "Bearer " + c.apiKey;
@@ -39,6 +47,7 @@ const openaiCompatible = async (c, { system, user, json, maxTokens, signal }) =>
     model: c.model,
     messages: [
       ...(jsonNudge(system, json) ? [{ role: "system", content: jsonNudge(system, json) }] : []),
+      ...history,
       { role: "user", content: user },
     ],
     temperature: 0.2,
@@ -53,7 +62,7 @@ const openaiCompatible = async (c, { system, user, json, maxTokens, signal }) =>
   return msg.content || "";
 };
 
-const anthropic = async (c, { system, user, json, maxTokens, signal }) => {
+const anthropic = async (c, { system, user, json, maxTokens, signal, history = [] }) => {
   const url = c.baseUrl.replace(/\/+$/, "") + "/v1/messages";
   const r = await fetch(url, {
     method: "POST",
@@ -67,7 +76,7 @@ const anthropic = async (c, { system, user, json, maxTokens, signal }) => {
       model: c.model,
       max_tokens: maxTokens,
       ...(jsonNudge(system, json) ? { system: jsonNudge(system, json) } : {}),
-      messages: [{ role: "user", content: user }],
+      messages: [...history, { role: "user", content: user }],
     }),
     signal,
   });

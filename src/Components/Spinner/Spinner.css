@@ -21,3 +21,11 @@
 .spinner__uses a { color: var(--ink-soft); text-decoration: underline; }
 .spinner__uses a:hover { color: var(--accent); }
 .spinner__hint { display: flex; gap: 8px; align-items: center; color: var(--ink-muted); font-size: 12px; }
+
+.spinner__modes { display: inline-flex; gap: 4px; margin-left: 16px; }
+.spinner__modes a { font-size: 13px; font-weight: 500; color: var(--ink-muted); padding: 4px 10px; border-radius: 999px; border: 1px solid transparent; }
+.spinner__modes a:hover { color: var(--ink); background: var(--bg-hover); }
+.spinner__modes a.is-active { color: var(--ink); border-color: var(--line); background: var(--bg-raised); }
+.spinnerView--talk { display: flex; flex-direction: column; overflow: hidden; }
+.spinnerView--talk .workspaceHeader { flex: none; }
+.spinnerView--talk .talk { flex: 1; min-height: 0; }

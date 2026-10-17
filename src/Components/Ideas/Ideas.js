@@ -103,7 +103,7 @@ const Ideas = ({ element, onChange }) => {
 
       {open && (
         <div className="ideas__body">
-          {!configured && <p className="muted">Connect Spinner (the spinning-wheel tab) to ask for ideas.</p>}
+          {!configured && <p className="muted">Connect Spinner (the spinning-wheel tab → Connection) to ask for ideas.</p>}
           {configured && (
             <>
               <div className="ideas__kinds" role="tablist">
