@@ -69,7 +69,7 @@ export const candidateThreads = (snippet, threads, mentioned, byFile) => {
       const shared = top.filter((e) => mine.has(e));
       return { thread: t, shared: shared.map((e) => byFile.get(e)).filter(Boolean), score: top.length ? shared.length / Math.min(top.length, mine.size) : 0 };
     })
-    .filter((c) => c.shared.length >= 2 && c.score >= 0.4)
+    .filter((c) => c.shared.length >= 2 && c.score >= 0.3)
     .sort((a, b) => b.score - a.score);
 };
 
