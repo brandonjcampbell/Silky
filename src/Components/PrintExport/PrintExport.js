@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { FaPrint } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { loadFile } from "../../utils/";
-import Modal from "../Modal";
+import Modal from "../Modal/Modal";
 import { FONTS, PAGES, DEFAULTS, loadPrefs, savePrefs, buildPrintHtml, printHtml, downloadHtml } from "../../print";
 import "./PrintExport.css";
 
