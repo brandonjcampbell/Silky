@@ -1,91 +1,230 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-//import { store } from "../../MyContext";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import {
+  FaUndo,
+  FaRedo,
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaStrikethrough,
+  FaHeading,
+  FaParagraph,
+  FaQuoteRight,
+  FaListUl,
+  FaListOl,
+  FaMinus,
+  FaRemoveFormat,
+} from "react-icons/fa";
 import "./TextEditor.css";
-import { getDisplayName } from "../../utils";
-import _ from "lodash";
 
-function usePrevious(value) {
-  const ref = useRef();
+/**
+ * The writing surface for snippets (and any actor with prose content).
+ *
+ * Contract is unchanged from the original: `data` is an HTML string, `save`
+ * is called with an HTML string. Internally the content is loaded into the
+ * contenteditable imperatively (never via dangerouslySetInnerHTML), so React
+ * re-renders during autosave don't reset the caret.
+ */
+
+const SAVE_DELAY = 900;
+
+const escapeHtml = (s) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+const countWords = (el) =>
+  el ? (el.innerText || "").trim().split(/\s+/).filter(Boolean).length : 0;
+
+const TOOLS = [
+  { group: "history", items: [
+    { cmd: "undo", icon: FaUndo, title: "Undo (Ctrl+Z)" },
+    { cmd: "redo", icon: FaRedo, title: "Redo (Ctrl+Y)" },
+  ]},
+  { group: "inline", items: [
+    { cmd: "bold", icon: FaBold, title: "Bold (Ctrl+B)", state: "bold" },
+    { cmd: "italic", icon: FaItalic, title: "Italic (Ctrl+I)", state: "italic" },
+    { cmd: "underline", icon: FaUnderline, title: "Underline (Ctrl+U)", state: "underline" },
+    { cmd: "strikeThrough", icon: FaStrikethrough, title: "Strikethrough", state: "strikeThrough" },
+  ]},
+  { group: "block", items: [
+    { cmd: "formatBlock", arg: "h2", icon: FaHeading, title: "Heading", block: "h2" },
+    { cmd: "formatBlock", arg: "h3", icon: FaHeading, title: "Subheading", block: "h3", small: true },
+    { cmd: "formatBlock", arg: "p", icon: FaParagraph, title: "Paragraph", block: "p" },
+    { cmd: "formatBlock", arg: "blockquote", icon: FaQuoteRight, title: "Quote", block: "blockquote" },
+  ]},
+  { group: "list", items: [
+    { cmd: "insertUnorderedList", icon: FaListUl, title: "Bulleted list", state: "insertUnorderedList" },
+    { cmd: "insertOrderedList", icon: FaListOl, title: "Numbered list", state: "insertOrderedList" },
+  ]},
+  { group: "misc", items: [
+    { cmd: "insertHorizontalRule", icon: FaMinus, title: "Scene break" },
+    { cmd: "clear", icon: FaRemoveFormat, title: "Clear formatting" },
+  ]},
+];
+
+const TextEditor = ({ data, save, actorUuid }) => {
+  const ref = useRef(null);
+  const timer = useRef(null);
+  const lastSaved = useRef("");
+  const [status, setStatus] = useState("saved"); // saved | dirty
+  const [words, setWords] = useState(0);
+  const [fmt, setFmt] = useState({});
+
+  // Load content when the actor (or its stored content) changes. The equality
+  // guard means an autosave round-trip never rewrites the DOM under the caret.
   useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
-
-const TextEditor = ({
-  data,
-  save,
-  actorUuid,
-  showAvatar,
-  showTitle = false,
-}) => {
- // const globalState = useContext(store);
-  const prevAmount = usePrevious({ actorUuid, data });
-  const [currentBlock, setCurrentBlock] = useState(null);
-  const [editorState, setEditorState] = useState();
-  const [dirty, setDirty] = useState(false);
-  const [saving, setSaving] = useState(0);
-  const [current, setCurrent] = useState(data + "");
-  const [recommendation, setRecommendation] = useState();
-  const initial = data;
+    const html = typeof data === "string" ? data : "";
+    if (ref.current && ref.current.innerHTML !== html) {
+      ref.current.innerHTML = html;
+    }
+    lastSaved.current = html;
+    setStatus("saved");
+    setWords(countWords(ref.current));
+  }, [actorUuid, data]);
 
   useEffect(() => {
-    setEditorState(data);
-    setDirty(false);
+    try {
+      document.execCommand("defaultParagraphSeparator", false, "p");
+    } catch (e) {
+      /* older engines */
+    }
+  }, []);
+
+  const commit = useCallback(() => {
+    clearTimeout(timer.current);
+    if (!ref.current) return;
+    const html = ref.current.innerHTML;
+    if (html !== lastSaved.current) {
+      lastSaved.current = html;
+      save(html);
+    }
+    setStatus("saved");
+  }, [save]);
+
+  const scheduleSave = useCallback(() => {
+    setStatus("dirty");
+    setWords(countWords(ref.current));
+    clearTimeout(timer.current);
+    timer.current = setTimeout(commit, SAVE_DELAY);
+  }, [commit]);
+
+  // Flush a pending save when leaving the editor.
+  useEffect(() => () => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+      if (ref.current && ref.current.innerHTML !== lastSaved.current) {
+        save(ref.current.innerHTML);
+      }
+    }
+  }, [save]);
+
+  // Reflect the selection's formatting in the toolbar.
+  const refreshFmt = useCallback(() => {
+    if (!ref.current || !ref.current.contains(document.activeElement)) return;
+    const next = {};
+    try {
+      ["bold", "italic", "underline", "strikeThrough", "insertUnorderedList", "insertOrderedList"].forEach(
+        (c) => { next[c] = document.queryCommandState(c); }
+      );
+      next.block = String(document.queryCommandValue("formatBlock") || "").toLowerCase();
+    } catch (e) {
+      /* ignore */
+    }
+    setFmt(next);
   }, []);
 
   useEffect(() => {
-    if (!prevAmount || (prevAmount && prevAmount.file !== data)) {
-      setEditorState(data);
+    document.addEventListener("selectionchange", refreshFmt);
+    return () => document.removeEventListener("selectionchange", refreshFmt);
+  }, [refreshFmt]);
+
+  const exec = (tool) => {
+    if (!ref.current) return;
+    ref.current.focus();
+    if (tool.cmd === "clear") {
+      document.execCommand("removeFormat", false, null);
+      document.execCommand("formatBlock", false, "p");
+    } else {
+      document.execCommand(tool.cmd, false, tool.arg || null);
     }
-  }, [actorUuid, data]);
-
-  const onEditorStateChange = (e) => {
-    setDirty(true);
-    setCurrent(e.currentTarget.innerHTML);
+    scheduleSave();
+    refreshFmt();
   };
 
-  const goForIt = () => {
-    save(current);
-    setDirty(null);
-  };
-
-  const checkKey = (e) => {
-    if (e.ctrlKey && e.key === "s") {
-      goForIt();
+  const onKeyDown = (e) => {
+    const mod = e.ctrlKey || e.metaKey;
+    if (mod && e.key.toLowerCase() === "s") {
+      e.preventDefault();
+      commit();
     }
   };
 
-  const ref = useRef(null);
+  // Paste as clean paragraphs: plain text in, <p> per blank-line-separated block.
+  const onPaste = (e) => {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain");
+    if (!text) return;
+    const html = text
+      .replace(/\r\n?/g, "\n")
+      .split(/\n{2,}/)
+      .map((p) => "<p>" + escapeHtml(p).replace(/\n/g, "<br>") + "</p>")
+      .join("");
+    document.execCommand("insertHTML", false, html);
+    scheduleSave();
+  };
+
+  const isActive = (tool) =>
+    (tool.state && fmt[tool.state]) || (tool.block && fmt.block === tool.block);
 
   return (
-    <div className={"contentBlock"}>
+    <div className="contentBlock">
+      <div className="editorToolbar" role="toolbar" aria-label="Formatting">
+        {TOOLS.map((g) => (
+          <span className="editorToolbar__group" key={g.group}>
+            {g.items.map((t) => {
+              const Icon = t.icon;
+              return (
+                <button
+                  key={t.title}
+                  type="button"
+                  title={t.title}
+                  aria-label={t.title}
+                  aria-pressed={!!isActive(t)}
+                  className={
+                    "editorToolbar__btn" +
+                    (isActive(t) ? " is-active" : "") +
+                    (t.small ? " is-small" : "")
+                  }
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => exec(t)}
+                >
+                  <Icon />
+                </button>
+              );
+            })}
+          </span>
+        ))}
+      </div>
 
-      {dirty && (
-        <div
-          className="unsaved"
-          onClick={() => {
-            goForIt();
-          }}
-        ></div>
-      )}
+      <div
+        className="page"
+        id="page"
+        ref={ref}
+        contentEditable
+        suppressContentEditableWarning
+        spellCheck
+        data-placeholder="Write the scene."
+        onInput={scheduleSave}
+        onKeyDown={onKeyDown}
+        onKeyUp={refreshFmt}
+        onMouseUp={refreshFmt}
+        onPaste={onPaste}
+        onBlur={commit}
+      />
 
-      <div>
-        <p
-          className="page"
-          id="page"
-          ref={ref}
-          contenteditable="true"
-          onInput={onEditorStateChange}
-          dangerouslySetInnerHTML={{ __html: initial }}
-          onKeyDown={checkKey}
-          onBlur={() => {
-            if (ref.current.id !== document.activeElement.id) {
-              console.log("you clicked on something else!");
-              goForIt();
-            }
-          }}
-        ></p>
+      <div className="editorFooter">
+        <span>{words} {words === 1 ? "word" : "words"}</span>
+        <span className={"editorFooter__status is-" + status}>
+          {status === "dirty" ? "Unsaved changes" : "Saved"}
+        </span>
       </div>
     </div>
   );

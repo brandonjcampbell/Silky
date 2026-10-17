@@ -32,7 +32,7 @@
 /* lists inside sections sit flush with the heading */
 .editor .snippets { margin-left: -10px; }
 
-.editor br { display: none; }
+.editor > br { display: none; }
 .editor .MuiStack-root { margin-top: 10px; }
 
 /* ── web view: the graph owns the space, the capture list sits beside it ── */

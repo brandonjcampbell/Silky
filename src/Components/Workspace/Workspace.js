@@ -286,10 +286,9 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
-          {element.content && (
+          {typeof element.content === "string" && (
             <div className="editor">
               <TextEditor
-                showAvatar={showAvatar}
                 save={saveIt}
                 data={element.content}
                 actorUuid={element.uuid}
