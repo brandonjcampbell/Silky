@@ -60,7 +60,14 @@ const TOOLS = [
   ]},
 ];
 
-const TextEditor = ({ data, save, actorUuid }) => {
+// `scene`: the full writing surface for snippets. `notes`: a lighter box
+// for everything else (an element's description, a thread's notes).
+const NOTES_TOOLS = TOOLS.filter((g) => g.group !== "misc" && g.group !== "block");
+
+const TextEditor = ({ data, save, actorUuid, variant = "notes", placeholder }) => {
+  const isScene = variant === "scene";
+  const tools = isScene ? TOOLS : NOTES_TOOLS;
+  const hint = placeholder || (isScene ? "Write the scene." : "Notes.");
   const ref = useRef(null);
   const timer = useRef(null);
   const lastSaved = useRef("");
@@ -190,9 +197,9 @@ const TextEditor = ({ data, save, actorUuid }) => {
     (tool.state && fmt[tool.state]) || (tool.block && fmt.block === tool.block);
 
   return (
-    <div className="contentBlock">
+    <div className={"contentBlock contentBlock--" + variant}>
       <div className="editorToolbar" role="toolbar" aria-label="Formatting">
-        {TOOLS.map((g) => (
+        {tools.map((g) => (
           <span className="editorToolbar__group" key={g.group}>
             {g.items.map((t) => {
               const Icon = t.icon;
@@ -226,7 +233,7 @@ const TextEditor = ({ data, save, actorUuid }) => {
         contentEditable
         suppressContentEditableWarning
         spellCheck
-        data-placeholder="Write the scene."
+        data-placeholder={hint}
         onInput={scheduleSave}
         onKeyDown={onKeyDown}
         onKeyUp={refreshFmt}

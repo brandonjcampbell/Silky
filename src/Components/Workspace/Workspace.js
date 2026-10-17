@@ -292,6 +292,14 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 save={saveIt}
                 data={element.content}
                 actorUuid={element.uuid}
+                variant={element.type === "snippet" ? "scene" : "notes"}
+                placeholder={
+                  element.type === "snippet"
+                    ? "Write the scene."
+                    : element.type === "thread"
+                    ? "Notes about this thread."
+                    : "Describe this element."
+                }
               ></TextEditor>
             </div>
           )}
@@ -300,10 +308,11 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             <div className="editor">
               <h4>Tags</h4>
               <TextEditor
-                showAvatar={showAvatar}
                 save={(x) => saveIt(x, "tags")}
                 data={element.tags}
                 actorUuid={element.uuid}
+                variant="notes"
+                placeholder="Tags."
               ></TextEditor>
             </div>
           )}

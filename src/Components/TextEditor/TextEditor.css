@@ -114,6 +114,14 @@
 .page a { color: var(--accent); text-decoration: underline; }
 .page ::selection { background: var(--accent-soft); }
 
+/* notes variant: a shorter, quieter box */
+.contentBlock--notes .page {
+  min-height: 7em;
+  padding: 18px 22px 22px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
 /* ── footer ── */
 
 .editorFooter {
