@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { store } from "../../NewContext";
 import "./ActorList.css";
 
@@ -18,6 +18,28 @@ const ActorList = ({ setRefresh }) => {
   const { dispatch } = globalState;
   const [filter, setFilter] = useState("");
   const [type, setType] = useState("element");
+  const [query, setQuery] = useState("");
+  const searchRef = useRef(null);
+
+  // Ctrl/Cmd+Shift+F focuses the list search from anywhere.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "f") {
+        e.preventDefault();
+        searchRef.current && searchRef.current.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const plain = (html) => (typeof html === "string" ? html.replace(/<[^>]+>/g, " ") : "");
+  const matches = (a) => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    if (String(a.name || "").toLowerCase().includes(q)) return true;
+    return q.length >= 3 && plain(a.content).toLowerCase().includes(q);
+  };
   const dirs = loadDir(globalState.state.dir).filter((x) =>
     x.includes(".element.")
   );
@@ -101,6 +123,12 @@ const ActorList = ({ setRefresh }) => {
     return test;
   };
 
+  const shown = dirs
+    .map((x) => loadUp(x))
+    .filter((y) => y && (type === "" || y.type === type))
+    .filter(matches)
+    .sort(compareOrder);
+
   return (
     <div className="ActorList">
       <div className="project">
@@ -152,12 +180,23 @@ const ActorList = ({ setRefresh }) => {
       </nav>
 
       <div className="content">
+        <div className="listSearch">
+          <input
+            ref={searchRef}
+            type="search"
+            value={query}
+            placeholder={"Search " + (type ? type + "s" : "everything")}
+            aria-label="Search the list"
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Escape" && setQuery("")}
+            spellCheck={false}
+          />
+          {query && <span className="listSearch__count">{shown.length}</span>}
+        </div>
+        {query && shown.length === 0 && <p className="listSearch__none">Nothing matches.</p>}
         <DraggableList
           showAvatar={type === "" ? true : false}
-          list={dirs
-            .map((x) => loadUp(x))
-            .filter((y) => type === "" || y.type === type)
-            .sort(compareOrder)}
+          list={shown}
           onDrop={(result, list) => handleDrop(result, list)}
         ></DraggableList>
 

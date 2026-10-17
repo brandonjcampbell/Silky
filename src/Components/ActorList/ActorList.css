@@ -89,3 +89,38 @@
 .content > button {
   margin: 10px 0 0 4px;
 }
+
+/* search above the list */
+.listSearch {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 2px 8px;
+  background: var(--bg-side);
+}
+.listSearch input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 5px 8px;
+  transition: border-color 120ms ease;
+}
+.listSearch input::placeholder { color: var(--ink-muted); }
+.listSearch input:focus { outline: none; border-color: var(--accent); }
+.listSearch input::-webkit-search-cancel-button { filter: grayscale(1) brightness(1.6); cursor: pointer; }
+.listSearch__count {
+  flex: none;
+  font-size: 11px;
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+  padding: 0 4px;
+}
+.listSearch__none { margin: 6px 4px; font-size: 13px; color: var(--ink-muted); }
