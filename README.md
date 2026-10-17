@@ -23,11 +23,11 @@ Silky stores a project as four kinds of *actors* and the edges between them:
 
 Because facts depend on facts and snippets reveal facts, the graph can answer questions a page stack can't: *What does the reader know at this point? What has to be established before this scene can land? Which threads touch this character?*
 
-The graph view is Cytoscape with a dozen layout engines; the editor is a rich-text workspace with element references inline.
+The graph view is Cytoscape; the editor is a proper writing surface — headings, quotes, lists, scene breaks, keyboard shortcuts — that autosaves as you type.
 
-![Editing a snippet: the prose, the facts it reveals, and the thread it is sequenced in](docs/silky-snippet.png)
+![Writing a snippet: formatting toolbar, the scene in a serif, word count and save state](docs/silky-snippet.png)
 
-*A snippet. The prose is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
+*A snippet. The scene is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
 ## Neo4j
 
