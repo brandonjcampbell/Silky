@@ -33,3 +33,6 @@
 
 /* when the storage bar is present the shell sits below it */
 .storageBar + .View { height: calc(100vh - 37px); }
+
+/* the route wrapper around <Workspace/>; the workspace sizes itself to this */
+.Workspace { height: 100%; }
