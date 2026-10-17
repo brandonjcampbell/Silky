@@ -31,7 +31,7 @@
   .icon { font-size: 24px; }
   .typeIcon { display: none; }
   .delete { right: 14px; }
-  .readAloud__wrap { right: 44px; top: 10px; }
+  .workspaceHeader__tools { right: 44px; }
   /* body panels hug the edges */
   .editor, .sceneAnalysis, .linkScan, .ideas, .impact, .history, .readAloud, .analysis, .spinner { margin-left: 12px; margin-right: 12px; padding-left: 0; padding-right: 0; }
   .editor { padding: 0 12px; }

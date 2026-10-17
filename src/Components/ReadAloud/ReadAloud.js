@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { FaVolumeUp, FaPlay, FaPause, FaStop, FaStepBackward, FaStepForward } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { loadFile } from "../../utils/";
@@ -19,6 +20,14 @@ const ReadAloud = ({ element }) => {
   const [prefs, setPrefs] = useState(loadPrefs);
   const reader = useRef(null);
   if (!reader.current) reader.current = new Reader({ onState: setSt });
+  // the button lives in the header's tool slot, the player below the header
+  const [slot, setSlot] = useState(null);
+  useEffect(() => {
+    const find = () => setSlot(document.querySelector(".workspace .workspaceHeader [data-tools-slot]"));
+    find();
+    const t = setTimeout(find, 50);
+    return () => clearTimeout(t);
+  }, [element.file]);
 
   const scenes = useMemo(() => {
     if (element.type === "thread") return (element.sequences || []).map((f) => loadFile(dir + f)).filter((a) => a && a.type === "snippet");
@@ -71,13 +80,15 @@ const ReadAloud = ({ element }) => {
   const unit = st.unit;
   const pct = st.n ? Math.round((st.i / st.n) * 100) : 0;
 
-  return (
-    <>
-      <span className="readAloud__wrap">
+  const button = (
       <button type="button" className={"readAloud__btn" + (st.playing ? " is-playing" : "")} title={element.type === "thread" ? "Read the whole thread aloud" : "Read aloud (from the cursor, if it's in the text)"} onClick={st.playing ? () => reader.current.pause() : start}>
         {st.playing ? <FaPause /> : <FaVolumeUp />}
       </button>
-      </span>
+  );
+
+  return (
+    <>
+      {slot ? createPortal(button, slot) : <span className="readAloud__wrap">{button}</span>}
       {open && (
         <div className="readAloud" role="region" aria-label="Read aloud">
           <div className="readAloud__row">

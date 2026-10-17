@@ -90,3 +90,6 @@
   font-size: 13px;
   border-radius: var(--radius);
 }
+
+/* a slot for per-actor tools (read aloud), sitting left of the delete icon */
+.workspaceHeader__tools { position: absolute; right: 56px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; gap: 4px; }

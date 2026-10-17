@@ -1,4 +1,4 @@
-.readAloud__wrap { position: absolute; right: 56px; top: 14px; z-index: 3; }
+.readAloud__wrap { position: absolute; right: 56px; top: 14px; z-index: 3; } /* fallback when no header slot */
 .readAloud__btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 32px; height: 32px; font-size: 15px; color: var(--ink-muted); background: transparent;

@@ -60,6 +60,7 @@ const TitleBar = ({ element, save, remove }) => {
         {element.name}
       </p>
 
+      <span className="workspaceHeader__tools" data-tools-slot />
       <DeleteIcon
         className="delete"
         onClick={() => {
