@@ -1,7 +1,7 @@
 /* Talking to Spinner about the narrative. Conversations are saved in the
    project (talk.json); Spinner is briefed with a digest of the project plus
    whatever the writer has brought into the conversation. */
-import { chat } from "./client";
+import { chat, complete } from "./client";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -17,9 +17,9 @@ export const loadTalk = (dir) => {
 };
 export const saveTalk = (dir, data) => writeFileSync(dir + FILE, JSON.stringify(data));
 
-export const newConversation = (dir, title = "New conversation") => {
+export const newConversation = (dir, title = "New conversation", extra = {}) => {
   const data = loadTalk(dir);
-  const c = { id: "talk-" + Date.now().toString(36), title, at: Date.now(), messages: [], focus: [] };
+  const c = { id: "talk-" + Date.now().toString(36), title, at: Date.now(), messages: [], focus: [], kind: "spinner", participants: [], asOf: null, ...extra };
   data.conversations.unshift(c);
   saveTalk(dir, data);
   return c;
@@ -114,4 +114,69 @@ export const talk = async ({ project, actors, conversation, signal }) => {
 export const titleFor = (text) => {
   const t = String(text).replace(/\s+/g, " ").trim();
   return t.length > 48 ? t.slice(0, 48).replace(/\s+\S*$/, "") + "…" : t || "New conversation";
+};
+
+
+/* ── talking to the characters themselves ───────────────────────────────── */
+
+const CAST_SYSTEM = `You are voicing characters from a novel in progress, for its author. You play ONLY the characters listed below, each strictly from their own dossier: what they know is what the dossier says, nothing more — not the plot's future, not other characters' secrets, not the fact that they are fictional. Each speaks in a voice that fits their description and the manuscript's period and register. They have motives, moods and blind spots; they can lie, deflect, get angry, refuse to answer, or fall silent. They may address the author (who speaks as "You") or each other.
+
+Write as a script: each line is one character speaking, with optional brief stage direction in parentheses. Keep lines short — one to four sentences. Do not narrate beyond stage directions. Do not break character to explain.`;
+
+const dossier = (el, actors, asOf, order) => {
+  const byFile = new Map(actors.map((a) => [a.file, a]));
+  const facts = (el.involved_in || [])
+    .map((f) => byFile.get(f))
+    .filter(Boolean)
+    .filter((f) => asOf == null || (f.revealed_by || []).some((s) => order(s) <= asOf) || !(f.revealed_by || []).length)
+    .map((f) => "- " + f.name);
+  const scenes = [...new Set((el.involved_in || []).flatMap((f) => ((byFile.get(f) || {}).revealed_by || [])))]
+    .map((s) => byFile.get(s))
+    .filter((s) => s && (asOf == null || order(s.file) <= asOf))
+    .sort((a, b) => order(a.file) - order(b.file));
+  const first = scenes[0];
+  const voice = first ? plain(first.content).replace(/\s+/g, " ").slice(0, 600) : "";
+  return `=== ${el.name} ${el.icon || ""}
+${plain(el.content).trim() || "(no description)"}
+What ${el.name} knows${asOf != null ? ` (as of scene ${asOf + 1})` : ""}:
+${facts.length ? facts.slice(0, 80).join("\n") : "- (nothing recorded)"}
+Appears in: ${scenes.map((s) => s.name).join("; ") || "(no scenes yet)"}${voice ? `\nA passage from their first scene, for voice and period:\n"${voice}"` : ""}`;
+};
+
+/**
+ * One exchange with the cast. Returns [{speaker: elementFile, text}].
+ * `conversation.participants` are element files; `conversation.asOf` is a
+ * manuscript scene index or null; `nudge` asks them to carry on among themselves.
+ */
+export const castTalk = async ({ project, actors, conversation, nudge = false, signal }) => {
+  const byFile = new Map(actors.map((a) => [a.file, a]));
+  const threads = actors.filter((a) => a.type === "thread");
+  const manu = threads.find((t) => t.name === "Manuscript") || [...threads].sort((a, b) => b.sequences.length - a.sequences.length)[0];
+  const orderMap = new Map((manu ? manu.sequences : []).map((f, i) => [f, i]));
+  const order = (f) => (orderMap.has(f) ? orderMap.get(f) : 1e9);
+  const cast = conversation.participants.map((f) => byFile.get(f)).filter(Boolean);
+  if (!cast.length) throw new Error("No one is in the room.");
+  const names = cast.map((c) => c.name);
+  const system = [
+    CAST_SYSTEM,
+    `\n\nThe novel: ${project}.`,
+    "\n\nCHARACTERS IN THE ROOM\n" + cast.map((c) => dossier(c, actors, conversation.asOf, order)).join("\n\n"),
+    `\n\nReturn JSON: { "lines": [{ "speaker": one of ${JSON.stringify(names)}, "text": "what they say, stage directions in parentheses" }] }. ${cast.length === 1 ? "Usually one line; two if the character pauses and goes on." : "One to four lines; let them react to one another, not only to the author."}`,
+  ].join("");
+  const history = conversation.messages.slice(-30).map((m) =>
+    m.role === "user"
+      ? { role: "user", content: m.content }
+      : { role: "assistant", content: (m.lines || []).map((l) => `${(byFile.get(l.speaker) || {}).name || "?"}: ${l.text}`).join("\n") }
+  );
+  const user = nudge ? "(The author says nothing. Carry on among yourselves — react to what was just said.)" : history.pop().content;
+  const out = await complete({ system, user, history, json: true, maxTokens: 900, signal });
+  const lines = (Array.isArray(out.lines) ? out.lines : [])
+    .map((l) => {
+      const el = cast.find((c) => c.name.toLowerCase() === String(l.speaker || "").toLowerCase()) || cast.find((c) => String(l.speaker || "").toLowerCase().includes(c.name.toLowerCase().split(" ")[0]));
+      return el && l.text ? { speaker: el.file, text: String(l.text).trim() } : null;
+    })
+    .filter(Boolean)
+    .slice(0, 4);
+  if (!lines.length) throw new Error("The characters had nothing to say. Try again or ask differently.");
+  return lines;
 };

@@ -64,3 +64,25 @@
   .talk__list { flex-direction: row; }
   .talk__item { max-width: 160px; }
 }
+
+/* characters */
+.castPick { background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; font-size: 12px; }
+.castPick p { margin: 0 0 6px; color: var(--ink-muted); }
+.castPick__list { max-height: 260px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+.castPick__list label { display: flex; align-items: center; gap: 6px; padding: 3px 4px; border-radius: var(--radius); color: var(--ink-soft); cursor: pointer; }
+.castPick__list label:hover { background: var(--bg-hover); color: var(--ink); }
+.castPick__list input { accent-color: var(--accent); margin: 0; }
+.castPick__row { display: flex; gap: 6px; margin-top: 8px; }
+.castPick__row button { font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.castPick__row button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+.castPick__row button:disabled { opacity: 0.5; }
+.talk__chip--cast { background: var(--accent-soft); border-color: transparent; }
+.talk__chip--cast a { color: var(--ink); }
+.talk__asOf { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); margin-left: auto; }
+.talk__asOf select { max-width: 240px; border-style: solid; }
+.talk__faces { font-size: 36px; letter-spacing: 6px; margin-bottom: 6px; }
+.script { display: flex; flex-direction: column; gap: 10px; }
+.script .msg__actions { align-self: flex-start; }
+.msg--cast .msg__body { font-family: var(--font-prose); font-size: 15px; border-left: 2px solid var(--accent); border-radius: 4px 12px 12px 4px; }
+.msg__face { font-size: 14px; }
+.talk__compose button + button { margin-left: 0; }
