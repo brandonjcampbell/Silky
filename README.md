@@ -35,7 +35,7 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 ## Examples
 
-The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (114 scenes, 185 elements, 1,149 facts). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
+The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (113 scenes, 180 elements, 1,143 facts). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
 
 ## Importing a manuscript
 
