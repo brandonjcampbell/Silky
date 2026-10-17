@@ -1,0 +1,12 @@
+.modelStatus {
+  position: fixed; right: 16px; bottom: 16px; z-index: 300; width: 280px;
+  padding: 10px 12px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(0,0,0,.35); font-size: 12px; color: var(--ink-soft);
+}
+.modelStatus__row { display: flex; justify-content: space-between; color: var(--ink); font-size: 13px; }
+.modelStatus__bar { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; margin: 6px 0; }
+.modelStatus__bar > i { display: block; height: 100%; background: var(--accent); transition: width 200ms ease; }
+.modelStatus__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-muted); }
+.modelStatus.is-ready .modelStatus__bar > i { background: #6fcf97; }
+.modelStatus.is-error { border-color: var(--accent); }
+.modelStatus.is-error .modelStatus__text { white-space: normal; color: var(--accent); }

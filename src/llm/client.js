@@ -1,4 +1,5 @@
 import { getConfig, PROVIDERS } from "./config";
+import { webllmComplete } from "./webllm";
 
 /**
  * One chat completion. Returns the assistant's text.
@@ -13,6 +14,8 @@ export const complete = async ({ system, user, json = false, maxTokens = 4096, s
   const text =
     c.provider === "anthropic"
       ? await anthropic(c, { system, user, json, maxTokens, signal })
+      : c.provider === "webllm"
+      ? await webllmComplete(c, { messages: messagesFor(system, user, json), json, maxTokens, signal })
       : await openaiCompatible(c, { system, user, json, maxTokens, signal });
   return json ? parseJson(text) : text;
 };
@@ -22,6 +25,11 @@ const jsonNudge = (system, json) =>
     ? (system ? system + "\n\n" : "") +
       "Respond with a single JSON object and nothing else: no prose, no code fences."
     : system;
+
+const messagesFor = (system, user, json) => [
+  ...(jsonNudge(system, json) ? [{ role: "system", content: jsonNudge(system, json) }] : []),
+  { role: "user", content: user },
+];
 
 const openaiCompatible = async (c, { system, user, json, maxTokens, signal }) => {
   const url = c.baseUrl.replace(/\/+$/, "") + "/chat/completions";

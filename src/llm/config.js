@@ -3,9 +3,21 @@
  * API key is sent to the configured endpoint and nowhere else.
  */
 
+import { WEBLLM_DEFAULT } from "./webllm";
+
 const KEY = "silky:llm";
 
 export const PROVIDERS = [
+  {
+    id: "webllm",
+    name: "In this browser (no key)",
+    note: "A small open model runs on your own GPU through WebGPU. Downloads once (1–5 GB), then works offline and nothing leaves your machine. Good for reader notes and wiki entries; rough for manuscript import. Needs Chrome or Edge.",
+    baseUrl: "webgpu://local",
+    model: WEBLLM_DEFAULT,
+    needsKey: false,
+    jsonMode: true,
+    local: true,
+  },
   {
     id: "openai",
     name: "OpenAI-compatible",

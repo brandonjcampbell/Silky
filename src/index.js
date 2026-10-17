@@ -9,6 +9,7 @@ import { StateProvider } from "./NewContext";
 import { ready, isElectron } from "./storage";
 import BrowserStorageBar from "./Components/BrowserStorageBar";
 import { applyTheme } from "./theme";
+import ModelStatus from "./Components/ModelStatus";
 
 applyTheme();
 
@@ -27,6 +28,7 @@ ready().then(() => {
               {!isElectron && <BrowserStorageBar />}
               <MyRoutes />
             </div>
+            <ModelStatus />
           </div>
         </HashRouter>
       </StateProvider>

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../Modal/Modal";
 import { PROVIDERS, defaultConfig, getConfig, saveConfig, clearConfig } from "../../llm/config";
 import { testConnection } from "../../llm/client";
+import { WEBLLM_MODELS, hasWebGPU, PROGRESS_EVENT, deleteModelCache, isEngineReady } from "../../llm/webllm";
 
 /** Configure which model Silky talks to. Everything stays in this browser. */
 const LlmSettings = ({ onClose }) => {
@@ -9,6 +10,15 @@ const LlmSettings = ({ onClose }) => {
   const [showKey, setShowKey] = useState(false);
   const [status, setStatus] = useState(null); // {ok, msg}
   const [testing, setTesting] = useState(false);
+  const [progress, setProgress] = useState(null); // {text, progress}
+  const local = cfg.provider === "webllm";
+  const gpu = hasWebGPU();
+
+  useEffect(() => {
+    const on = (e) => setProgress(e.detail.phase === "ready" ? null : e.detail);
+    window.addEventListener(PROGRESS_EVENT, on);
+    return () => window.removeEventListener(PROGRESS_EVENT, on);
+  }, []);
 
   const provider = PROVIDERS.find((p) => p.id === cfg.provider) || PROVIDERS[0];
   const set = (k) => (e) => setCfg({ ...cfg, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
@@ -24,7 +34,7 @@ const LlmSettings = ({ onClose }) => {
     setStatus(null);
     try {
       await testConnection(cfg);
-      setStatus({ ok: true, msg: `Connected. ${cfg.model} answered.` });
+      setStatus({ ok: true, msg: local ? "The model runs here and answered." : `Connected. ${cfg.model} answered.` });
     } catch (e) {
       setStatus({ ok: false, msg: e.message });
     } finally {
@@ -51,10 +61,10 @@ const LlmSettings = ({ onClose }) => {
           {getConfig() && <button type="button" onClick={forget}>Forget connection</button>}
           <span className="spacer" />
           {status && <span className={"status " + (status.ok ? "ok" : "err")}>{status.msg}</span>}
-          <button type="button" onClick={test} disabled={testing || (provider.needsKey && !cfg.apiKey)}>
-            {testing ? "Testing…" : "Test"}
+          <button type="button" onClick={test} disabled={testing || (provider.needsKey && !cfg.apiKey) || (local && !gpu)}>
+            {testing ? (local ? "Loading…" : "Testing…") : local ? (isEngineReady(cfg.model) ? "Test" : "Download & test") : "Test"}
           </button>
-          <button type="button" className="primary" onClick={save} disabled={provider.needsKey && !cfg.apiKey}>
+          <button type="button" className="primary" onClick={save} disabled={(provider.needsKey && !cfg.apiKey) || (local && !gpu)}>
             Save
           </button>
         </>
@@ -75,16 +85,50 @@ const LlmSettings = ({ onClose }) => {
       </label>
       <p className="hint">{provider.note}</p>
 
+      {local && (
+        <>
+          {!gpu && (
+            <p className="note" style={{ color: "var(--accent)" }}>
+              This browser doesn’t expose WebGPU, so a model can’t run here. Chrome or Edge on a computer with a GPU will; or pick another provider.
+            </p>
+          )}
+          <label className="field">
+            <span>Model</span>
+            <select value={cfg.model} onChange={set("model")}>
+              {WEBLLM_MODELS.map((m) => (
+                <option key={m.id} value={m.id}>{m.name} — {m.size}</option>
+              ))}
+            </select>
+          </label>
+          <p className="hint">{(WEBLLM_MODELS.find((m) => m.id === cfg.model) || {}).note}</p>
+          {progress && (
+            <div>
+              <div className="bar"><i style={{ width: `${Math.round((progress.progress || 0) * 100)}%` }} /></div>
+              <p className="hint">{progress.text}</p>
+            </div>
+          )}
+          <p className="hint">
+            The first run downloads the weights from Hugging Face and caches them in this browser; later runs start in seconds. Clearing site data removes them.{" "}
+            <button type="button" onClick={async () => { try { await deleteModelCache(cfg.model); setStatus({ ok: true, msg: "Cached weights removed." }); } catch (e) { setStatus({ ok: false, msg: e.message }); } }}>Remove downloaded weights</button>
+          </p>
+        </>
+      )}
+
+      {!local && (
       <label className="field">
         <span>Base URL</span>
         <input type="url" value={cfg.baseUrl} onChange={set("baseUrl")} spellCheck={false} />
       </label>
+      )}
 
+      {!local && (
       <label className="field">
         <span>Model</span>
         <input type="text" value={cfg.model} onChange={set("model")} spellCheck={false} />
       </label>
+      )}
 
+      {!local && (
       <label className="field">
         <span>API key{provider.needsKey ? "" : " (optional)"}</span>
         <div style={{ display: "flex", gap: 6 }}>
@@ -99,8 +143,9 @@ const LlmSettings = ({ onClose }) => {
           <button type="button" onClick={() => setShowKey((s) => !s)}>{showKey ? "Hide" : "Show"}</button>
         </div>
       </label>
+      )}
 
-      {cfg.provider !== "anthropic" && (
+      {cfg.provider !== "anthropic" && !local && (
         <label className="check">
           <input type="checkbox" checked={!!cfg.jsonMode} onChange={set("jsonMode")} />
           Server supports JSON mode (<code>response_format</code>). Untick if the test fails with a 400.
