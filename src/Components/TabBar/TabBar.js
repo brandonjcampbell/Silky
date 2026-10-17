@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaBook } from "react-icons/fa";
+import { GiSpinningWheel } from "react-icons/gi";
 import { store } from "../../NewContext";
 import { existsSync } from "../../storage";
 import { loadFile } from "../../utils/";
@@ -26,9 +27,11 @@ const TYPE_ICON = {
 const TabBar = () => {
   const { state } = useContext(store);
   const params = useParams();
-  const isWiki = useLocation().pathname.startsWith("/wiki");
-  // a tab key is an actor file, "analysis:<id>", or "wiki"
-  const file = isWiki ? "wiki" : params.id ? "analysis:" + params.id : params.file;
+  const pathname = useLocation().pathname;
+  const isWiki = pathname.startsWith("/wiki");
+  const isSpinner = pathname.startsWith("/spinner");
+  // a tab key is an actor file, "analysis:<id>", "wiki" or "spinner"
+  const file = isSpinner ? "spinner" : isWiki ? "wiki" : params.id ? "analysis:" + params.id : params.file;
   const navigate = useNavigate();
   const project = state.project;
   const [tabs, setTabs] = useState(() => loadTabs(project));
@@ -60,8 +63,8 @@ const TabBar = () => {
     saveTabs(project, next);
   }, [file, tabs, project, state.dir, navigate]);
 
-  const isLive = (f) => (f === "wiki" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : existsSync(state.dir + f));
-  const hrefOf = (f) => (f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : "/elements/" + f);
+  const isLive = (f) => (f === "wiki" || f === "spinner" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : existsSync(state.dir + f));
+  const hrefOf = (f) => (f === "spinner" ? "/spinner" : f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : "/elements/" + f);
   const live = useMemo(
     () => tabs.filter(isLive),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -95,7 +98,9 @@ const TabBar = () => {
     <div className="tabBar" role="tablist">
       {live.map((f) => {
         let a;
-        if (f === "wiki") {
+        if (f === "spinner") {
+          a = { name: "Spinner", icon: <GiSpinningWheel />, type: "analysis" };
+        } else if (f === "wiki") {
           a = { name: "Wiki", icon: <FaBook />, type: "analysis" };
         } else if (f.startsWith("analysis:")) {
           const m = analysisById(f.slice(9));

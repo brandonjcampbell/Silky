@@ -5,13 +5,14 @@ import "./ActorList.css";
 import { loadDir, loadFile, saveFile, renameDir } from "../../utils/";
 import DraggableList from "../DraggableList";
 import { TiScissors } from "react-icons/ti";
-import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import { GiSpiderWeb, GiSewingString, GiLightBulb, GiSpinningWheel } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { FaChartLine, FaBook } from "react-icons/fa";
 import { ANALYSES } from "../Analysis";
 import { WIKI_INDEX } from "../Wiki";
+import { isConfigured } from "../../llm/config";
 import logo from "../../images/logo.svg";
 import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
@@ -182,6 +183,15 @@ const ActorList = ({ setRefresh }) => {
             <Icon />
           </button>
         ))}
+        <span className="activityBar__gap" />
+        <NavLink
+          to="/spinner"
+          className={({ isActive }) => "tab tab--link" + (isActive ? " selected" : "")}
+          title={"Spinner — the language model" + (isConfigured() ? " (connected)" : " (not connected)")}
+        >
+          <GiSpinningWheel />
+          {isConfigured() && <i className="activityBar__dot" />}
+        </NavLink>
       </nav>
 
       {type === "analysis" && (

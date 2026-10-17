@@ -69,10 +69,10 @@ const App = () => {
           <button
             type="button"
             className={"trayBtn" + (isConfigured() ? " is-on" : "")}
-            title={isConfigured() ? "Language model connected" : "Connect a language model"}
+            title={isConfigured() ? "Spinner — language model connected" : "Spinner — connect a language model"}
             onClick={() => setPanel("llm")}
           >
-            <FaPlug /> <span>Model</span>
+            <FaPlug /> <span>Spinner</span>
           </button>
           <ThemePicker />
         </div>

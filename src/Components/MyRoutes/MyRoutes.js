@@ -17,6 +17,7 @@ const MyRoutes = () => {
       <Route path="/elements/:file" element={inProject ? <Shell /> : <App />} />
       <Route path="/analysis/:id" element={inProject ? <Shell /> : <App />} />
       <Route path="/wiki/*" element={inProject ? <Shell /> : <App />} />
+      <Route path="/spinner" element={inProject ? <Shell /> : <App />} />
       <Route path="*" element={<App />} />
     </Routes>
   );

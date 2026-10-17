@@ -5,7 +5,7 @@ import { testConnection } from "../../llm/client";
 import { WEBLLM_MODELS, hasWebGPU, PROGRESS_EVENT, deleteModelCache, isEngineReady } from "../../llm/webllm";
 
 /** Configure which model Silky talks to. Everything stays in this browser. */
-const LlmSettings = ({ onClose }) => {
+const LlmSettings = ({ onClose, inline = false }) => {
   const [cfg, setCfg] = useState(() => getConfig() || defaultConfig());
   const [showKey, setShowKey] = useState(false);
   const [status, setStatus] = useState(null); // {ok, msg}
@@ -44,19 +44,18 @@ const LlmSettings = ({ onClose }) => {
 
   const save = () => {
     saveConfig(cfg);
-    onClose();
+    if (inline) setStatus({ ok: true, msg: "Saved." });
+    else onClose();
   };
 
   const forget = () => {
     clearConfig();
-    onClose();
+    setCfg(defaultConfig());
+    if (inline) setStatus({ ok: true, msg: "Connection forgotten." });
+    else onClose();
   };
 
-  return (
-    <Modal
-      title="Language model"
-      onClose={onClose}
-      footer={
+  const footer = (
         <>
           {getConfig() && <button type="button" onClick={forget}>Forget connection</button>}
           <span className="spacer" />
@@ -68,8 +67,10 @@ const LlmSettings = ({ onClose }) => {
             Save
           </button>
         </>
-      }
-    >
+  );
+
+  const body = (
+    <>
       <p className="note">
         Silky can read a manuscript and draft its elements, facts and scenes for you. Point it at a model you
         trust. The key is kept in this browser only and sent to nothing but the address below.
@@ -151,6 +152,20 @@ const LlmSettings = ({ onClose }) => {
           Server supports JSON mode (<code>response_format</code>). Untick if the test fails with a 400.
         </label>
       )}
+    </>
+  );
+
+  if (inline) {
+    return (
+      <div className="modal modal--inline">
+        <div className="modal__body">{body}</div>
+        <footer className="modal__foot">{footer}</footer>
+      </div>
+    );
+  }
+  return (
+    <Modal title="Spinner — language model" onClose={onClose} footer={footer}>
+      {body}
     </Modal>
   );
 };

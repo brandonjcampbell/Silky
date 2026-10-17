@@ -520,7 +520,7 @@ const Reader = () => {
             {form !== "edit" && <button type="button" className="linkish readerIntro__edit" onClick={() => setForm("edit")}>Edit profile</button>}
           </p>
           <div className="reader__bar">
-            {!configured && <span className="muted">Connect a model (the <b>Model</b> button on the project tray) to run a reader.</span>}
+            {!configured && <span className="muted">Connect Spinner (the <Link to="/spinner">Spinner</Link> tab, or the button on the project tray) to run a reader.</span>}
             {configured && !busy && (
               <>
                 <button type="button" className="primary" onClick={() => run(false)} disabled={!pending}>

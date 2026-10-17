@@ -7,12 +7,15 @@ import Workspace from "../Workspace";
 import TabBar from "../TabBar";
 import Analysis from "../Analysis";
 import Wiki from "../Wiki";
+import Spinner from "../Spinner";
 import logo from "../../images/logo.svg";
 
 /** Sidebar + editor pane. The editor pane carries the open tabs. */
 const Shell = () => {
   const { file, id } = useParams();
-  const isWiki = useLocation().pathname.startsWith("/wiki");
+  const pathname = useLocation().pathname;
+  const isWiki = pathname.startsWith("/wiki");
+  const isSpinner = pathname.startsWith("/spinner");
   const [, setRefresh] = useState(0);
   const doRefresh = (v) => setRefresh(v);
 
@@ -28,7 +31,11 @@ const Shell = () => {
         <ReflexElement className="middle-pane" flex={0.8}>
           <div className="editorPane">
             <TabBar />
-            {isWiki ? (
+            {isSpinner ? (
+              <div className="Workspace">
+                <Spinner />
+              </div>
+            ) : isWiki ? (
               <div className="Workspace">
                 <Wiki />
               </div>

@@ -146,3 +146,6 @@
 .dropzone.is-over { border-color: var(--accent); color: var(--ink); }
 .dropzone input[type="file"] { display: none; }
 .dropzone .pick { text-decoration: underline; cursor: pointer; color: var(--ink-soft); }
+
+/* the same form, embedded in a page rather than floating */
+.modal--inline { max-height: none; box-shadow: none; width: min(100%, 640px); background: var(--bg-raised); }
