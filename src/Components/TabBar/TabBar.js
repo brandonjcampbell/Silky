@@ -1,14 +1,15 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaBook } from "react-icons/fa";
-import { GiSpinningWheel } from "react-icons/gi";
+
 import { FaBars } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { existsSync } from "../../storage";
 import { loadFile } from "../../utils/";
 import { loadTabs, saveTabs } from "../../tabs";
 import { TiScissors } from "react-icons/ti";
-import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
+import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { analysisById } from "../Analysis";
 import "./TabBar.css";
@@ -105,7 +106,7 @@ const TabBar = ({ onMenu }) => {
       {live.map((f) => {
         let a;
         if (f === "spinner") {
-          a = { name: "Spinner", icon: <GiSpinningWheel />, type: "analysis" };
+          a = { name: "Spinner", icon: <SpinnerIcon />, type: "analysis" };
         } else if (f === "wiki") {
           a = { name: "Wiki", icon: <FaBook />, type: "analysis" };
         } else if (f.startsWith("analysis:")) {

@@ -1,3 +1,4 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { store } from "../../NewContext";
 import "./ActorList.css";
@@ -5,7 +6,7 @@ import "./ActorList.css";
 import { loadDir, loadFile, saveFile, renameDir } from "../../utils/";
 import DraggableList from "../DraggableList";
 import { TiScissors } from "react-icons/ti";
-import { GiSpiderWeb, GiSewingString, GiLightBulb, GiSpinningWheel } from "react-icons/gi";
+import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -197,7 +198,7 @@ const ActorList = ({ setRefresh }) => {
           className={({ isActive }) => "tab tab--link" + (isActive ? " selected" : "")}
           title={"Spinner — talk about the book, talk to your characters, connection" + (isConfigured() ? " (connected)" : " (not connected)")}
         >
-          <GiSpinningWheel />
+          <SpinnerIcon />
           {isConfigured() && <i className="activityBar__dot" />}
         </NavLink>
       </nav>

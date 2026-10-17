@@ -1,7 +1,8 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
-import { GiSpinningWheel } from "react-icons/gi";
+
 import { store } from "../../NewContext";
 import { loadDir, loadFile, saveFile } from "../../utils/";
 import { scanSnippet } from "../../analysis/links";
@@ -133,7 +134,7 @@ const LinkScanner = ({ element, onChange }) => {
     <section className="linkScan">
       <div className="linkScan__bar">
         <button type="button" className="linkScan__run" onClick={run}><FaSearch /> {result ? "Scan again" : "Scan for links"}</button>
-        {result && configured && !busy && !model && <button type="button" onClick={refine} title="Spinner reads the scene and confirms which facts it really establishes, and what it establishes that the project doesn’t know yet"><GiSpinningWheel /> Ask Spinner</button>}
+        {result && configured && !busy && !model && <button type="button" onClick={refine} title="Spinner reads the scene and confirms which facts it really establishes, and what it establishes that the project doesn’t know yet"><SpinnerIcon /> Ask Spinner</button>}
         {busy && <><span className="linkScan__busy">Spinner is reading…</span><button type="button" onClick={() => abortRef.current && abortRef.current.abort()}>Stop</button></>}
         {result && !busy && <span className="linkScan__summary">{result.mentioned.length} elements mentioned · {total} suggestion{total === 1 ? "" : "s"}</span>}
         {err && <span className="linkScan__err">{err}</span>}

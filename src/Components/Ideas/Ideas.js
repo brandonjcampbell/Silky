@@ -1,6 +1,7 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { GiSpinningWheel } from "react-icons/gi";
+
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
 import { askIdeas, IDEA_KINDS } from "../../llm/ideas";
@@ -93,7 +94,7 @@ const Ideas = ({ element, onChange }) => {
     <section className={"ideas" + (open ? " is-open" : "")}>
       <div className="ideas__bar">
         <button type="button" className="ideas__toggle" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-          <GiSpinningWheel /> Ask Spinner for ideas
+          <SpinnerIcon /> Ask Spinner for ideas
         </button>
         <label className="ideas__show" title="Underline every passage that came from Spinner">
           <input type="checkbox" checked={showAi} onChange={toggleShow} /> Show AI text

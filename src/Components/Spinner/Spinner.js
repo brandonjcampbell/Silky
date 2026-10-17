@@ -1,7 +1,8 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Talk from "../Talk";
-import { GiSpinningWheel } from "react-icons/gi";
+
 import { FaFileImport, FaBookReader, FaBook, FaPlug } from "react-icons/fa";
 import LlmSettings from "../LlmSettings";
 import { getConfig, isConfigured, PROVIDERS } from "../../llm/config";
@@ -30,7 +31,7 @@ const Spinner = () => {
   return (
     <div className={"workspace spinnerView" + (settings ? "" : " spinnerView--talk")}>
       <h1 className="workspaceHeader">
-        <span className="typeIcon"><GiSpinningWheel /></span>
+        <span className="typeIcon"><SpinnerIcon /></span>
         <p>Spinner</p>
         <nav className="spinner__modes">
           <NavLink to="/spinner" end className={({ isActive }) => (isActive ? "is-active" : "")}>Talk</NavLink>
@@ -61,7 +62,7 @@ const Spinner = () => {
             <h3>What Spinner does</h3>
             <ul>
               <li>
-                <GiSpinningWheel />
+                <SpinnerIcon />
                 <div><b>Talk about the book</b><span>A conversation to break a block: bring in the scene you’re stuck on and Spinner asks the right questions. <Link to="/spinner">Open Talk</Link></span></div>
               </li>
               <li>

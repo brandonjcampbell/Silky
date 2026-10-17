@@ -20,6 +20,7 @@ import Ideas from "../Ideas";
 import Impact from "../Impact";
 import History from "../History";
 import ReadAloud from "../ReadAloud";
+import TalkAbout from "../TalkAbout";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -304,6 +305,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && isThread && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
+          <TalkAbout element={element} />
           <ReadAloud element={element} />
           <div className="threadView">
             <div className="threadView__doc" ref={threadDocRef}>
@@ -374,6 +376,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
       {element && !isThread && (
         <>
           <TitleBar save={save} remove={remove} element={element} />
+          <TalkAbout element={element} />
           {element.type === "snippet" && <ReadAloud element={element} />}
           {typeof element.content === "string" && (
             <div className="editor">

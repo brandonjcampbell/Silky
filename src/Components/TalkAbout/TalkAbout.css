@@ -1,0 +1,6 @@
+.talkAbout__btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; font-size: 15px; color: var(--ink-muted); background: transparent;
+  border: 1px solid transparent; border-radius: var(--radius); cursor: pointer; transition: color 120ms ease, background 120ms ease;
+}
+.talkAbout__btn:hover { color: var(--accent); background: var(--bg-hover); }

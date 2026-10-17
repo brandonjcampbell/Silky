@@ -1,6 +1,7 @@
+import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { GiSpinningWheel } from "react-icons/gi";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 import { FaPlus, FaTrash, FaPaperPlane, FaCopy, FaFileImport, FaComments, FaUserFriends } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { loadDir, loadFile, saveFile } from "../../utils/";
@@ -26,12 +27,38 @@ const Talk = () => {
   const abortRef = useRef(null);
   const endRef = useRef(null);
   const configured = isConfigured();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const actors = useMemo(() => loadDir(dir).filter((f) => f.includes(".element.")).map((f) => loadFile(dir + f)).filter(Boolean), [dir, project, cur]); // eslint-disable-line react-hooks/exhaustive-deps
   const byFile = useMemo(() => new Map(actors.map((a) => [a.file, a])), [actors]);
   const conv = data.conversations.find((c) => c.id === cur) || null;
 
   useEffect(() => { setData(loadTalk(dir)); }, [dir]);
+
+  // Arrived from an actor's "talk about this" / "talk to" button: open a
+  // conversation with it in the room (reusing a fresh one if it exists).
+  useEffect(() => {
+    const q = new URLSearchParams(location.search);
+    const about = q.get("about");
+    const withEl = q.get("with");
+    if (!about && !withEl) return;
+    const target = loadFile(dir + (about || withEl));
+    if (!target) { navigate("/spinner", { replace: true }); return; }
+    const d = loadTalk(dir);
+    let c;
+    if (about) {
+      c = d.conversations.find((x) => x.kind !== "cast" && x.focus.length === 1 && x.focus[0] === target.file && x.messages.length === 0);
+      if (!c) c = newConversation(dir, `About ${target.name}`, { kind: "spinner", focus: [target.file] });
+    } else {
+      c = d.conversations.find((x) => x.kind === "cast" && (x.participants || []).length === 1 && x.participants[0] === target.file);
+      if (!c) c = newConversation(dir, target.name, { kind: "cast", participants: [target.file], asOf: null });
+    }
+    setData(loadTalk(dir));
+    setCur(c.id);
+    navigate("/spinner", { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
   useEffect(() => { endRef.current && endRef.current.scrollIntoView({ block: "end" }); }, [conv && conv.messages.length, busy]);
   useEffect(() => () => abortRef.current && abortRef.current.abort(), []);
 
@@ -216,7 +243,7 @@ const Talk = () => {
           )}
           {configured && !isCast && (!conv || !conv.messages.length) && (
             <div className="talk__welcome">
-              <GiSpinningWheel className="talk__bigIcon" />
+              <SpinnerIcon className="talk__bigIcon" />
               <p>Spinner knows the shape of <b>{project}</b> — its scenes, threads and cast. Bring the scene you're stuck on into the room, then talk. Spinner asks more than it tells; it won't write the scene unless you ask.</p>
               <div className="talk__openers">
                 {OPENERS.map((o) => <button key={o.label} type="button" onClick={() => setDraft(o.text)}>{o.label}</button>)}
@@ -236,7 +263,7 @@ const Talk = () => {
               </div>
             ) : (
             <article key={i} className={"msg msg--" + m.role}>
-              <div className="msg__who">{m.role === "assistant" ? <><GiSpinningWheel /> Spinner</> : "You"}</div>
+              <div className="msg__who">{m.role === "assistant" ? <><SpinnerIcon /> Spinner</> : "You"}</div>
               <div className="msg__body">{m.content.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div>
               {m.role === "assistant" && (
                 <div className="msg__actions">
@@ -249,7 +276,7 @@ const Talk = () => {
             </article>
             )
           ))}
-          {busy && <article className="msg msg--assistant is-thinking"><div className="msg__who"><GiSpinningWheel className="spin" /> Spinner</div><div className="msg__body"><p>…</p></div></article>}
+          {busy && <article className="msg msg--assistant is-thinking"><div className="msg__who"><SpinnerIcon className="spin" /> Spinner</div><div className="msg__body"><p>…</p></div></article>}
           {err && <p className="talk__err">{err}</p>}
           <div ref={endRef} />
         </div>
