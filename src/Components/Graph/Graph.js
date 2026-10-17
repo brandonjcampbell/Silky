@@ -4,6 +4,7 @@ import "./Graph.css";
 import Cytoscape from "cytoscape";
 import CytoscapeComponent from "react-cytoscapejs";
 import cola from "cytoscape-cola";
+import { readPalette, THEME_EVENT } from "../../theme";
 
 const Graph = ({ elements, onDrop }) => {
   const defaultLayout = {
@@ -24,6 +25,13 @@ const Graph = ({ elements, onDrop }) => {
   const [windowDimensions, setWindowDimensions] = useState(
     getWindowDimensions()
   );
+  const [palette, setPalette] = useState(readPalette);
+
+  useEffect(() => {
+    const onTheme = () => setPalette(readPalette());
+    window.addEventListener(THEME_EVENT, onTheme);
+    return () => window.removeEventListener(THEME_EVENT, onTheme);
+  }, []);
 
   useEffect(() => {
     if (cy) {
@@ -89,15 +97,17 @@ const Graph = ({ elements, onDrop }) => {
           style: {
             height: showNodeText ? 100 : 15,
             width: showNodeText ? 100 : 15,
-            backgroundColor: "#333",
+            backgroundColor: palette.bgRaised,
+            "border-width": 1,
+            "border-color": palette.line,
             label: showNodeText ? "data(label)" : "",
             "text-wrap": "wrap",
             "text-max-width": 100,
             "font-size": "12px",
             "text-halign": "center",
             "text-valign": "center",
-            color: "white",
-            "text-outline-color": "black",
+            color: palette.ink,
+            "text-outline-color": palette.bgRaised,
             "text-outline-width": 2,
           },
         },
@@ -105,10 +115,12 @@ const Graph = ({ elements, onDrop }) => {
           selector: "edge",
           style: {
             width: 2,
+            "line-color": palette.inkMuted,
+            "target-arrow-color": palette.inkMuted,
             "target-arrow-shape": "triangle",
             "curve-style": "bezier",
-            color: "black",
-            "text-outline-color": "white",
+            color: palette.ink,
+            "text-outline-color": palette.bg,
             "text-outline-width": 2,
             "font-size": "12px",
             "edge-text-rotation": "autorotate",
@@ -118,11 +130,11 @@ const Graph = ({ elements, onDrop }) => {
         {
           selector: "node[hyper>0]",
           style: {
-            color: "black",
+            color: palette.bg,
             width: 25,
             height: 25,
-            backgroundColor: "white",
-            "text-outline-color": "white",
+            backgroundColor: palette.accent,
+            "text-outline-color": palette.accent,
             "text-outline-width": 2,
           },
         },

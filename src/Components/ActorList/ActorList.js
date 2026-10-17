@@ -10,6 +10,7 @@ import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.svg";
+import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
 
 const ActorList = ({ setRefresh }) => {
@@ -126,6 +127,7 @@ const ActorList = ({ setRefresh }) => {
         >
           {globalState.state.project}
         </div>
+        <ThemePicker compact />
       </div>
       <HiOutlineGlobeAlt
         onClick={() => setType("")}

@@ -8,6 +8,9 @@ import { MyRoutes } from "./Components/";
 import { StateProvider } from "./NewContext";
 import { ready, isElectron } from "./storage";
 import BrowserStorageBar from "./Components/BrowserStorageBar";
+import { applyTheme } from "./theme";
+
+applyTheme();
 
 // In the browser the storage layer hydrates its in-memory mirror from
 // IndexedDB before anything renders, so the synchronous file utils the

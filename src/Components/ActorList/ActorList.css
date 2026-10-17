@@ -21,7 +21,11 @@
   margin-bottom: 8px;
 }
 .logo { height: 30px; flex: none; }
+.project .themePicker { margin-left: auto; flex: none; }
+.project .themePicker__menu { min-width: 240px; }
 .projectName {
+  flex: 1;
+  min-width: 0;
   font-size: 16px;
   font-weight: 600;
   color: var(--ink);

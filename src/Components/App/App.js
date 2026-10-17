@@ -4,6 +4,7 @@ import { loadDir, makeDir, deleteDir } from "../../utils/";
 import logo from "../../images/logo.svg";
 import { GiTrashCan } from "react-icons/gi";
 import FormDialog from "../FormDialog/FormDialog";
+import ThemePicker from "../ThemePicker";
 import "./App.css";
 
 const App = () => {
@@ -52,6 +53,9 @@ const App = () => {
             }}
           ></input>
           <button type="button" onClick={newDir}>+ New project</button>
+        </div>
+        <div className="projectTray__tools">
+          <ThemePicker />
         </div>
       </div>
 
