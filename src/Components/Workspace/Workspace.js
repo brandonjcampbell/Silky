@@ -113,7 +113,6 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <br />
           <Stack spacing={2} sx={{ width: 300 }}>
             <Autocomplete
-              style={{ background: "white" }}
               id={relationship + "-fact"}
               clearOnEscape
               clearOnBlur
@@ -168,7 +167,6 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <br />
           <Stack spacing={2} sx={{ width: 300 }}>
             <Autocomplete
-              style={{ background: "white" }}
               id={relationship + "-fact"}
               clearOnEscape
               clearOnBlur

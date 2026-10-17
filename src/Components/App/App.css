@@ -1,38 +1,93 @@
-.projectTray{
+/* Project tray — the landing screen. */
 
-width: 100vw;
-height: 100vh;
-  overflow-y: scroll;
+.projectTray {
+  width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 40px 48px 64px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  align-content: start;
 }
-.root{
+.storageBar + .projectTray { min-height: calc(100vh - 37px); }
 
-  color: white;
-
+/* the first child holds the logo and the new-project card; let it span the row */
+.projectTray > div:first-child {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 18px;
 }
-.projectTray a {
-  text-decoration: none;
+.projectTray .logo { height: 44px; }
+
+.projectTray .root { color: var(--ink); }
+
+/* new-project card: an input that looks like a card until you type */
+.projectTray > div:first-child .projectcard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-muted);
+  font-size: 14px;
+}
+.projectTray input {
+  font: inherit;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  width: 220px;
+  transition: border-color 120ms ease;
+}
+.projectTray input::placeholder { color: var(--ink-muted); }
+.projectTray input:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
-.projectTray a div {
-  color:black;
+/* project cards */
+.projectcard {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
-
-.projectcard:hover .folderName{
-  background-color: rgb(254, 0, 76);
-
+.folderName {
+  flex: 1;
+  box-sizing: border-box;
+  padding: 18px 16px;
+  margin: 0;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
-.folderName{
-  width: calc(100% - 70px);
-  padding:5px;
-
-  margin:5px;
-  color:white;
-  background:rgb(78, 76, 76);
-  border-radius: 3px;
-  display: inline-block;
+.projectcard:hover .folderName {
+  background: var(--bg-raised);
+  border-color: var(--accent);
 }
-.folderTools{
-  width:45px;
-  display: inline-block;
+.folderTools {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  color: var(--ink-muted);
+  font-size: 18px;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 120ms ease, color 120ms ease;
 }
+.projectcard:hover .folderTools { opacity: 1; }
+.folderTools:hover { color: var(--accent); }

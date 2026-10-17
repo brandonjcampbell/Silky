@@ -1,78 +1,63 @@
-@keyframes wiggle {
-  0% {
-    transform: rotate(-0deg);
-  }
-  80% {
-    transform: rotate(-0deg);
-  }
-  85% {
-    transform: rotate(15deg) translate(-10px, 0px);
-  }
-  95% {
-    transform: rotate(-15deg) translate(10px, 0px);
-  }
-  100% {
-    transform: rotate(-0deg);
-  }
-}
+/* The writing surface. Prose is set in a serif; everything else stays sans. */
 
 .contentBlock {
-  border-radius: 2px;
   position: relative;
   overflow-x: hidden;
   z-index: 100;
 }
-.unsaved {
-  color: white;
-  background-color: rgba(0, 0, 0, 0.55);
-  position: fixed;
-  z-index: -1;
-  display: inline-block;
-  top: 0px;
-  right: 0px;
-  font-size: 15px;
-  height: 100vh;
-  width: 100vw; 
 
-  cursor: pointer;
+.page {
+  box-sizing: border-box;
+  margin: 18px 0 8px;
+  padding: 26px 32px;
+  max-width: 72ch;
+  min-height: 7em;
+  border-radius: var(--radius);
+  background-color: var(--bg-page);
+  color: var(--ink);
+  font-family: var(--font-prose);
+  font-size: 18px;
+  line-height: 1.6;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
-
-
-.editingBlockBanner {
-  color: transparent;
-  position: absolute;
-  font-size: 10px;
-  top: 0px;
-  left: 10px;
-
-  color: white;
+.page p { margin: 0 0 1em; }
+.page p:last-child { margin-bottom: 0; }
+.page:empty::before {
+  content: "Write here.";
+  color: var(--ink-muted);
 }
 
 [contenteditable="true"]:active,
 [contenteditable="true"]:focus {
   border: none;
   outline: none;
-  caret-color: orange;
+  caret-color: var(--accent);
 }
 
-.intellisense{
+/* unsaved-changes scrim: click anywhere to save */
+.unsaved {
   position: fixed;
-  right:0px;
-  top:0px;
-  background:black;
-  border: 5px solid white;
+  inset: 0;
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+}
+
+.editingBlockBanner {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  font-size: 10px;
+  color: var(--ink);
+}
+
+.intellisense {
+  position: fixed;
+  right: 0;
+  top: 0;
   z-index: 100;
   padding: 100px;
-}
-
-.page {
-  max-height: none;
-  padding: 10px;
-  padding-right:0px;
-  overflow-y: scroll;
-  text-align: justify;
-  margin: 10px;
-  margin-right:0px;
-  border-radius: 2px;
-  background-color: rgb(56, 53, 57);
+  background: var(--bg-side);
+  border: 1px solid var(--line);
 }

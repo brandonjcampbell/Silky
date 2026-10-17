@@ -1,55 +1,56 @@
+/* Sidebar: project title, type tabs, the actor list. */
 
-.ActorList{
-  /* background-color: #1b1818; */
-
-
-margin-left:10px;
+.ActorList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 10px 8px 12px 12px;
+  box-sizing: border-box;
 }
 
-.tab{
-  color:rgb(48, 48, 48);
-  border-top-right-radius: 5px;
-  border-top-left-radius: 5px;
-  margin: 5px;
-  padding:5px;
+.project {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-bottom: 8px;
 }
-.tab.selected{
-  background-color: white;
+.logo { height: 30px; flex: none; }
+.projectName {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: var(--radius);
 }
-.content{
-    overflow-y: auto;
-    overflow-x:hidden;
-  }
-  .controls{
-      margin:4px;
-  
-  }
-  .listSearch{
-      width:calc(100% - 50px);
-      border-color:white;
-      display: inline-block;
-      position: relative;
-      top:5px;
-      left:5px;   
-  }
-  .listSearch > * {
-    color:white!important;
-    padding-left:5px;
-  }
+.projectName:focus { outline: none; background: var(--bg-raised); }
 
-  .logo {
-    height: 35px;
-    margin:10px;
-  }
-  .project{
-    display: flex;
-    vertical-align: middle;
-    line-height: 50px;
-    height: 50px;
-    margin-left: -10px;
-  }
-  .projectName{
-    overflow-x: hidden;
-    overflow-y: hidden;
-    line-height:auto;
-  }
+/* type tabs: one row of glyphs; the selected one carries the accent */
+.tab {
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  margin: 0 2px 10px 0;
+  box-sizing: border-box;
+  border-radius: var(--radius);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 120ms ease, background 120ms ease;
+  vertical-align: middle;
+}
+.tab:hover { color: var(--ink); background: var(--bg-hover); }
+.tab.selected { color: var(--accent); background: var(--accent-soft); }
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-left: -4px;
+}
+.content > button {
+  margin: 10px 0 0 4px;
+}

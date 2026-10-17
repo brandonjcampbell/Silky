@@ -32,6 +32,7 @@ const App = () => {
         <img className="logo" src={logo}></img>
         <div className="root projectcard">
           <input
+            placeholder="Name a new project"
             value={newProject}
             onChange={(x) => setNewProject(x.target.value)}
             onBlur={() => {

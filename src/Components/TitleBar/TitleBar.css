@@ -1,85 +1,92 @@
+/* Workspace header: type glyph, emoji, editable title, delete. */
+
 .workspaceHeader {
   display: flex;
-  vertical-align: bottom;
-  line-height: 35px;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 18px 56px 14px 24px;
   position: relative;
-  top: -20px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--line);
 }
-
-.title {
-  position: relative;
-
-  top: 25px;
-  left: 10px;
-  margin-left: 5px;
-  color: white;
-}
-.icon{
-  font-size:40px;
-  display: inline-block;
-  padding-top:10px;
-  margin-right:-10px;
-  color: white;
-}
-.typeIcon{
-  font-size:40px;
-  display: inline-block;
-  padding-top:10px;
-  margin-left:10px;
-  color: white;
-}
-.titleEditor {
-  color: Red;
-}
-
-.workspaceHeader p {
-  color: white;
-  margin-left: 15px;
-  margin-top: 10px;
-}
-.emojiSelector{
-  background-color: rgb(27, 27, 27);
-  position: fixed;
-  height: 100vh;
-  left:0px;
-  top:0px;
-  width: 100vw;
-  z-index: 1000;
-  overflow-y: scroll;
+.typeIcon {
+  font-size: 22px;
+  color: var(--ink-muted);
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding-top:50px;
+  align-items: center;
+  flex: none;
 }
-.emojiSelector button{
+.icon {
+  font-size: 30px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  flex: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 2px;
+}
+.icon:hover { background: var(--bg-hover); }
+.workspaceHeader p {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 2ch;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: var(--radius);
+  outline: none;
+}
+.workspaceHeader p:focus { background: var(--bg-raised); }
+
+.delete {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+.delete:hover { color: var(--accent); }
+
+/* emoji picker overlay */
+.emojiSelector {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(27, 24, 24, 0.96);
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 4px;
+  padding: 56px 24px 24px;
+  box-sizing: border-box;
+}
+.emojiSelector button {
   width: 40px;
   height: 40px;
-  border:0px;
-  background-color: #4646465e;
+  border: 0;
+  background: var(--bg-raised);
   border-radius: 100px;
-  margin:4px;
-  color:white;
+  color: var(--ink);
   font-size: 20px;
+  cursor: pointer;
+  transition: transform 80ms ease, background 120ms ease;
 }
-.emojiSelector button:hover{
-  font-size:22px;
-}
-
-.emojiSelector .neverMind{
+.emojiSelector button:hover { transform: scale(1.12); background: var(--bg-hover); }
+.emojiSelector button.selected { background: var(--accent); }
+.emojiSelector .neverMind {
   position: fixed;
-  top:1px;
-  right:10px;
-  background-color: white;
-  color: black;
-}
-.emojiSelector button.selected{
-  background-color: rgb(254, 0, 76);
-}
-.delete {
-  color: white;
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  height: 15px;
-  width: 15px;
+  top: 12px;
+  right: 16px;
+  width: auto;
+  height: auto;
+  font-size: 13px;
+  border-radius: var(--radius);
 }

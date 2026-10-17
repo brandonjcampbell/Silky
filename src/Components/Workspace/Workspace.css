@@ -1,10 +1,39 @@
+/* The workspace: header, prose, relationship sections, graph. */
+
+.workspace {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.storageBar ~ .View .workspace { height: 100%; }
+.middle-pane { height: 100%; }
+
+.workspace > span {
+  display: block;
+  padding: 32px 24px;
+  color: var(--ink-muted);
+}
+
 .editor {
-  padding: 0px;
-  position: relative;
-  top: -60px;
-  color:white;
+  position: static;
+  padding: 0 24px;
+  color: var(--ink);
 }
-.workspace{
-  overflow-y:scroll; 
-  height: 100vh;
+
+/* a relationship section: a quiet heading with a hairline above */
+.editor h4 {
+  margin: 26px 0 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--ink-muted);
 }
+.editor > h4:first-child { border-top: 0; padding-top: 0; }
+
+/* lists inside sections sit flush with the heading */
+.editor .snippets { margin-left: -10px; }
+
+.editor br { display: none; }
+.editor .MuiStack-root { margin-top: 10px; }
