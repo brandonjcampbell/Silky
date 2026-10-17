@@ -1,0 +1,15 @@
+[
+  {
+    "file": "dracula.json",
+    "name": "Dracula",
+    "blurb": "Bram Stoker's novel, imported as a manuscript and modelled by a language model, with seven plot threads traced through it. Every fact and link is a first draft.",
+    "counts": {
+      "element": 180,
+      "fact": 1143,
+      "snippet": 113,
+      "thread": 8,
+      "web": 8
+    },
+    "size": 1995775
+  }
+]
