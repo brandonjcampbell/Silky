@@ -42,3 +42,6 @@ html.show-ai .page [data-ai] {
   background: var(--accent-soft);
   border-radius: 2px;
 }
+.ideas__scope { margin: 0; font-size: 11px; color: var(--ink-muted); }
+.ideas .ideas__link { border: none; padding: 0; font-size: 11px; text-decoration: underline; color: var(--ink-muted); background: none; }
+.ideas .ideas__link:hover { color: var(--accent); background: none; }

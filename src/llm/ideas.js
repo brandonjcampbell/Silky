@@ -12,6 +12,7 @@ export const IDEA_KINDS = [
   { id: "deepen", name: "Deepen a character", prompt: "For the main character in this scene, suggest three small moments — a gesture, a thought, a thing they notice — that would reveal who they are without stating it. Each as a sentence or two of prose.", insertable: true },
   { id: "questions", name: "Questions a reader would ask", prompt: "List three questions a careful reader would be asking at the end of this scene, and for each, one way the writer might answer or sharpen it. These are notes, not prose.", insertable: false },
   { id: "custom", name: "Ask anything", prompt: "", insertable: true },
+  { id: "revise", name: "Revise", prompt: "", revise: true },
 ];
 
 const SYSTEM = `You are Spinner, a writing collaborator inside a novelist's story bible. You know only what is in the project: the scene text and the facts given. Match the manuscript's voice, tense and register exactly; never summarise or explain the scene back; never add headings or labels; never contradict the known facts. Offer genuinely different options, not variations on one. Keep each suggestion self-contained.`;
@@ -34,8 +35,8 @@ Exactly three suggestions.`;
 /**
  * @returns {Promise<{title, text, why}[]>}
  */
-export const askIdeas = async ({ snippet, actors, kindId, question, signal }) => {
-  const kind = IDEA_KINDS.find((k) => k.id === kindId) || IDEA_KINDS[0];
+/** Cast, bearing facts and thread names for a scene — shared by the prompts. */
+export const sceneContext = (snippet, actors) => {
   const byFile = new Map(actors.map((a) => [a.file, a]));
   const text = plain(snippet.content);
   const reveals = (snippet.reveals || []).map((f) => byFile.get(f)).filter(Boolean);
@@ -50,10 +51,18 @@ export const askIdeas = async ({ snippet, actors, kindId, question, signal }) =>
   cast.forEach((e) => (e.involved_in || []).slice(-6).forEach((f) => factSet.add(f)));
   const facts = [...factSet].map((f) => byFile.get(f)).filter(Boolean).slice(0, 60).map((f) => f.name);
   const threads = (snippet.sequenced_in || []).map((t) => byFile.get(t)).filter((t) => t && t.name !== "Manuscript").map((t) => t.name);
+  return { text, cast: cast.map((e) => e.name), facts, threads };
+};
 
+/**
+ * @returns {Promise<{title, text, why}[]>}
+ */
+export const askIdeas = async ({ snippet, actors, kindId, question, signal }) => {
+  const kind = IDEA_KINDS.find((k) => k.id === kindId) || IDEA_KINDS[0];
+  const { text, cast, facts, threads } = sceneContext(snippet, actors);
   const out = await complete({
     system: SYSTEM,
-    user: user({ scene: { name: snippet.name, text: text.slice(-16000) }, facts, cast: cast.map((e) => e.name), threads, kind, question }),
+    user: user({ scene: { name: snippet.name, text: text.slice(-16000) }, facts, cast, threads, kind, question }),
     json: true,
     maxTokens: 2500,
     signal,

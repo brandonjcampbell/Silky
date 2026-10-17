@@ -705,7 +705,7 @@ const Influence = () => {
               {list.sort((a, b) => b.ins.at - a.ins.at).map((r) => (
                 <article key={r.ins.id} className={"note insertion is-" + r.status}>
                   <header>
-                    <span><span className={"tag tag--" + r.status}>{r.status === "verbatim" ? "verbatim" : r.status === "edited" ? `rewritten · ${pct(r.similarity)} original` : r.status === "unmarked" ? "un-marked, text kept" : "removed"}</span> <span className="muted">{new Date(r.ins.at).toLocaleString()} · {r.ins.kind}{r.ins.model ? ` · ${r.ins.model}` : ""} · {r.ins.words} words</span></span>
+                    <span><span className={"tag tag--" + r.status}>{r.status === "verbatim" ? "verbatim" : r.status === "edited" ? `rewritten · ${pct(r.similarity)} original` : r.status === "unmarked" ? "un-marked, text kept" : "removed"}</span> <span className="muted">{new Date(r.ins.at).toLocaleString()} · {r.ins.kind === "revise" || r.ins.kind === "talk-revise" ? "woven in" : r.ins.kind}{r.ins.model ? ` · ${r.ins.model}` : ""} · {r.ins.words} words{r.ins.removed ? ` · ${r.ins.removed} of yours dropped` : ""}</span></span>
                     {(r.status === "verbatim" || r.status === "edited") && s && (
                       <span className="note__meta">
                         <button type="button" onClick={() => unmarkOne(file, r.ins.id)} title="Keep the words, drop the mark">Un-mark</button>{" "}

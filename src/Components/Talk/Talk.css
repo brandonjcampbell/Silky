@@ -86,3 +86,5 @@
 .msg--cast .msg__body { font-family: var(--font-prose); font-size: 15px; border-left: 2px solid var(--accent); border-radius: 4px 12px 12px 4px; }
 .msg__face { font-size: 14px; }
 .talk__compose button + button { margin-left: 0; }
+.talk__weaving { margin: 0; font-size: 12px; color: var(--ink-muted); display: inline-flex; align-items: center; gap: 6px; }
+.msg .revision { max-width: 68ch; }

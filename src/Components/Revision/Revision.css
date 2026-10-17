@@ -1,0 +1,13 @@
+.revision { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.revision__head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--ink-soft); }
+.revision__stat { font-size: 11px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); }
+.revision__stat.is-ins { color: var(--accent); border-color: var(--accent-soft); background: var(--accent-soft); }
+.revision__stat.is-del { color: var(--ink-muted); }
+.revision__text { font-family: var(--font-prose); font-size: 15px; line-height: 1.6; color: var(--ink); max-height: 50vh; overflow: auto; }
+.revision__text p { margin: 0 0 0.7em; }
+.revision__text ins { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; text-underline-offset: 3px; background: var(--accent-soft); border-radius: 2px; }
+.revision__text del { color: var(--ink-muted); text-decoration: line-through; opacity: 0.7; }
+.revision__actions { display: flex; gap: 6px; flex-wrap: wrap; }
+.revision__actions button { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.revision__actions button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+.revision__actions button:disabled { opacity: 0.5; cursor: default; }

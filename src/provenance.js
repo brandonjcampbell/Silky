@@ -33,9 +33,9 @@ export const wrapForInsert = (text, id) =>
     .join("</p><p>");
 
 /** Log an insertion. */
-export const recordInsertion = (dir, { id, file, kind, prompt, text, provider, model }) => {
+export const recordInsertion = (dir, { id, file, kind, prompt, text, provider, model, removed }) => {
   const data = loadProvenance(dir);
-  data.insertions.push({ id, file, kind, prompt: prompt || "", text, words: words(text), provider, model, at: Date.now() });
+  data.insertions.push({ id, file, kind, prompt: prompt || "", text, words: words(text), provider, model, at: Date.now(), ...(removed ? { removed } : {}) });
   saveProvenance(dir, data);
   return data;
 };

@@ -8,6 +8,9 @@ import { loadDir, loadFile, saveFile } from "../../utils/";
 import { loadTalk, newConversation, updateConversation, deleteConversation, talk, castTalk, titleFor, OPENERS } from "../../llm/talk";
 import { getConfig, isConfigured } from "../../llm/config";
 import { newId, wrapForInsert, recordInsertion } from "../../provenance";
+import { reviseScene } from "../../llm/revise";
+import { parseHtml, sceneText, weave } from "../../revise";
+import Revision from "../Revision";
 import "./Talk.css";
 
 const TYPE_GLYPH = { snippet: "📜", element: "🧩", fact: "💡", thread: "🧵", web: "🕸️" };
@@ -24,6 +27,7 @@ const Talk = () => {
   const [err, setErr] = useState(null);
   const [pick, setPick] = useState("");
   const [castPick, setCastPick] = useState(null); // null | Set of element files while choosing
+  const [weaving, setWeaving] = useState(null); // { msg, scene, result?, busy }
   const abortRef = useRef(null);
   const endRef = useRef(null);
   const configured = isConfigured();
@@ -149,6 +153,39 @@ const Talk = () => {
     window.alert(`Added to “${s.name}”, marked as Spinner’s.`);
   };
 
+  /** Have Spinner work a reply into a scene; show the delta, apply on request. */
+  const weaveInto = async (sceneFile, msgIndex, text) => {
+    const s = loadFile(dir + sceneFile);
+    if (!s || typeof s.content !== "string") return;
+    setWeaving({ msg: msgIndex, scene: s.file, busy: true });
+    const ctrl = new AbortController();
+    abortRef.current = ctrl;
+    try {
+      const root = parseHtml(s.content);
+      const t = sceneText(root, null);
+      const direction = `Integrate the following into the scene where it fits best, in the manuscript's own voice (it came out of a conversation about the book, so adapt it rather than paste it): ${text}`;
+      const revised = await reviseScene({ snippet: s, actors, direction, text: t, signal: ctrl.signal });
+      const result = weave({ root: parseHtml(s.content), revisedText: revised, selection: null });
+      setWeaving({ msg: msgIndex, scene: s.file, result, busy: false, direction });
+    } catch (e) {
+      if (!e || e.name !== "AbortError") setErr(e.message || String(e));
+      setWeaving(null);
+    }
+  };
+  const applyWeave = () => {
+    if (!weaving || !weaving.result) return;
+    const s = loadFile(dir + weaving.scene);
+    if (!s) return;
+    s.content = weaving.result.html;
+    saveFile(dir + s.file, s);
+    if (weaving.result.added) {
+      const cfg = getConfig() || {};
+      recordInsertion(dir, { id: weaving.result.id, file: s.file, kind: "talk-revise", prompt: weaving.direction, text: weaving.result.addedText, provider: cfg.provider, model: cfg.model, removed: weaving.result.removed });
+    }
+    setWeaving(null);
+    window.alert(`Woven into “${s.name}” — ${weaving.result.added} new word${weaving.result.added === 1 ? "" : "s"} marked as Spinner’s.`);
+  };
+
   const isCast = !!(conv && conv.kind === "cast");
   const participants = conv ? (conv.participants || []).map((f) => byFile.get(f)).filter(Boolean) : [];
   const elementsAll = useMemo(() => [...actors].filter((a) => a.type === "element").sort((a, b) => (b.involved_in || []).length - (a.involved_in || []).length), [actors]);
@@ -269,9 +306,16 @@ const Talk = () => {
                 <div className="msg__actions">
                   <button type="button" onClick={() => copy(m.content)} title="Copy"><FaCopy /></button>
                   {focusScenes.map((s) => (
-                    <button key={s.file} type="button" onClick={() => insertInto(s.file, m.content)} title={`Append to “${s.name}”, marked as Spinner’s`}><FaFileImport /> {s.name.length > 18 ? s.name.slice(0, 18) + "…" : s.name}</button>
+                    <React.Fragment key={s.file}>
+                      <button type="button" onClick={() => insertInto(s.file, m.content)} title={`Append to “${s.name}” as a marked paragraph`}><FaFileImport /> Append to {s.name.length > 18 ? s.name.slice(0, 18) + "…" : s.name}</button>
+                      <button type="button" disabled={!!(weaving && weaving.busy)} onClick={() => weaveInto(s.file, i, m.content)} title={`Spinner rewrites “${s.name}” to work this in; you see the delta first and only the new words count as Spinner’s`}><SpinnerIcon /> Weave into {s.name.length > 18 ? s.name.slice(0, 18) + "…" : s.name}</button>
+                    </React.Fragment>
                   ))}
                 </div>
+              )}
+              {weaving && weaving.msg === i && weaving.busy && <p className="talk__weaving"><SpinnerIcon className="spin" /> Spinner is working it into the scene…</p>}
+              {weaving && weaving.msg === i && weaving.result && (
+                <Revision result={weaving.result} sceneName={(byFile.get(weaving.scene) || {}).name} onApply={applyWeave} onDiscard={() => setWeaving(null)} />
               )}
             </article>
             )
