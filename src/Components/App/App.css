@@ -22,7 +22,10 @@
   margin-bottom: 18px;
 }
 .projectTray .logo { height: 44px; }
-.projectTray__tools { margin-left: auto; }
+.projectTray__tools { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.projectTray .trayBtn { display: inline-flex; align-items: center; gap: 7px; }
+.projectTray .trayBtn.is-on { color: var(--ink); border-color: var(--accent); }
+.projectTray .trayBtn.is-on svg { color: var(--accent); }
 
 .projectTray .root { color: var(--ink); }
 

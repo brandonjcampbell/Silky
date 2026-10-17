@@ -5,6 +5,10 @@ import logo from "../../images/logo.svg";
 import { GiTrashCan } from "react-icons/gi";
 import FormDialog from "../FormDialog/FormDialog";
 import ThemePicker from "../ThemePicker";
+import LlmSettings from "../LlmSettings";
+import ImportManuscript from "../ImportManuscript";
+import { FaFileImport, FaPlug } from "react-icons/fa";
+import { isConfigured } from "../../llm/config";
 import "./App.css";
 
 const App = () => {
@@ -13,6 +17,7 @@ const App = () => {
   const { dispatch } = globalState;
   const [newProject, setNewProject] = useState("");
   const [trashable, setTrashable] = useState();
+  const [panel, setPanel] = useState(null); // "llm" | "import" | null
 
   const keyPress = (e) => {
     if (e.keyCode === 13) {
@@ -55,9 +60,32 @@ const App = () => {
           <button type="button" onClick={newDir}>+ New project</button>
         </div>
         <div className="projectTray__tools">
+          <button type="button" className="trayBtn" title="Import a manuscript" onClick={() => setPanel("import")}>
+            <FaFileImport /> <span>Import manuscript</span>
+          </button>
+          <button
+            type="button"
+            className={"trayBtn" + (isConfigured() ? " is-on" : "")}
+            title={isConfigured() ? "Language model connected" : "Connect a language model"}
+            onClick={() => setPanel("llm")}
+          >
+            <FaPlug /> <span>Model</span>
+          </button>
           <ThemePicker />
         </div>
       </div>
+
+      {panel === "llm" && <LlmSettings onClose={() => setPanel(null)} />}
+      {panel === "import" && (
+        <ImportManuscript
+          onClose={() => setPanel(null)}
+          onOpenSettings={() => setPanel("llm")}
+          onDone={(name) => {
+            setPanel(null);
+            dispatch({ action: "setProject", payload: { name } });
+          }}
+        />
+      )}
 
       {dirs.map((x) => {
         return (
