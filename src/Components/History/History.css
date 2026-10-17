@@ -1,0 +1,26 @@
+.history { margin: 6px 24px 8px; max-width: 72ch; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-raised); font-size: 13px; }
+.history__head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); background: transparent; border: 0; cursor: pointer; text-align: left; }
+.history__head:hover { color: var(--ink); }
+.history__summary { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-muted); }
+.history__chev { margin-left: auto; color: var(--ink-muted); }
+.history__body { padding: 0 12px 12px; }
+.history__list { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow-y: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+.history__row { display: grid; grid-template-columns: 150px 1fr auto; gap: 10px; width: 100%; padding: 6px 10px; font: inherit; font-size: 12px; text-align: left; color: var(--ink-soft); background: transparent; border: 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.history__list li:last-child .history__row { border-bottom: 0; }
+.history__row:hover { background: var(--bg-hover); color: var(--ink); }
+.history__list li.is-picked .history__row { background: var(--accent-soft); color: var(--ink); }
+.history__when small, .history__name small, .history__words small { color: var(--ink-muted); }
+.history__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history__words { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.history__words b.up { color: #6fcf97; font-weight: 500; } .history__words b.down { color: var(--accent); font-weight: 500; }
+.history__diff { margin-top: 10px; }
+.history__diffbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 6px; color: var(--ink-soft); }
+.history__diffbar small { color: var(--ink-muted); margin-left: 6px; }
+.history button:not(.history__head):not(.history__row) { font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.history button:not(.history__head):not(.history__row):hover { color: var(--ink); border-color: var(--ink-muted); }
+.history button.linkish { border: 0; padding: 0; text-decoration: underline; color: var(--ink-muted); }
+.history__text { font-family: var(--font-prose); font-size: 14px; line-height: 1.6; color: var(--ink-soft); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; max-height: 320px; overflow-y: auto; }
+.history__text .d-ins { background: rgba(111, 207, 151, 0.22); color: var(--ink); border-radius: 2px; }
+.history__text .d-del { background: var(--accent-soft); color: var(--ink-muted); text-decoration: line-through; border-radius: 2px; }
+.history__foot { margin: 8px 0 0; font-size: 11px; color: var(--ink-muted); }
+.history .muted { color: var(--ink-muted); }

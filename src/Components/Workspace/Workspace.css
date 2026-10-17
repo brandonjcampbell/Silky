@@ -160,3 +160,6 @@
   .threadView__doc { flex: none; padding-right: 16px; }
   .threadView__aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
 }
+
+/* impact/history inside the thread aside sit flush */
+.threadView__meta .impact, .threadView__meta .history { margin: 10px 0 0; max-width: none; }

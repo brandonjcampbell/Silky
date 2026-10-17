@@ -17,6 +17,8 @@ import Graph from "../Graph";
 import SceneAnalysis from "../SceneAnalysis";
 import LinkScanner from "../LinkScanner";
 import Ideas from "../Ideas";
+import Impact from "../Impact";
+import History from "../History";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -359,6 +361,10 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                   />
                 </div>
               )}
+              <div className="threadView__meta">
+                <Impact element={element} onChange={() => setRefresh(Date.now())} />
+                <History element={element} onChange={() => setRefresh(Date.now())} />
+              </div>
             </aside>
           </div>
         </>
@@ -386,6 +392,8 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           {element.type === "snippet" && <Ideas element={element} onChange={() => setRefresh(Date.now())} />}
           {element.type === "snippet" && <LinkScanner element={element} onChange={() => setRefresh(Date.now())} />}
           {element.type === "snippet" && <SceneAnalysis element={element} />}
+          <Impact element={element} onChange={() => setRefresh(Date.now())} />
+          <History element={element} onChange={() => setRefresh(Date.now())} />
 
           {element.tags && (
             <div className="editor">

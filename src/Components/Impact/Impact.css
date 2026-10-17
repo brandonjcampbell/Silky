@@ -1,0 +1,22 @@
+.impact { margin: 6px 24px 8px; max-width: 72ch; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-raised); font-size: 13px; }
+.impact__head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); background: transparent; border: 0; cursor: pointer; text-align: left; }
+.impact__head:hover { color: var(--ink); }
+.impact__summary { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-muted); }
+.impact__flag { color: var(--accent); font-weight: 500; }
+.impact__chev { margin-left: auto; color: var(--ink-muted); }
+.impact__body { padding: 0 12px 12px; }
+.impact h4 { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); margin: 12px 0 4px; }
+.impact__list { list-style: none; margin: 0; padding: 0; }
+.impact__list li { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; border-top: 1px solid var(--line); }
+.impact__list li:first-child { border-top: 0; }
+.impact__list a { color: var(--ink-soft); }
+.impact__list a:hover { color: var(--accent); }
+.impact__how { color: var(--ink-muted); font-size: 12px; text-align: right; white-space: nowrap; }
+.impact__list--stale li { border-color: transparent; background: var(--accent-soft); border-radius: var(--radius); padding: 5px 8px; margin-bottom: 4px; }
+.impact__list--stale .impact__how { white-space: normal; max-width: 60%; }
+.impact__list--inline { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.impact__list--inline li { border: 0; padding: 0; gap: 4px; }
+.impact__rename { background: var(--bg); border: 1px solid var(--accent); border-radius: var(--radius); padding: 10px 12px; margin-top: 10px; }
+.impact__rename p { margin: 0 0 8px; color: var(--ink-soft); line-height: 1.5; }
+.impact button.primary { font: inherit; font-size: 12px; color: #fff; background: var(--accent); border: 1px solid var(--accent); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.impact .muted { color: var(--ink-muted); }
