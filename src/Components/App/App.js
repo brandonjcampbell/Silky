@@ -19,12 +19,23 @@ const App = () => {
     }
   };
 
-  const newDir = () => {
-    makeDir(newProject);
-    dispatch({ action: "setProject", payload: { name: newProject } });
+  const dirs = loadDir();
+
+  // A blank name gets the conventional placeholder, numbered if taken.
+  const untitledName = () => {
+    const taken = new Set(dirs.map((d) => d.toLowerCase()));
+    if (!taken.has("untitled")) return "Untitled";
+    let n = 2;
+    while (taken.has(`untitled ${n}`)) n += 1;
+    return `Untitled ${n}`;
   };
 
-  const dirs = loadDir();
+  const newDir = () => {
+    const name = newProject.trim() || untitledName();
+    makeDir(name);
+    setNewProject("");
+    dispatch({ action: "setProject", payload: { name } });
+  };
 
   return (
     <div className="projectTray">
@@ -35,11 +46,12 @@ const App = () => {
             placeholder="Name a new project"
             value={newProject}
             onChange={(x) => setNewProject(x.target.value)}
+            onKeyDown={keyPress}
             onBlur={() => {
-              newDir();
+              if (newProject.trim()) newDir();
             }}
-          ></input>{" "}
-          + New Project{" "}
+          ></input>
+          <button type="button" onClick={newDir}>+ New project</button>
         </div>
       </div>
 
