@@ -8,7 +8,7 @@ Most writing tools are a stack of pages. Silky is a graph. The things in your st
 
 Built for writers who crave dark themes. Your projects stay in your browser (or in a folder you choose); nothing is uploaded anywhere.
 
-![A Silky web: elements, facts, snippets and threads laid out as a graph, with involves / because / reveals edges between them](docs/silky-graph.png)
+![A Silky web: elements, facts, snippets and threads laid out as a graph, with involves / because / reveals edges between them](docs/silky-web.png)
 
 ## The model
 
@@ -27,11 +27,7 @@ The graph view is Cytoscape with a dozen layout engines; the editor is a rich-te
 
 ![Editing a snippet: the prose, the facts it reveals, and the thread it is sequenced in](docs/silky-snippet.png)
 
-*A snippet. The prose is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph.*
-
-![A web's capture list, with every actor in the project pulled into one graph](docs/silky-web.png)
-
-*A **web** captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
+*A snippet. The prose is on top; below it, the facts this scene reveals and the thread it belongs to. Every list is an edge in the graph. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
 ## Neo4j
 
