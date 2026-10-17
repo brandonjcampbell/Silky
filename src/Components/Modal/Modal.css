@@ -84,8 +84,9 @@
 
 .modal .hint { font-size: 12px; color: var(--ink-muted); margin: -6px 0 12px; line-height: 1.4; }
 .modal .note { font-size: 13px; color: var(--ink-soft); line-height: 1.45; margin: 0 0 12px; }
-.modal .check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
-.modal .check input { accent-color: var(--accent); }
+.modal .check { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; line-height: 1.5; }
+.modal .check input { accent-color: var(--accent); margin: 0 8px 0 0; vertical-align: -2px; }
+.modal .check code { font-size: 12px; }
 
 .modal button {
   font: inherit;

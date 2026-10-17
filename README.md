@@ -33,6 +33,14 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 *A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
+## Importing a manuscript
+
+If you already have a draft, Silky can build the model from it. **Model** on the project tray connects a language model — any OpenAI-compatible endpoint (OpenAI, OpenRouter, a local Ollama, LM Studio or vLLM) or Anthropic. The key stays in your browser's localStorage and is sent only to the address you enter.
+
+**Import manuscript** then takes pasted text or a `.txt`/`.md` file, splits it into scenes at headings and scene breaks (`* * *`, `---`, "Chapter …"), and shows the split before anything is sent. With a model connected, each scene is read once with a running cast list; the model returns the elements it introduces and the facts it establishes, and a final pass links causes to effects. The result is a new project: a snippet per scene, elements, facts wired by `involves`, `revealed_by` and `because`, a **Manuscript** thread running the scenes in order, and a web of the whole thing. Without a model, the same import still gives you the scenes and thread.
+
+Everything it produces is a draft meant to be pruned.
+
 ## Neo4j
 
 Projects live on disk as JSON, so the app runs with no database. `silkyToCypher.js` exports a project into Neo4j as `Element`, `Fact`, `Snippet`, and `Thread` nodes with the edges above, so you can run Cypher over your own narrative:
