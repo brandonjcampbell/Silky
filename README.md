@@ -35,13 +35,13 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 ## Examples
 
-The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (113 scenes, 180 elements, 1,143 facts). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
+The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (113 scenes, 180 elements, 1,143 facts, and seven plot threads from Jonathan at the castle to the chase back to Transylvania). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
 
 ## Importing a manuscript
 
 If you already have a draft, Silky can build the model from it. **Model** on the project tray connects a language model — any OpenAI-compatible endpoint (OpenAI, OpenRouter, a local Ollama, LM Studio or vLLM) or Anthropic. The key stays in your browser's localStorage and is sent only to the address you enter.
 
-**Import manuscript** then takes pasted text or a `.txt`/`.md` file, splits it into scenes at headings and scene breaks (`* * *`, `---`, "Chapter …"), and shows the split before anything is sent. With a model connected, each scene is read once with a running cast list; the model returns the elements it introduces and the facts it establishes, and a final pass links causes to effects. The result is a new project: a snippet per scene, elements, facts wired by `involves`, `revealed_by` and `because`, a **Manuscript** thread running the scenes in order, and a web of the whole thing. Without a model, the same import still gives you the scenes and thread.
+**Import manuscript** then takes pasted text or a `.txt`/`.md` file, splits it into scenes at headings and scene breaks (`* * *`, `---`, "Chapter …"), and shows the split before anything is sent. With a model connected, each scene is read once with a running cast list; the model returns the elements it introduces and the facts it establishes, then two passes over the whole: one links causes to effects, one traces the separate plot threads — a character's arc, a subplot, a journey — and which scenes each runs through. The result is a new project: a snippet per scene, elements, facts wired by `involves`, `revealed_by` and `because`, a **Manuscript** thread running every scene in order, one thread per plot line the model found, and a web of the whole thing. Without a model, the same import still gives you the scenes and thread.
 
 Everything it produces is a draft meant to be pruned.
 

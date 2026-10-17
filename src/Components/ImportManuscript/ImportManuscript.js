@@ -52,7 +52,7 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
         model = await extractModel(scenes, {
           signal: ctrl.signal,
           onProgress: ({ step: st, index, total, message }) => {
-            const pct = st === "scenes" ? Math.round((index / total) * 90) : 95;
+            const pct = st === "scenes" ? Math.round((index / total) * 85) : st === "causes" ? 90 : 95;
             setProgress({ message, pct });
           },
         });
@@ -65,6 +65,7 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
         elements: model ? model.elements.length : 0,
         facts: model ? model.facts.length : 0,
         links: model ? model.links.length : 0,
+        threads: model ? (model.threads || []).length : 0,
         failed: model ? model.scenes.filter((s) => s.error).length : 0,
       });
       setStep("done");
@@ -163,7 +164,7 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
           <p className="note">
             {scenes.length} scene{scenes.length === 1 ? "" : "s"}, {totalWords.toLocaleString()} words.
             {configured
-              ? " Each scene is sent to the model once, then one pass links causes to effects."
+              ? " Each scene is sent to the model once, then one pass links causes to effects and one traces the plot threads."
               : " No model is connected yet, so only the scenes can be imported."}
           </p>
           <ol className="sceneList">
@@ -194,11 +195,12 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
             <div><b>{result.elements}</b><span>elements</span></div>
             <div><b>{result.facts}</b><span>facts</span></div>
             <div><b>{result.links}</b><span>causal links</span></div>
+            <div><b>{result.threads}</b><span>plot threads</span></div>
           </div>
           {result.failed > 0 && (
             <p className="hint">{result.failed} scene{result.failed === 1 ? "" : "s"} couldn’t be read by the model and were imported as text only.</p>
           )}
-          <p className="hint">Everything is a draft: the whole web is in a web called “{result.project} — whole web”, and the scenes run in order in the “Manuscript” thread.</p>
+          <p className="hint">Everything is a draft: the whole web is in a web called “{result.project} — whole web”, and the scenes run in order in the “Manuscript” thread{result.threads ? `, alongside ${result.threads} plot thread${result.threads === 1 ? "" : "s"} the model traced` : ""}.</p>
         </>
       )}
     </Modal>

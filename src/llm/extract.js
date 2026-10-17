@@ -124,6 +124,27 @@ ${facts.map((f, i) => `${i + 1}. ${f.statement}`).join("\n")}
 
 Return JSON: { "links": [{ "cause": <number>, "effect": <number> }] }`;
 
+const THREADS_SYSTEM = `You are helping a novelist find the separate plot threads in their manuscript. A thread is a storyline a reader could follow on its own: one character's arc, a subplot, a mystery from its first clue to its solution, a journey. Threads may share scenes, and a scene may belong to several threads or to none.
+
+Rules:
+- 2 to 8 threads. Each needs at least 3 scenes. Do not make a thread that is simply "the whole book".
+- List each thread's scenes by number, in manuscript order, including every scene where that storyline advances.
+- "name": 2–5 words, the way a writer would label it ("Lucy's decline", "The voyage of the Demeter").
+- "description": one or two sentences on what the thread is about and where it begins and ends.
+- "icon": one emoji.`;
+
+const threadsUser = (scenes, sceneResults, facts) => {
+  const factByKey = new Map(facts.map((f) => [f.key, f]));
+  const lines = scenes.map((s, i) => {
+    const r = sceneResults[i] || { facts: [] };
+    const title = r.title || s.title || `Scene ${i + 1}`;
+    const opening = s.text.replace(/\s+/g, " ").split(" ").slice(0, 40).join(" ");
+    const fs = r.facts.slice(0, 4).map((k) => factByKey.get(k)).filter(Boolean).map((f) => "    - " + f.statement);
+    return `${i + 1}. ${title}\n    "${opening}…"` + (fs.length ? "\n" + fs.join("\n") : "");
+  });
+  return `Scenes:\n${lines.join("\n")}\n\nReturn JSON: { "threads": [{ "name": "string", "icon": "emoji", "description": "string", "scenes": [<number>, ...] }] }`;
+};
+
 const norm = (s) => String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
 
 /** First grapheme of a string (keeps ZWJ/skin-tone emoji whole), or "". */
@@ -219,7 +240,26 @@ export const extractModel = async (scenes, { onProgress = () => {}, signal } = {
     }
   }
 
-  return { scenes: sceneResults, elements, facts, links };
+  let threads = [];
+  if (scenes.length >= 6) {
+    onProgress({ step: "threads", index: 0, total: 1, message: "Tracing plot threads" });
+    try {
+      const out = await complete({ system: THREADS_SYSTEM, user: threadsUser(scenes, sceneResults, facts), json: true, maxTokens: 8192, signal });
+      threads = (Array.isArray(out.threads) ? out.threads : [])
+        .map((t) => ({
+          name: String(t.name || "").trim(),
+          icon: firstGlyph(t.icon) || "🧵",
+          description: String(t.description || "").trim(),
+          scenes: [...new Set((Array.isArray(t.scenes) ? t.scenes : []).map((n) => Number(n) - 1).filter((n) => n >= 0 && n < scenes.length))].sort((a, b) => a - b),
+        }))
+        .filter((t) => t.name && t.scenes.length >= 3 && t.scenes.length < scenes.length);
+    } catch (e) {
+      if (e && e.name === "AbortError") throw e;
+      threads = [];
+    }
+  }
+
+  return { scenes: sceneResults, elements, facts, links, threads };
 };
 
 /* ────────────────────────────────────────────────────────────────────────
@@ -264,6 +304,18 @@ export const writeProject = (name, scenes, model) => {
   // thread
   const thread = mk("thread", "Manuscript", "🧵", { content: "", sequences: snippets.map((s) => s.file) });
   snippets.forEach((s) => s.sequenced_in.push(thread.file));
+
+  // plot threads the model traced: each sequences a subset of the scenes
+  ((model && model.threads) || []).forEach((t) => {
+    const th = mk("thread", t.name, t.icon || "🧵", { content: t.description ? toHtml(t.description) : "", sequences: [] });
+    t.scenes.forEach((si) => {
+      const sn = snippets[si];
+      if (sn) {
+        th.sequences.push(sn.file);
+        sn.sequenced_in.push(th.file);
+      }
+    });
+  });
 
   const elementByKey = new Map();
   const factByKey = new Map();
@@ -310,7 +362,7 @@ export const writeProject = (name, scenes, model) => {
     ["element", 500, 320],
     ["fact", 330, 210],
     ["snippet", 170, 100],
-    ["thread", 40, 20],
+    ["thread", 60, 30],
   ];
   groups.forEach(([type, rx, ry]) => {
     const items = actors.filter((a) => a.type === type);
