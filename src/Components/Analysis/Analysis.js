@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint } from "react-icons/fa";
+import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint, FaFire } from "react-icons/fa";
+import Progress from "./Progress";
 import { loadProvenance, insertionStatus, aiWords, removeFromHtml, unmarkInHtml, getShowAi, setShowAi } from "../../provenance";
 import { saveFile } from "../../utils/";
 import { store } from "../../NewContext";
@@ -11,6 +12,7 @@ import { isConfigured } from "../../llm/config";
 import "./Analysis.css";
 
 export const ANALYSES = [
+  { id: "progress", name: "Progress", icon: FaFire, blurb: "Words per day, streaks, goals, and what you made when." },
   { id: "wordcount", name: "Word count", icon: FaChartBar, blurb: "Totals, and every scene and thread measured." },
   { id: "pacing", name: "Pacing", icon: FaTachometerAlt, blurb: "Scene lengths, dialogue and sentence rhythm across the book." },
   { id: "style", name: "Style", icon: FaFeatherAlt, blurb: "Sentence length, dialogue, adverbs, filter words, vocabulary." },
@@ -738,7 +740,7 @@ const Influence = () => {
 
 /* ── shell ────────────────────────────────────────────────────────────── */
 
-const VIEWS = { wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
+const VIEWS = { progress: Progress, wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
 
 const Analysis = () => {
   const { id } = useParams();

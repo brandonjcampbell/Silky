@@ -1,0 +1,38 @@
+.progress__goals { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; font-size: 13px; color: var(--ink-muted); }
+.progress__goals label { display: inline-flex; align-items: center; gap: 6px; }
+.progress__goals input { width: 110px; font: inherit; font-size: 13px; color: var(--ink); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 8px; }
+.progress__goals input[type="date"] { width: auto; }
+.progress__goals input:focus { outline: none; border-color: var(--accent); }
+.stat--accent b { color: var(--accent); }
+.progress__ring { display: flex; align-items: center; gap: 12px; margin: 14px 0 0; font-size: 12px; color: var(--ink-muted); }
+.progress__bar { flex: 1; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.progress__bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width 300ms ease; }
+.progress__days { position: relative; display: flex; align-items: flex-end; gap: 3px; height: 140px; padding: 0 0 4px; border-bottom: 1px solid var(--line); }
+.progress__day { position: relative; flex: 1; height: 100%; display: flex; align-items: flex-end; }
+.progress__day i, .progress__day em { position: absolute; left: 0; right: 0; bottom: 0; display: block; border-radius: 2px 2px 0 0; }
+.progress__day i { background: var(--ink-muted); opacity: 0.55; min-height: 0; }
+.progress__day.is-met i { background: var(--accent); opacity: 0.9; }
+.progress__day.is-today i { outline: 1px solid var(--accent); }
+.progress__day em { background: var(--accent-soft); border-top: 1px dashed var(--accent); }
+.progress__goalLine { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--accent); pointer-events: none; }
+.heat { display: flex; gap: 3px; align-items: flex-start; overflow-x: auto; padding-bottom: 4px; }
+.heat__dow { display: flex; flex-direction: column; gap: 3px; margin-right: 4px; }
+.heat__dow span { height: 12px; width: 12px; font-size: 9px; line-height: 12px; color: var(--ink-muted); }
+.heat__week { display: flex; flex-direction: column; gap: 3px; }
+.heat__cell { width: 12px; height: 12px; border-radius: 2px; background: var(--line); display: block; }
+.heat__cell.l1 { background: var(--accent); opacity: 0.3; }
+.heat__cell.l2 { background: var(--accent); opacity: 0.5; }
+.heat__cell.l3 { background: var(--accent); opacity: 0.75; }
+.heat__cell.l4 { background: var(--accent); opacity: 1; }
+.heat__cell.is-future { opacity: 0.25; background: transparent; border: 1px dashed var(--line); box-sizing: border-box; }
+.heat__cell.is-today { outline: 1px solid var(--ink); outline-offset: 1px; }
+.progress__made { border-collapse: collapse; font-size: 13px; }
+.progress__made th, .progress__made td { text-align: right; padding: 4px 12px 4px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.progress__made th:first-child, .progress__made td:first-child { text-align: left; color: var(--ink-muted); }
+.progress__made th { font-size: 11px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.progress__recent { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+.progress__recent li { padding: 4px 0; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; }
+.progress__recent a { color: var(--ink); text-decoration: none; }
+.progress__recent a:hover { color: var(--accent); }
+.progress .muted { color: var(--ink-muted); font-size: 12px; }
+.progress__note { margin-top: 20px; }

@@ -1,5 +1,6 @@
 import { writeFileSync, existsSync, readFileSync } from "../storage";
 import { trackSave } from "../history";
+import { trackProgress } from "../progress";
 
 /** Write an actor (or any file). Actor saves are versioned in history.json. */
 const saveFile = (filepath, content) => {
@@ -12,6 +13,7 @@ const saveFile = (filepath, content) => {
       prev = null;
     }
     out = trackSave(filepath, prev, content);
+    try { trackProgress(filepath, prev, content); } catch (e) { /* the log is best-effort */ }
   }
   writeFileSync(filepath, typeof out !== "string" ? JSON.stringify(out) : out);
 };
