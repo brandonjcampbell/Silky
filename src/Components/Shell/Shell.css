@@ -1,0 +1,63 @@
+/* ── phone layout: one column, the list as a drawer ───────────────────── */
+.View--mobile { position: relative; flex-direction: column; }
+.View--mobile .editorPane { flex: 1; min-height: 0; }
+.View--mobile .mobileList { flex: 1; min-height: 0; width: 100%; border-right: 0; }
+.View--mobile .mobileList.is-drawer {
+  position: absolute; inset: 0 18% 0 0; z-index: 60;
+  box-shadow: 12px 0 40px rgba(0, 0, 0, 0.5);
+  border-right: 1px solid var(--line);
+  animation: drawerIn 160ms ease-out;
+}
+@keyframes drawerIn { from { transform: translateX(-24px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+.mobileScrim { position: absolute; inset: 0; z-index: 55; background: rgba(0, 0, 0, 0.45); border: 0; padding: 0; cursor: pointer; }
+
+@media (max-width: 820px) {
+  html, body { font-size: 14px; }
+  /* storage bar: just the buttons */
+  .storageBar { height: auto; padding: 5px 10px; gap: 8px; }
+  .storageBar__status { display: none; }
+  .storageBar + .View { height: calc(100vh - 38px); }
+  /* sidebar */
+  .ActorList { grid-template-columns: 40px 1fr; }
+  .ActorList .project { padding: 8px 8px 4px 10px; min-height: 40px; }
+  .projectName { font-size: 15px; }
+  /* tabs */
+  .tabBar { height: 40px; }
+  .tabBar .tab { max-width: 160px; padding-left: 10px; }
+  .tabBar .tab__type { display: none; }
+  /* header */
+  .workspaceHeader { padding: 12px 88px 10px 14px; gap: 8px; }
+  .workspaceHeader p { font-size: 18px; }
+  .icon { font-size: 24px; }
+  .typeIcon { display: none; }
+  .delete { right: 14px; }
+  .readAloud__wrap { right: 44px; top: 10px; }
+  /* body panels hug the edges */
+  .editor, .sceneAnalysis, .linkScan, .ideas, .impact, .history, .readAloud, .analysis, .spinner { margin-left: 12px; margin-right: 12px; padding-left: 0; padding-right: 0; }
+  .editor { padding: 0 12px; }
+  .editor .MuiStack-root { width: 100% !important; }
+  .contentBlock { max-width: none; }
+  .page { font-size: 17px; padding: 14px 14px; min-height: 40vh; }
+  .editorToolbar { gap: 2px 6px; padding: 4px 6px; }
+  .editorToolbar__group + .editorToolbar__group { padding-left: 6px; }
+  .editorToolbar__btn { width: 30px; height: 30px; }
+  /* split views stack */
+  .webView, .threadView { flex-direction: column; }
+  .webView__graph { flex: none; height: 55vh; }
+  .webView__aside, .threadView__aside { width: auto; border-left: 0; border-top: 1px solid var(--line); }
+  .threadDoc { max-width: none; }
+  /* analyses */
+  .analysis { padding: 12px 12px 40px; }
+  .analysis__table { display: block; overflow-x: auto; }
+  .twoCol, .threeCol { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .spinner__cols { grid-template-columns: 1fr; }
+  /* tray */
+  .projectTray { padding: 18px 16px 48px; grid-template-columns: 1fr; }
+  .projectTray > div:first-child { flex-wrap: wrap; gap: 10px; }
+  .projectTray input { width: 100%; }
+  .projectTray__tools { margin-left: 0; flex-wrap: wrap; }
+  .wikiView__page { padding: 14px 14px 40px; }
+  .graph__tools { flex-wrap: wrap; max-width: calc(100% - 20px); }
+  .modelStatus { right: 10px; left: 10px; width: auto; }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 import "react-reflex/styles.css";
@@ -9,8 +9,10 @@ import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
 import logo from "../../images/logo.svg";
+import { useMobile } from "../../useMobile";
+import "./Shell.css";
 
-/** Sidebar + editor pane. The editor pane carries the open tabs. */
+/** Sidebar + editor pane. On narrow screens the sidebar is a drawer. */
 const Shell = () => {
   const { file, id } = useParams();
   const pathname = useLocation().pathname;
@@ -18,45 +20,56 @@ const Shell = () => {
   const isSpinner = pathname.startsWith("/spinner");
   const [, setRefresh] = useState(0);
   const doRefresh = (v) => setRefresh(v);
+  const mobile = useMobile();
+  const hasContent = !!(file || id || isWiki || isSpinner);
+  // on a phone the list shows when nothing is open, and as a drawer otherwise
+  const [drawer, setDrawer] = useState(false);
+  useEffect(() => { setDrawer(false); }, [pathname]);
+
+  const editor = (
+    <div className="editorPane">
+      <TabBar onMenu={mobile ? () => setDrawer(true) : undefined} />
+      {isSpinner ? (
+        <div className="Workspace"><Spinner /></div>
+      ) : isWiki ? (
+        <div className="Workspace"><Wiki /></div>
+      ) : id ? (
+        <div className="Workspace"><Analysis /></div>
+      ) : file ? (
+        <div className="Workspace"><Workspace setRefresh={doRefresh} /></div>
+      ) : (
+        <div className="editorPane__empty">
+          <div>
+            <img className="logo" src={logo} alt="" />
+            Pick something from the list, or make something new.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  if (mobile) {
+    return (
+      <div className="View View--mobile">
+        {!hasContent || drawer ? (
+          <div className={"left-pane mobileList" + (drawer ? " is-drawer" : "")}>
+            <div className="List"><ActorList setRefresh={doRefresh} /></div>
+          </div>
+        ) : null}
+        {drawer && <button type="button" className="mobileScrim" aria-label="Close list" onClick={() => setDrawer(false)} />}
+        {hasContent && editor}
+      </div>
+    );
+  }
 
   return (
     <div className="View">
       <ReflexContainer orientation="vertical">
         <ReflexElement className="left-pane" flex={0.2} minSize={200}>
-          <div className="List">
-            <ActorList setRefresh={doRefresh} />
-          </div>
+          <div className="List"><ActorList setRefresh={doRefresh} /></div>
         </ReflexElement>
         <ReflexSplitter />
-        <ReflexElement className="middle-pane" flex={0.8}>
-          <div className="editorPane">
-            <TabBar />
-            {isSpinner ? (
-              <div className="Workspace">
-                <Spinner />
-              </div>
-            ) : isWiki ? (
-              <div className="Workspace">
-                <Wiki />
-              </div>
-            ) : id ? (
-              <div className="Workspace">
-                <Analysis />
-              </div>
-            ) : file ? (
-              <div className="Workspace">
-                <Workspace setRefresh={doRefresh} />
-              </div>
-            ) : (
-              <div className="editorPane__empty">
-                <div>
-                  <img className="logo" src={logo} alt="" />
-                  Pick something from the list, or make something new.
-                </div>
-              </div>
-            )}
-          </div>
-        </ReflexElement>
+        <ReflexElement className="middle-pane" flex={0.8}>{editor}</ReflexElement>
       </ReflexContainer>
     </div>
   );

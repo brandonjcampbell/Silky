@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaBook } from "react-icons/fa";
 import { GiSpinningWheel } from "react-icons/gi";
+import { FaBars } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { existsSync } from "../../storage";
 import { loadFile } from "../../utils/";
@@ -24,7 +25,7 @@ const TYPE_ICON = {
  * Editor tabs across the top of the workspace. Opening an actor adds a tab;
  * tabs survive reloads per project. Middle-click or × closes.
  */
-const TabBar = () => {
+const TabBar = ({ onMenu }) => {
   const { state } = useContext(store);
   const params = useParams();
   const pathname = useLocation().pathname;
@@ -92,10 +93,15 @@ const TabBar = () => {
     if (file !== keep) navigate(hrefOf(keep));
   };
 
-  if (!live.length) return <div className="tabBar tabBar--empty" />;
+  const menu = onMenu ? (
+    <button type="button" className="tabBar__menu" aria-label="Open the list" onClick={onMenu}><FaBars /></button>
+  ) : null;
+
+  if (!live.length) return <div className={"tabBar" + (onMenu ? "" : " tabBar--empty")}>{menu}</div>;
 
   return (
     <div className="tabBar" role="tablist">
+      {menu}
       {live.map((f) => {
         let a;
         if (f === "spinner") {
