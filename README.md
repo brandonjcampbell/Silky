@@ -33,6 +33,10 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 *A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
+## Examples
+
+The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (114 scenes, 185 elements, 1,149 facts). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
+
 ## Importing a manuscript
 
 If you already have a draft, Silky can build the model from it. **Model** on the project tray connects a language model — any OpenAI-compatible endpoint (OpenAI, OpenRouter, a local Ollama, LM Studio or vLLM) or Anthropic. The key stays in your browser's localStorage and is sent only to the address you enter.
@@ -58,7 +62,7 @@ I demoed this at GraphConnect 2022 (*Weaving Tangled Webs: Using Graphs to Autho
 
 **Just open it:** https://brandonjcampbell.github.io/Silky/
 
-Projects are saved in your browser (IndexedDB). In Chrome or Edge, **Connect a folder** from the bar at the top to also mirror every project to a real directory on disk as plain JSON files; anywhere else, **Export / Import** moves projects around as a single JSON file. Nothing leaves your machine either way.
+Projects are saved in your browser (IndexedDB). In Chrome or Edge, **Connect a folder** from the bar at the top to also mirror every project to a real directory on disk as plain JSON files; anywhere else, the download icon on a project card exports that project as JSON, **Export all** on the top bar exports every project at once, and **Import…** reads either kind of file. Nothing leaves your machine either way.
 
 **Run it locally:**
 

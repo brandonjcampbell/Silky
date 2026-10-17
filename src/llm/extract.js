@@ -1,5 +1,6 @@
 import { complete } from "./client";
-import { existsSync, mkdirSync, writeFileSync, projectDir, readdirSync, silkyRoot } from "../storage";
+import { existsSync, mkdirSync, writeFileSync, projectDir } from "../storage";
+export { uniqueProjectName } from "../storage/projectIO";
 
 /* ────────────────────────────────────────────────────────────────────────
    1. Split a manuscript into scenes. Deterministic; no model involved.
@@ -221,15 +222,6 @@ const toHtml = (text) =>
     .join("");
 
 const KIND_ICON = { person: "🙂", place: "📍", thing: "🔹", group: "🏛️", idea: "💡" };
-
-export const uniqueProjectName = (base) => {
-  let names = [];
-  try { names = readdirSync(silkyRoot()).map((n) => n.toLowerCase()); } catch (e) { /* none yet */ }
-  if (!names.includes(base.toLowerCase())) return base;
-  let n = 2;
-  while (names.includes(`${base} ${n}`.toLowerCase())) n += 1;
-  return `${base} ${n}`;
-};
 
 /**
  * Build the actors and write them. `model` may be null for a scenes-only

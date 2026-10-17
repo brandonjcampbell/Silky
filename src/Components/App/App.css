@@ -87,11 +87,13 @@
   transform: translateY(-50%);
   display: flex;
   align-items: center;
+  gap: 10px;
   color: var(--ink-muted);
   font-size: 18px;
   opacity: 0;
-  cursor: pointer;
-  transition: opacity 120ms ease, color 120ms ease;
+  transition: opacity 120ms ease;
 }
+.folderTools svg { cursor: pointer; transition: color 120ms ease; }
+.folderTools svg:first-child { font-size: 15px; }
 .projectcard:hover .folderTools { opacity: 1; }
-.folderTools:hover { color: var(--accent); }
+.folderTools svg:hover { color: var(--accent); }

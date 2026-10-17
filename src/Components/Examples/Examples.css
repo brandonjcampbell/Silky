@@ -1,0 +1,42 @@
+.examples {
+  grid-column: 1 / -1;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.examples h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.examples__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.projectTray .exampleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+.projectTray .exampleCard:hover:not(:disabled) { border-style: solid; border-color: var(--accent); background: var(--bg-raised); }
+.projectTray .exampleCard:disabled { opacity: 0.6; cursor: progress; }
+.exampleCard__name { font-size: 16px; color: var(--ink); }
+.exampleCard__blurb { line-height: 1.4; }
+.exampleCard__meta { font-size: 12px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
+.exampleCard__cta { margin-top: 4px; font-size: 12px; color: var(--accent); }
+.examples__err { color: var(--accent); font-size: 13px; }

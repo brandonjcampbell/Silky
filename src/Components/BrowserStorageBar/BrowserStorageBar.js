@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { browser } from "../../storage";
+import { importProjects } from "../../storage/projectIO";
 import "./BrowserStorageBar.css";
 
 /**
@@ -26,8 +27,8 @@ const BrowserStorageBar = () => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
     try {
-      const n = await browser.importAll(f);
-      setNote(`Imported ${n} file${n === 1 ? "" : "s"}.`);
+      const names = await importProjects(f, f.name.replace(/\.silky\.json$|\.json$/i, ""));
+      setNote(`Imported ${names.join(", ")}.`);
       window.location.reload();
     } catch (err) {
       setNote("Import failed: " + err.message);
@@ -48,10 +49,10 @@ const BrowserStorageBar = () => {
             {folder ? "Change folder…" : "Connect a folder…"}
           </button>
         )}
-        <button onClick={() => browser.exportAll()} title="Download all projects as JSON">
-          Export
+        <button onClick={() => browser.exportAll()} title="Download every project in one JSON file (each project also has its own export on its card)">
+          Export all
         </button>
-        <button onClick={() => fileInput.current.click()} title="Load a previous export">
+        <button onClick={() => fileInput.current.click()} title="Load a project or whole-store export">
           Import…
         </button>
         <input ref={fileInput} type="file" accept="application/json,.json" onChange={onImport} hidden />

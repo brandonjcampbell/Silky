@@ -72,6 +72,9 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
+    "examples": "node scripts/examples-index.js",
+    "prestart": "node scripts/examples-index.js",
+    "prebuild": "node scripts/examples-index.js",
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "electron": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",

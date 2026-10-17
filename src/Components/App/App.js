@@ -3,6 +3,9 @@ import { store } from "../../NewContext";
 import { loadDir, makeDir, deleteDir } from "../../utils/";
 import logo from "../../images/logo.svg";
 import { GiTrashCan } from "react-icons/gi";
+import { FaDownload } from "react-icons/fa";
+import Examples from "../Examples";
+import { exportProject } from "../../storage/projectIO";
 import FormDialog from "../FormDialog/FormDialog";
 import ThemePicker from "../ThemePicker";
 import LlmSettings from "../LlmSettings";
@@ -106,11 +109,14 @@ const App = () => {
               {x}
             </div>
             <div className="folderTools">
-              <GiTrashCan onClick={() => setTrashable(x)} />
+              <FaDownload title="Export this project as JSON" onClick={() => exportProject(x)} />
+              <GiTrashCan title="Delete this project" onClick={() => setTrashable(x)} />
             </div>
           </div>
         );
       })}
+
+      <Examples existing={dirs} onLoaded={(name) => dispatch({ action: "setProject", payload: { name } })} />
     </div>
   );
 };
