@@ -33,6 +33,11 @@ const tidy = (root) => {
     }
   });
   root.querySelectorAll("hr[id]").forEach((el) => el.removeAttribute("id"));
+  // zero-width anchors left by keepTypingHuman
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const zw = [];
+  while (walker.nextNode()) if (walker.currentNode.nodeValue.includes("\u200b")) zw.push(walker.currentNode);
+  zw.forEach((t) => { t.nodeValue = t.nodeValue.replace(/\u200b/g, ""); });
 };
 
 /* ── keep typed text out of AI-marked spans ────────────────────────────────
@@ -75,8 +80,8 @@ const keepTypingHuman = (e, root) => {
   let parent = null;
   if (span) {
     if (!range.collapsed) { range.deleteContents(); range = sel.getRangeAt(0); }
+    parent = span.parentNode;
     anchor = splitAiSpan(span, range.startContainer, range.startOffset);
-    parent = anchor ? anchor.parentNode : span.parentNode;
   } else if (range.collapsed && range.startContainer.nodeType === 1) {
     // caret sits between siblings; the browser would extend a neighbouring span
     const c = range.startContainer;
@@ -96,25 +101,28 @@ const keepTypingHuman = (e, root) => {
   } else return;
 
   e.preventDefault();
-  const place = (node) => {
+  // caret goes INSIDE the new text node, at its end, so the next keystroke
+  // lands in it rather than drifting back into the span
+  const placeIn = (textNode) => {
     const r = document.createRange();
-    r.setStartAfter(node);
+    r.setStart(textNode, textNode.length);
     r.collapse(true);
     sel.removeAllRanges();
     sel.addRange(r);
   };
   if (e.inputType === "insertText") {
-    const text = document.createTextNode(e.data || "");
+    // a trailing plain space would collapse at a block end; Chrome itself uses nbsp here
+    const data = e.data === " " ? "\u00a0" : e.data || "";
+    const text = document.createTextNode(data);
     if (anchor) anchor.after(text); else parent.prepend(text);
-    place(text);
+    placeIn(text);
   } else {
-    // a paragraph or line break: a zero-width anchor keeps the caret outside the span
+    // a paragraph or line break: a zero-width anchor keeps the caret outside the
+    // span through the native command; tidy() strips it at save time
     const marker = document.createTextNode("\u200b");
     if (anchor) anchor.after(marker); else parent.prepend(marker);
-    place(marker);
+    placeIn(marker);
     document.execCommand(e.inputType === "insertParagraph" ? "insertParagraph" : "insertLineBreak");
-    // drop the marker if it survived
-    if (marker.parentNode && marker.textContent === "\u200b") marker.remove();
   }
   root.dispatchEvent(new Event("input", { bubbles: true }));
 };
