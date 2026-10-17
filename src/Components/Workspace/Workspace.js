@@ -104,12 +104,15 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     elementType,
     relationship,
     reflexiveRelationship,
-    label
+    label,
+    help
   ) => {
     if (element[relationship]) {
+      const kindName = { element: "an element", fact: "a fact", snippet: "a scene", thread: "a thread" }[elementType] || "an item";
       return (
         <div className="editor">
           <h4>{label}</h4>
+          {help && <p className="editor__help">{help}</p>}
           <DraggableList
             list={element[relationship].map((x) => loadUp(x))}
             onDrop={(result, list) =>
@@ -146,7 +149,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 )}
               getOptionLabel={(x) => x.icon + " " + x.name}
               renderInput={(params) => {
-                return <TextField {...params} label="search" />;
+                return <TextField {...params} label={"Add " + kindName} />;
               }}
             />
           </Stack>
@@ -200,7 +203,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 )}
               getOptionLabel={(x) => x.icon + " " + x.name}
               renderInput={(params) => {
-                return <TextField {...params} label="search" />;
+                return <TextField {...params} label={"Add " + kindName} />;
               }}
             />
           </Stack>
@@ -414,14 +417,14 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
             </div>
           )}
 
-          {renderEditList("element", "involves", "involved_in", "Involving")}
-          {renderEditList("fact", "involved_in", "involves", "Involved In")}
-          {renderEditList("fact", "causes", "because", "Causes")}
-          {renderEditList("fact", "because", "causes", "Because")}
-          {renderEditList("fact", "reveals", "revealed_by", "Reveals")}
-          {renderEditList("snippet", "revealed_by", "reveals", "Revealed By")}
-          {renderEditList("snippet", "sequences", "sequenced_in", "Sequences")}
-          {renderEditList("thread","sequenced_in","sequences","Sequenced In")}
+          {renderEditList("element", "involves", "involved_in", "Involves", "The people, places and things this fact is about.")}
+          {renderEditList("fact", "involved_in", "involves", "Involved in", "Facts about this element — its history, as the story knows it.")}
+          {renderEditList("fact", "causes", "because", "Causes", "Facts that follow from this one.")}
+          {renderEditList("fact", "because", "causes", "Because", "Facts that led to this one.")}
+          {renderEditList("fact", "reveals", "revealed_by", "Reveals", "Facts the reader learns in this scene. The Link scanner above can suggest them.")}
+          {renderEditList("snippet", "revealed_by", "reveals", "Revealed by", "Scenes where the reader learns this fact.")}
+          {renderEditList("snippet", "sequences", "sequenced_in", "Scenes in order", "Drag to reorder; open the thread to read them as one document.")}
+          {renderEditList("thread", "sequenced_in", "sequences", "In threads", "The manuscript, subplots or arcs this scene belongs to.")}
           {isWeb && (
             <div className="webView">
               <div className="webView__graph">

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { store } from "../../NewContext";
+import { loadDir } from "../../utils/";
 import { useLocation, useParams } from "react-router-dom";
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 import "react-reflex/styles.css";
@@ -8,7 +10,7 @@ import TabBar from "../TabBar";
 import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
-import logo from "../../images/logo.svg";
+import Welcome from "../Welcome";
 import { useMobile } from "../../useMobile";
 import "./Shell.css";
 
@@ -21,7 +23,10 @@ const Shell = () => {
   const [, setRefresh] = useState(0);
   const doRefresh = (v) => setRefresh(v);
   const mobile = useMobile();
-  const hasContent = !!(file || id || isWiki || isSpinner);
+  const { state } = useContext(store);
+  const emptyProject = !loadDir(state.dir).some((f) => f.includes(".element."));
+  // an empty project opens on the welcome panel, even on a phone
+  const hasContent = !!(file || id || isWiki || isSpinner) || emptyProject;
   // on a phone the list shows when nothing is open, and as a drawer otherwise
   const [drawer, setDrawer] = useState(false);
   useEffect(() => { setDrawer(false); }, [pathname]);
@@ -38,12 +43,7 @@ const Shell = () => {
       ) : file ? (
         <div className="Workspace"><Workspace setRefresh={doRefresh} /></div>
       ) : (
-        <div className="editorPane__empty">
-          <div>
-            <img className="logo" src={logo} alt="" />
-            Pick something from the list, or make something new.
-          </div>
-        </div>
+        <div className="editorPane__empty"><Welcome setRefresh={doRefresh} /></div>
       )}
     </div>
   );

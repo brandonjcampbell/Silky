@@ -48,6 +48,10 @@ const App = () => {
 
   return (
     <div className="projectTray">
+      <p className="projectTray__intro">
+        <strong>Silky</strong> is a story bible that thinks in graphs. Scenes reveal facts; facts involve people and places and cause other facts; threads put scenes in order; webs draw the whole thing. Everything stays in this browser.
+        {dirs.length === 0 && <> New here? <b>Open an example below</b>, or import a manuscript and let Spinner build the bible for you.</>}
+      </p>
       <div>
         <img className="logo" src={logo}></img>
         <div className="root projectcard">

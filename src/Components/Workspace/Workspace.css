@@ -165,3 +165,5 @@
 
 /* impact/history inside the thread aside sit flush */
 .threadView__meta .impact, .threadView__meta .history { margin: 10px 0 0; max-width: none; }
+
+.editor__help { margin: -4px 24px 8px; font-size: 12px; color: var(--ink-muted); line-height: 1.4; }

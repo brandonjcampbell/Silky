@@ -17,6 +17,7 @@ import { isConfigured } from "../../llm/config";
 import logo from "../../images/logo.svg";
 import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
+import { KINDS, kindOf } from "../../kinds";
 
 const ActorList = ({ setRefresh }) => {
   const globalState = useContext(store);
@@ -172,12 +173,12 @@ const ActorList = ({ setRefresh }) => {
       </div>
       <nav className="activityBar" aria-label="Kinds">
         {[
-          ["", HiOutlineGlobeAlt, "Everything"],
-          ["element", HiPuzzle, "Elements"],
-          ["fact", GiLightBulb, "Facts"],
-          ["snippet", TiScissors, "Snippets — the scenes"],
-          ["thread", GiSewingString, "Threads"],
-          ["web", GiSpiderWeb, "Webs"],
+          ["", HiOutlineGlobeAlt, "Everything — every item in the project, in one list"],
+          ["element", HiPuzzle, "Elements — " + kindOf("element").blurb],
+          ["fact", GiLightBulb, "Facts — " + kindOf("fact").blurb],
+          ["snippet", TiScissors, "Scenes — " + kindOf("snippet").blurb],
+          ["thread", GiSewingString, "Threads — " + kindOf("thread").blurb],
+          ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
           ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
           ["wiki", FaBook, "Wiki — the project as an encyclopedia"],
         ].map(([id, Icon, title]) => (
@@ -236,7 +237,7 @@ const ActorList = ({ setRefresh }) => {
             ref={searchRef}
             type="search"
             value={query}
-            placeholder={"Search " + (type ? type + "s" : "everything")}
+            placeholder={"Search " + (type ? kindOf(type).label.toLowerCase() : "everything") + "  ⌘⇧F"}
             aria-label="Search the list"
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && setQuery("")}
@@ -245,6 +246,8 @@ const ActorList = ({ setRefresh }) => {
           {query && <span className="listSearch__count">{shown.length}</span>}
         </div>
         {query && shown.length === 0 && <p className="listSearch__none">Nothing matches.</p>}
+        {!query && shown.length === 0 && type && <p className="listEmpty">{kindOf(type).empty}</p>}
+        {!query && shown.length === 0 && !type && <p className="listEmpty">Nothing here yet. {KINDS.map((k) => k.glyph + " " + k.label).join(" · ")} — pick a kind above to add one.</p>}
         <DraggableList
           showAvatar={type === "" ? true : false}
           list={shown}
@@ -264,7 +267,7 @@ const ActorList = ({ setRefresh }) => {
               });
             }}
           >
-            + {type}
+            + {kindOf(type).one}
           </button>
         )}
       </div>

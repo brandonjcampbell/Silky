@@ -10,7 +10,7 @@ const wc = (s) => (s.trim() ? s.trim().split(/\s+/).length : 0);
  * Paste or drop a manuscript → preview the scene split → (optionally) have the
  * model extract elements and facts → write a new project.
  */
-const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
+const ImportManuscript = ({ onClose, onDone, onOpenSettings, into }) => {
   const [step, setStep] = useState("input"); // input | preview | working | done
   const [text, setText] = useState("");
   const [name, setName] = useState("");
@@ -58,7 +58,7 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
   };
 
   const run = async (withModel) => {
-    const project = uniqueProjectName(name.trim() || "Imported manuscript");
+    const project = into || uniqueProjectName(name.trim() || "Imported manuscript");
     setError(null);
     setStep("working");
     const ctrl = new AbortController();
@@ -177,10 +177,13 @@ const ImportManuscript = ({ onClose, onDone, onOpenSettings }) => {
             <button type="button" onClick={loadGutenberg} disabled={!gut.trim() || fetching}>{fetching ? "Fetching…" : "Fetch"}</button>
           </div>
           {fetchErr && <p className="hint" style={{ color: "var(--accent)" }}>{fetchErr}</p>}
-          <label className="field">
-            <span>Project name</span>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Imported manuscript" />
-          </label>
+          {!into && (
+            <label className="field">
+              <span>Project name</span>
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Imported manuscript" />
+            </label>
+          )}
+          {into && <p className="hint">The manuscript goes into “{into}”.</p>}
           <label className="field">
             <span>Manuscript</span>
             <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Paste the manuscript here." spellCheck={false} />
