@@ -5,11 +5,12 @@ import "react-reflex/styles.css";
 import ActorList from "../ActorList";
 import Workspace from "../Workspace";
 import TabBar from "../TabBar";
+import Analysis from "../Analysis";
 import logo from "../../images/logo.svg";
 
 /** Sidebar + editor pane. The editor pane carries the open tabs. */
 const Shell = () => {
-  const { file } = useParams();
+  const { file, id } = useParams();
   const [, setRefresh] = useState(0);
   const doRefresh = (v) => setRefresh(v);
 
@@ -25,7 +26,11 @@ const Shell = () => {
         <ReflexElement className="middle-pane" flex={0.8}>
           <div className="editorPane">
             <TabBar />
-            {file ? (
+            {id ? (
+              <div className="Workspace">
+                <Analysis />
+              </div>
+            ) : file ? (
               <div className="Workspace">
                 <Workspace setRefresh={doRefresh} />
               </div>

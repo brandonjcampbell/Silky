@@ -8,7 +8,9 @@ import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { FaChartLine } from "react-icons/fa";
+import { ANALYSES } from "../Analysis";
 import logo from "../../images/logo.svg";
 import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
@@ -165,6 +167,7 @@ const ActorList = ({ setRefresh }) => {
           ["snippet", TiScissors, "Snippets — the scenes"],
           ["thread", GiSewingString, "Threads"],
           ["web", GiSpiderWeb, "Webs"],
+          ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
         ].map(([id, Icon, title]) => (
           <button
             key={id}
@@ -179,6 +182,23 @@ const ActorList = ({ setRefresh }) => {
         ))}
       </nav>
 
+      {type === "analysis" && (
+        <div className="content analysisList">
+          {ANALYSES.map((a) => {
+            const Icon = a.icon;
+            return (
+              <NavLink key={a.id} to={"/analysis/" + a.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
+                <span className="analysisItem__icon"><Icon /></span>
+                <span className="analysisItem__text">
+                  <span className="analysisItem__name">{a.name}</span>
+                  <span className="analysisItem__blurb">{a.blurb}</span>
+                </span>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
+      {type !== "analysis" && (
       <div className="content">
         <div className="listSearch">
           <input
@@ -217,6 +237,7 @@ const ActorList = ({ setRefresh }) => {
           </button>
         )}
       </div>
+      )}
     </div>
   );
 };

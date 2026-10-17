@@ -124,3 +124,17 @@
   padding: 0 4px;
 }
 .listSearch__none { margin: 6px 4px; font-size: 13px; color: var(--ink-muted); }
+
+/* analyses list */
+.analysisList { display: flex; flex-direction: column; gap: 4px; padding-top: 6px; }
+.analysisItem {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 8px 10px; border-radius: var(--radius); color: var(--ink-soft);
+}
+.analysisItem:hover { background: var(--bg-hover); color: var(--ink); }
+.analysisItem.is-active { background: var(--accent-soft); color: var(--ink); }
+.analysisItem__icon { flex: none; margin-top: 2px; color: var(--ink-muted); }
+.analysisItem.is-active .analysisItem__icon { color: var(--accent); }
+.analysisItem__text { display: flex; flex-direction: column; min-width: 0; }
+.analysisItem__name { font-size: 14px; font-weight: 600; }
+.analysisItem__blurb { font-size: 12px; color: var(--ink-muted); line-height: 1.35; }

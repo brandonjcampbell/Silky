@@ -33,6 +33,10 @@ The graph view is Cytoscape; the editor is a proper writing surface — headings
 
 *A thread. Its scenes read as one manuscript — edit any of them in place and it saves to its own snippet. Drag the list in the panel to reorder; the manuscript follows. A **web** (the hero image above) captures any set of actors and draws the edges between them — `involves`, `because`, `reveals`, and `then` along threads.*
 
+## Analyses
+
+The last glyph on the sidebar's activity bar opens four analyses, each measured over any thread (the whole manuscript by default): **Word count** (totals, every scene and thread), **Pacing** (scene lengths, dialogue share and sentence rhythm charted in order, with outliers), **Style** (sentence length and variance, dialogue, reading grade, vocabulary, -ly adverbs, passive hints, filter words, most-used words, the longest sentence), and **Reader** — with a model connected, it reads each scene cold as a first-time reader carrying a running memory of what came before, and gives engagement and clarity scores, a reaction, open questions and a line it will remember, then writes a letter about the whole. Reader notes are saved in the project.
+
 ## Examples
 
 The project tray lists example projects bundled with the site; **Dracula** is Bram Stoker's novel run through the manuscript import below (113 scenes, 180 elements, 1,143 facts, and seven plot threads from Jonathan at the castle to the chase back to Transylvania). Click one to copy it into your own projects. To add an example, drop a project export (the file the download icon on a project card produces) into `public/examples/` — the index is rebuilt on every start and build.
