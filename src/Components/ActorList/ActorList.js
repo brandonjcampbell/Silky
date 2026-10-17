@@ -9,8 +9,9 @@ import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaChartLine } from "react-icons/fa";
+import { FaChartLine, FaBook } from "react-icons/fa";
 import { ANALYSES } from "../Analysis";
+import { WIKI_INDEX } from "../Wiki";
 import logo from "../../images/logo.svg";
 import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
@@ -168,6 +169,7 @@ const ActorList = ({ setRefresh }) => {
           ["thread", GiSewingString, "Threads"],
           ["web", GiSpiderWeb, "Webs"],
           ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
+          ["wiki", FaBook, "Wiki — the project as an encyclopedia"],
         ].map(([id, Icon, title]) => (
           <button
             key={id}
@@ -198,7 +200,17 @@ const ActorList = ({ setRefresh }) => {
           })}
         </div>
       )}
-      {type !== "analysis" && (
+      {type === "wiki" && (
+        <div className="content wikiList">
+          {WIKI_INDEX.map((p) => (
+            <NavLink key={p.id} to={"/wiki/" + p.id} className={({ isActive }) => "wikiItem" + (isActive ? " is-active" : "")}>
+              {p.name}
+            </NavLink>
+          ))}
+          <p className="wikiList__hint">Every element, scene and thread has a page; follow the links. Download the whole thing as one HTML file from the page header.</p>
+        </div>
+      )}
+      {type !== "analysis" && type !== "wiki" && (
       <div className="content">
         <div className="listSearch">
           <input
