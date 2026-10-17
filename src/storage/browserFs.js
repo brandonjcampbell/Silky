@@ -174,6 +174,15 @@ const scheduleFlush = ({ put = [], del = [] }) => {
   flushTimer = setTimeout(flush, 50);
 };
 
+/** Write everything pending to IndexedDB now. Await before reload/navigation. */
+export const flushNow = async () => {
+  if (flushTimer) {
+    clearTimeout(flushTimer);
+    flushTimer = null;
+  }
+  await flush();
+};
+
 const flush = async () => {
   flushTimer = null;
   const put = [...pending.put];

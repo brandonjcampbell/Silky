@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { browser } from "../../storage";
+import { browser, flushNow } from "../../storage";
 import { importProjects } from "../../storage/projectIO";
 import "./BrowserStorageBar.css";
 
@@ -19,6 +19,7 @@ const BrowserStorageBar = () => {
       setFolder(browser.connectedDirectoryName());
       setNote("Folder connected. Projects now save to disk as well.");
       // Projects list may have changed after importing from the folder.
+      await flushNow();
       window.location.reload();
     }
   };
@@ -29,6 +30,7 @@ const BrowserStorageBar = () => {
     try {
       const names = await importProjects(f, f.name.replace(/\.silky\.json$|\.json$/i, ""));
       setNote(`Imported ${names.join(", ")}.`);
+      await flushNow();
       window.location.reload();
     } catch (err) {
       setNote("Import failed: " + err.message);

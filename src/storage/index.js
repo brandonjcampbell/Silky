@@ -66,6 +66,9 @@ export const pickAndStoreImage = (destPath) => backend.pickAndStoreImage(destPat
  */
 export const ready = () => backend.ready();
 
+/** Make sure pending writes are durable (browser: IndexedDB). No-op in Electron. */
+export const flushNow = () => (isElectron ? Promise.resolve() : browserFs.flushNow());
+
 /** Browser-only extras (no-ops in Electron). */
 export const browser = {
   /** True when the File System Access API is available (Chromium). */
