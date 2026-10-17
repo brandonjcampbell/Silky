@@ -128,11 +128,11 @@ const WordCount = () => {
 
 /* ── Pacing ───────────────────────────────────────────────────────────── */
 
-const Chart = ({ series, labels, height = 180, format = (v) => fmt(v), unit = "" }) => {
+const Chart = ({ series, labels, height = 180, format = (v) => fmt(v), unit = "", max: fixedMax }) => {
   const w = 900;
   const padL = 44, padR = 12, padT = 10, padB = 24;
   const n = series.length;
-  const max = Math.max(1, ...series);
+  const max = fixedMax || Math.max(1, ...series);
   const bw = (w - padL - padR) / Math.max(n, 1);
   const y = (v) => padT + (height - padT - padB) * (1 - v / max);
   const mean = n ? series.reduce((a, b) => a + b, 0) / n : 0;
@@ -190,7 +190,7 @@ const Pacing = () => {
         <Stat label="scene length, mean" value={fmt(mean)} sub={`shortest ${fmt(sorted[sorted.length - 1].words)} · longest ${fmt(sorted[0].words)}`} />
         <Stat label="dialogue" value={pct(rows.reduce((n, r) => n + r.dialogue * r.words, 0) / Math.max(total, 1))} sub="of words inside quotation marks" />
         <Stat label="words per sentence" value={fmt(rows.reduce((n, r) => n + r.avgSentence * r.words, 0) / Math.max(total, 1), 1)} sub="weighted by scene length" />
-        <Stat label="long stretch" value={longRun.len ? `${longRun.len} scenes` : "none"} sub={longRun.len ? `from scene ${longRun.start + 1}, all over 1.5× the mean` : "no run of over-long scenes"} />
+        <Stat label="longest sag" value={longRun.len >= 2 ? `${longRun.len} scenes` : "none"} sub={longRun.len >= 2 ? `from scene ${longRun.start + 1}, all over 1.5× the mean` : "no run of over-long scenes in a row"} />
       </div>
 
       <h3>Scene length <small>words per scene — tall bars are where the book slows to dwell; a run of them is a sag</small></h3>
@@ -371,7 +371,7 @@ const Reader = () => {
             <Stat label="open questions" value={fmt(notes.reduce((a, x) => a + x.n.questions.length, 0))} sub="things the reader was left wondering" />
           </div>
           <h3>Engagement, scene by scene</h3>
-          <Chart series={notes.map((x) => x.n.engagement)} labels={notes.map((x, i) => `${i + 1}. ${x.s.name}`)} format={(v) => fmt(v, 0)} height={120} />
+          <Chart series={notes.map((x) => x.n.engagement)} labels={notes.map((x, i) => `${i + 1}. ${x.s.name}`)} format={(v) => fmt(v, 0)} height={120} max={5} />
           {dips.length > 0 && (
             <>
               <h3>Where attention dipped</h3>
