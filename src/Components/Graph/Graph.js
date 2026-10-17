@@ -50,6 +50,9 @@ const Graph = ({ elements, onDrop }) => {
       };
       onDrop(temp);
     });
+    // Fit once on first mount so a web opens showing all of its nodes,
+    // whatever screen it was laid out on. Stored positions are untouched.
+    cy.one("render", () => cy.fit(undefined, 40));
     setCy(cy);
   };
 
