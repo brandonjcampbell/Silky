@@ -5,6 +5,7 @@ import { FaSearch } from "react-icons/fa";
 
 import { store } from "../../NewContext";
 import { loadDir, loadFile, saveFile } from "../../utils/";
+import { roleFromKind } from "../../role";
 import { scanSnippet } from "../../analysis/links";
 import { scanWithModel } from "../../llm/scan";
 import { isConfigured } from "../../llm/config";
@@ -97,9 +98,9 @@ const LinkScanner = ({ element, onChange }) => {
     if (!s.captured_in.includes(w.file)) s.captured_in.push(w.file);
     save(s); save(w); mark("web:" + w.file); onChange();
   };
-  const createElement = ({ name, icon, description }) => {
+  const createElement = ({ name, icon, description, kind }) => {
     const uuid = "element-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-    const a = { name, file: uuid + ".element.json", type: "element", icon: icon || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [], origin: "spinner-scan" };
+    const a = { name, file: uuid + ".element.json", type: "element", icon: icon || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [], origin: "spinner-scan", kind: kind || "thing", role: roleFromKind(kind) };
     save(a); return a;
   };
   const createFact = ({ statement, involves }) => {
@@ -115,7 +116,7 @@ const LinkScanner = ({ element, onChange }) => {
     save(f); save(s); mark("new:" + statement); onChange();
   };
   const addName = (name, extra = {}) => {
-    const a = createElement({ name, icon: extra.icon || KIND_ICON[extra.kind] || "🔹", description: extra.description });
+    const a = createElement({ name, icon: extra.icon || KIND_ICON[extra.kind] || "🔹", description: extra.description, kind: extra.kind });
     mark("name:" + name); onChange();
     return a;
   };

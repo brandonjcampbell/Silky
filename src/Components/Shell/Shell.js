@@ -10,6 +10,7 @@ import TabBar from "../TabBar";
 import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
+import MapView from "../MapView";
 import Welcome from "../Welcome";
 import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
@@ -17,7 +18,7 @@ import "./Shell.css";
 
 /** Sidebar + editor pane. On narrow screens the sidebar is a drawer. */
 const Shell = () => {
-  const { file, id } = useParams();
+  const { file, id, mapId } = useParams();
   const pathname = useLocation().pathname;
   const isWiki = pathname.startsWith("/wiki");
   const isSpinner = pathname.startsWith("/spinner");
@@ -27,7 +28,7 @@ const Shell = () => {
   const { state } = useContext(store);
   const emptyProject = !loadDir(state.dir).some((f) => f.includes(".element."));
   // an empty project opens on the welcome panel, even on a phone
-  const hasContent = !!(file || id || isWiki || isSpinner) || emptyProject;
+  const hasContent = !!(file || id || mapId || isWiki || isSpinner) || emptyProject;
   // on a phone the list shows when nothing is open, and as a drawer otherwise
   const [drawer, setDrawer] = useState(false);
   useEffect(() => { setDrawer(false); }, [pathname]);
@@ -45,6 +46,8 @@ const Shell = () => {
         <div className="Workspace"><Spinner /></div>
       ) : isWiki ? (
         <div className="Workspace"><Wiki /></div>
+      ) : mapId ? (
+        <div className="Workspace"><MapView /></div>
       ) : id ? (
         <div className="Workspace"><Analysis /></div>
       ) : file ? (

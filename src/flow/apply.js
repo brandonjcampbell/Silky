@@ -1,6 +1,7 @@
 /* Small, reversible edits to the model that Flow mode (and anything else)
    can make on the writer's behalf. Every function returns an undo. */
 import { loadDir, loadFile, saveFile, moveFile } from "../utils/";
+import { roleFromKind } from "../role";
 
 const actors = (dir) => loadDir(dir).filter((f) => f.includes(".element.")).map((f) => loadFile(dir + f)).filter(Boolean);
 const save = (dir, a) => saveFile(dir + a.file, a);
@@ -27,7 +28,7 @@ export const linkFact = (dir, sceneFile, factFile) => {
 /** A new element. */
 export const createElement = (dir, { name, kind, icon, description }, origin = "spinner-flow") => {
   const uuid = uid("element");
-  const a = { name, file: uuid + ".element.json", type: "element", icon: icon || KIND_ICON[kind] || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [], origin };
+  const a = { name, file: uuid + ".element.json", type: "element", icon: icon || KIND_ICON[kind] || "🔹", order: Date.now(), uuid, content: description ? `<p>${description}</p>` : " ", involved_in: [], captured_in: [], origin, kind: kind || "thing", role: roleFromKind(kind) };
   save(dir, a);
   const undo = () => {
     const all = actors(dir);

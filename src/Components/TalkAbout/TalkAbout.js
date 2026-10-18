@@ -1,4 +1,5 @@
 import SpinnerIcon from "../SpinnerIcon";
+import { isCharacter } from "../../role";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -21,7 +22,7 @@ const TalkAbout = ({ element }) => {
 
   const buttons = (
     <>
-      {element.type === "element" && (
+      {element.type === "element" && isCharacter(element) && (
         <button type="button" className="talkAbout__btn" title={`Talk to ${element.name}`} onClick={() => navigate("/spinner?with=" + encodeURIComponent(element.file))}>
           <FaUserFriends />
         </button>

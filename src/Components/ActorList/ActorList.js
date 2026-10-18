@@ -10,7 +10,8 @@ import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaChartLine, FaBook } from "react-icons/fa";
+import { FaChartLine, FaBook, FaMapMarkedAlt } from "react-icons/fa";
+import { loadMaps, newMap } from "../../maps";
 import { ANALYSES } from "../Analysis";
 import { WIKI_INDEX } from "../Wiki";
 import { isConfigured } from "../../llm/config";
@@ -27,6 +28,12 @@ const ActorList = ({ setRefresh }) => {
   const [query, setQuery] = useState("");
   const searchRef = useRef(null);
   const [, setLlmTick] = useState(0);
+  const [, setMapTick] = useState(0);
+  useEffect(() => {
+    const on = () => setMapTick((t) => t + 1);
+    window.addEventListener("silky-maps", on);
+    return () => window.removeEventListener("silky-maps", on);
+  }, []);
 
   // the Spinner glyph's dot follows the connection
   useEffect(() => {
@@ -181,6 +188,7 @@ const ActorList = ({ setRefresh }) => {
           ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
           ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
           ["wiki", FaBook, "Wiki — the project as an encyclopedia"],
+          ["map", FaMapMarkedAlt, "Maps — pin your locations, draw routes, set a scale and measure distances"],
         ].map(([id, Icon, title]) => (
           <button
             key={id}
@@ -230,7 +238,22 @@ const ActorList = ({ setRefresh }) => {
           <p className="wikiList__hint">Every element, scene and thread has a page; follow the links. Download the whole thing as one HTML file from the page header.</p>
         </div>
       )}
-      {type !== "analysis" && type !== "wiki" && (
+      {type === "map" && (
+        <div className="content mapsList">
+          {loadMaps(globalState.state.dir).maps.map((m) => (
+            <NavLink key={m.id} to={"/map/" + m.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
+              <span className="analysisItem__icon"><FaMapMarkedAlt /></span>
+              <span className="analysisItem__text">
+                <span className="analysisItem__name">{m.name}</span>
+                <span className="analysisItem__blurb">{m.pins.length} pin{m.pins.length === 1 ? "" : "s"} · {m.lines.length} route{m.lines.length === 1 ? "" : "s"}{m.scale ? ` · ${m.scale.length} ${m.unit} scale` : " · no scale"}</span>
+              </span>
+            </NavLink>
+          ))}
+          {loadMaps(globalState.state.dir).maps.length === 0 && <p className="listEmpty">No maps yet. A map is an image (or a blank sheet) with your locations pinned on it, routes drawn, and a scale so Silky can tell you how far things are apart.</p>}
+          <button type="button" onClick={() => { const m = newMap(globalState.state.dir, "Map " + (loadMaps(globalState.state.dir).maps.length + 1)); navigate("/map/" + m.id); }}>+ map</button>
+        </div>
+      )}
+      {type !== "analysis" && type !== "wiki" && type !== "map" && (
       <div className="content">
         <div className="listSearch">
           <input

@@ -1,4 +1,5 @@
 import { complete } from "./client";
+import { roleFromKind } from "../role";
 import { existsSync, mkdirSync, writeFileSync, projectDir } from "../storage";
 export { uniqueProjectName } from "../storage/projectIO";
 
@@ -399,6 +400,8 @@ export const writeProject = (name, scenes, model) => {
         content: e.description ? toHtml(e.description) : " ",
         involved_in: [],
         origin: "spinner-import",
+        kind: e.kind || "thing",
+        role: roleFromKind(e.kind),
       });
       elementByKey.set(e.key, el);
     });

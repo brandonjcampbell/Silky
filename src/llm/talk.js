@@ -3,6 +3,7 @@
    whatever the writer has brought into the conversation. */
 import { chat, complete, parseJson } from "./client";
 import { getConfig } from "./config";
+import { isCharacter } from "../role";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -172,13 +173,16 @@ export const castTalk = async ({ project, actors, conversation, nudge = false, s
   const manu = threads.find((t) => t.name === "Manuscript") || [...threads].sort((a, b) => b.sequences.length - a.sequences.length)[0];
   const orderMap = new Map((manu ? manu.sequences : []).map((f, i) => [f, i]));
   const order = (f) => (orderMap.has(f) ? orderMap.get(f) : 1e9);
-  const cast = conversation.participants.map((f) => byFile.get(f)).filter(Boolean);
-  if (!cast.length) throw new Error("No one is in the room.");
+  const everyone = conversation.participants.map((f) => byFile.get(f)).filter(Boolean);
+  const cast = everyone.filter(isCharacter);
+  const things = everyone.filter((e) => !isCharacter(e));
+  if (!cast.length) throw new Error(things.length ? `${things.map((t) => t.name).join(", ")} can't speak — nothing in the room is a character. Mark one as a character on its page.` : "No one is in the room.");
   const names = cast.map((c) => c.name);
   const system = [
     CAST_SYSTEM,
     `\n\nThe novel: ${project}.`,
     "\n\nCHARACTERS IN THE ROOM\n" + cast.map((c) => dossier(c, actors, conversation.asOf, order)).join("\n\n"),
+    things.length ? "\n\nALSO PRESENT, NOT SENTIENT (places and things; they never speak, but the characters can see, touch, enter or refer to them)\n" + things.map((t) => dossier(t, actors, conversation.asOf, order)).join("\n\n") : "",
     `\n\nReply as a script, one line per speech, each beginning with the speaker's exact name and a colon — speakers: ${names.join(", ")}. Stage directions go in parentheses. ${cast.length === 1 ? "Usually one line; two if the character pauses and goes on." : "One to four lines; let them react to one another, not only to the author."} No preamble, no commentary, nothing outside the script.`,
   ].join("");
   const history = conversation.messages.slice(-30).map((m) =>

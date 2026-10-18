@@ -18,6 +18,7 @@ import SceneAnalysis from "../SceneAnalysis";
 import LinkScanner from "../LinkScanner";
 import Ideas from "../Ideas";
 import PrintExport from "../PrintExport";
+import RolePicker from "../RolePicker";
 import Impact from "../Impact";
 import History from "../History";
 import ReadAloud from "../ReadAloud";
@@ -384,6 +385,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <TalkAbout element={element} />
           {element.type === "snippet" && <ReadAloud element={element} />}
           {element.type === "snippet" && <PrintExport element={element} />}
+          {element.type === "element" && <RolePicker element={element} onChange={(role) => { element.role = role; save(element); }} />}
           {typeof element.content === "string" && (
             <div className="editor">
               <TextEditor

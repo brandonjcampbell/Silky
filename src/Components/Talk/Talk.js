@@ -11,6 +11,8 @@ import { newId, wrapForInsert, recordInsertion } from "../../provenance";
 import { reviseScene } from "../../llm/revise";
 import { parseHtml, sceneText, weave } from "../../revise";
 import Revision from "../Revision";
+import { isCharacter, roleOf } from "../../role";
+import SortRoles from "../RolePicker/SortRoles";
 import "./Talk.css";
 
 const TYPE_GLYPH = { snippet: "📜", element: "🧩", fact: "💡", thread: "🧵", web: "🕸️" };
@@ -207,10 +209,15 @@ const Talk = () => {
           <div className="castPick">
             <p>Who's in the room?</p>
             <div className="castPick__list">
-              {elementsAll.map((e) => (
+              {elementsAll.filter(isCharacter).map((e) => (
                 <label key={e.file}><input type="checkbox" checked={castPick.has(e.file)} onChange={(ev) => { const n = new Set(castPick); if (ev.target.checked) n.add(e.file); else n.delete(e.file); setCastPick(n); }} /> {e.icon} {e.name}</label>
               ))}
+              {elementsAll.some((e) => !isCharacter(e)) && <p className="castPick__sub">Places and things — present, not speaking</p>}
+              {elementsAll.filter((e) => !isCharacter(e)).map((e) => (
+                <label key={e.file} className="is-thing"><input type="checkbox" checked={castPick.has(e.file)} onChange={(ev) => { const n = new Set(castPick); if (ev.target.checked) n.add(e.file); else n.delete(e.file); setCastPick(n); }} /> {e.icon} {e.name} <small>{roleOf(e) === "location" ? "place" : "thing"}</small></label>
+              ))}
             </div>
+            <p className="castPick__hint">Only characters speak. Mark an element as a character on its page (Character / Location / Thing) to give it a voice. <SortRoles onDone={() => setCastPick(new Set(castPick))} /></p>
             <div className="castPick__row">
               <button type="button" className="primary" disabled={!castPick.size} onClick={startCast}>Start</button>
               <button type="button" onClick={() => setCastPick(null)}>Cancel</button>
@@ -278,7 +285,7 @@ const Talk = () => {
           {configured && isCast && !conv.messages.length && (
             <div className="talk__welcome">
               <div className="talk__faces">{participants.map((a) => <span key={a.file} title={a.name}>{a.icon}</span>)}</div>
-              <p>{participants.map((a) => a.name).join(", ")} {participants.length === 1 ? "is" : "are"} in the room. They know only what the project says they know{conv.asOf != null ? ` as of scene ${conv.asOf + 1}` : ""} — ask them anything, or press <b>Let them talk</b> and listen.</p>
+              <p>{participants.filter(isCharacter).map((a) => a.name).join(", ") || "No one who can speak"} {participants.filter(isCharacter).length === 1 ? "is" : "are"} in the room{participants.some((a) => !isCharacter(a)) ? `, with ${participants.filter((a) => !isCharacter(a)).map((a) => a.name).join(", ")} present but not sentient` : ""}. They know only what the project says they know{conv.asOf != null ? ` as of scene ${conv.asOf + 1}` : ""} — ask them anything, or press <b>Let them talk</b> and listen.</p>
             </div>
           )}
           {configured && !isCast && (!conv || !conv.messages.length) && (

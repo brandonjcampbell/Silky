@@ -20,6 +20,7 @@ const MyRoutes = () => {
       <Route path="/wiki/*" element={inProject ? <Shell /> : <App />} />
       <Route path="/spinner" element={inProject ? <Shell /> : <App />} />
       <Route path="/spinner/settings" element={inProject ? <Shell /> : <App />} />
+      <Route path="/map/:mapId" element={inProject ? <Shell /> : <App />} />
       <Route path="/write" element={<FlowPage />} />
       <Route path="*" element={<App />} />
     </Routes>
