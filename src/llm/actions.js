@@ -87,6 +87,7 @@ export const hrefFor = (dir, name) => {
   if (!n || n === "write" || n === "writing page" || n === "blank page" || n === "home") return { href: "/", label: "the writing page" };
   if (n === "wiki") return { href: "/wiki/home", label: "the wiki" };
   if (n === "preferences" || n === "settings") return { href: "/preferences", label: "Preferences" };
+  if (n === "about" || n === "license" || n === "terms") return { href: "/about", label: "About" };
   if (n === "spinner" || n === "talk") return { href: "/spinner", label: "Spinner" };
   if (ANALYSIS_NAMES[n]) return { href: "/analysis/" + ANALYSIS_NAMES[n], label: name };
   const maps = loadMaps(dir).maps, tls = loadTimelines(dir).timelines;

@@ -104,3 +104,5 @@
 .projectTray .trayBtn--write { text-decoration: none; color: #fff; background: var(--accent); border-color: var(--accent); }
 .projectTray .trayBtn--write:hover { filter: brightness(1.1); }
 .projectTray__storage { grid-column: 1 / -1; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+.projectTray__about { margin: 14px 0 0; font-size: 12px; color: var(--ink-muted); }
+.projectTray__about a { color: var(--ink-soft); }

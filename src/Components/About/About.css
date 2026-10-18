@@ -1,0 +1,12 @@
+.about__body { margin: 0 24px 48px; max-width: 72ch; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.about__logo { height: 48px; margin: 6px 0 12px; display: block; filter: var(--logo-filter, none); }
+.about__lede { font-size: 16px; color: var(--ink); margin: 0 0 16px; }
+.about__facts { display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0 0 20px; padding: 12px 14px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); }
+.about__facts dt { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); padding-top: 3px; }
+.about__facts dd { margin: 0; color: var(--ink); }
+.about__facts a { color: var(--accent); display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
+.about__facts a:hover { text-decoration: underline; }
+.about h3 { margin: 22px 0 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.about p { margin: 0 0 10px; }
+.about strong { color: var(--ink); }
+.about__fine { font-size: 12.5px; color: var(--ink-muted); }

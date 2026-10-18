@@ -15,7 +15,7 @@ import { HiPuzzle } from "react-icons/hi";
 import { analysisById } from "../Analysis";
 import { mapById } from "../../maps";
 import { timelineById } from "../../timelines";
-import { FaMapMarkedAlt, FaStream, FaSlidersH } from "react-icons/fa";
+import { FaMapMarkedAlt, FaStream, FaSlidersH, FaInfoCircle } from "react-icons/fa";
 import "./TabBar.css";
 
 const TYPE_ICON = {
@@ -37,8 +37,9 @@ const TabBar = ({ onMenu }) => {
   const isWiki = pathname.startsWith("/wiki");
   const isSpinner = pathname.startsWith("/spinner");
   const isPrefs = pathname.startsWith("/preferences");
+  const isAbout = pathname.startsWith("/about");
   // a tab key is an actor file, "analysis:<id>", "wiki" or "spinner"
-  const file = isPrefs ? "preferences" : isSpinner ? "spinner" : isWiki ? "wiki" : params.mapId ? "map:" + params.mapId : params.tlId ? "timeline:" + params.tlId : params.id ? "analysis:" + params.id : params.file;
+  const file = isAbout ? "about" : isPrefs ? "preferences" : isSpinner ? "spinner" : isWiki ? "wiki" : params.mapId ? "map:" + params.mapId : params.tlId ? "timeline:" + params.tlId : params.id ? "analysis:" + params.id : params.file;
   const navigate = useNavigate();
   const project = state.project;
   const [tabs, setTabs] = useState(() => loadTabs(project));
@@ -73,8 +74,8 @@ const TabBar = ({ onMenu }) => {
     saveTabs(project, next);
   }, [file, tabs, project, state.dir, navigate]);
 
-  const isLive = (f) => (f === "wiki" || f === "spinner" || f === "preferences" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : f.startsWith("map:") ? !!mapById(state.dir, f.slice(4)) : f.startsWith("timeline:") ? !!timelineById(state.dir, f.slice(9)) : existsSync(state.dir + f));
-  const hrefOf = (f) => (f === "preferences" ? "/preferences" : f === "spinner" ? "/spinner" : f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : f.startsWith("map:") ? "/map/" + f.slice(4) : f.startsWith("timeline:") ? "/timeline/" + f.slice(9) : "/elements/" + f);
+  const isLive = (f) => (f === "wiki" || f === "spinner" || f === "preferences" || f === "about" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : f.startsWith("map:") ? !!mapById(state.dir, f.slice(4)) : f.startsWith("timeline:") ? !!timelineById(state.dir, f.slice(9)) : existsSync(state.dir + f));
+  const hrefOf = (f) => (f === "about" ? "/about" : f === "preferences" ? "/preferences" : f === "spinner" ? "/spinner" : f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : f.startsWith("map:") ? "/map/" + f.slice(4) : f.startsWith("timeline:") ? "/timeline/" + f.slice(9) : "/elements/" + f);
   const live = useMemo(
     () => tabs.filter(isLive),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,6 +118,8 @@ const TabBar = ({ onMenu }) => {
           a = { name: "Spinner", icon: <SpinnerIcon />, type: "analysis" };
         } else if (f === "preferences") {
           a = { name: "Preferences", icon: <FaSlidersH />, type: "analysis" };
+        } else if (f === "about") {
+          a = { name: "About", icon: <FaInfoCircle />, type: "analysis" };
         } else if (f === "wiki") {
           a = { name: "Wiki", icon: <FaBook />, type: "analysis" };
         } else if (f.startsWith("analysis:")) {

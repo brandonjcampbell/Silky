@@ -11,7 +11,7 @@ import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaBook, FaTools, FaStream, FaMapMarkedAlt, FaSlidersH } from "react-icons/fa";
+import { FaBook, FaTools, FaStream, FaMapMarkedAlt, FaSlidersH, FaInfoCircle } from "react-icons/fa";
 import { loadTimelines, newTimeline } from "../../timelines";
 import { loadMaps, newMap } from "../../maps";
 import { ANALYSES } from "../Analysis";
@@ -214,7 +214,11 @@ const ActorList = ({ setRefresh }) => {
         <div className="content mapsList">
           <NavLink to="/preferences" className={({ isActive }) => "analysisItem analysisItem--prefs" + (isActive ? " is-active" : "")}>
             <span className="analysisItem__icon"><FaSlidersH /></span>
-            <span className="analysisItem__text"><span className="analysisItem__name">Preferences</span><span className="analysisItem__blurb">Theme, fonts, Spinner.</span></span>
+            <span className="analysisItem__text"><span className="analysisItem__name">Preferences</span><span className="analysisItem__blurb">Theme, fonts, storage, calendar, Spinner.</span></span>
+          </NavLink>
+          <NavLink to="/about" className={({ isActive }) => "analysisItem analysisItem--prefs" + (isActive ? " is-active" : "")}>
+            <span className="analysisItem__icon"><FaInfoCircle /></span>
+            <span className="analysisItem__text"><span className="analysisItem__name">About</span><span className="analysisItem__blurb">Author, version, license, terms.</span></span>
           </NavLink>
           <h4 className="toolsHead">Maps</h4>
           {loadMaps(globalState.state.dir).maps.map((m) => (

@@ -1,6 +1,6 @@
 {
   "name": "silky",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "homepage": "./",
   "main": "./electron/main.js",
@@ -75,8 +75,8 @@
     "examples": "node scripts/examples-index.js",
     "prestart": "node scripts/examples-index.js",
     "prebuild": "node scripts/examples-index.js",
-    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider REACT_APP_VERSION=$npm_package_version react-scripts start",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider REACT_APP_VERSION=$npm_package_version react-scripts build",
     "electron": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "ebuild": "npm run build && node_modules/.bin/build",
     "test": "react-scripts test",

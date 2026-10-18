@@ -124,7 +124,7 @@ const App = () => {
       })}
 
       <Examples existing={dirs} onLoaded={(name) => dispatch({ action: "setProject", payload: { name } })} />
-      <div className="projectTray__storage"><BrowserStorageBar inline /></div>
+      <div className="projectTray__storage"><BrowserStorageBar inline /><p className="projectTray__about">Silky {process.env.REACT_APP_VERSION || "0.1.0"} · Brandon Campbell · CC0 · <a href="https://github.com/brandonjcampbell/Silky" target="_blank" rel="noreferrer">source</a> · open any project for the About page and terms of use.</p></div>
     </div>
   );
 };

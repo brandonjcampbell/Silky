@@ -30,6 +30,7 @@ jobs:
           npm run build 2>&1 | tee build.log
         env:
           CI: false   # react-scripts 4 treats lint warnings as errors when CI=true
+          REACT_APP_BUILD: ${{ github.sha }}
       # On failure, keep the compiler output somewhere plain git can fetch it
       # (the Actions log download sits behind blob storage some networks block).
       - name: Publish build log on failure

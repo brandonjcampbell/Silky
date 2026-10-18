@@ -22,6 +22,7 @@ const MyRoutes = () => {
       <Route path="/map/:mapId" element={inProject ? <Shell /> : <App />} />
       <Route path="/timeline/:tlId" element={inProject ? <Shell /> : <App />} />
       <Route path="/preferences" element={inProject ? <Shell /> : <App />} />
+      <Route path="/about" element={inProject ? <Shell /> : <App />} />
       <Route path="/write" element={<Navigate to="/" replace />} />
       <Route path="*" element={<App />} />
     </Routes>
