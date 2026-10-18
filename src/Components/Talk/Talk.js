@@ -193,17 +193,21 @@ const Talk = () => {
 
   /** Apply one of Spinner's proposed actions (or undo it). */
   const undoRef = useRef(new Map());
-  const runAction = (mi, ai) => {
+  const runActions = (mi, indices) => {
     if (!conv) return;
     const m = conv.messages[mi];
-    const item = m.actions[ai];
-    const r = applyAction(dir, item.a);
-    if (r.ok && r.undo) undoRef.current.set(`${conv.id}:${mi}:${ai}`, r.undo);
-    const actions = m.actions.map((x, k) => (k === ai ? { ...x, state: r.ok ? "done" : "failed", result: r.message } : x));
+    const results = new Map();
+    indices.forEach((ai) => {
+      const r = applyAction(dir, m.actions[ai].a);
+      if (r.ok && r.undo) undoRef.current.set(`${conv.id}:${mi}:${ai}`, r.undo);
+      results.set(ai, r);
+    });
+    const actions = m.actions.map((x, k) => (results.has(k) ? { ...x, state: results.get(k).ok ? "done" : "failed", result: results.get(k).message } : x));
     const c = { ...conv, messages: conv.messages.map((x, k) => (k === mi ? { ...x, actions } : x)) };
     updateConversation(dir, c); refresh(c.id);
     window.dispatchEvent(new CustomEvent("silky-flow-changed"));
   };
+  const runAction = (mi, ai) => runActions(mi, [ai]);
   const undoAction = (mi, ai) => {
     const u = undoRef.current.get(`${conv.id}:${mi}:${ai}`);
     if (u) { try { u(); } catch (e) { /* */ } undoRef.current.delete(`${conv.id}:${mi}:${ai}`); }
@@ -213,7 +217,7 @@ const Talk = () => {
     updateConversation(dir, c); refresh(c.id);
     window.dispatchEvent(new CustomEvent("silky-flow-changed"));
   };
-  const runAll = (mi) => { conv.messages[mi].actions.forEach((x, ai) => { if (x.state === "proposed") runAction(mi, ai); }); };
+  const runAll = (mi) => runActions(mi, conv.messages[mi].actions.map((x, ai) => (x.state === "proposed" ? ai : -1)).filter((ai) => ai >= 0));
 
   const isCast = !!(conv && conv.kind === "cast");
   const participants = conv ? (conv.participants || []).map((f) => byFile.get(f)).filter(Boolean) : [];
