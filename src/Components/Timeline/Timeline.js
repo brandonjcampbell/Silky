@@ -1,7 +1,21 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { store } from "../../NewContext";
 import { placeScenes, fmtDate, fmtDuration, hasWhen, unitMs, calendarYear } from "../../time";
+import { plain, styleStats, fmt, pct } from "../../analysis/text";
+import { loadReader, allReaders } from "../../analysis/reader";
 import "./Timeline.css";
+
+/* ── lenses: what a scene's marker can show besides when it happens ── */
+const LENSES = [
+  { id: "none", name: "Just when" },
+  { id: "words", name: "Length", value: (st) => st.words, label: (v) => `${fmt(v)} words`, hint: "bigger is longer" },
+  { id: "dialogue", name: "Dialogue", value: (st) => st.dialogue, label: (v) => `${pct(v)} dialogue`, hint: "bigger is talkier", max: 1 },
+  { id: "rhythm", name: "Sentence length", value: (st) => st.avgSentence, label: (v) => `${fmt(v, 1)} words a sentence`, hint: "bigger is longer sentences" },
+  { id: "grade", name: "Reading grade", value: (st) => st.grade, label: (v) => `grade ${fmt(v, 1)}`, hint: "bigger is harder" },
+];
+const PACE_COLOR = { slow: "#5b9bd5", steady: "#6aa84f", brisk: "#e69138", rushed: "#cc0000" };
+const scoreColor = (n) => ["#cc0000", "#e69138", "#b8a000", "#6aa84f", "#2e8b57"][Math.max(1, Math.min(5, Math.round(n))) - 1];
 
 const tickStep = (span) => {
   const DAY = unitMs("days"), MONTH = unitMs("months"), YEAR = unitMs("years");
@@ -31,7 +45,33 @@ const packRows = (items, x) => {
  * assumed ones hollow; durations are bars. Click a scene to open it.
  */
 const Timeline = ({ scenes, lanes: lanesProp, title }) => {
+  const { state } = useContext(store);
+  const dir = state.dir;
   const lanes = useMemo(() => (lanesProp && lanesProp.length ? lanesProp : [{ name: title || "Scenes", color: null, scenes: scenes || [] }]), [lanesProp, scenes, title]);
+  const [lens, setLens] = useState(() => { try { return localStorage.getItem("silky:timeline-lens") || "none"; } catch (e) { return "none"; } });
+  const pickLens = (id) => { setLens(id); try { localStorage.setItem("silky:timeline-lens", id); } catch (e) { /* */ } };
+  // per-scene text statistics, once per scene
+  const stats = useMemo(() => {
+    const m = new Map();
+    lanes.forEach((l) => l.scenes.forEach((sc) => { if (!m.has(sc.file)) m.set(sc.file, styleStats(plain(sc.content))); }));
+    return m;
+  }, [lanes]);
+  // readers who have notes on any of these scenes
+  const readerData = useMemo(() => loadReader(dir), [dir, lanes]); // eslint-disable-line react-hooks/exhaustive-deps
+  const readers = allReaders(readerData).filter((r) => readerData.readers[r.id] && lanes.some((l) => l.scenes.some((sc) => readerData.readers[r.id].scenes[sc.file])));
+  const readerLens = lens.startsWith("reader:") ? lens.slice(7) : null;
+  const noteOf = (file) => (readerLens && readerData.readers[readerLens] ? readerData.readers[readerLens].scenes[file] : null);
+  const lensDef = LENSES.find((l) => l.id === lens) || LENSES[0];
+  const lensVals = lensDef.value ? [...stats.values()].map(lensDef.value).filter(Number.isFinite) : [];
+  const lensMax = lensDef.max || (lensVals.length ? Math.max(...lensVals) : 1) || 1;
+  /** radius scale 3.5–10 for the lens value, and a colour for reader lenses */
+  const mark = (file) => {
+    const st = stats.get(file);
+    if (readerLens) { const n = noteOf(file); return n ? { r: 3.5 + (n.engagement / 5) * 6.5, color: scoreColor(n.engagement), text: `${n.engagement}/5 · ${n.pace}` } : { r: 4.5, hollow: true, text: "not read" }; }
+    if (!lensDef.value || !st) return { r: 4.5 };
+    const v = lensDef.value(st);
+    return { r: 3.5 + Math.sqrt(Math.max(0, v) / lensMax) * 6.5, text: lensDef.label(v) };
+  };
   // the first lane (the manuscript, usually) places scenes; other lanes reuse
   // those times for scenes without a date of their own, so a scene sits at
   // the same moment in every lane
@@ -46,6 +86,7 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
   const on = placedLanes.flatMap((l) => l.placed.filter((p) => !p.unplaced));
   const off = placedLanes.flatMap((l) => l.placed.filter((p) => p.unplaced).map((p) => ({ ...p, lane: l })));
   const [hover, setHover] = useState(null);
+  const [pick, setPick] = useState(null); // scene whose card is pinned open
   const [, setCalTick] = useState(0);
   useEffect(() => { const on = () => setCalTick((t) => t + 1); window.addEventListener("silky-calendar", on); return () => window.removeEventListener("silky-calendar", on); }, []);
   const total = lanes.reduce((n, l) => n + l.scenes.length, 0);
@@ -78,6 +119,14 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
     <div className="timeline">
       <div className="timeline__head">
         <span>{on.length} placed scene{on.length === 1 ? "" : "s"} across {lanes.length} thread{lanes.length === 1 ? "" : "s"} · {fmtDuration(max - min) || "a moment"} · {fmtDate(min)} → {fmtDate(max)}</span>
+        <label className="timeline__lens">Show
+          <select value={lens} onChange={(e) => pickLens(e.target.value)}>
+            {LENSES.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            {readers.length > 0 && <optgroup label="Reader">{readers.map((r) => <option key={r.id} value={"reader:" + r.id}>{r.name}</option>)}</optgroup>}
+          </select>
+          {lensDef.hint && !readerLens && <small>{lensDef.hint}</small>}
+          {readerLens && <small>size and colour are engagement · hover for the reaction</small>}
+        </label>
       </div>
       <svg className="timeline__svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" role="img" aria-label="Scenes on a time axis" style={{ aspectRatio: `${W} / ${H}` }}>
         {ticks.map((t) => (
@@ -94,18 +143,53 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
             {g.items.map((p) => {
               const yy = g.y0 + (multi ? 16 : 6) + p.row * ROW;
               const x0 = x(p.start), x1 = Math.max(x(p.end), x0 + 2);
-              const cls = "timeline__scene" + (p.anchored ? " is-anchored" : p.inferred ? " is-inferred" : " is-relative") + (hover === p.scene.file ? " is-hover" : "");
+              const mk = mark(p.scene.file);
+              const cls = "timeline__scene" + (p.anchored ? " is-anchored" : p.inferred ? " is-inferred" : " is-relative") + (hover === p.scene.file ? " is-hover" : "") + (mk.hollow ? " is-unread" : "");
               const left = x1 + 8 > W * 0.78;
+              const style = mk.color ? { "--lane": mk.color } : undefined;
               return (
-                <g key={p.scene.file} className={cls} onMouseEnter={() => setHover(p.scene.file)} onMouseLeave={() => setHover(null)}>
-                  {p.duration > 0 ? <rect x={x0} y={yy} width={x1 - x0} height={11} rx={3} className="timeline__bar" /> : <circle cx={x0} cy={yy + 5.5} r={4.5} className="timeline__dot" />}
-                  <text x={left ? x0 - 8 : x1 + 8} y={yy + 9.5} className="timeline__label" textAnchor={left ? "end" : "start"}>{p.scene.icon} {p.scene.name}</text>
+                <g key={p.scene.file} className={cls} style={style} onMouseEnter={() => setHover(p.scene.file)} onMouseLeave={() => setHover(null)} onClick={() => setPick(pick === p.scene.file ? null : p.scene.file)}>
+                  {p.duration > 0 ? <rect x={x0} y={yy + 5.5 - mk.r} width={x1 - x0} height={mk.r * 2} rx={3} className="timeline__bar" /> : <circle cx={x0} cy={yy + 5.5} r={mk.r} className="timeline__dot" />}
+                  <text x={left ? x0 - 8 - mk.r : x1 + 8 + (p.duration > 0 ? 0 : mk.r - 4.5)} y={yy + 9.5} className="timeline__label" textAnchor={left ? "end" : "start"}>{p.scene.icon} {p.scene.name}{mk.text && lens !== "none" ? <tspan className="timeline__val"> · {mk.text}</tspan> : null}</text>
                 </g>
               );
             })}
           </g>
         ))}
       </svg>
+      {(() => {
+        const file = pick || hover;
+        const sc = file && lanes.flatMap((l) => l.scenes).find((x) => x.file === file);
+        const st = sc && stats.get(file);
+        if (!sc || !st) return null;
+        const notes = readers.map((r) => ({ reader: r, note: readerData.readers[r.id].scenes[file] })).filter((x) => x.note);
+        return (
+          <div className={"sceneCard" + (pick ? " is-pinned" : "")}>
+            <div className="sceneCard__head">
+              <Link to={"/elements/" + file}>{sc.icon} {sc.name}</Link>
+              {pick && <button type="button" className="xbtn" onClick={() => setPick(null)} aria-label="Close">×</button>}
+            </div>
+            <dl className="sceneCard__stats">
+              <div><dt>Words</dt><dd>{fmt(st.words)}</dd></div>
+              <div><dt>Dialogue</dt><dd>{pct(st.dialogue)}</dd></div>
+              <div><dt>Sentence</dt><dd>{fmt(st.avgSentence, 1)} ± {fmt(st.sdSentence, 1)}</dd></div>
+              <div><dt>Grade</dt><dd>{fmt(st.grade, 1)}</dd></div>
+              <div><dt>Adverbs</dt><dd>{fmt(st.adverbsPer1k, 1)}‰</dd></div>
+              <div><dt>Read</dt><dd>{fmt(st.readingMinutes, 0)} min</dd></div>
+            </dl>
+            {notes.map(({ reader, note }) => (
+              <div key={reader.id} className="sceneCard__note">
+                <p className="sceneCard__reader"><b>{reader.name}</b> <span style={{ color: scoreColor(note.engagement) }}>●</span> engagement {note.engagement}/5 · clarity {note.clarity}/5 · <span style={{ color: PACE_COLOR[note.pace] }}>{note.pace}</span></p>
+                <p>{note.reaction}</p>
+                {note.questions && note.questions.length > 0 && <ul>{note.questions.map((q, i) => <li key={i}>{q}</li>)}</ul>}
+                {note.memorable && <p className="sceneCard__quote">“{note.memorable}”</p>}
+              </div>
+            ))}
+            {notes.length === 0 && readers.length === 0 && <p className="muted">No reader has read this yet — run one under Analyses › Reader to see reactions here.</p>}
+            {!pick && <p className="sceneCard__tip">click the scene to keep this open</p>}
+          </div>
+        );
+      })()}
       {laneGeo.map((g, li) => (
         <div key={li} className="timeline__laneList">
           {multi && <h5 style={g.lane.color ? { color: g.lane.color } : undefined}>{g.lane.name}</h5>}
@@ -120,8 +204,9 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
                     {prev && p.start < prev.start ? <small className="is-back"> · goes back {fmtDuration(prev.start - p.start)}</small> : null}
                     <em>{p.anchored ? "dated" : p.inferred ? "assumed to follow" : "offset"}</em>
                   </span>
-                  <Link to={"/elements/" + p.scene.file}>{p.scene.icon} {p.scene.name}</Link>
+                  <Link to={"/elements/" + p.scene.file}>{p.scene.icon} {p.scene.name}{lens !== "none" && mark(p.scene.file).text ? <small className="timeline__val"> · {mark(p.scene.file).text}</small> : null}</Link>
                   {p.scene.when && p.scene.when.note && <span className="timeline__note">{p.scene.when.note}</span>}
+                  {readerLens && noteOf(p.scene.file) && <span className="timeline__note timeline__reaction">{noteOf(p.scene.file).reaction}</span>}
                 </li>
               );
             })}

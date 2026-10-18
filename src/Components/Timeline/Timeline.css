@@ -1,5 +1,27 @@
 .timeline { display: flex; flex-direction: column; gap: 10px; }
-.timeline__head { font-size: 12px; color: var(--ink-muted); }
+.timeline__head { font-size: 12px; color: var(--ink-muted); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.timeline__lens { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; }
+.timeline__lens select { font: inherit; font-size: 12px; color: var(--ink); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 3px 6px; }
+.timeline__lens small { font-size: 11px; opacity: 0.8; }
+.timeline__val { fill: var(--ink-muted); color: var(--ink-muted); font-size: 10.5px; font-weight: 400; }
+.timeline__scene { cursor: pointer; }
+.timeline__scene.is-unread .timeline__dot, .timeline__scene.is-unread .timeline__bar { fill: var(--bg-raised); stroke: var(--ink-muted); stroke-width: 1; stroke-dasharray: 2 2; }
+.timeline__reaction { font-style: normal; }
+.sceneCard { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-raised); padding: 10px 14px; font-size: 13px; line-height: 1.5; }
+.sceneCard.is-pinned { border-color: var(--accent); }
+.sceneCard__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sceneCard__head a { color: var(--ink); font-weight: 600; text-decoration: none; }
+.sceneCard__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 6px 12px; margin: 8px 0; }
+.sceneCard__stats div { display: flex; flex-direction: column; }
+.sceneCard__stats dt { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+.sceneCard__stats dd { margin: 0; font-variant-numeric: tabular-nums; }
+.sceneCard__note { border-top: 1px solid var(--line); padding-top: 8px; margin-top: 8px; }
+.sceneCard__note p { margin: 0 0 4px; }
+.sceneCard__note ul { margin: 2px 0 4px; padding-left: 18px; color: var(--ink-muted); }
+.sceneCard__reader { color: var(--ink-muted); font-size: 12px; }
+.sceneCard__quote { font-style: italic; color: var(--ink-soft); }
+.sceneCard__tip { font-size: 11px; color: var(--ink-muted); margin: 4px 0 0; }
+.sceneCard .muted { color: var(--ink-muted); }
 .timeline__empty { color: var(--ink-muted); font-size: 13px; line-height: 1.5; }
 .timeline__svg { width: 100%; height: auto; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); }
 .timeline__grid { stroke: var(--line); stroke-width: 1; }

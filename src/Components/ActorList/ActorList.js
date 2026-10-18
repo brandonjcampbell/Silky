@@ -226,7 +226,7 @@ const ActorList = ({ setRefresh }) => {
               <span className="analysisItem__icon"><FaMapMarkedAlt /></span>
               <span className="analysisItem__text">
                 <span className="analysisItem__name">{m.name}</span>
-                <span className="analysisItem__blurb">{m.pins.length} pin{m.pins.length === 1 ? "" : "s"} · {m.lines.length} route{m.lines.length === 1 ? "" : "s"}{m.scale ? ` · ${m.scale.length} ${m.unit} scale` : " · no scale"}</span>
+                <span className="analysisItem__blurb">{m.pins.length} pin{m.pins.length === 1 ? "" : "s"} · {m.lines.filter((l) => !l.closed).length} route{m.lines.filter((l) => !l.closed).length === 1 ? "" : "s"}{m.lines.some((l) => l.closed) ? ` · ${m.lines.filter((l) => l.closed).length} region${m.lines.filter((l) => l.closed).length === 1 ? "" : "s"}` : ""}{m.scale ? ` · ${m.scale.length} ${m.unit} scale` : " · no scale"}</span>
               </span>
             </NavLink>
           ))}
