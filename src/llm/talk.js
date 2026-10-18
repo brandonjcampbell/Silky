@@ -6,6 +6,9 @@ import { getConfig } from "./config";
 import { isCharacter } from "../role";
 import { ACTION_DOCS } from "./actions";
 import { activeCalendar, isCustom } from "../calendar";
+import { loadMaps } from "../maps";
+import { loadTimelines } from "../timelines";
+import { projectDir } from "../storage";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -75,6 +78,15 @@ export const projectDigest = (project, actors) => {
   if (other.length) lines.push("Plot threads: " + other.map((t) => `${t.name} (${t.sequences.length} scenes${plain(t.content).trim() ? ": " + plain(t.content).trim().slice(0, 140) : ""})`).join(" | "));
   if (elements.length) lines.push("Principal elements: " + elements.slice(0, 25).map((e) => `${e.name}${plain(e.content).trim() ? " — " + plain(e.content).trim().slice(0, 100) : ""}`).join(" | "));
   if (elements.length > 25 && elements.length <= 400) lines.push("All element names: " + elements.map((e) => e.name).join("; "));
+  const facts = actors.filter((a) => a.type === "fact");
+  if (facts.length && facts.length <= 150) lines.push("All facts: " + facts.map((f) => f.name).join(" | "));
+  const dir = projectDir(project);
+  try {
+    const maps = loadMaps(dir).maps;
+    if (maps.length) lines.push("Maps (in Tools): " + maps.map((m) => `${m.name} (${m.pins.length} pins)`).join("; "));
+    const tls = loadTimelines(dir).timelines;
+    if (tls.length) lines.push("Timelines (in Tools): " + tls.map((t) => t.name).join("; "));
+  } catch (e) { /* no project dir */ }
   if (threads.length) lines.push("All threads: " + threads.map((t) => t.name).join("; "));
   const cal = activeCalendar();
   lines.push(isCustom(cal)

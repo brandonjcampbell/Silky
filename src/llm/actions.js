@@ -9,8 +9,13 @@ import { loadMaps } from "../maps";
 import { loadTimelines } from "../timelines";
 import { loadTabs, saveTabs } from "../tabs";
 import { loadCalendar, saveCalendar, GREGORIAN, CUSTOM_DEFAULT, isCustom } from "../calendar";
+import { newMap, updateMap, newPin, deleteMap } from "../maps";
+import { newTimeline, updateTimeline, deleteTimeline } from "../timelines";
+import { isLocation } from "../role";
 
 export const ACTION_DOCS = `When the author asks you to change the project — make, link, rename, split, merge, move, date or remove things — do it by ending your reply with one fenced block tagged silky-actions holding a JSON array of actions. Say in a sentence what you are doing; keep the block last. Refer to things by their names as the project knows them. Only act when asked, and never remove anything unless the author plainly asks.
+
+Creating something that already exists by that name reuses it rather than making a duplicate, so it is safe to name things you aren't sure about. Maps, timelines, the calendar and tabs are yours to make and change as well.
 
 Actions (fields in brackets are optional):
 - {"action":"create_element","name":"…","role":"character|location|thing",["description":"…"]}
@@ -30,6 +35,10 @@ Actions (fields in brackets are optional):
 - {"action":"remove","name":"…"}   (goes to the project's rubbish; only when asked)
 - {"action":"open","name":"…"}   (opens a thing in a tab and shows it; also "wiki", "preferences", "progress", "word count", "pacing", "style", "reader", "ai influence", a map's or timeline's name, or "write" for the blank page)
 - {"action":"close","name":"…"|"all"|"others"}   (closes that tab, every tab, or every tab but the current one)
+- {"action":"merge_elements","keep":"name","remove":"name"}   (fold a duplicate into the one to keep: its facts, scenes, webs and maps move over; the duplicate goes to the rubbish)
+- {"action":"create_map","name":"…",["unit":"miles"],["pins":["location name",…]]}   (a blank map in Tools; pins land in a row to be dragged into place)
+- {"action":"pin","map":"map name","location":"element name",["x":500,"y":300]}
+- {"action":"create_timeline","name":"…",["threads":["thread name",…]]}
 - {"action":"set_calendar","mode":"gregorian"}  or  {"action":"set_calendar","mode":"custom",["era":"AE"],["hoursPerDay":24],["months":[{"name":"Frostfall","days":40},…]]}   (the project's calendar; years start at 0; omit months to keep the current ones)
 - {"action":"rename_month","month":"old name"|3,"to":"new name",["days":31]}
 
@@ -152,6 +161,10 @@ export const describeAction = (dir, a) => {
     case "move_scene": return `Move ${nameOf(a.scene, ["snippet"])} in ${nameOf(a.thread, ["thread"])}${a.after ? ` to after ${nameOf(a.after, ["snippet"])}` : a.position != null ? ` to position ${a.position}` : " to the end"}`;
     case "remove": return `Remove ${nameOf(a.name)} (to the rubbish)`;
     case "open": { const h = hrefFor(dir, a.name); return h ? `Open ${h.label}` : `Open ${miss(a.name)}`; }
+    case "merge_elements": return `Merge ${nameOf(a.remove)} into ${nameOf(a.keep)} (the first goes to the rubbish)`;
+    case "create_map": return `Create map 🗺️ ${a.name}${a.unit ? ` (${a.unit})` : ""}${a.pins && a.pins.length ? ` with pins for ${a.pins.map((n) => nameOf(n, ["element"])).join(", ")}` : ""}`;
+    case "pin": return `Pin ${nameOf(a.location, ["element"])} on map “${a.map}”`;
+    case "create_timeline": return `Create timeline ${a.name}${a.threads && a.threads.length ? ` with ${a.threads.map((n) => nameOf(n, ["thread"])).join(", ")}` : ""}`;
     case "set_calendar": return a.mode === "gregorian" ? "Use the Gregorian calendar for this project" : `Use a custom calendar${a.era ? ` (era “${a.era}”)` : ""}${a.hoursPerDay ? `, ${a.hoursPerDay}-hour days` : ""}${Array.isArray(a.months) && a.months.length ? `, ${a.months.length} months: ${a.months.map((m) => `${m.name} (${m.days})`).join(", ")}` : ""}`;
     case "rename_month": return `Rename month ${typeof a.month === "number" ? "#" + a.month : `“${a.month}”`} to “${a.to}”${a.days ? `, ${a.days} days` : ""}`;
     case "close": return norm(a.name) === "all" ? "Close every tab" : norm(a.name) === "others" ? "Close the other tabs" : `Close the tab for ${nameOf(a.name)}`;
@@ -161,6 +174,7 @@ export const describeAction = (dir, a) => {
 
 /* ── applying ── */
 const save = (dir, x) => saveFile(dir + x.file, x);
+const existing = (actors, type, name) => actors.find((x) => x.type === type && norm(x.name) === norm(name)) || null;
 const mkActor = (type, name, icon, extra) => { const u = uid(type); return { name, file: u + ".element.json", type, icon, order: Date.now(), uuid: u, captured_in: [], origin: "spinner-talk", ...extra }; };
 
 const linkPair = (dir, a, rel, b) => {
@@ -209,12 +223,26 @@ export const applyAction = (dir, a, ctx = {}) => {
   try {
     switch (a.action) {
       case "create_element": {
+        const dup = existing(actors, "element", a.name);
+        if (dup) {
+          const changed = [];
+          if (a.role && ROLES.some((r) => r.id === a.role) && dup.role !== a.role) { const was = dup.role; dup.role = a.role; changed.push(() => { const y = loadFile(dir + dup.file); if (y) { y.role = was; save(dir, y); } }); }
+          if (a.description && !String(dup.content || "").replace(/<[^>]+>/g, "").trim()) { const was = dup.content; dup.content = toHtml(a.description); changed.push(() => { const y = loadFile(dir + dup.file); if (y) { y.content = was; save(dir, y); } }); }
+          if (changed.length) { save(dir, dup); undos.push(...changed); }
+          return done(`${dup.icon} ${dup.name} already existed — reused it${changed.length ? " and filled in what was missing" : ""}`);
+        }
         const role = ROLES.some((r) => r.id === a.role) ? a.role : roleFromKind(a.role);
         const el = mkActor("element", String(a.name).trim(), ROLE_ICON[role] || "🔹", { content: a.description ? toHtml(a.description) : " ", involved_in: [], role, kind: role === "character" ? "person" : role === "location" ? "place" : "thing" });
         save(dir, el); undos.push(binLater(dir, el));
         return done(`Created ${el.icon} ${el.name}`);
       }
       case "create_fact": {
+        const dupF = existing(actors, "fact", a.statement);
+        if (dupF) {
+          (a.revealed_by || []).forEach((n) => { const sc = find(actors, n, ["snippet"]); if (sc && !(sc.reveals || []).includes(dupF.file)) undos.push(linkPair(dir, sc, REL.reveals, loadFile(dir + dupF.file))); });
+          (a.involves || []).forEach((n) => { const e = find(actors, n, ["element"]); if (e && !(dupF.involves || []).includes(e.file)) undos.push(linkPair(dir, loadFile(dir + dupF.file), REL.involves, e)); });
+          return done(`💡 ${dupF.name} already existed — reused it`);
+        }
         const f = mkActor("fact", String(a.statement).trim(), "💡", { content: [], causes: [], because: [], involves: [], revealed_by: [] });
         save(dir, f); undos.push(binLater(dir, f));
         (a.involves || []).forEach((n) => { const e = find(actors, n, ["element"]); if (e) undos.push(linkPair(dir, loadFile(dir + f.file), REL.involves, e)); });
@@ -223,6 +251,8 @@ export const applyAction = (dir, a, ctx = {}) => {
         return done(`Created 💡 ${f.name}`);
       }
       case "create_scene": {
+        const dupS = existing(actors, "snippet", a.name);
+        if (dupS) return done(`📜 ${dupS.name} already exists — left as it is`);
         const s = mkActor("snippet", String(a.name).trim(), "📜", { content: a.content ? toHtml(a.content) : "", reveals: [], sequenced_in: [] });
         save(dir, s); undos.push(binLater(dir, s));
         let t = a.thread ? find(actors, a.thread, ["thread"]) : null;
@@ -241,12 +271,22 @@ export const applyAction = (dir, a, ctx = {}) => {
         return done(`Created 📜 ${s.name}${t ? ` in ${t.name}` : ""}`);
       }
       case "create_thread": {
+        const dupT = existing(actors, "thread", a.name);
+        if (dupT) {
+          (a.scenes || []).forEach((n) => { const sc = find(actors, n, ["snippet"]); if (sc && !dupT.sequences.includes(sc.file)) undos.push(linkPair(dir, loadFile(dir + dupT.file), REL.sequences, loadFile(dir + sc.file))); });
+          return done(`🧵 ${dupT.name} already existed — reused it`);
+        }
         const t = mkActor("thread", String(a.name).trim(), "🧵", { content: "", sequences: [] });
         save(dir, t); undos.push(binLater(dir, t));
         (a.scenes || []).forEach((n) => { const s = find(actors, n, ["snippet"]); if (s) undos.push(linkPair(dir, loadFile(dir + t.file), REL.sequences, loadFile(dir + s.file))); });
         return done(`Created 🧵 ${t.name}`);
       }
       case "create_web": {
+        const dupW = existing(actors, "web", a.name);
+        if (dupW) {
+          (a.items || []).forEach((n) => { const x = find(actors, n); if (x) undos.push(captureIn(dir, loadFile(dir + dupW.file), loadFile(dir + x.file))); });
+          return done(`🕸️ ${dupW.name} already existed — reused it`);
+        }
         const w = mkActor("web", String(a.name).trim(), "🕸️", { captures: [], expands: ["reveals", "because", "involves", "then"] });
         save(dir, w); undos.push(binLater(dir, w));
         (a.items || []).forEach((n) => { const x = find(actors, n); if (x) undos.push(captureIn(dir, loadFile(dir + w.file), loadFile(dir + x.file))); });
@@ -338,6 +378,59 @@ export const applyAction = (dir, a, ctx = {}) => {
         const x = need(a.name);
         undos.push(toRubbish(dir, x));
         return done(`Removed ${x.name} (it's in the rubbish)`);
+      }
+      case "merge_elements": {
+        const keep = need(a.keep, ["element"], "an element"), gone = need(a.remove, ["element"], "an element");
+        if (keep.file === gone.file) throw new Error("Those are the same element.");
+        const touched = [];
+        actors.forEach((x) => {
+          let changed = false;
+          const swap = (arr) => { if (!Array.isArray(arr) || !arr.includes(gone.file)) return arr; changed = true; const out = arr.filter((f) => f !== gone.file); if (!out.includes(keep.file)) out.push(keep.file); return out; };
+          if (x.type === "fact") x.involves = swap(x.involves);
+          if (x.type === "web" && Array.isArray(x.captures) && x.captures.some((c) => c.file === gone.file)) { changed = true; const hasKeep = x.captures.some((c) => c.file === keep.file); x.captures = x.captures.filter((c) => c.file !== gone.file).concat(hasKeep ? [] : [{ file: keep.file, x: 300, y: 300 }]); }
+          if (changed) { const before = loadFile(dir + x.file); save(dir, x); touched.push(() => save(dir, before)); }
+        });
+        const k2 = loadFile(dir + keep.file);
+        const kBefore = loadFile(dir + keep.file);
+        k2.involved_in = [...new Set([...(k2.involved_in || []), ...(gone.involved_in || [])])];
+        k2.captured_in = [...new Set([...(k2.captured_in || []), ...(gone.captured_in || [])])];
+        if (!String(k2.content || "").replace(/<[^>]+>/g, "").trim() && gone.content) k2.content = gone.content;
+        save(dir, k2);
+        const maps = loadMaps(dir).maps;
+        maps.forEach((m) => { if (m.pins.some((p) => p.element === gone.file)) { const before = JSON.parse(JSON.stringify(m)); updateMap(dir, { ...m, pins: m.pins.map((p) => (p.element === gone.file ? { ...p, element: keep.file } : p)) }); touched.push(() => updateMap(dir, before)); } });
+        const back = toRubbish(dir, gone);
+        undos.push(() => { back(); touched.reverse().forEach((u) => u()); save(dir, kBefore); });
+        return done(`Merged ${gone.name} into ${keep.name}`);
+      }
+      case "create_map": {
+        const have = loadMaps(dir).maps.find((m) => norm(m.name) === norm(a.name));
+        const m = have || newMap(dir, String(a.name).trim());
+        const pins = [...m.pins];
+        (a.pins || []).forEach((n, i) => { const e = find(actors, n, ["element"]); if (e && !pins.some((p) => p.element === e.file)) pins.push(newPin(300 + (pins.length % 6) * 220, 300 + Math.floor(pins.length / 6) * 180, { element: e.file })); });
+        updateMap(dir, { ...m, unit: a.unit || m.unit, pins });
+        const mid = m.id;
+        undos.push(() => { if (have) updateMap(dir, have); else deleteMap(dir, mid); });
+        return done(`${have ? "Updated" : "Created"} map “${m.name}”${pins.length > m.pins.length ? ` with ${pins.length - m.pins.length} pin${pins.length - m.pins.length === 1 ? "" : "s"} to drag into place` : ""}`);
+      }
+      case "pin": {
+        const m = loadMaps(dir).maps.find((x) => norm(x.name) === norm(a.map) || norm(x.name).includes(norm(a.map)));
+        if (!m) throw new Error(`No map called “${a.map}”`);
+        const e = need(a.location, ["element"], "a location");
+        if (!isLocation(e)) { const was = e.role; e.role = "location"; save(dir, e); undos.push(() => { const y = loadFile(dir + e.file); if (y) { y.role = was; save(dir, y); } }); }
+        if (m.pins.some((p) => p.element === e.file)) return done(`${e.name} is already pinned on ${m.name}`);
+        const before = JSON.parse(JSON.stringify(m));
+        updateMap(dir, { ...m, pins: [...m.pins, newPin(Number.isFinite(Number(a.x)) ? Number(a.x) : 300 + (m.pins.length % 6) * 220, Number.isFinite(Number(a.y)) ? Number(a.y) : 300 + Math.floor(m.pins.length / 6) * 180, { element: e.file })] });
+        undos.push(() => updateMap(dir, before));
+        return done(`Pinned ${e.name} on ${m.name}`);
+      }
+      case "create_timeline": {
+        const threads = (a.threads || []).map((n) => find(actors, n, ["thread"])).filter(Boolean).map((t) => t.file);
+        const have = loadTimelines(dir).timelines.find((t) => norm(t.name) === norm(a.name));
+        if (have) { const before = { ...have }; updateTimeline(dir, { ...have, threads: [...new Set([...have.threads, ...threads])] }); undos.push(() => updateTimeline(dir, before)); return done(`Updated timeline “${have.name}”`); }
+        const t = newTimeline(dir, String(a.name).trim(), threads.length ? threads : (actors.find((x) => x.type === "thread" && x.name === "Manuscript") ? [actors.find((x) => x.type === "thread" && x.name === "Manuscript").file] : []));
+        const tid = t.id;
+        undos.push(() => deleteTimeline(dir, tid));
+        return done(`Created timeline “${t.name}”`);
       }
       case "set_calendar": {
         const was = loadCalendar(dir);
