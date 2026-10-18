@@ -38,8 +38,8 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const ls = links.map((l) => ({ ...l, a: byId.get(l.source), b: byId.get(l.target) })).filter((l) => l.a && l.b && l.a !== l.b);
     ls.forEach((l) => { l.a.deg += 1; l.b.deg += 1; });
     s.nodes = list; s.links = ls; s.byId = byId; s.alpha = 1;
-    // fit once the canvas has a size (a couple of frames in)
-    s.fitAt = (s.frame || 0) + 2;
+    // keep the whole graph in view while it spreads out, until the writer takes over
+    s.autoFit = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, links]);
 
@@ -73,7 +73,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const step = () => {
       const s = sim.current;
       s.frame = (s.frame || 0) + 1;
-      if (s.fitAt != null && s.frame >= s.fitAt && c.clientWidth > 0) { fit(); s.fitAt = null; }
+      if (s.autoFit && c.clientWidth > 0 && s.frame % 6 === 0) { fit(); if (s.alpha < 0.12) s.autoFit = false; }
       const N = s.nodes;
       const n = N.length;
       if (n) {
@@ -195,6 +195,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
   };
   const onDown = (e) => {
     const s = sim.current;
+    s.autoFit = false;
     const p = toWorld(e);
     const d = nodeAt(p);
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -221,6 +222,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
   const onWheel = (e) => {
     e.preventDefault();
     const s = sim.current;
+    s.autoFit = false;
     const r = canvasRef.current.getBoundingClientRect();
     const cx = e.clientX - r.left, cy = e.clientY - r.top;
     const f = e.deltaY < 0 ? 1.12 : 1 / 1.12;
