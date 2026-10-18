@@ -117,10 +117,11 @@ const FlowPage = () => {
     let last = page.lastElementChild;
     const empties = [];
     while (last && !(last.textContent || "").replace(/[\s\u200b\u00a0]/g, "")) { empties.push(last); last = last.previousElementSibling; }
-    if (last && /^\s*(\*\s*){3,}\s*$/.test(last.textContent || "")) {
+    // only once Enter has been pressed after the stars (an empty paragraph follows)
+    if (last && empties.length && /^\s*(\*\s*){3,}\s*$/.test(last.textContent || "")) {
       last.remove();
       empties.forEach((e) => e.remove());
-      if (!page.childElementCount) page.innerHTML = "<p><br></p>";
+      if (!page.hasChildNodes()) page.innerHTML = "<p><br></p>";
       page.dispatchEvent(new Event("input", { bubbles: true }));
       setTimeout(() => { commitAll(); newScene(); }, 0);
     }
