@@ -1,4 +1,4 @@
-.flowPage { height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); }
+.flowPage { width: 100vw; box-sizing: border-box; height: 100vh; display: flex; flex-direction: column; background: var(--bg); color: var(--ink); }
 .storageBar + .flowPage { height: calc(100vh - 37px); }
 .flowPage__head { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--ink-muted); }
 .flowPage__home img { height: 26px; display: block; opacity: 0.85; }
