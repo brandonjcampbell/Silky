@@ -5,6 +5,7 @@ import { chat, complete, parseJson } from "./client";
 import { getConfig } from "./config";
 import { isCharacter } from "../role";
 import { ACTION_DOCS } from "./actions";
+import { activeCalendar, isCustom } from "../calendar";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -75,6 +76,10 @@ export const projectDigest = (project, actors) => {
   if (elements.length) lines.push("Principal elements: " + elements.slice(0, 25).map((e) => `${e.name}${plain(e.content).trim() ? " — " + plain(e.content).trim().slice(0, 100) : ""}`).join(" | "));
   if (elements.length > 25 && elements.length <= 400) lines.push("All element names: " + elements.map((e) => e.name).join("; "));
   if (threads.length) lines.push("All threads: " + threads.map((t) => t.name).join("; "));
+  const cal = activeCalendar();
+  lines.push(isCustom(cal)
+    ? `Calendar: the author's own — ${cal.months.length} months (${cal.months.map((m) => `${m.name} ${m.days}d`).join(", ")}), ${cal.hoursPerDay}-hour days, years from 0${cal.era ? `, era "${cal.era}"` : ""}. Write dates as year-month-day.`
+    : "Calendar: Gregorian. Write dates as YYYY-MM-DD.");
   if (actors.filter((a) => a.type === "web").length) lines.push("Webs: " + actors.filter((a) => a.type === "web").map((w) => w.name).join("; "));
   return lines.join("\n");
 };

@@ -8,6 +8,7 @@ import { EMPTY_WHEN } from "../time";
 import { loadMaps } from "../maps";
 import { loadTimelines } from "../timelines";
 import { loadTabs, saveTabs } from "../tabs";
+import { loadCalendar, saveCalendar, GREGORIAN, CUSTOM_DEFAULT, isCustom } from "../calendar";
 
 export const ACTION_DOCS = `When the author asks you to change the project — make, link, rename, split, merge, move, date or remove things — do it by ending your reply with one fenced block tagged silky-actions holding a JSON array of actions. Say in a sentence what you are doing; keep the block last. Refer to things by their names as the project knows them. Only act when asked, and never remove anything unless the author plainly asks.
 
@@ -29,6 +30,8 @@ Actions (fields in brackets are optional):
 - {"action":"remove","name":"…"}   (goes to the project's rubbish; only when asked)
 - {"action":"open","name":"…"}   (opens a thing in a tab and shows it; also "wiki", "preferences", "progress", "word count", "pacing", "style", "reader", "ai influence", a map's or timeline's name, or "write" for the blank page)
 - {"action":"close","name":"…"|"all"|"others"}   (closes that tab, every tab, or every tab but the current one)
+- {"action":"set_calendar","mode":"gregorian"}  or  {"action":"set_calendar","mode":"custom",["era":"AE"],["hoursPerDay":24],["months":[{"name":"Frostfall","days":40},…]]}   (the project's calendar; years start at 0; omit months to keep the current ones)
+- {"action":"rename_month","month":"old name"|3,"to":"new name",["days":31]}
 
 Example:
 I'll add him and tie him to the Hall.
@@ -149,6 +152,8 @@ export const describeAction = (dir, a) => {
     case "move_scene": return `Move ${nameOf(a.scene, ["snippet"])} in ${nameOf(a.thread, ["thread"])}${a.after ? ` to after ${nameOf(a.after, ["snippet"])}` : a.position != null ? ` to position ${a.position}` : " to the end"}`;
     case "remove": return `Remove ${nameOf(a.name)} (to the rubbish)`;
     case "open": { const h = hrefFor(dir, a.name); return h ? `Open ${h.label}` : `Open ${miss(a.name)}`; }
+    case "set_calendar": return a.mode === "gregorian" ? "Use the Gregorian calendar for this project" : `Use a custom calendar${a.era ? ` (era “${a.era}”)` : ""}${a.hoursPerDay ? `, ${a.hoursPerDay}-hour days` : ""}${Array.isArray(a.months) && a.months.length ? `, ${a.months.length} months: ${a.months.map((m) => `${m.name} (${m.days})`).join(", ")}` : ""}`;
+    case "rename_month": return `Rename month ${typeof a.month === "number" ? "#" + a.month : `“${a.month}”`} to “${a.to}”${a.days ? `, ${a.days} days` : ""}`;
     case "close": return norm(a.name) === "all" ? "Close every tab" : norm(a.name) === "others" ? "Close the other tabs" : `Close the tab for ${nameOf(a.name)}`;
     default: return `Unknown action “${a.action}”`;
   }
@@ -333,6 +338,29 @@ export const applyAction = (dir, a, ctx = {}) => {
         const x = need(a.name);
         undos.push(toRubbish(dir, x));
         return done(`Removed ${x.name} (it's in the rubbish)`);
+      }
+      case "set_calendar": {
+        const was = loadCalendar(dir);
+        let next;
+        if (a.mode === "gregorian") next = GREGORIAN;
+        else {
+          const base = isCustom(was) ? was : CUSTOM_DEFAULT;
+          const months = Array.isArray(a.months) && a.months.length ? a.months.map((m, i) => ({ name: String((m && m.name) || `Month ${i + 1}`), days: Math.max(1, Number((m && m.days) || 30)) })) : base.months;
+          next = { ...base, mode: "custom", era: a.era != null ? String(a.era) : base.era || "", hoursPerDay: a.hoursPerDay ? Math.max(1, Number(a.hoursPerDay)) : base.hoursPerDay, months };
+        }
+        saveCalendar(dir, next);
+        undos.push(() => saveCalendar(dir, was));
+        return done(next.mode === "gregorian" ? "Calendar is Gregorian again" : `Calendar set: ${next.months.length} months, ${next.months.reduce((n, m) => n + m.days, 0)}-day year${next.era ? `, era ${next.era}` : ""}`);
+      }
+      case "rename_month": {
+        const was = loadCalendar(dir);
+        if (!isCustom(was)) throw new Error("The project is on the Gregorian calendar; set a custom one first.");
+        const idx = typeof a.month === "number" ? a.month - 1 : was.months.findIndex((m) => norm(m.name) === norm(a.month) || norm(m.name).startsWith(norm(a.month)));
+        if (idx < 0 || idx >= was.months.length) throw new Error(`No month “${a.month}”`);
+        const months = was.months.map((m, i) => (i === idx ? { ...m, name: a.to ? String(a.to) : m.name, days: a.days ? Math.max(1, Number(a.days)) : m.days } : m));
+        saveCalendar(dir, { ...was, months });
+        undos.push(() => saveCalendar(dir, was));
+        return done(`Month ${idx + 1} is now ${months[idx].name} (${months[idx].days} days)`);
       }
       case "open": {
         const h = hrefFor(dir, a.name);
