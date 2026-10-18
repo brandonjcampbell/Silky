@@ -12,6 +12,7 @@ import Spinner from "../Spinner";
 import MapView from "../MapView";
 import TimelineView from "../TimelineView";
 import Preferences from "../Preferences";
+import { activateProjectCalendar } from "../../calendar";
 import FlowPage from "../FlowPage";
 import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
@@ -28,6 +29,7 @@ const Shell = () => {
   const doRefresh = (v) => setRefresh(v);
   const mobile = useMobile();
   const { state } = useContext(store);
+  useEffect(() => { activateProjectCalendar(state.dir); }, [state.dir]);
   // nothing open means the writing page, so there is always content — even on a phone
   const hasContent = true;
   // on a phone the list shows when nothing is open, and as a drawer otherwise

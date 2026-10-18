@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaRegClock } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { DURATION_UNITS, EMPTY_WHEN, hasWhen, whenSummary } from "../../time";
+import { activeCalendar, isCustom } from "../../calendar";
 import "./When.css";
 
 /** When a scene happens, and for how long. Absolute, or relative to the scene before it in a thread. */
@@ -24,7 +26,7 @@ const When = ({ element, onChange }) => {
           </div>
           {m === "abs" ? (
             <div className="when__row">
-              <label>Date <input type="text" value={w.date} placeholder="1897-05-03, 1897, 3 May 1897, -0400" onChange={(e) => { set("date", e.target.value); if (e.target.value) set("relValue", ""); }} /></label>
+              <label>Date <input type="text" value={w.date} placeholder={isCustom(activeCalendar()) ? `year-month-day, e.g. 12-3-7, or 7 ${activeCalendar().months[0].name} 12` : "1897-05-03, 1897, 3 May 1897, -0400"} onChange={(e) => { set("date", e.target.value); if (e.target.value) set("relValue", ""); }} /></label>
               <label>Time <input type="text" value={w.time} placeholder="21:30" onChange={(e) => set("time", e.target.value)} /></label>
             </div>
           ) : (
@@ -39,7 +41,7 @@ const When = ({ element, onChange }) => {
             <label>Unit <select value={w.durationUnit} onChange={(e) => set("durationUnit", e.target.value)}>{DURATION_UNITS.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}</select></label>
             <label className="when__note">Note <input type="text" value={w.note} placeholder="the night of the storm; three winters on…" onChange={(e) => set("note", e.target.value)} /></label>
           </div>
-          <p className="muted">Scenes with neither a date nor an offset are placed right after the one before them. A thread's Timeline draws all of this on one axis.</p>
+          <p className="muted">Scenes with neither a date nor an offset are placed right after the one before them. A thread's Timeline draws all of this on one axis. Dates read in {isCustom(activeCalendar()) ? `your calendar${activeCalendar().era ? ` (${activeCalendar().era})` : ""}` : "the Gregorian calendar"} — <Link to="/preferences">change the project's calendar</Link>.</p>
         </div>
       )}
     </section>

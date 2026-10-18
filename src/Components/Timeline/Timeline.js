@@ -1,14 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { placeScenes, fmtDate, fmtDuration, hasWhen } from "../../time";
+import { placeScenes, fmtDate, fmtDuration, hasWhen, unitMs, calendarYear } from "../../time";
 import "./Timeline.css";
 
-const DAY = 86400e3;
 const tickStep = (span) => {
-  const steps = [3600e3, 6 * 3600e3, DAY, 7 * DAY, 30.4375 * DAY, 91.3 * DAY, 365.25 * DAY, 10 * 365.25 * DAY, 100 * 365.25 * DAY];
+  const DAY = unitMs("days"), MONTH = unitMs("months"), YEAR = unitMs("years");
+  const steps = [3600e3, 6 * 3600e3, DAY, 7 * DAY, MONTH, 3 * MONTH, YEAR, 10 * YEAR, 100 * YEAR];
   return steps.find((s) => span / s <= 10) || steps[steps.length - 1];
 };
-const tickLabel = (ms, step) => (step < DAY ? fmtDate(ms, { time: true, year: false }) : step < 30 * DAY ? fmtDate(ms, { year: false }) : step < 365 * DAY ? fmtDate(ms).replace(/^\d+ /, "") : String(new Date(ms).getUTCFullYear()));
+const tickLabel = (ms, step) => {
+  const DAY = unitMs("days"), YEAR = unitMs("years");
+  return step < DAY ? fmtDate(ms, { time: true, year: false }) : step < 30 * DAY ? fmtDate(ms, { year: false }) : step < YEAR ? fmtDate(ms).replace(/^\d+ /, "") : String(calendarYear(ms));
+};
 const W = 1000, ROW = 22, LANE_PAD = 10, TOP = 30;
 
 /** Pack items into rows so nothing overlaps (x-extent plus an estimated label width). */
@@ -32,17 +35,19 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
   // the first lane (the manuscript, usually) places scenes; other lanes reuse
   // those times for scenes without a date of their own, so a scene sits at
   // the same moment in every lane
-  const placedLanes = useMemo(() => {
+  const placedLanes = (() => { // recomputed every render: cheap, and the calendar can change underneath
     const known = new Map();
     return lanes.map((l, i) => {
       const placed = placeScenes(l.scenes, i ? known : null);
       if (!i) placed.forEach((p) => { if (!p.unplaced) known.set(p.scene.file, p); });
       return { ...l, placed };
     });
-  }, [lanes]);
+  })();
   const on = placedLanes.flatMap((l) => l.placed.filter((p) => !p.unplaced));
   const off = placedLanes.flatMap((l) => l.placed.filter((p) => p.unplaced).map((p) => ({ ...p, lane: l })));
   const [hover, setHover] = useState(null);
+  const [, setCalTick] = useState(0);
+  useEffect(() => { const on = () => setCalTick((t) => t + 1); window.addEventListener("silky-calendar", on); return () => window.removeEventListener("silky-calendar", on); }, []);
   const total = lanes.reduce((n, l) => n + l.scenes.length, 0);
   if (!total) return <p className="timeline__empty">No scenes here yet.</p>;
   if (!on.length) return <p className="timeline__empty">Nothing is placed in time yet. Open a scene and set <b>When does this happen?</b> — one date anchors a thread; the rest can follow by offsets.</p>;

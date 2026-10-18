@@ -4,6 +4,8 @@
    time what the map is for space. Dates are plain calendar dates; years may
    be anything a Date can hold, so historical and far-future stories work. */
 
+import { activeCalendar, isCustom, dayMs, monthDays, yearDays, parseCustom, fmtCustom, yearOf } from "./calendar";
+
 export const DURATION_UNITS = [
   { id: "minutes", name: "minutes", ms: 60e3 },
   { id: "hours", name: "hours", ms: 3600e3 },
@@ -12,13 +14,24 @@ export const DURATION_UNITS = [
   { id: "months", name: "months", ms: 30.4375 * 86400e3 },
   { id: "years", name: "years", ms: 365.25 * 86400e3 },
 ];
-export const unitMs = (id) => (DURATION_UNITS.find((u) => u.id === id) || DURATION_UNITS[2]).ms;
+/** A unit's length in the project's calendar (days, months and years follow it). */
+export const unitMs = (id) => {
+  const cal = activeCalendar();
+  if (isCustom(cal)) {
+    if (id === "days") return dayMs(cal);
+    if (id === "weeks") return 7 * dayMs(cal);
+    if (id === "months") return monthDays(cal) * dayMs(cal);
+    if (id === "years") return yearDays(cal) * dayMs(cal);
+  }
+  return (DURATION_UNITS.find((u) => u.id === id) || DURATION_UNITS[2]).ms;
+};
 export const toMs = (value, unit) => (Number.isFinite(Number(value)) ? Number(value) * unitMs(unit) : 0);
 
 /** "1897", "1897-05", "1897-05-03", "1897-05-03 21:30", "3 May 1897", "-0400-01-01" (400 BC) → ms, or null. */
 export const parseDate = (s, time) => {
   const str = String(s || "").trim();
   if (!str) return null;
+  if (isCustom(activeCalendar())) return parseCustom(str, time);
   let m = str.match(/^(-?\d{1,6})(?:-(\d{1,2}))?(?:-(\d{1,2}))?(?:[ T](\d{1,2}):(\d{2}))?$/);
   let d;
   if (m) {
@@ -45,6 +58,7 @@ const pad = (n) => String(n).padStart(2, "0");
 /** A readable date at the precision the span calls for. */
 export const fmtDate = (ms, { time = false, year = true } = {}) => {
   if (!Number.isFinite(ms)) return "";
+  if (isCustom(activeCalendar())) return fmtCustom(ms, { time, year });
   const d = new Date(ms);
   const y = d.getUTCFullYear();
   const yStr = y < 0 ? `${-y} BC` : String(y);
@@ -54,7 +68,8 @@ export const fmtDate = (ms, { time = false, year = true } = {}) => {
 export const fmtDuration = (ms) => {
   if (!ms) return "";
   const abs = Math.abs(ms);
-  const pick = [...DURATION_UNITS].reverse().find((u) => abs >= u.ms * 0.95) || DURATION_UNITS[0];
+  const units = DURATION_UNITS.map((u) => ({ ...u, ms: unitMs(u.id) }));
+  const pick = [...units].reverse().find((u) => abs >= u.ms * 0.95) || units[0];
   const v = abs / pick.ms;
   const n = v >= 10 ? Math.round(v) : Math.round(v * 10) / 10;
   return `${ms < 0 ? "-" : ""}${n} ${n === 1 ? pick.name.replace(/s$/, "") : pick.name}`;
@@ -99,3 +114,6 @@ export const placeScenes = (scenes, known = null) => {
   });
   return out;
 };
+
+/** The calendar year of a moment, in the project's calendar. */
+export const calendarYear = (ms) => (isCustom(activeCalendar()) ? yearOf(ms) : new Date(ms).getUTCFullYear());

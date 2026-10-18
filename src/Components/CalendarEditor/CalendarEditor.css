@@ -1,0 +1,19 @@
+.calEd { display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
+.calEd__modes { display: flex; gap: 8px; flex-wrap: wrap; }
+.calEd__modes label { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.calEd__modes label.is-on { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
+.calEd__modes input { accent-color: var(--accent); margin: 0; }
+.calEd__row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.calEd__row label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--ink-muted); }
+.calEd input[type="text"], .calEd input[type="number"] { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 8px; }
+.calEd input[type="number"] { width: 80px; }
+.calEd__months { border-collapse: collapse; max-width: 520px; }
+.calEd__months th, .calEd__months td { text-align: left; padding: 3px 6px; border-bottom: 1px solid var(--line); font-size: 12px; }
+.calEd__months th { color: var(--ink-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
+.calEd__months td:first-child { color: var(--ink-muted); width: 24px; }
+.calEd__months input[type="text"] { width: 100%; box-sizing: border-box; }
+.calEd__months button { font: inherit; color: var(--ink-muted); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); width: 24px; height: 24px; cursor: pointer; }
+.calEd__months button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+.calEd__add { align-self: flex-start; font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.calEd .muted { color: var(--ink-muted); font-size: 12px; line-height: 1.5; margin: 0; }
+.calEd code { font-size: 12px; background: var(--bg-raised); padding: 1px 4px; border-radius: 3px; }
