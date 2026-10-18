@@ -20,7 +20,7 @@ const TOOLS = [
 const MapView = () => {
   const { state } = useContext(store);
   const dir = state.dir;
-  const { id } = useParams();
+  const { mapId: id } = useParams();
   const navigate = useNavigate();
   const [map, setMap] = useState(() => mapById(dir, id));
   const [tool, setTool] = useState("select");
