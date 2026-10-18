@@ -13,7 +13,7 @@ const TOOLS = [
   { id: "pin", name: "Pin", icon: FaMapPin, hint: "Click to drop a pin, then pick which location it is." },
   { id: "line", name: "Route", icon: FaRoute, hint: "Click to add points; double-click or Enter to finish; Esc to cancel. The route's length appears beside it." },
   { id: "scale", name: "Set scale", icon: FaRulerCombined, hint: "Click two points you know the distance between, then say how far apart they are. Every other distance follows." },
-  { id: "measure", name: "Measure", icon: FaRulerHorizontal, hint: "Click two points to read the distance between them." },
+  { id: "measure", name: "Measure", icon: FaRulerHorizontal, hint: "Click two points to read the distance between them. Each reading is kept in the list on the right." },
 ];
 
 /** A map of the story's places: image or blank sheet, scale, pins, routes, distances. */
@@ -63,7 +63,7 @@ const MapView = () => {
 
   /* ── pointer ── */
   const onDown = (e) => {
-    if (e.button === 1 || (e.button === 0 && tool === "select" && !e.target.closest("[data-pin], [data-line]"))) {
+    if (e.button === 1 || (e.button === 0 && tool === "select" && !e.target.closest("[data-pin], [data-line], [data-reading]"))) {
       dragRef.current = { kind: "pan", sx: e.clientX, sy: e.clientY, vx: view.x, vy: view.y, moved: false };
       e.currentTarget.setPointerCapture(e.pointerId);
       return;
@@ -114,7 +114,16 @@ const MapView = () => {
     } else if (tool === "scale" || tool === "measure") {
       if (!draft || draft.kind !== tool) setDraft({ kind: tool, a: m });
       else if (!draft.b) {
-        if (tool === "measure") setDraft({ ...draft, b: m });
+        if (tool === "measure") {
+          // keep the reading; the distance is recomputed from the scale whenever it's shown
+          const r = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5), a: draft.a, b: m, name: "", at: Date.now() };
+          const near = (pt) => { const p = map.pins.filter((x) => x.element || x.label).map((x) => ({ x, d: dist(x, pt) })).sort((u, v) => u.d - v.d)[0]; return p && p.d * view.z < 18 ? pinName(p.x) : null; };
+          const from = near(draft.a), to = near(m);
+          if (from && to) r.name = `${from} → ${to}`;
+          save({ ...map, readings: [...(map.readings || []), r] });
+          setSel({ kind: "reading", id: r.id });
+          setDraft(null);
+        }
         else {
           const cur = map.scale ? map.scale.length : "";
           const ans = window.prompt(`How far apart are these two points, in ${map.unit}?`, cur);
@@ -124,7 +133,7 @@ const MapView = () => {
           setTool("select");
         }
       } else setDraft({ kind: tool, a: m });
-    } else if (tool === "select" && !e.target.closest("[data-pin], [data-line]")) {
+    } else if (tool === "select" && !e.target.closest("[data-pin], [data-line], [data-reading]")) {
       setSel(null);
     }
   };
@@ -154,6 +163,7 @@ const MapView = () => {
   const removeSel = () => {
     if (!sel) return;
     if (sel.kind === "pin") save({ ...map, pins: map.pins.filter((p) => p.id !== sel.id) });
+    else if (sel.kind === "reading") save({ ...map, readings: (map.readings || []).filter((r) => r.id !== sel.id) });
     else save({ ...map, lines: map.lines.filter((l) => l.id !== sel.id) });
     setSel(null);
   };
@@ -175,6 +185,8 @@ const MapView = () => {
 
   const selPin = sel && sel.kind === "pin" ? map.pins.find((p) => p.id === sel.id) : null;
   const selLine = sel && sel.kind === "line" ? map.lines.find((l) => l.id === sel.id) : null;
+  const readings = map.readings || [];
+  const selReading = sel && sel.kind === "reading" ? readings.find((r) => r.id === sel.id) : null;
   const pinName = (p) => (p.element && byFile.get(p.element) ? `${byFile.get(p.element).icon || ""} ${byFile.get(p.element).name}`.trim() : p.label || "Pin");
   const measurePx = draft && draft.kind === "measure" ? dist(draft.a, draft.b || cursor || draft.a) : null;
   const scalePx = draft && draft.kind === "scale" && cursor ? dist(draft.a, draft.b || cursor) : null;
@@ -245,6 +257,16 @@ const MapView = () => {
                 <text x={(map.scale.a.x + map.scale.b.x) / 2} y={(map.scale.a.y + map.scale.b.y) / 2 - px(8)} fontSize={px(11)} className="mapLabel">{map.scale.length} {map.unit}</text>
               </g>
             )}
+            {readings.map((r) => {
+              const on = selReading && selReading.id === r.id;
+              return (
+                <g key={r.id} data-reading={r.id} className={"mapReading" + (on ? " is-selected" : "")} onClick={() => tool === "select" && setSel({ kind: "reading", id: r.id })}>
+                  <line x1={r.a.x} y1={r.a.y} x2={r.b.x} y2={r.b.y} strokeWidth={px(on ? 2 : 1)} />
+                  <line x1={r.a.x} y1={r.a.y} x2={r.b.x} y2={r.b.y} strokeWidth={px(12)} className="mapReading__hit" />
+                  {on && <text x={(r.a.x + r.b.x) / 2} y={(r.a.y + r.b.y) / 2 - px(8)} fontSize={px(12)} className="mapLabel mapLabel--big">{r.name ? r.name + " · " : ""}{fmtDist(map, dist(r.a, r.b))}</text>}
+                </g>
+              );
+            })}
             {draft && (draft.kind === "scale" || draft.kind === "measure") && cursor && (
               <g className={"mapMeasure is-" + draft.kind}>
                 <line x1={draft.a.x} y1={draft.a.y} x2={(draft.b || cursor).x} y2={(draft.b || cursor).y} strokeWidth={px(2)} />
@@ -311,6 +333,15 @@ const MapView = () => {
             </div>
           )}
 
+          {selReading && (
+            <div className="mapPanel">
+              <h5>Reading</h5>
+              <input placeholder="Name this reading" value={selReading.name} onChange={(e) => save({ ...map, readings: readings.map((x) => (x.id === selReading.id ? { ...x, name: e.target.value } : x)) })} />
+              <p className="mapPanel__title">{fmtDist(map, dist(selReading.a, selReading.b))}<small className="muted">{new Date(selReading.at).toLocaleDateString()}</small></p>
+              <div className="mapPanel__row"><button type="button" onClick={removeSel}><FaTrash /> Remove</button></div>
+            </div>
+          )}
+
           <h5>Places</h5>
           <SortRoles onDone={() => setTick((t) => t + 1)} />
           {locations.length === 0 && <p className="muted">No locations yet. On an element's page, mark it as a Location and it will appear here.</p>}
@@ -334,6 +365,22 @@ const MapView = () => {
               <ul className="mapList">
                 {map.lines.map((l) => <li key={l.id}><span>{l.name || "Unnamed route"}</span><b>{fmtDist(map, pathLength(l.points))}</b></li>)}
               </ul>
+            </>
+          )}
+
+          {readings.length > 0 && (
+            <>
+              <h5>Readings <small className="muted">({readings.length})</small></h5>
+              <p className="muted">Every measurement you've taken. They follow the scale, so re-setting it updates them all.</p>
+              <ul className="mapList mapList--readings">
+                {readings.slice().reverse().map((r) => (
+                  <li key={r.id} className={selReading && selReading.id === r.id ? "is-on" : ""}>
+                    <button type="button" className="mapList__pick" onClick={() => { setSel({ kind: "reading", id: r.id }); setView((v) => { const rc = svgRef.current.getBoundingClientRect(); return { ...v, x: rc.width / 2 - ((r.a.x + r.b.x) / 2) * v.z, y: rc.height / 2 - ((r.a.y + r.b.y) / 2) * v.z }; }); }}>{r.name || "Unnamed reading"}</button>
+                    <b>{fmtDist(map, dist(r.a, r.b))}</b>
+                  </li>
+                ))}
+              </ul>
+              <div className="mapPanel__row"><button type="button" onClick={() => { if (window.confirm("Clear every reading on this map?")) save({ ...map, readings: [] }); }}>Clear readings</button></div>
             </>
           )}
 

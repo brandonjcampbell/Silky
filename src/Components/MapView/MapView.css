@@ -59,3 +59,10 @@
   .mapView__side { width: auto; border-left: 0; border-top: 1px solid var(--line); max-height: 45vh; }
   .mapView__hint { display: none; }
 }
+.mapReading line { stroke: var(--ink-muted); stroke-dasharray: 3 5; opacity: 0.8; }
+.mapReading .mapReading__hit { stroke: transparent; opacity: 1; cursor: pointer; stroke-dasharray: none; }
+.mapReading.is-selected line:not(.mapReading__hit) { stroke: var(--ink); opacity: 1; }
+.mapList--readings .mapList__pick { border: 0; padding: 0; color: var(--ink); background: none; text-align: left; font-size: 13px; }
+.mapList--readings .mapList__pick:hover { color: var(--accent); }
+.mapList--readings li.is-on .mapList__pick { color: var(--accent); }
+.mapPanel__title small { font-weight: 400; }
