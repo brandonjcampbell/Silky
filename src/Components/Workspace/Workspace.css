@@ -172,3 +172,15 @@
 .threadModes button { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: var(--ink-muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
 .threadModes button.is-on { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
 .threadTimeline { padding: 8px 0 24px; max-width: 1000px; }
+
+/* relationship sections look like the impact card: one bordered block, rows with hairlines */
+.workspace > .relCard, .workspace .relCard { margin: 10px 24px 8px; max-width: var(--page-width, 72ch); padding: 0 12px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-raised); font-size: 13px; }
+.relCard .relCard__head { display: flex; align-items: center; gap: 8px; margin: 0; padding: 8px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.relCard__count { margin-left: auto; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-muted); }
+.relCard .editor__help { margin: 0 0 6px; }
+.relCard .snippets { margin-left: 0; }
+.relCard .listItem { border-top: 1px solid var(--line); }
+.relCard .listItem:first-child { border-top: 0; }
+.relCard .row { padding: 4px 0; }
+.relCard .MuiStack-root { margin-top: 8px; width: 100% !important; max-width: 360px; }
+.webView__aside .relCard, .threadView__aside .relCard { margin: 10px 0 8px; }

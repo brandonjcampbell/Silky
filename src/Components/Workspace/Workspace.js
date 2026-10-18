@@ -115,9 +115,10 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   ) => {
     if (element[relationship]) {
       const kindName = { element: "an element", fact: "a fact", snippet: "a scene", thread: "a thread" }[elementType] || "an item";
+      const count = element[relationship].length;
       return (
-        <div className="editor">
-          <h4>{label}</h4>
+        <div className="editor relCard">
+          <h4 className="relCard__head"><span>{label}</span><span className="relCard__count">{count ? `${count} ${kindName.replace(/^an? /, "")}${count === 1 ? "" : "s"}` : "none yet"}</span></h4>
           {help && <p className="editor__help">{help}</p>}
           <DraggableList
             list={element[relationship].map((x) => loadUp(x))}

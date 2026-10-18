@@ -21,7 +21,26 @@ const Impact = ({ element, onChange }) => {
   const [open, setOpen] = useState(false);
   const [tick, setTick] = useState(0);
   const actors = useMemo(() => loadDir(dir).filter((f) => f.includes(".element.")).map((f) => loadFile(dir + f)).filter(Boolean), [dir, element.file, element.updated, tick]); // eslint-disable-line react-hooks/exhaustive-deps
-  const r = useMemo(() => impactOf(element, actors, dir), [element, actors, dir]);
+  const full = useMemo(() => impactOf(element, actors, dir), [element, actors, dir]);
+  // the relationship cards on the page already list direct links; keep only
+  // what ripples outward from them
+  const r = useMemo(() => {
+    const direct = {
+      element: { facts: true, webs: true },
+      fact: { elements: true, webs: true, scenesHow: "states this" },
+      snippet: { threads: true, webs: true, factsHow: "stated here" },
+      thread: { scenes: true, webs: true },
+    }[element.type] || {};
+    return {
+      ...full,
+      facts: direct.facts ? [] : full.facts.filter((x) => x.how !== direct.factsHow),
+      scenes: direct.scenes ? [] : full.scenes.filter((x) => x.how !== direct.scenesHow),
+      elements: direct.elements ? [] : full.elements,
+      threads: direct.threads ? [] : full.threads,
+      webs: direct.webs ? [] : full.webs,
+    };
+  }, [full, element.type]);
+  r.total = r.scenes.length + r.facts.length + r.elements.length + r.threads.length + r.webs.length;
 
   // a rename we can offer to carry into the scenes
   const versions = versionsOf(dir, element.file);
@@ -60,7 +79,7 @@ const Impact = ({ element, onChange }) => {
   return (
     <section className={"impact" + (open ? " is-open" : "")}>
       <button type="button" className="impact__head" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
-        <FaProjectDiagram /> <span>Impact</span>
+        <FaProjectDiagram /> <span>Impact</span> <span className="impact__sub">what rests on this</span>
         <span className="impact__summary">
           {r.scenes.length ? `${r.scenes.length} scene${r.scenes.length === 1 ? "" : "s"}` : ""}{r.facts.length ? ` · ${r.facts.length} fact${r.facts.length === 1 ? "" : "s"}` : ""}{r.threads.length ? ` · ${r.threads.length} thread${r.threads.length === 1 ? "" : "s"}` : ""}{r.webs.length ? ` · ${r.webs.length} web${r.webs.length === 1 ? "" : "s"}` : ""}
           {(r.stale.length || r.derived.length) ? <b className="impact__flag"> · {r.stale.length + r.derived.length} to re-check</b> : null}
