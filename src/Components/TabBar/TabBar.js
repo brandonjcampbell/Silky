@@ -1,3 +1,4 @@
+import { FaScroll } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useMemo, useState } from "react";
@@ -9,7 +10,6 @@ import { store } from "../../NewContext";
 import { existsSync } from "../../storage";
 import { loadFile } from "../../utils/";
 import { loadTabs, saveTabs } from "../../tabs";
-import { TiScissors } from "react-icons/ti";
 import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { analysisById } from "../Analysis";
@@ -21,7 +21,7 @@ import "./TabBar.css";
 const TYPE_ICON = {
   element: <HiPuzzle />,
   fact: <GiLightBulb />,
-  snippet: <TiScissors />,
+  snippet: <FaScroll />,
   thread: <GiSewingString />,
   web: <GiSpiderWeb />,
 };

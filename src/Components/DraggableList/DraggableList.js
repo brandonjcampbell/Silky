@@ -1,3 +1,4 @@
+import { FaScroll } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import React, { useContext, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -7,7 +8,6 @@ import "./DraggableList.css";
 import saveFile from "../../utils/saveFile";
 import moveFile from "../../utils/moveFile";
 import { Link } from "react-router-dom";
-import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 
@@ -62,7 +62,7 @@ const DraggableList = ({
       return <GiLightBulb />;
     }
     if (element.type === "snippet") {
-      return <TiScissors />;
+      return <FaScroll />;
     }
     if (element.type === "thread") {
       return <GiSewingString />;

@@ -1,8 +1,8 @@
+import { FaScroll } from "react-icons/fa";
 import React, {useState} from "react";
 import _ from "lodash";
 import "./TitleBar.css";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { TiScissors } from "react-icons/ti";
 import { GiSpiderWeb, GiSewingString, GiLightBulb } from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import {emojis} from "./emojis.json"
@@ -35,7 +35,7 @@ const TitleBar = ({ element, save, remove }) => {
       return <GiLightBulb />;
     }
     if (element.type === "snippet") {
-      return <TiScissors />;
+      return <FaScroll />;
     }
     if (element.type === "thread") {
       return <GiSewingString />;

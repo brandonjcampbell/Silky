@@ -1,3 +1,4 @@
+import { FaScroll } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -6,7 +7,6 @@ import "./ActorList.css";
 
 import { loadDir, loadFile, saveFile, renameDir } from "../../utils/";
 import DraggableList from "../DraggableList";
-import { TiScissors } from "react-icons/ti";
 import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
@@ -109,7 +109,7 @@ const ActorList = ({ setRefresh }) => {
     const icon = emojis[random];
 
     let test = {
-      name: "New " + ofType,
+      name: "New " + ((kindOf(ofType) || {}).one || ofType),
       file: uuid + ".element.json",
       type: ofType,
       icon: icon,
@@ -183,7 +183,7 @@ const ActorList = ({ setRefresh }) => {
           ["", HiOutlineGlobeAlt, "Search & wiki — search everything in the project, or read it as an encyclopedia"],
           ["element", HiPuzzle, "Elements — " + kindOf("element").blurb],
           ["fact", GiLightBulb, "Facts — " + kindOf("fact").blurb],
-          ["snippet", TiScissors, "Scenes — " + kindOf("snippet").blurb],
+          ["snippet", FaScroll, "Scenes — " + kindOf("snippet").blurb],
           ["thread", GiSewingString, "Threads — " + kindOf("thread").blurb],
           ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
           ["map", FaTools, "Tools — maps, timelines, analyses, preferences"],
