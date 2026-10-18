@@ -7,7 +7,8 @@ import "./When.css";
 const When = ({ element, onChange }) => {
   const [open, setOpen] = useState(false);
   const w = { ...EMPTY_WHEN, ...(element.when || {}) };
-  const set = (k, v) => { element.when = { ...w, [k]: v }; onChange(element); };
+  // read the live value each time: two edits in one handler must not clobber each other
+  const set = (k, v) => { element.when = { ...EMPTY_WHEN, ...(element.when || {}), [k]: v }; onChange(element); };
   const mode = w.date ? "abs" : w.relValue !== "" ? "rel" : "abs";
   const [m, setMode] = useState(mode);
   return (
