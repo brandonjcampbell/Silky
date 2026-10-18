@@ -76,10 +76,12 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
       if (s.autoFit && c.clientWidth > 0 && s.frame % 6 === 0) { fit(); if (s.alpha < 0.12) s.autoFit = false; }
       const N = s.nodes;
       const n = N.length;
-      if (n) {
+      if (n && s.alpha > 0) {
         const big = n > 250;
-        // cool slowly toward a low floor so the graph breathes but doesn't jitter
-        s.alpha = Math.max(0.02, s.alpha * 0.985);
+        // cool to a stop: once the graph has settled it holds still until
+        // something (a drag, new data) reheats it
+        s.alpha *= 0.985;
+        if (s.alpha < 0.004) s.alpha = 0;
         const k = s.alpha;
         // repulsion (O(n²); fine for a web of a few hundred)
         const maxD2 = big ? 250 * 250 : 400 * 400;
@@ -90,7 +92,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
             let dx = b.x - a.x, dy = b.y - a.y;
             let d2 = dx * dx + dy * dy;
             if (d2 > maxD2) continue;
-            if (d2 < 1) { dx = (Math.random() - 0.5); dy = (Math.random() - 0.5); d2 = 1; }
+            if (d2 < 0.01) { dx = 0.1; dy = 0.1; d2 = 0.02; }
             const f = (big ? 900 : 1600) * k / d2;
             const fx = dx * f, fy = dy * f;
             a.vx -= fx; a.vy -= fy; b.vx += fx; b.vy += fy;
@@ -106,13 +108,20 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
           l.a.vx += dx * f * wa; l.a.vy += dy * f * wa;
           l.b.vx -= dx * f * wb; l.b.vy -= dy * f * wb;
         });
-        // gravity to the middle, damping, integrate
+        // gravity to the middle, heavy damping, integrate; tiny motion is dropped
+        let energy = 0;
         N.forEach((d) => {
           d.vx -= d.x * 0.004 * k; d.vy -= d.y * 0.004 * k;
-          d.vx *= 0.82; d.vy *= 0.82;
+          d.vx *= 0.6; d.vy *= 0.6;
           if (d.fx != null) { d.x = d.fx; d.y = d.fy; d.vx = 0; d.vy = 0; }
-          else { d.x += d.vx; d.y += d.vy; }
+          else {
+            if (Math.abs(d.vx) < 0.02) d.vx = 0;
+            if (Math.abs(d.vy) < 0.02) d.vy = 0;
+            d.x += d.vx; d.y += d.vy;
+            energy += d.vx * d.vx + d.vy * d.vy;
+          }
         });
+        if (energy < 0.01 * n && !s.nodes.some((d) => d.fx != null)) s.alpha = 0;
       }
       draw(ctx, c);
       raf = requestAnimationFrame(step);
@@ -170,8 +179,11 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
         if (nt || isHot || isHover || z > 1.4) {
           g.font = `${(isSel ? 13 : 12) / z}px sans-serif`; g.textAlign = "center"; g.textBaseline = "top";
           const label = (d.icon ? d.icon + " " : "") + (d.name.length > 44 && !isSel ? d.name.slice(0, 42).replace(/\s+\S*$/, "") + "…" : d.name);
+          // snap labels to whole device pixels so still text doesn't shimmer
+          g.save(); g.translate(Math.round(d.x * z) / z - d.x, Math.round((d.y + r + 3 / z) * z) / z - (d.y + r + 3 / z));
           g.lineWidth = 3 / z; g.strokeStyle = P.bg; g.strokeText(label, d.x, d.y + r + 3 / z);
           g.fillStyle = isSel ? P.ink : P.inkSoft; g.fillText(label, d.x, d.y + r + 3 / z);
+          g.restore();
         }
       });
       g.globalAlpha = 1;
@@ -199,7 +211,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const p = toWorld(e);
     const d = nodeAt(p);
     e.currentTarget.setPointerCapture(e.pointerId);
-    if (d) { s.drag = { node: d, moved: false, sx: e.clientX, sy: e.clientY }; d.fx = d.x; d.fy = d.y; s.alpha = Math.max(s.alpha, 0.6); }
+    if (d) { s.drag = { node: d, moved: false, sx: e.clientX, sy: e.clientY }; d.fx = d.x; d.fy = d.y; s.alpha = Math.max(s.alpha, 0.5); }
     else s.drag = { pan: true, sx: e.clientX, sy: e.clientY, vx: s.view.x, vy: s.view.y, moved: false };
   };
   const onMove = (e) => {
@@ -208,7 +220,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const dx = e.clientX - s.drag.sx, dy = e.clientY - s.drag.sy;
     if (Math.abs(dx) + Math.abs(dy) > 3) s.drag.moved = true;
     if (s.drag.pan) { s.view.x = s.drag.vx + dx; s.view.y = s.drag.vy + dy; }
-    else { const p = toWorld(e); s.drag.node.fx = p.x; s.drag.node.fy = p.y; s.alpha = Math.max(s.alpha, 0.4); }
+    else { const p = toWorld(e); s.drag.node.fx = p.x; s.drag.node.fy = p.y; s.alpha = Math.max(s.alpha, 0.3); }
   };
   const onUp = (e) => {
     const s = sim.current;
