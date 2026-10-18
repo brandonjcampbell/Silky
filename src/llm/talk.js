@@ -1,7 +1,7 @@
 /* Talking to Spinner about the narrative. Conversations are saved in the
    project (talk.json); Spinner is briefed with a digest of the project plus
    whatever the writer has brought into the conversation. */
-import { chat, complete } from "./client";
+import { chat, complete, parseJson } from "./client";
 import { getConfig } from "./config";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
@@ -179,7 +179,7 @@ export const castTalk = async ({ project, actors, conversation, nudge = false, s
     CAST_SYSTEM,
     `\n\nThe novel: ${project}.`,
     "\n\nCHARACTERS IN THE ROOM\n" + cast.map((c) => dossier(c, actors, conversation.asOf, order)).join("\n\n"),
-    `\n\nReturn JSON: { "lines": [{ "speaker": one of ${JSON.stringify(names)}, "text": "what they say, stage directions in parentheses" }] }. ${cast.length === 1 ? "Usually one line; two if the character pauses and goes on." : "One to four lines; let them react to one another, not only to the author."}`,
+    `\n\nReply as a script, one line per speech, each beginning with the speaker's exact name and a colon — speakers: ${names.join(", ")}. Stage directions go in parentheses. ${cast.length === 1 ? "Usually one line; two if the character pauses and goes on." : "One to four lines; let them react to one another, not only to the author."} No preamble, no commentary, nothing outside the script.`,
   ].join("");
   const history = conversation.messages.slice(-30).map((m) =>
     m.role === "user"
@@ -188,15 +188,51 @@ export const castTalk = async ({ project, actors, conversation, nudge = false, s
   );
   let user = nudge ? "(The author says nothing. Carry on among yourselves — react to what was just said.)" : history.pop().content;
   const cfg = getConfig() || {};
-  if (cfg.provider === "webllm") user = `(Stay in character as ${names.join(" and ")} from the novel "${project}", speaking only from your dossiers. Answer as JSON lines.)\n\n${user}`;
-  const out = await complete({ system, user, history, json: true, maxTokens: 900, signal });
-  const lines = (Array.isArray(out.lines) ? out.lines : [])
-    .map((l) => {
-      const el = cast.find((c) => c.name.toLowerCase() === String(l.speaker || "").toLowerCase()) || cast.find((c) => String(l.speaker || "").toLowerCase().includes(c.name.toLowerCase().split(" ")[0]));
-      return el && l.text ? { speaker: el.file, text: String(l.text).trim() } : null;
-    })
-    .filter(Boolean)
-    .slice(0, 4);
-  if (!lines.length) throw new Error("The characters had nothing to say. Try again or ask differently.");
+  if (cfg.provider === "webllm") user = `(Stay in character as ${names.join(" and ")} from the novel "${project}", speaking only from your dossiers. Reply as a script: each line "Name: what they say".)\n\n${user}`;
+  // Ask for text, parse ourselves: small models often return the lines in
+  // some other shape, or as a plain script, and all of those are usable.
+  const raw = await complete({ system, user, history, json: false, maxTokens: 900, signal });
+  const lines = parseCastReply(raw, cast);
+  if (!lines.length) throw new Error(`The characters had nothing to say. ${String(raw || "").trim() ? "Spinner replied: " + String(raw).trim().slice(0, 240) : "The model returned nothing."}`);
   return lines;
+};
+
+/** Match a speaker label to a cast member: exact, first name, any name word, or containment. */
+const whoIs = (label, cast) => {
+  const l = String(label || "").toLowerCase().replace(/[^\p{L}\p{N} ]/gu, " ").trim();
+  if (!l) return null;
+  return cast.find((c) => c.name.toLowerCase() === l)
+    || cast.find((c) => l.includes(c.name.toLowerCase()) || c.name.toLowerCase().includes(l))
+    || cast.find((c) => c.name.toLowerCase().split(/\s+/).some((w) => w.length > 2 && l.split(/\s+/).includes(w)))
+    || null;
+};
+
+/** JSON in any of the shapes we've seen, else a "Name: line" script, else one speaker. */
+export const parseCastReply = (raw, cast) => {
+  const out = [];
+  const add = (speaker, text) => {
+    const el = whoIs(speaker, cast);
+    const t = String(text || "").trim();
+    if (el && t) out.push({ speaker: el.file, text: t });
+  };
+  let data = null;
+  try { data = parseJson(String(raw)); } catch (e) { data = null; }
+  if (data && typeof data === "object") {
+    const arr = Array.isArray(data) ? data : Array.isArray(data.lines) ? data.lines : Array.isArray(data.script) ? data.script : Array.isArray(data.dialogue) ? data.dialogue : Array.isArray(data.messages) ? data.messages : null;
+    if (arr) arr.forEach((l) => { if (l && typeof l === "object") add(l.speaker || l.name || l.character || l.who, l.text || l.line || l.content || l.says); else if (typeof l === "string") { const m = l.match(/^\s*\**([^:*]{1,60})\**\s*:\s*(.+)$/s); if (m) add(m[1], m[2]); } });
+    else if (data.speaker || data.name) add(data.speaker || data.name, data.text || data.line || data.content);
+    else if (typeof data === "object") Object.entries(data).forEach(([k, v]) => { if (typeof v === "string") add(k, v); });
+  }
+  if (!out.length) {
+    // a plain script: lines like "Holmes: ..." or "**Dr. Watson** (quietly): ..."
+    const text = String(raw || "").replace(/```[a-z]*|```/g, "");
+    const re = /^[ \t]*\**([^\n:*]{1,60}?)\**[ \t]*(\([^)]*\))?[ \t]*:[ \t]*(.+)$/gm;
+    let m;
+    while ((m = re.exec(text))) add(m[1], (m[2] ? m[2] + " " : "") + m[3]);
+    if (!out.length && cast.length === 1 && text.trim()) add(cast[0].name, text.trim());
+  }
+  // merge consecutive lines by the same speaker, cap at 4
+  const merged = [];
+  out.forEach((l) => { const last = merged[merged.length - 1]; if (last && last.speaker === l.speaker) last.text += " " + l.text; else merged.push({ ...l }); });
+  return merged.slice(0, 4);
 };
