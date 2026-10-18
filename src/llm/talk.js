@@ -84,7 +84,8 @@ export const projectDigest = (project, actors) => {
   const dir = projectDir(project);
   try {
     const maps = loadMaps(dir).maps;
-    if (maps.length) lines.push("Maps (in Tools): " + maps.map((m) => `${m.name} (${m.pins.length} pins)`).join("; "));
+    const pinLabel = (p) => { const e = p.element && actors.find((a) => a.file === p.element); return e ? e.name : p.label || "pin"; };
+    if (maps.length) lines.push("Maps (in Tools; coordinates x,y from the top-left): " + maps.map((m) => `${m.name} — ${m.w}×${m.h}${m.scale ? `, scale set in ${m.unit}` : ", no scale"}; pins: ${m.pins.map((p) => `${pinLabel(p)} @${Math.round(p.x)},${Math.round(p.y)}`).join(", ") || "none"}${(m.lines || []).length ? `; drawn: ${m.lines.map((l) => `${l.closed ? (l.texture || "solid") + " region" : "route"}${l.name ? ` “${l.name}”` : ""}`).join(", ")}` : ""}`).join(" | "));
     const tls = loadTimelines(dir).timelines;
     if (tls.length) lines.push("Timelines (in Tools): " + tls.map((t) => t.name).join("; "));
   } catch (e) { /* no project dir */ }

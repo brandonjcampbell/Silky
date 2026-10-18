@@ -9,7 +9,7 @@ import { loadMaps } from "../maps";
 import { loadTimelines } from "../timelines";
 import { loadTabs, saveTabs } from "../tabs";
 import { loadCalendar, saveCalendar, GREGORIAN, CUSTOM_DEFAULT, isCustom } from "../calendar";
-import { newMap, updateMap, newPin, deleteMap } from "../maps";
+import { newMap, updateMap, newPin, deleteMap, newLine, newRegion, TEXTURES } from "../maps";
 import { newTimeline, updateTimeline, deleteTimeline } from "../timelines";
 import { isLocation } from "../role";
 
@@ -43,7 +43,10 @@ Actions (fields in brackets are optional):
 - {"action":"close","name":"…"|"all"|"others"}   (closes that tab, every tab, or every tab but the current one)
 - {"action":"merge_elements","keep":"name","remove":"name"}   (fold a duplicate into the one to keep: its facts, scenes, webs and maps move over; the duplicate goes to the rubbish)
 - {"action":"create_map","name":"…",["unit":"miles"],["pins":["location name",…]]}   (a blank map in Tools; pins land in a row to be dragged into place)
-- {"action":"pin","map":"map name","location":"element name",["x":500,"y":300]}
+- {"action":"pin","map":"map name","location":"element name",["x":500,"y":300]}   (map coordinates run 0…width, 0…height from the top-left; the digest gives each map's size and where its pins are)
+- {"action":"move_pin","map":"map name","location":"element name","x":500,"y":300}   (arrange the geography)
+- {"action":"draw_region","map":"map name","name":"…","texture":"water|grass|forest|rock|sand|marsh|snow|town|solid",["points":[{"x":..,"y":..},…]]|["around":["place name",…],["margin":120]]}   (a textured area: give the outline, or the places it encloses and it is drawn around their pins)
+- {"action":"draw_route","map":"map name","name":"…","through":["place name",…]|"points":[{"x":..,"y":..},…]}   (a road or journey from pin to pin; its length is read from the scale)
 - {"action":"create_timeline","name":"…",["threads":["thread name",…]]}
 - {"action":"set_calendar","mode":"gregorian"}  or  {"action":"set_calendar","mode":"custom",["era":"AE"],["hoursPerDay":24],["months":[{"name":"Frostfall","days":40},…]]}   (the project's calendar; years start at 0; omit months to keep the current ones)
 - {"action":"rename_month","month":"old name"|3,"to":"new name",["days":31]}
@@ -131,6 +134,28 @@ const find = (actors, name, types) => {
     || null;
 };
 const uid = (t) => `${t}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
+/** A rounded outline enclosing the given points with `margin` around them. */
+const blobAround = (pts, margin) => {
+  if (pts.length === 1) { const c = pts[0]; return Array.from({ length: 12 }, (_, i) => ({ x: c.x + Math.cos((i / 12) * 2 * Math.PI) * margin, y: c.y + Math.sin((i / 12) * 2 * Math.PI) * margin })); }
+  // convex hull (monotone chain), then each hull vertex pushed outward and corners rounded
+  const P = [...pts].sort((a, b) => a.x - b.x || a.y - b.y);
+  const cross = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  const lower = []; P.forEach((p) => { while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop(); lower.push(p); });
+  const upper = []; [...P].reverse().forEach((p) => { while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop(); upper.push(p); });
+  const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+  const cx = hull.reduce((n, p) => n + p.x, 0) / hull.length, cy = hull.reduce((n, p) => n + p.y, 0) / hull.length;
+  const out = [];
+  hull.forEach((p, i) => {
+    const q = hull[(i + 1) % hull.length];
+    [p, { x: (p.x * 2 + q.x) / 3, y: (p.y * 2 + q.y) / 3 }, { x: (p.x + q.x * 2) / 3, y: (p.y + q.y * 2) / 3 }].forEach((v, k) => {
+      const d = Math.hypot(v.x - cx, v.y - cy) || 1;
+      const m = k === 0 ? margin : margin * 0.8; // sides tuck in a little so it reads as a blob, not a box
+      out.push({ x: Math.round(v.x + ((v.x - cx) / d) * m), y: Math.round(v.y + ((v.y - cy) / d) * m) });
+    });
+  });
+  return out;
+};
 /** The first emoji (grapheme) in a string, so "🧑‍🌾 farmer" becomes 🧑‍🌾. */
 const firstGlyph = (s) => {
   const str = String(s || "").trim();
@@ -185,6 +210,9 @@ export const describeAction = (dir, a) => {
     case "merge_elements": return `Merge ${nameOf(a.remove)} into ${nameOf(a.keep)} (the first goes to the rubbish)`;
     case "create_map": return `Create map 🗺️ ${a.name}${a.unit ? ` (${a.unit})` : ""}${a.pins && a.pins.length ? ` with pins for ${a.pins.map((n) => nameOf(n, ["element"])).join(", ")}` : ""}`;
     case "pin": return `Pin ${nameOf(a.location, ["element"])} on map “${a.map}”`;
+    case "move_pin": return `Move ${nameOf(a.location, ["element"])} on map “${a.map}” to ${Math.round(a.x)}, ${Math.round(a.y)}`;
+    case "draw_region": return `Draw ${a.texture || "a"} region “${a.name || "unnamed"}” on map “${a.map}”${a.around && a.around.length ? ` around ${a.around.map((n) => nameOf(n, ["element"])).join(", ")}` : a.points ? ` (${a.points.length} points)` : ""}`;
+    case "draw_route": return `Draw route “${a.name || "unnamed"}” on map “${a.map}”${a.through && a.through.length ? ` through ${a.through.map((n) => nameOf(n, ["element"])).join(" → ")}` : a.points ? ` (${a.points.length} points)` : ""}`;
     case "create_timeline": return `Create timeline ${a.name}${a.threads && a.threads.length ? ` with ${a.threads.map((n) => nameOf(n, ["thread"])).join(", ")}` : ""}`;
     case "set_calendar": return a.mode === "gregorian" ? "Use the Gregorian calendar for this project" : `Use a custom calendar${a.era ? ` (era “${a.era}”)` : ""}${a.hoursPerDay ? `, ${a.hoursPerDay}-hour days` : ""}${Array.isArray(a.months) && a.months.length ? `, ${a.months.length} months: ${a.months.map((m) => `${m.name} (${m.days})`).join(", ")}` : ""}`;
     case "rename_month": return `Rename month ${typeof a.month === "number" ? "#" + a.month : `“${a.month}”`} to “${a.to}”${a.days ? `, ${a.days} days` : ""}`;
@@ -239,6 +267,7 @@ const toRubbish = (dir, x) => {
 export const applyAction = (dir, a, ctx = {}) => {
   const actors = actorsOf(dir);
   const need = (n, types, what) => { const x = find(actors, n, types); if (!x) throw new Error(`Can't find ${what || "that"}: “${n}”`); return x; };
+    const mapNamed = (name) => { const n = norm(name || ""); const maps = loadMaps(dir).maps; const m = maps.find((x) => norm(x.name) === n) || maps.find((x) => norm(x.name).includes(n)) || (maps.length === 1 ? maps[0] : null); if (!m) throw new Error(`No map called “${name}”`); return m; };
   const undos = [];
   const done = (message) => ({ ok: true, message, undo: () => { undos.reverse().forEach((u) => { try { u(); } catch (e) { /* */ } }); } });
   try {
@@ -459,8 +488,7 @@ export const applyAction = (dir, a, ctx = {}) => {
         return done(`${have ? "Updated" : "Created"} map “${m.name}”${pins.length > m.pins.length ? ` with ${pins.length - m.pins.length} pin${pins.length - m.pins.length === 1 ? "" : "s"} to drag into place` : ""}`);
       }
       case "pin": {
-        const m = loadMaps(dir).maps.find((x) => norm(x.name) === norm(a.map) || norm(x.name).includes(norm(a.map)));
-        if (!m) throw new Error(`No map called “${a.map}”`);
+        const m = mapNamed(a.map);
         const e = need(a.location, ["element"], "a location");
         if (!isLocation(e)) { const was = e.role; e.role = "location"; save(dir, e); undos.push(() => { const y = loadFile(dir + e.file); if (y) { y.role = was; save(dir, y); } }); }
         if (m.pins.some((p) => p.element === e.file)) return done(`${e.name} is already pinned on ${m.name}`);
@@ -468,6 +496,49 @@ export const applyAction = (dir, a, ctx = {}) => {
         updateMap(dir, { ...m, pins: [...m.pins, newPin(Number.isFinite(Number(a.x)) ? Number(a.x) : 300 + (m.pins.length % 6) * 220, Number.isFinite(Number(a.y)) ? Number(a.y) : 300 + Math.floor(m.pins.length / 6) * 180, { element: e.file })] });
         undos.push(() => updateMap(dir, before));
         return done(`Pinned ${e.name} on ${m.name}`);
+      }
+      case "move_pin": {
+        const m = mapNamed(a.map);
+        const e = need(a.location, ["element"], "a location");
+        const pin = m.pins.find((p) => p.element === e.file);
+        if (!pin) throw new Error(`${e.name} isn't pinned on ${m.name}`);
+        const x = Number(a.x), y = Number(a.y);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) throw new Error("Where to? Give x and y.");
+        const before = JSON.parse(JSON.stringify(m));
+        updateMap(dir, { ...m, pins: m.pins.map((p) => (p.id === pin.id ? { ...p, x: clamp(x, 0, m.w), y: clamp(y, 0, m.h) } : p)) });
+        undos.push(() => updateMap(dir, before));
+        return done(`Moved ${e.name} on ${m.name}`);
+      }
+      case "draw_region": {
+        const m = mapNamed(a.map);
+        let pts = Array.isArray(a.points) ? a.points.map((p) => ({ x: Number(p.x), y: Number(p.y) })).filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y)) : [];
+        if (pts.length < 3 && Array.isArray(a.around) && a.around.length) {
+          const anchors = a.around.map((n) => { const e = find(actors, n, ["element"]); return e && m.pins.find((p) => p.element === e.file); }).filter(Boolean);
+          if (!anchors.length) throw new Error("None of those places is pinned on the map yet — pin them first.");
+          pts = blobAround(anchors.map((p) => ({ x: p.x, y: p.y - 10 })), Number(a.margin) || Math.max(80, Math.min(m.w, m.h) * 0.07));
+        }
+        if (pts.length < 3) throw new Error("A region needs at least three points, or the places it goes around.");
+        const texture = TEXTURES.some((t) => t.id === a.texture) ? a.texture : "solid";
+        const r = newRegion(pts.map((p) => ({ x: clamp(p.x, 0, m.w), y: clamp(p.y, 0, m.h) })), { name: String(a.name || ""), texture });
+        const before = JSON.parse(JSON.stringify(m));
+        updateMap(dir, { ...m, lines: [...m.lines, r] });
+        undos.push(() => updateMap(dir, before));
+        return done(`Drew ${TEXTURES.find((t) => t.id === texture).name.toLowerCase()} region${r.name ? ` “${r.name}”` : ""} on ${m.name}`);
+      }
+      case "draw_route": {
+        const m = mapNamed(a.map);
+        let pts = Array.isArray(a.points) ? a.points.map((p) => ({ x: Number(p.x), y: Number(p.y) })).filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y)) : [];
+        if (pts.length < 2 && Array.isArray(a.through)) {
+          const missing = [];
+          pts = a.through.map((n) => { const e = find(actors, n, ["element"]); const p = e && m.pins.find((q) => q.element === e.file); if (!p) missing.push(n); return p && { x: p.x, y: p.y }; }).filter(Boolean);
+          if (missing.length) throw new Error(`Not pinned on the map: ${missing.join(", ")} — pin them first.`);
+        }
+        if (pts.length < 2) throw new Error("A route needs at least two places or points.");
+        const l = newLine(pts, { name: String(a.name || "") });
+        const before = JSON.parse(JSON.stringify(m));
+        updateMap(dir, { ...m, lines: [...m.lines, l] });
+        undos.push(() => updateMap(dir, before));
+        return done(`Drew route${l.name ? ` “${l.name}”` : ""} on ${m.name}`);
       }
       case "create_timeline": {
         const threads = (a.threads || []).map((n) => find(actors, n, ["thread"])).filter(Boolean).map((t) => t.file);
