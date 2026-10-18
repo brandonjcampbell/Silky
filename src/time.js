@@ -79,7 +79,7 @@ export const whenSummary = (s) => {
  * (flagged `inferred`) once anything before them is anchored.
  * @returns {{ scene, start, end, duration, anchored, inferred, unplaced }[]}
  */
-export const placeScenes = (scenes) => {
+export const placeScenes = (scenes, known = null) => {
   const out = [];
   let cursor = null; // end of the last placed scene
   scenes.forEach((s) => {
@@ -87,7 +87,9 @@ export const placeScenes = (scenes) => {
     const duration = toMs(w.durationValue, w.durationUnit);
     let start = null, anchored = false, inferred = false;
     const abs = w.date ? parseDate(w.date, w.time) : null;
+    const k = known && known.get ? known.get(s.file) : null;
     if (abs != null) { start = abs; anchored = true; }
+    else if (k && k.start != null) { start = k.start; inferred = k.inferred; } // placed by the primary thread
     else if (w.relValue !== "" && w.relValue != null && cursor != null) { start = cursor + toMs(w.relValue, w.relUnit); }
     else if (cursor != null) { start = cursor; inferred = true; }
     if (start == null) { out.push({ scene: s, start: null, end: null, duration, anchored: false, inferred: false, unplaced: true }); return; }

@@ -29,7 +29,17 @@ const packRows = (items, x) => {
  */
 const Timeline = ({ scenes, lanes: lanesProp, title }) => {
   const lanes = useMemo(() => (lanesProp && lanesProp.length ? lanesProp : [{ name: title || "Scenes", color: null, scenes: scenes || [] }]), [lanesProp, scenes, title]);
-  const placedLanes = useMemo(() => lanes.map((l) => ({ ...l, placed: placeScenes(l.scenes) })), [lanes]);
+  // the first lane (the manuscript, usually) places scenes; other lanes reuse
+  // those times for scenes without a date of their own, so a scene sits at
+  // the same moment in every lane
+  const placedLanes = useMemo(() => {
+    const known = new Map();
+    return lanes.map((l, i) => {
+      const placed = placeScenes(l.scenes, i ? known : null);
+      if (!i) placed.forEach((p) => { if (!p.unplaced) known.set(p.scene.file, p); });
+      return { ...l, placed };
+    });
+  }, [lanes]);
   const on = placedLanes.flatMap((l) => l.placed.filter((p) => !p.unplaced));
   const off = placedLanes.flatMap((l) => l.placed.filter((p) => p.unplaced).map((p) => ({ ...p, lane: l })));
   const [hover, setHover] = useState(null);
