@@ -14,11 +14,12 @@ import { FaChartLine, FaBook, FaMapMarkedAlt } from "react-icons/fa";
 import { loadMaps, newMap } from "../../maps";
 import { ANALYSES } from "../Analysis";
 import { WIKI_INDEX } from "../Wiki";
+import "../Wiki/Wiki.css";
 import { isConfigured } from "../../llm/config";
 import logo from "../../images/logo.svg";
 import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
-import { KINDS, kindOf } from "../../kinds";
+import { kindOf } from "../../kinds";
 
 const ActorList = ({ setRefresh }) => {
   const globalState = useContext(store);
@@ -180,14 +181,13 @@ const ActorList = ({ setRefresh }) => {
       </div>
       <nav className="activityBar" aria-label="Kinds">
         {[
-          ["", HiOutlineGlobeAlt, "Everything — every item in the project, in one list"],
+          ["", HiOutlineGlobeAlt, "Search & wiki — search everything in the project, or read it as an encyclopedia"],
           ["element", HiPuzzle, "Elements — " + kindOf("element").blurb],
           ["fact", GiLightBulb, "Facts — " + kindOf("fact").blurb],
           ["snippet", TiScissors, "Scenes — " + kindOf("snippet").blurb],
           ["thread", GiSewingString, "Threads — " + kindOf("thread").blurb],
           ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
           ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
-          ["wiki", FaBook, "Wiki — the project as an encyclopedia"],
           ["map", FaMapMarkedAlt, "Maps — pin your locations, draw routes, set a scale and measure distances"],
         ].map(([id, Icon, title]) => (
           <button
@@ -228,16 +228,6 @@ const ActorList = ({ setRefresh }) => {
           })}
         </div>
       )}
-      {type === "wiki" && (
-        <div className="content wikiList">
-          {WIKI_INDEX.map((p) => (
-            <NavLink key={p.id} to={"/wiki/" + p.id} className={({ isActive }) => "wikiItem" + (isActive ? " is-active" : "")}>
-              {p.name}
-            </NavLink>
-          ))}
-          <p className="wikiList__hint">Every element, scene and thread has a page; follow the links. Download the whole thing as one HTML file from the page header.</p>
-        </div>
-      )}
       {type === "map" && (
         <div className="content mapsList">
           {loadMaps(globalState.state.dir).maps.map((m) => (
@@ -253,14 +243,24 @@ const ActorList = ({ setRefresh }) => {
           <button type="button" onClick={() => { const m = newMap(globalState.state.dir, "Map " + (loadMaps(globalState.state.dir).maps.length + 1)); navigate("/map/" + m.id); }}>+ map</button>
         </div>
       )}
-      {type !== "analysis" && type !== "wiki" && type !== "map" && (
+      {type !== "analysis" && type !== "map" && (
       <div className="content">
+        {!type && (
+          <div className="wikiList wikiList--inList">
+            {WIKI_INDEX.map((p) => (
+              <NavLink key={p.id} to={"/wiki/" + p.id} className={({ isActive }) => "wikiItem" + (isActive ? " is-active" : "")}>
+                <FaBook /> {p.name}
+              </NavLink>
+            ))}
+            <p className="wikiList__hint">The wiki reads the whole project as an encyclopedia. Or search everything below — names and text, across every kind.</p>
+          </div>
+        )}
         <div className="listSearch">
           <input
             ref={searchRef}
             type="search"
             value={query}
-            placeholder={"Search " + (type ? kindOf(type).label.toLowerCase() : "everything") + "  ⌘⇧F"}
+            placeholder={(type ? "Search " + kindOf(type).label.toLowerCase() : "Search everything") + "  ⌘⇧F"}
             aria-label="Search the list"
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Escape" && setQuery("")}
@@ -270,12 +270,11 @@ const ActorList = ({ setRefresh }) => {
         </div>
         {query && shown.length === 0 && <p className="listSearch__none">Nothing matches.</p>}
         {!query && shown.length === 0 && type && <p className="listEmpty">{kindOf(type).empty}</p>}
-        {!query && shown.length === 0 && !type && <p className="listEmpty">Nothing here yet. {KINDS.map((k) => k.glyph + " " + k.label).join(" · ")} — pick a kind above to add one.</p>}
-        <DraggableList
+        {(type || query) && <DraggableList
           showAvatar={type === "" ? true : false}
           list={shown}
           onDrop={(result, list) => handleDrop(result, list)}
-        ></DraggableList>
+        ></DraggableList>}
 
         {type && (
           <button
