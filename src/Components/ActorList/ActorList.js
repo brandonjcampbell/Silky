@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { store } from "../../NewContext";
@@ -177,7 +178,7 @@ const ActorList = ({ setRefresh }) => {
           className="closeProject"
           title="Close this project and go back to the project list"
           onClick={() => { dispatch({ action: "setProject", payload: { name: "" } }); navigate("/"); }}
-        >×</button>
+        ><FaTimes /></button>
       </div>
       <nav className="activityBar" aria-label="Kinds">
         {[

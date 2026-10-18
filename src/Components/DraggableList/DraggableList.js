@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import React, { useContext, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import _ from "lodash";
@@ -100,7 +101,7 @@ const DraggableList = ({
                   </div>
                 </Link>
                 {removeFromList && (
-                  <button className="removeButton" onClick={() => removeFromList(x)}>x</button>
+                  <button type="button" className="removeButton" aria-label="Remove" onClick={() => removeFromList(x)}><FaTimes /></button>
                 )}
               </div>
             )}

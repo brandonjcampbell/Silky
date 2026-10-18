@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import React, { useEffect } from "react";
 import "./Modal.css";
 
@@ -14,7 +15,7 @@ const Modal = ({ title, onClose, children, footer, wide = false, xl = false }) =
       <div className={"modal" + (wide ? " modal--wide" : "") + (xl ? " modal--xl" : "")} role="dialog" aria-modal="true" aria-label={title}>
         <header className="modal__head">
           <h3>{title}</h3>
-          <button type="button" className="modal__close" aria-label="Close" onClick={onClose}>×</button>
+          <button type="button" className="modal__close" aria-label="Close" onClick={onClose}><FaTimes /></button>
         </header>
         <div className="modal__body">{children}</div>
         {footer && <footer className="modal__foot">{footer}</footer>}

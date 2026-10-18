@@ -124,3 +124,12 @@ a:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* every little × is the same icon, centred */
+.xbtn, .tab__close, .closeProject, .modal__close, .talk__chip button, .calEd__months button, .removeButton {
+  display: inline-flex; align-items: center; justify-content: center; line-height: 1; padding: 0;
+}
+.xbtn svg, .tab__close svg, .closeProject svg, .modal__close svg, .talk__chip button svg, .calEd__months button svg, .removeButton svg { width: 0.7em; height: 0.7em; display: block; }
+.xbtn { font: inherit; font-size: 14px; color: var(--ink-muted); background: transparent; border: 0; cursor: pointer; width: 20px; height: 20px; border-radius: 50%; }
+.xbtn:hover { color: var(--accent); background: var(--bg-hover); }
+.talk__chip button { width: 20px; height: 20px; border-radius: 50%; }

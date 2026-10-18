@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -147,7 +148,7 @@ const TabBar = ({ onMenu }) => {
             {a.type !== "analysis" && <span className="tab__type">{TYPE_ICON[a.type]}</span>}
             <span className="tab__icon">{a.icon}</span>
             <span className="tab__name">{a.name}</span>
-            <button type="button" className="tab__close" aria-label={"Close " + a.name} onClick={(e) => close(f, e)}>×</button>
+            <button type="button" className="tab__close" aria-label={"Close " + a.name} onClick={(e) => close(f, e)}><FaTimes /></button>
           </div>
         );
       })}

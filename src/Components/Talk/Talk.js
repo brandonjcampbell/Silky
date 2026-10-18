@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import SpinnerIcon from "../SpinnerIcon";
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -275,7 +276,7 @@ const Talk = () => {
             {participants.map((a) => (
               <span key={a.file} className="talk__chip talk__chip--cast">
                 <Link to={"/elements/" + a.file}>{a.icon} {a.name}</Link>
-                {participants.length > 1 && <button type="button" aria-label="Remove" onClick={() => dropParticipant(a.file)}>×</button>}
+                {participants.length > 1 && <button type="button" className="xbtn" aria-label="Remove" onClick={() => dropParticipant(a.file)}><FaTimes /></button>}
               </span>
             ))}
             <select value={pick} onChange={(e) => addParticipant(e.target.value)} aria-label="Add a character">
@@ -298,7 +299,7 @@ const Talk = () => {
           {focusActors.map((a) => (
             <span key={a.file} className="talk__chip">
               <Link to={"/elements/" + a.file}>{TYPE_GLYPH[a.type]} {a.icon} {a.name}</Link>
-              <button type="button" aria-label="Remove" onClick={() => dropFocus(a.file)}>×</button>
+              <button type="button" className="xbtn" aria-label="Remove" onClick={() => dropFocus(a.file)}><FaTimes /></button>
             </span>
           ))}
           <select value={pick} onChange={(e) => addFocus(e.target.value)} aria-label="Bring something into the conversation">

@@ -91,7 +91,8 @@ export const webllmComplete = async (c, { messages, json, maxTokens, signal }) =
   try {
     const out = await e.chat.completions.create(req);
     if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
-    return (out.choices && out.choices[0] && out.choices[0].message && out.choices[0].message.content) || "";
+    const ch = out.choices && out.choices[0];
+    return { text: (ch && ch.message && ch.message.content) || "", cut: !!(ch && ch.finish_reason === "length") };
   } finally {
     if (signal) signal.removeEventListener("abort", onAbort);
   }

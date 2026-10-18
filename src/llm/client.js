@@ -8,17 +8,31 @@ import { webllmComplete } from "./webllm";
  * always reinforced in the prompt) and parses it; the parsed object is
  * returned instead of text.
  */
+let lastCut = false;
+/** Whether the most recent completion ran out of room even after continuing. */
+export const lastReplyWasCut = () => lastCut;
+
 export const complete = async ({ system, user, json = false, maxTokens = 4096, signal, config, history = [] }) => {
   const c = config || getConfig();
   if (!c) throw new Error("No LLM connection configured.");
-  const text =
+  const run = (hist, usr) =>
     c.provider === "anthropic"
-      ? await anthropic(c, { system, user, json, maxTokens, signal, history })
+      ? anthropic(c, { system, user: usr, json, maxTokens, signal, history: hist })
       : c.provider === "webllm"
-      ? await webllmComplete(c, { messages: messagesFor(system, user, json, history), json, maxTokens, signal })
-      : await openaiCompatible(c, { system, user, json, maxTokens, signal, history });
+      ? webllmComplete(c, { messages: messagesFor(system, usr, json, hist), json, maxTokens, signal })
+      : openaiCompatible(c, { system, user: usr, json, maxTokens, signal, history: hist });
+  // A reply that hits the token limit is continued — up to twice — by
+  // handing the partial back and asking for the rest, then joined.
+  let { text, cut } = asResult(await run(history, user));
+  for (let i = 0; cut && i < 2; i += 1) {
+    const more = asResult(await run([...history, { role: "user", content: user }, { role: "assistant", content: text }], "Continue exactly where you left off — no preamble, no repetition, finish what you were writing."));
+    text += more.text;
+    cut = more.cut;
+  }
+  lastCut = cut;
   return json ? parseJson(text) : text;
 };
+const asResult = (r) => (r && typeof r === "object" && "text" in r ? { text: r.text || "", cut: !!r.cut } : { text: r || "", cut: false });
 
 /** A multi-turn chat: `messages` is [{role:"user"|"assistant", content}], the last one from the user. */
 export const chat = async ({ system, messages, maxTokens = 1500, signal, config }) => {
@@ -59,7 +73,7 @@ const openaiCompatible = async (c, { system, user, json, maxTokens, signal, hist
   const data = await r.json();
   const msg = data.choices && data.choices[0] && data.choices[0].message;
   if (!msg) throw new Error("Unexpected response shape from the model.");
-  return msg.content || "";
+  return { text: msg.content || "", cut: data.choices[0].finish_reason === "length" };
 };
 
 const anthropic = async (c, { system, user, json, maxTokens, signal, history = [] }) => {
@@ -82,7 +96,7 @@ const anthropic = async (c, { system, user, json, maxTokens, signal, history = [
   });
   if (!r.ok) throw new Error(await errorText(r));
   const data = await r.json();
-  return (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("");
+  return { text: (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join(""), cut: data.stop_reason === "max_tokens" };
 };
 
 const errorText = async (r) => {

@@ -1,3 +1,4 @@
+import { FaTimes } from "react-icons/fa";
 import React, { useContext, useEffect, useState } from "react";
 import { store } from "../../NewContext";
 import { loadCalendar, saveCalendar, GREGORIAN, CUSTOM_DEFAULT, parseCustom, fmtCustom } from "../../calendar";
@@ -34,7 +35,7 @@ const CalendarEditor = () => {
                   <td>{i + 1}</td>
                   <td><input type="text" value={m.name} onChange={(e) => setMonth(i, "name", e.target.value)} /></td>
                   <td><input type="number" min="1" value={m.days} onChange={(e) => setMonth(i, "days", e.target.value)} /></td>
-                  <td><button type="button" disabled={cal.months.length <= 1} onClick={() => save({ ...cal, months: cal.months.filter((_, j) => j !== i) })} aria-label="Remove month">×</button></td>
+                  <td><button type="button" disabled={cal.months.length <= 1} onClick={() => save({ ...cal, months: cal.months.filter((_, j) => j !== i) })} aria-label="Remove month"><FaTimes /></button></td>
                 </tr>
               ))}
             </tbody>
