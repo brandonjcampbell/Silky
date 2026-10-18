@@ -16,8 +16,8 @@
 .flowPage__sideBtn:hover { color: var(--ink); }
 .flowPage__body { flex: 1; min-height: 0; display: flex; }
 .flowPage__doc { flex: 1; min-width: 0; overflow-y: auto; padding: 0 24px 40vh; }
-.flowPage__doc > .editorToolbar { position: sticky; top: 0; z-index: 5; max-width: 72ch; margin: 10px auto 0; }
-.flowDoc { max-width: 72ch; margin: 0 auto; padding-top: 24px; }
+.flowPage__doc > .editorToolbar { position: sticky; top: 0; z-index: 5; max-width: var(--page-width, 72ch); margin: 10px auto 0; }
+.flowDoc { max-width: var(--page-width, 72ch); margin: 0 auto; padding-top: 24px; }
 .flowScene__rule { height: 1px; background: var(--line); margin: 2.4em 25% 1.2em; }
 .flowScene__name { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin: 0 0 6px; }
 .flowScene__name a { color: inherit; text-decoration: none; }

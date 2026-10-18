@@ -9,10 +9,12 @@ import { StateProvider } from "./NewContext";
 import { ready, isElectron } from "./storage";
 import BrowserStorageBar from "./Components/BrowserStorageBar";
 import { applyTheme } from "./theme";
+import { applyPrefs } from "./prefs";
 import ModelStatus from "./Components/ModelStatus";
 import { applyShowAi } from "./provenance";
 
 applyTheme();
+applyPrefs();
 applyShowAi();
 
 // In the browser the storage layer hydrates its in-memory mirror from

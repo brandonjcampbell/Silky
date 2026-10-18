@@ -1,0 +1,21 @@
+.prefs { padding-bottom: 48px; }
+.prefs__section { margin: 0 24px 28px; max-width: 760px; }
+.prefs__section h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-soft); }
+.prefs__section h3 svg { color: var(--accent); }
+.prefs__section h4 { margin: 18px 0 8px; font-size: 12px; color: var(--ink-muted); font-weight: 600; }
+.prefs__themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.prefs__theme { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; border: 2px solid; border-radius: var(--radius); cursor: pointer; font: inherit; text-align: left; }
+.prefs__theme.is-on { box-shadow: 0 0 0 2px var(--accent-soft); }
+.prefs__swatch { display: block; width: 100%; height: 34px; border: 1px solid; border-radius: 4px; position: relative; }
+.prefs__swatch i { position: absolute; left: 8px; bottom: 6px; width: 28px; height: 6px; border-radius: 3px; }
+.prefs__themeName { font-size: 13px; }
+.prefs__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px 24px; }
+.prefs__grid label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-muted); }
+.prefs__grid select { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 6px 8px; }
+.prefs__grid input[type="range"] { accent-color: var(--accent); width: 100%; }
+.prefs__val { color: var(--ink); font-variant-numeric: tabular-nums; }
+.prefs__sample { margin-top: 14px; padding: 18px 24px; background: var(--bg-page); border: 1px solid var(--line); border-radius: var(--radius); max-width: var(--page-width, 72ch); }
+.prefs__sample p { margin: 0; font-family: var(--font-prose); font-size: var(--prose-size, 18px); line-height: var(--prose-leading, 1.65); color: var(--ink); }
+.prefs__reset { margin-top: 10px; font: inherit; font-size: 12px; color: var(--ink-muted); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.prefs__reset:hover { color: var(--ink); border-color: var(--ink-muted); }
+.prefs .modal--inline { max-width: 760px; }

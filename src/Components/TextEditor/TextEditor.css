@@ -2,7 +2,7 @@
 
 .contentBlock {
   position: relative;
-  max-width: 72ch;
+  max-width: var(--page-width, 72ch);
   margin: 14px 0 8px;
 }
 
@@ -60,8 +60,8 @@
   background-color: var(--bg-page);
   color: var(--ink);
   font-family: var(--font-prose);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: var(--prose-size, 18px);
+  line-height: var(--prose-leading, 1.65);
   text-align: left;
   overflow-wrap: anywhere;
   outline: none;

@@ -10,7 +10,7 @@ import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaChartLine, FaBook, FaMapMarkedAlt, FaTools, FaStream } from "react-icons/fa";
+import { FaBook, FaTools, FaStream, FaMapMarkedAlt, FaSlidersH } from "react-icons/fa";
 import { loadTimelines, newTimeline } from "../../timelines";
 import { loadMaps, newMap } from "../../maps";
 import { ANALYSES } from "../Analysis";
@@ -187,8 +187,7 @@ const ActorList = ({ setRefresh }) => {
           ["snippet", TiScissors, "Scenes — " + kindOf("snippet").blurb],
           ["thread", GiSewingString, "Threads — " + kindOf("thread").blurb],
           ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
-          ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
-          ["map", FaTools, "Tools — maps (space) and timelines (time)"],
+          ["map", FaTools, "Tools — maps, timelines, analyses, preferences"],
         ].map(([id, Icon, title]) => (
           <button
             key={id}
@@ -212,24 +211,12 @@ const ActorList = ({ setRefresh }) => {
         </NavLink>
       </nav>
 
-      {type === "analysis" && (
-        <div className="content analysisList">
-          {ANALYSES.map((a) => {
-            const Icon = a.icon;
-            return (
-              <NavLink key={a.id} to={"/analysis/" + a.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
-                <span className="analysisItem__icon"><Icon /></span>
-                <span className="analysisItem__text">
-                  <span className="analysisItem__name">{a.name}</span>
-                  <span className="analysisItem__blurb">{a.blurb}</span>
-                </span>
-              </NavLink>
-            );
-          })}
-        </div>
-      )}
       {type === "map" && (
         <div className="content mapsList">
+          <NavLink to="/preferences" className={({ isActive }) => "analysisItem analysisItem--prefs" + (isActive ? " is-active" : "")}>
+            <span className="analysisItem__icon"><FaSlidersH /></span>
+            <span className="analysisItem__text"><span className="analysisItem__name">Preferences</span><span className="analysisItem__blurb">Theme, fonts, Spinner.</span></span>
+          </NavLink>
           <h4 className="toolsHead">Maps</h4>
           {loadMaps(globalState.state.dir).maps.map((m) => (
             <NavLink key={m.id} to={"/map/" + m.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
@@ -254,9 +241,22 @@ const ActorList = ({ setRefresh }) => {
           ))}
           {loadTimelines(globalState.state.dir).timelines.length === 0 && <p className="listEmpty">No timelines yet. A timeline lays one or more threads on a shared time axis — what the map is for space. Set when each scene happens on its page.</p>}
           <button type="button" onClick={() => { const all = loadDir(globalState.state.dir).filter((f) => f.includes(".element.")).map((f) => loadFile(globalState.state.dir + f)).filter((a) => a && a.type === "thread"); const manu = all.find((t) => t.name === "Manuscript"); const t = newTimeline(globalState.state.dir, "Timeline " + (loadTimelines(globalState.state.dir).timelines.length + 1), manu ? [manu.file] : []); navigate("/timeline/" + t.id); }}>+ timeline</button>
+          <h4 className="toolsHead">Analyses</h4>
+          {ANALYSES.map((a) => {
+            const Icon = a.icon;
+            return (
+              <NavLink key={a.id} to={"/analysis/" + a.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
+                <span className="analysisItem__icon"><Icon /></span>
+                <span className="analysisItem__text">
+                  <span className="analysisItem__name">{a.name}</span>
+                  <span className="analysisItem__blurb">{a.blurb}</span>
+                </span>
+              </NavLink>
+            );
+          })}
         </div>
       )}
-      {type !== "analysis" && type !== "map" && (
+      {type !== "map" && (
       <div className="content">
         {!type && (
           <div className="wikiList wikiList--inList">

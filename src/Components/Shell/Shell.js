@@ -11,6 +11,7 @@ import Wiki from "../Wiki";
 import Spinner from "../Spinner";
 import MapView from "../MapView";
 import TimelineView from "../TimelineView";
+import Preferences from "../Preferences";
 import FlowPage from "../FlowPage";
 import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
@@ -22,6 +23,7 @@ const Shell = () => {
   const pathname = useLocation().pathname;
   const isWiki = pathname.startsWith("/wiki");
   const isSpinner = pathname.startsWith("/spinner");
+  const isPrefs = pathname.startsWith("/preferences");
   const [, setRefresh] = useState(0);
   const doRefresh = (v) => setRefresh(v);
   const mobile = useMobile();
@@ -41,7 +43,9 @@ const Shell = () => {
   const editor = (
     <div className="editorPane">
       <TabBar onMenu={mobile ? () => setDrawer(true) : undefined} />
-      {isSpinner ? (
+      {isPrefs ? (
+        <div className="Workspace"><Preferences /></div>
+      ) : isSpinner ? (
         <div className="Workspace"><Spinner /></div>
       ) : isWiki ? (
         <div className="Workspace"><Wiki /></div>
