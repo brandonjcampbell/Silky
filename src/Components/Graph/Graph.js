@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./Graph.css";
 import CytoscapeComponent from "react-cytoscapejs";
 import { FaCompress, FaSave, FaFont, FaTag, FaAtom } from "react-icons/fa";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { readPalette, THEME_EVENT } from "../../theme";
 import ForceGraph from "./ForceGraph";
 import NodeDetails from "./NodeDetails";
+import { GROUP_COLORS } from "../WebAnalysis/WebAnalysis";
 
 const PHYSICS_KEY = "silky:graph-physics";
 
@@ -58,7 +59,8 @@ const LAYOUTS = [
 
 const SHAPE = { element: "ellipse", fact: "round-rectangle", snippet: "rectangle", thread: "diamond", web: "hexagon" };
 
-const Graph = ({ elements, onDrop, onPositions, lookup }) => {
+const Graph = ({ elements, onDrop, onPositions, lookup, groups }) => {
+  const groupOf = useMemo(() => { const m = new Map(); (groups || []).forEach((g, i) => g.forEach((id) => m.set(id, i))); return m; }, [groups]);
   const [cy, setCy] = useState(null);
   const navigate = useNavigate();
   const [physics, setPhysics] = useState(() => { try { return localStorage.getItem(PHYSICS_KEY) === "1"; } catch (e) { return false; } });
@@ -133,7 +135,8 @@ const Graph = ({ elements, onDrop, onPositions, lookup }) => {
   };
 
   // graph data for the physics view, and the neighbourhood of the selection
-  const fNodes = elements.filter((e) => !e.data.source).map((e) => ({ id: e.data.id, name: e.data.name || String(e.data.label || "").replace(/^\S+\s/, ""), icon: e.data.icon || "", type: e.data.type, x: e.position && e.position.x, y: e.position && e.position.y }));
+  const fNodes = elements.filter((e) => !e.data.source).map((e) => ({ id: e.data.id, name: e.data.name || String(e.data.label || "").replace(/^\S+\s/, ""), icon: e.data.icon || "", type: e.data.type, x: e.position && e.position.x, y: e.position && e.position.y, color: groupOf.has(e.data.id) ? GROUP_COLORS[groupOf.get(e.data.id) % GROUP_COLORS.length] : null }));
+  const cyElements = groups ? elements.map((e) => (e.data.source || !groupOf.has(e.data.id) ? e : { ...e, data: { ...e.data, group: groupOf.get(e.data.id) % GROUP_COLORS.length } })) : elements;
   const fLinks = elements.filter((e) => e.data.source).map((e) => ({ source: e.data.source, target: e.data.target, label: e.data.label, kind: e.data.kind }));
   const selActor = selected && lookup ? lookup(selected) : null;
   const neighbours = selected && lookup
@@ -167,7 +170,7 @@ const Graph = ({ elements, onDrop, onPositions, lookup }) => {
       ) : (
       <CytoscapeComponent
         cy={handleCy}
-        elements={elements}
+        elements={cyElements}
         style={{ width: "100%", height: "100%" }}
         minZoom={0.05}
         maxZoom={4}
@@ -224,6 +227,7 @@ const Graph = ({ elements, onDrop, onPositions, lookup }) => {
               "text-outline-width": 2,
             },
           },
+          ...GROUP_COLORS.map((c, i) => ({ selector: `node[group = ${i}]`, style: { "border-color": c, "border-width": 3, backgroundColor: c + "33" } })),
           { selector: "node:selected", style: { "border-color": palette.accent, "border-width": 3 } },
         ]}
       />

@@ -21,6 +21,13 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
   // (re)build the simulation when the graph changes; keep positions of nodes we already had
   useEffect(() => {
     const s = sim.current;
+    const sig = nodes.map((d) => d.id).join("|") + "#" + links.map((l) => l.source + ">" + l.target).join("|");
+    if (s.sig === sig) {
+      // same graph, new decoration (colours, names): update in place, no reheat
+      nodes.forEach((nd) => { const d = s.byId.get(nd.id); if (d) { d.color = nd.color; d.name = nd.name; d.icon = nd.icon; } });
+      return;
+    }
+    s.sig = sig;
     const old = s.byId;
     const n = nodes.length;
     const list = nodes.map((nd, i) => {
@@ -174,7 +181,8 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
         else g.arc(d.x, d.y, r, 0, Math.PI * 2);
         g.fillStyle = P.bgRaised; g.fill();
         g.lineWidth = (isSel ? 3 : isHover ? 2 : 1.2) / z;
-        g.strokeStyle = isSel || isHover ? P.accent : P[TYPE_COLOR[d.type]] || P.line;
+        g.strokeStyle = isSel || isHover ? P.accent : d.color || P[TYPE_COLOR[d.type]] || P.line;
+        if (d.color) { g.save(); g.globalAlpha *= 0.35; g.fillStyle = d.color; g.fill(); g.restore(); }
         g.stroke();
         if (nt || isHot || isHover || z > 1.4) {
           g.font = `${(isSel ? 13 : 12) / z}px sans-serif`; g.textAlign = "center"; g.textBaseline = "top";

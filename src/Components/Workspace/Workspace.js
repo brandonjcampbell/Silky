@@ -22,6 +22,7 @@ import RolePicker from "../RolePicker";
 import When from "../When";
 import Timeline from "../Timeline";
 import { FaBookOpen, FaStream } from "react-icons/fa";
+import WebAnalysis from "../WebAnalysis";
 import Impact from "../Impact";
 import History from "../History";
 import ReadAloud from "../ReadAloud";
@@ -301,6 +302,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   const threadDocRef = useRef(null);
   const [sceneStatus, setSceneStatus] = useState({});
   const [threadMode, setThreadMode] = useState("read"); // read | timeline
+  const [colorGroups, setColorGroups] = useState(null); // communities to colour the web by
 
   // Save a scene edited inside the thread document back to its own file.
   const saveScene = (snippet) => (html) => {
@@ -450,6 +452,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 <Graph
                   elements={[...cytoElements, ...cytoRelationships]}
                   lookup={loadUp}
+                  groups={colorGroups}
                   onDrop={(x) => {
                     let temp = element.captures.map((y) => {
                       if (y.file === x.id) {
@@ -470,6 +473,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                 ></Graph>
               </div>
               <aside className="webView__aside">
+                <WebAnalysis elements={[...cytoElements, ...cytoRelationships]} lookup={loadUp} colorBy={colorGroups} onColorBy={setColorGroups} />
                 {renderGraphableEditList("captures", "captured_in", "Captures")}
               </aside>
             </div>
