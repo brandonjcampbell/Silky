@@ -38,7 +38,7 @@ Spinner is the model behind Silky. Connect one from the spider at the foot of th
 
 **Provenance.** Every passage Spinner wrote is marked in the text and logged. Typing beside or inside one lands outside the mark; only editing its own words counts as rewriting it. *Show AI text* underlines them all; the **AI influence** report says how many words in each scene still trace to Spinner (even after you've rewritten them), lists every insertion, and can un-mark or remove any of them — one passage, one scene, or everything. If you ever need to state what a model contributed, the answer is already there.
 
-**Talk.** The Spinner tab is a conversation about the book, briefed with a digest of the project and whatever you bring into the room. It asks more than it tells, offers sharply different options with their costs, cites the project's own facts, and won't write the scene unless asked. **Talk to characters** puts the cast in the room instead: each is played strictly from its dossier — description, the facts that involve it, the scenes it appears in, a passage for voice — and knows nothing beyond that; set *as of* a scene and they know only what the book has established by then. Places and things can be in the room too, present but not sentient. Press *Let them talk* and they carry on among themselves.
+**Talk.** The Spinner tab is a conversation about the book, briefed with a digest of the project and whatever you bring into the room. It asks more than it tells, offers sharply different options with their costs, cites the project's own facts, and won't write the scene unless asked. Ask it to do something and it proposes the actions — create or merge elements, split a scene, date a whole thread, pin places on a map, pick better icons, open or close tabs — and you apply each with Undo. **Talk to characters** puts the cast in the room instead: each is played strictly from its dossier — description, the facts that involve it, the scenes it appears in, a passage for voice — and knows nothing beyond that; set *as of* a scene and they know only what the book has established by then. Places and things can be in the room too, present but not sentient. Press *Let them talk* and they carry on among themselves.
 
 ![Characters in the room: Scrooge and Bob Cratchit answer in their own voices, from what the book knows](docs/silky-characters.png)
 
@@ -53,6 +53,10 @@ Spinner is the model behind Silky. Connect one from the spider at the foot of th
 **Maps.** Mark elements as locations and pin them on a map — an image you upload, or a blank gridded sheet. Set a scale (two points and the distance between them), draw routes and read their lengths, measure between any two points; every reading is kept. Distances between every pinned place are tabulated.
 
 ![A map of Dartmoor with pinned places, a route, a scale and a reading](docs/silky-map.png)
+
+**Timelines** are for time what maps are for space. Give a scene a date, a time and a duration — in the Gregorian calendar or one of your own, with your own months and year zero, set in Preferences or by asking Spinner — and any thread reads as an event timeline; a timeline in the toolbox lays several threads out as lanes against one axis, so you can see where the subplots cross and what the reader meets out of order. Scenes without a date take their place from the threads around them.
+
+![Six threads of The Hound of the Baskervilles as lanes on one timeline](docs/silky-timeline.png)
 
 **Analyses.** Word count, pacing (scene lengths, dialogue share, sentence rhythm), style (sentence variance, filter words, adverbs, reading grade), the reader notes above, AI influence, and **Progress**: words per day against a goal, streaks, a sixteen-week heatmap, what you made each week, and — with a target and a deadline — the pace you need and when you'll finish at the pace you have.
 
