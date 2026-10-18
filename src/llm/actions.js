@@ -17,6 +17,8 @@ export const ACTION_DOCS = `When the author asks you to change the project — m
 
 Creating something that already exists by that name reuses it rather than making a duplicate, so it is safe to name things you aren't sure about. Maps, timelines, the calendar and tabs are yours to make and change as well.
 
+"Set the timeline" or "date the scenes" means giving scenes times: one set_when per scene (dates you infer from the text, offsets like "3 days after the previous"), or date_thread to space a whole thread evenly; the Timeline view then draws them. "open" only shows something — it sets nothing.
+
 Actions (fields in brackets are optional):
 - {"action":"create_element","name":"…","role":"character|location|thing",["description":"…"]}
 - {"action":"create_fact","statement":"…",["involves":["element name",…]],["revealed_by":["scene name",…]],["because":["fact statement",…]]}
@@ -29,6 +31,7 @@ Actions (fields in brackets are optional):
 - {"action":"set_role","name":"…","role":"character|location|thing"}
 - {"action":"set_description","name":"…","text":"…"}
 - {"action":"set_when","scene":"…",["date":"1897-05-03"],["time":"21:30"],["offset":3,"unit":"days"],["duration":2,"durationUnit":"hours"],["note":"…"]}
+- {"action":"date_thread","thread":"…","start":"1889-09-25",["every":1,"unit":"days"],["overwrite":false]}   (dates the thread's first scene and spaces the rest 'every' units apart as offsets; scenes that already have a time are kept unless overwrite)
 - {"action":"split_scene","scene":"…","at":"the first few words of the paragraph that begins the second part",["newName":"…"]}
 - {"action":"merge_scenes","first":"scene name","second":"scene name"}
 - {"action":"move_scene","scene":"…","thread":"…",["after":"scene name"|"position":1]}
@@ -160,6 +163,7 @@ export const describeAction = (dir, a) => {
     case "set_role": return `Make ${nameOf(a.name, ["element"])} a ${a.role}`;
     case "set_description": return `Describe ${nameOf(a.name)}: “${String(a.text || "").slice(0, 80)}${String(a.text || "").length > 80 ? "…" : ""}”`;
     case "set_when": return `Set when for ${nameOf(a.scene, ["snippet"])}: ${[a.date && `on ${a.date}${a.time ? " " + a.time : ""}`, a.offset != null && a.offset !== "" && `${a.offset} ${a.unit || "days"} after the previous`, a.duration != null && a.duration !== "" && `lasts ${a.duration} ${a.durationUnit || "hours"}`, a.note].filter(Boolean).join(", ")}`;
+    case "date_thread": return `Date every scene in ${nameOf(a.thread, ["thread"])}: first on ${a.start}, then ${a.every || 1} ${a.unit || "days"} apart${a.overwrite ? " (overwriting existing times)" : " (keeping scenes already timed)"}`;
     case "split_scene": return `Split ${nameOf(a.scene, ["snippet"])} at “${String(a.at || "").slice(0, 50)}…”${a.newName ? ` → new scene “${a.newName}”` : ""}`;
     case "merge_scenes": return `Merge ${nameOf(a.second, ["snippet"])} into ${nameOf(a.first, ["snippet"])}`;
     case "move_scene": return `Move ${nameOf(a.scene, ["snippet"])} in ${nameOf(a.thread, ["thread"])}${a.after ? ` to after ${nameOf(a.after, ["snippet"])}` : a.position != null ? ` to position ${a.position}` : " to the end"}`;
@@ -333,6 +337,23 @@ export const applyAction = (dir, a, ctx = {}) => {
         s.when = w; save(dir, s);
         undos.push(() => { const y = loadFile(dir + s.file); if (y) { y.when = was; save(dir, y); } });
         return done(`Set when for ${s.name}`);
+      }
+      case "date_thread": {
+        const t = need(a.thread, ["thread"], "a thread");
+        const scenes = t.sequences.map((f) => loadFile(dir + f)).filter((x) => x && x.type === "snippet");
+        if (!scenes.length) throw new Error(`${t.name} has no scenes.`);
+        const befores = scenes.map((x) => [x.file, x.when]);
+        let n = 0;
+        scenes.forEach((x, i) => {
+          const has = x.when && (x.when.date || x.when.relValue);
+          if (has && !a.overwrite) return;
+          const w = { ...EMPTY_WHEN, ...(x.when || {}) };
+          if (i === 0) { w.date = String(a.start); w.relValue = ""; }
+          else { w.date = ""; w.relValue = String(a.every != null ? a.every : 1); w.relUnit = a.unit || "days"; }
+          x.when = w; save(dir, x); n += 1;
+        });
+        undos.push(() => befores.forEach(([f, w]) => { const y = loadFile(dir + f); if (y) { y.when = w; save(dir, y); } }));
+        return done(`Dated ${n} scene${n === 1 ? "" : "s"} in ${t.name}`);
       }
       case "split_scene": {
         const s = need(a.scene, ["snippet"], "a scene");
