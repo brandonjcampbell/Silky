@@ -264,7 +264,8 @@ const MapView = () => {
               const on = selLine && selLine.id === l.id;
               const c = l.color || textureOf(l.texture).color;
               const cx = l.points.reduce((n, p) => n + p.x, 0) / l.points.length;
-              const cy = l.points.reduce((n, p) => n + p.y, 0) / l.points.length;
+              const top = Math.min(...l.points.map((p) => p.y));
+              const cy = top + px(22); // name sits just inside the top edge, clear of pins near the middle
               const pts = l.points.map((p) => `${p.x},${p.y}`).join(" ");
               return (
                 <g key={l.id} data-line={l.id} className={"mapRegion" + (on ? " is-selected" : "")}>

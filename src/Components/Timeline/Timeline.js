@@ -28,14 +28,19 @@ const tickLabel = (ms, step) => {
 };
 const W = 1000, ROW = 22, LANE_PAD = 10, TOP = 30;
 
-/** Pack items into rows so nothing overlaps (x-extent plus an estimated label width). */
+/** Pack items into rows so nothing overlaps — the mark plus its label, which
+    sits to the right unless the scene is near the right edge. */
 const packRows = (items, x, extra = 0) => {
-  const rows = [];
+  const rows = []; // per row, the [start,end] spans taken
   return items.map((it) => {
-    const x0 = x(it.start), x1 = Math.max(x(it.end), x0 + 2) + Math.min(220, 8 + it.scene.name.length * 6.2) + extra;
-    let r = rows.findIndex((end) => end < x0 - 6);
-    if (r < 0) { r = rows.length; rows.push(x1); } else rows[r] = x1;
-    return { ...it, row: r };
+    const x0 = x(it.start), x1 = Math.max(x(it.end), x0 + 2);
+    const lw = Math.min(220, 8 + it.scene.name.length * 6.2) + extra;
+    const left = x1 + 8 > W * 0.78;
+    const a = left ? x0 - lw : x0, b = left ? x1 : x1 + lw;
+    let r = rows.findIndex((spans) => spans.every(([s, e]) => e < a - 6 || s > b + 6));
+    if (r < 0) { r = rows.length; rows.push([]); }
+    rows[r].push([a, b]);
+    return { ...it, row: r, left };
   }).map((it) => ({ ...it, rows: rows.length }));
 };
 
@@ -145,7 +150,7 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
               const x0 = x(p.start), x1 = Math.max(x(p.end), x0 + 2);
               const mk = mark(p.scene.file);
               const cls = "timeline__scene" + (p.anchored ? " is-anchored" : p.inferred ? " is-inferred" : " is-relative") + (hover === p.scene.file ? " is-hover" : "") + (mk.hollow ? " is-unread" : "");
-              const left = x1 + 8 > W * 0.78;
+              const left = p.left;
               const style = mk.color ? { "--lane": mk.color } : undefined;
               return (
                 <g key={p.scene.file} className={cls} style={style} onMouseEnter={() => setHover(p.scene.file)} onMouseLeave={() => setHover(null)} onClick={() => setPick(pick === p.scene.file ? null : p.scene.file)}>
