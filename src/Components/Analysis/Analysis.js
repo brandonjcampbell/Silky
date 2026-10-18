@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint, FaFire } from "react-icons/fa";
 import Progress from "./Progress";
+import Timeline from "../Timeline";
+import { FaStream } from "react-icons/fa";
 import { loadProvenance, insertionStatus, aiWords, removeFromHtml, unmarkInHtml, getShowAi, setShowAi } from "../../provenance";
 import { saveFile } from "../../utils/";
 import { store } from "../../NewContext";
@@ -13,6 +15,7 @@ import "./Analysis.css";
 
 export const ANALYSES = [
   { id: "progress", name: "Progress", icon: FaFire, blurb: "Words per day, streaks, goals, and what you made when." },
+  { id: "timeline", name: "Timeline", icon: FaStream, blurb: "A thread's scenes on a time axis — what the map is for space." },
   { id: "wordcount", name: "Word count", icon: FaChartBar, blurb: "Totals, and every scene and thread measured." },
   { id: "pacing", name: "Pacing", icon: FaTachometerAlt, blurb: "Scene lengths, dialogue and sentence rhythm across the book." },
   { id: "style", name: "Style", icon: FaFeatherAlt, blurb: "Sentence length, dialogue, adverbs, filter words, vocabulary." },
@@ -740,7 +743,20 @@ const Influence = () => {
 
 /* ── shell ────────────────────────────────────────────────────────────── */
 
-const VIEWS = { progress: Progress, wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
+const TimelineView = () => {
+  const { threads, snippets, byFile } = useProject();
+  const [choice, setChoice] = useThreadChoice(threads);
+  const thread = byFile.get(choice);
+  const scenes = scenesOf(thread, snippets, byFile);
+  return (
+    <div>
+      <ThreadPicker threads={threads} value={choice} onChange={setChoice} />
+      <Timeline scenes={scenes} title={thread ? thread.name : "All scenes"} />
+    </div>
+  );
+};
+
+const VIEWS = { timeline: TimelineView, progress: Progress, wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
 
 const Analysis = () => {
   const { id } = useParams();

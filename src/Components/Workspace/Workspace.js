@@ -19,6 +19,9 @@ import LinkScanner from "../LinkScanner";
 import Ideas from "../Ideas";
 import PrintExport from "../PrintExport";
 import RolePicker from "../RolePicker";
+import When from "../When";
+import Timeline from "../Timeline";
+import { FaBookOpen, FaStream } from "react-icons/fa";
 import Impact from "../Impact";
 import History from "../History";
 import ReadAloud from "../ReadAloud";
@@ -297,6 +300,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
   const isThread = !!(element && element.type === "thread" && Array.isArray(element.sequences));
   const threadDocRef = useRef(null);
   const [sceneStatus, setSceneStatus] = useState({});
+  const [threadMode, setThreadMode] = useState("read"); // read | timeline
 
   // Save a scene edited inside the thread document back to its own file.
   const saveScene = (snippet) => (html) => {
@@ -313,10 +317,19 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           <TalkAbout element={element} />
           <ReadAloud element={element} />
           <PrintExport element={element} />
+          <div className="threadModes" role="tablist">
+            <button type="button" role="tab" aria-selected={threadMode === "read"} className={threadMode === "read" ? "is-on" : ""} onClick={() => setThreadMode("read")}><FaBookOpen /> Read</button>
+            <button type="button" role="tab" aria-selected={threadMode === "timeline"} className={threadMode === "timeline" ? "is-on" : ""} onClick={() => setThreadMode("timeline")} title="The scenes on a time axis — set when each happens on its page"><FaStream /> Timeline</button>
+          </div>
           <div className="threadView">
             <div className="threadView__doc" ref={threadDocRef}>
-              <EditorToolbar scopeRef={threadDocRef} />
-              <div className="threadDoc">
+              {threadMode === "timeline" && (
+                <div className="threadTimeline">
+                  <Timeline scenes={element.sequences.map((f) => loadUp(f)).filter((s) => s && s.type === "snippet")} title={element.name} />
+                </div>
+              )}
+              {threadMode === "read" && <EditorToolbar scopeRef={threadDocRef} />}
+              {threadMode === "read" && <div className="threadDoc">
                 {element.sequences.length === 0 && (
                   <p className="threadDoc__empty">
                     No scenes in this thread yet. Add one from the list.
@@ -355,7 +368,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
                     </section>
                   );
                 })}
-              </div>
+              </div>}
             </div>
             <aside className="threadView__aside">
               {renderEditList("snippet", "sequences", "sequenced_in", "Scenes in order")}
@@ -386,6 +399,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
           {element.type === "snippet" && <ReadAloud element={element} />}
           {element.type === "snippet" && <PrintExport element={element} />}
           {element.type === "element" && <RolePicker element={element} onChange={(role) => { element.role = role; save(element); }} />}
+          {element.type === "snippet" && <When element={element} onChange={save} />}
           {typeof element.content === "string" && (
             <div className="editor">
               <TextEditor

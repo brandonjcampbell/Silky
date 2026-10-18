@@ -1,0 +1,15 @@
+.when { margin: 4px 24px 6px; max-width: 72ch; font-size: 13px; }
+.when__toggle { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
+.when__toggle:hover, .when.is-open .when__toggle { color: var(--ink); border-color: var(--accent); }
+.when__body { margin-top: 8px; padding: 12px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 10px; }
+.when__modes { display: flex; gap: 6px; }
+.when__modes button { font: inherit; font-size: 12px; color: var(--ink-muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.when__modes button.is-on { color: var(--ink); border-color: var(--accent); background: var(--accent-soft); }
+.when__row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.when__row label { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--ink-muted); }
+.when__row input, .when__row select { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 5px 8px; width: 150px; }
+.when__row input[type="number"] { width: 80px; }
+.when__row .when__note { flex: 1; min-width: 180px; }
+.when__row .when__note input { width: 100%; box-sizing: border-box; }
+.when__row input:focus, .when__row select:focus { outline: none; border-color: var(--accent); }
+.when .muted { font-size: 11px; color: var(--ink-muted); margin: 0; align-self: center; }
