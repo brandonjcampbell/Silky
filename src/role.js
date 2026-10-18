@@ -15,13 +15,17 @@ const TITLE = /^(dr|mr|mrs|ms|miss|sir|lord|lady|count|countess|baron|duke|duche
 const PERSON = /\b(he|she|his|her|him|man|woman|boy|girl|son|daughter|wife|husband|brother|sister|mother|father|friend|servant|doctor|lawyer|solicitor|clerk|nephew|niece|baronet|heir|naturalist|butler|maid|convict|ghost|spirit|vampire|nobleman|gentleman|lady|child|detective|inspector|priest|nurse|soldier|captain|sailor|merchant|miser|partner)\b/i;
 const PLACE = /\b(house|hall|manor|castle|abbey|church|chapel|inn|hotel|tavern|town|city|village|hamlet|street|road|lane|alley|square|bridge|river|lake|sea|coast|shore|bay|harbour|harbor|port|island|moor|heath|mire|bog|marsh|forest|wood|woods|hill|mountain|valley|pass|cave|cliff|tor|ruin|ruins|station|office|shop|room|cellar|crypt|tomb|graveyard|cemetery|garden|park|farm|estate|county|country|kingdom|land|realm|asylum|prison|school|university|college|library|museum|theatre|theater|market|camp|fort|fortress|tower|palace|temple|monastery|cottage|lodge|mill|mine|quarry|dock|wharf|pier|field|plain|desert|glacier|canyon|gorge|grove|orchard|vineyard|beach|dune|moorland|moors|downs|fens|highlands|lowlands|wilderness|plateau|swamp|jungle|steppe|tundra|coastline|countryside|district|quarter|borough|province|region|continent|planet|world)\b/i;
 
+const THING = /\b(portrait|painting|picture|letter|note|manuscript|document|papers?|book|journal|diary|boots?|shoe|hat|coat|cloak|stick|cane|knife|dagger|sword|gun|pistol|rifle|map|ring|key|box|chest|bottle|phial|vial|potion|poison|coin|coins|money|treasure|jewel|necklace|watch|clock|lamp|candle|mirror|carriage|cart|coach|ship|boat|horse|hound|dog|cat|net|rope|chain|bell|legend|curse|prophecy|rumour|rumor|secret|plan|scheme|will|deed|contract|debt|song|poem|story|tale|myth|recipe|machine|device|engine|weapon|artifact|artefact|relic|statue|idol|crown|throne|flag|banner)\b/i;
+
 /** A best guess from name and description, for elements that were never designated. */
 export const guessRole = (el) => {
   const name = String(el.name || "");
   const desc = plain(el.content).slice(0, 240);
   if (TITLE.test(name)) return "character";
-  const nameHasPlace = PLACE.test(name);
   const descHead = desc.split(/[.;:—-]/)[0] || "";
+  if (PERSON.test(descHead)) return "character";
+  if (THING.test(name) || (THING.test(descHead) && /^(a|an|the) /i.test(descHead))) return "thing";
+  const nameHasPlace = PLACE.test(name);
   if (/^(the )?[a-z' ]+ (of|at|in|on) /i.test(name) && nameHasPlace) return "location";
   if (nameHasPlace && !PERSON.test(descHead)) return "location";
   if (PLACE.test(descHead) && !PERSON.test(descHead)) return "location";
