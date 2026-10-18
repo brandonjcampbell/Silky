@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Graph.css";
 import CytoscapeComponent from "react-cytoscapejs";
-import { FaCompress, FaSave, FaFont, FaTag } from "react-icons/fa";
+import { FaCompress, FaSave, FaFont, FaTag, FaAtom } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { readPalette, THEME_EVENT } from "../../theme";
+import ForceGraph from "./ForceGraph";
+import NodeDetails from "./NodeDetails";
+
+const PHYSICS_KEY = "silky:graph-physics";
 
 /**
  * Layouts offered in the toolbar. "Saved" uses the positions stored on the
@@ -53,8 +58,12 @@ const LAYOUTS = [
 
 const SHAPE = { element: "ellipse", fact: "round-rectangle", snippet: "rectangle", thread: "diamond", web: "hexagon" };
 
-const Graph = ({ elements, onDrop, onPositions }) => {
+const Graph = ({ elements, onDrop, onPositions, lookup }) => {
   const [cy, setCy] = useState(null);
+  const navigate = useNavigate();
+  const [physics, setPhysics] = useState(() => { try { return localStorage.getItem(PHYSICS_KEY) === "1"; } catch (e) { return false; } });
+  const [selected, setSelected] = useState(null);
+  const forceRef = useRef(null);
   const [layoutId, setLayoutId] = useState("preset");
   const [showNodeText, setShowNodeText] = useState(true);
   const [showEdgeText, setShowEdgeText] = useState(true);
@@ -86,8 +95,12 @@ const Graph = ({ elements, onDrop, onPositions }) => {
       const n = e.target;
       onDropRef.current && onDropRef.current({ id: n.id(), position: { ...n.position() } });
     });
+    instance.on("tap", (e) => { if (e.target === instance) setSelected(null); });
+    instance.on("tap", "node", (e) => setSelected(e.target.id()));
+    instance.on("dbltap", "node", (e) => navigate("/elements/" + e.target.id()));
     setCy(instance);
   };
+  const togglePhysics = () => setPhysics((p) => { try { localStorage.setItem(PHYSICS_KEY, p ? "0" : "1"); } catch (e) { /* */ } return !p; });
 
   // Run the chosen layout whenever it changes (or the graph mounts).
   useEffect(() => {
@@ -109,36 +122,49 @@ const Graph = ({ elements, onDrop, onPositions }) => {
   }, [cy]);
 
   const savePositions = () => {
-    if (!cy || !onPositions) return;
-    const pos = {};
-    cy.nodes().forEach((n) => {
-      pos[n.id()] = { ...n.position() };
-    });
+    if (!onPositions) return;
+    let pos = {};
+    if (physics && forceRef.current) pos = forceRef.current.positions();
+    else if (cy) cy.nodes().forEach((n) => { pos[n.id()] = { ...n.position() }; });
+    else return;
     onPositions(pos);
     setDirty(false);
     setLayoutId("preset");
   };
+
+  // graph data for the physics view, and the neighbourhood of the selection
+  const fNodes = elements.filter((e) => !e.data.source).map((e) => ({ id: e.data.id, name: e.data.name || String(e.data.label || "").replace(/^\S+\s/, ""), icon: e.data.icon || "", type: e.data.type, x: e.position && e.position.x, y: e.position && e.position.y }));
+  const fLinks = elements.filter((e) => e.data.source).map((e) => ({ source: e.data.source, target: e.data.target, label: e.data.label, kind: e.data.kind }));
+  const selActor = selected && lookup ? lookup(selected) : null;
+  const neighbours = selected && lookup
+    ? fLinks.filter((l) => l.source === selected || l.target === selected).map((l) => { const other = l.source === selected ? l.target : l.source; const a = lookup(other); return a ? { actor: a, label: l.source === selected ? l.label : "← " + l.label } : null; }).filter(Boolean)
+    : [];
 
   const nodeSize = showNodeText ? (big ? 70 : 100) : 14;
 
   return (
     <div className="graph">
       <div className="graph__tools" role="toolbar" aria-label="Graph layout">
-        <select value={layoutId} onChange={(e) => setLayoutId(e.target.value)} title="Layout">
+        <select value={layoutId} onChange={(e) => setLayoutId(e.target.value)} title="Layout" disabled={physics}>
           {LAYOUTS.map((l) => (
             <option key={l.id} value={l.id}>{l.name}</option>
           ))}
         </select>
-        <button type="button" title="Fit to view" onClick={() => cy && cy.fit(undefined, 40)}><FaCompress /></button>
+        <button type="button" className={physics ? "is-on" : ""} title="Physics — a live force simulation; drag nodes and the rest follows" aria-pressed={physics} onClick={togglePhysics}><FaAtom /> Physics</button>
+        <button type="button" title="Fit to view" onClick={() => (physics ? forceRef.current && forceRef.current.fit() : cy && cy.fit(undefined, 40))}><FaCompress /></button>
         <button type="button" className={showNodeText ? "is-on" : ""} title="Node labels" aria-pressed={showNodeText} onClick={() => setShowNodeText((v) => !v)}><FaFont /></button>
         <button type="button" className={showEdgeText ? "is-on" : ""} title="Edge labels" aria-pressed={showEdgeText} onClick={() => setShowEdgeText((v) => !v)}><FaTag /></button>
         {onPositions && (
-          <button type="button" className={dirty ? "is-accent" : ""} title="Save these positions to the web" onClick={savePositions} disabled={!dirty && layoutId === "preset"}>
-            <FaSave /> {dirty ? "Save layout" : "Saved"}
+          <button type="button" className={dirty || physics ? "is-accent" : ""} title="Save these positions to the web" onClick={savePositions} disabled={!physics && !dirty && layoutId === "preset"}>
+            <FaSave /> {dirty || physics ? "Save layout" : "Saved"}
           </button>
         )}
         <span className="graph__count">{nodeCount.toLocaleString()} nodes</span>
       </div>
+      {selActor && <NodeDetails actor={selActor} neighbours={neighbours} onPick={setSelected} onClose={() => setSelected(null)} />}
+      {physics ? (
+        <ForceGraph ref={forceRef} nodes={fNodes} links={fLinks} selected={selected} onSelect={setSelected} onOpen={(id) => navigate("/elements/" + id)} showNodeText={showNodeText} showEdgeText={showEdgeText} />
+      ) : (
       <CytoscapeComponent
         cy={handleCy}
         elements={elements}
@@ -201,6 +227,7 @@ const Graph = ({ elements, onDrop, onPositions }) => {
           { selector: "node:selected", style: { "border-color": palette.accent, "border-width": 3 } },
         ]}
       />
+      )}
     </div>
   );
 };

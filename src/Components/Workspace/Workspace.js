@@ -239,7 +239,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
     });
     cytoElements = elements.map((x) => {
       return {
-        data: { id: x.file, label: x.icon + " " + x.name, type: x.type },
+        data: { id: x.file, label: x.icon + " " + x.name, name: x.name, icon: x.icon, type: x.type },
         position: x.position,
       };
     });
@@ -435,6 +435,7 @@ const Workspace = ({ showAvatar = true, setRefresh }) => {
               <div className="webView__graph">
                 <Graph
                   elements={[...cytoElements, ...cytoRelationships]}
+                  lookup={loadUp}
                   onDrop={(x) => {
                     let temp = element.captures.map((y) => {
                       if (y.file === x.id) {
