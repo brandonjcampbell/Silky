@@ -23,7 +23,7 @@
 .flowScene__name a { color: inherit; text-decoration: none; }
 .flowScene__name a:hover { color: var(--accent); }
 .flowScene__name .muted { opacity: 0.6; }
-.flowDoc .page { font-size: 1.06em; min-height: 6em; }
+.flowDoc .page { font-size: calc(var(--prose-size, 18px) * 1.06); min-height: 6em; }
 .flowDoc__next { display: block; margin: 2.4em auto 0; font: inherit; font-size: 12px; letter-spacing: 0.08em; color: var(--ink-muted); background: transparent; border: 0; cursor: pointer; }
 .flowDoc__next:hover { color: var(--accent); }
 .flowPage__side { width: 280px; flex: none; overflow-y: auto; border-left: 1px solid var(--line); padding: 14px 16px 24px; font-size: 13px; background: var(--bg-raised); }

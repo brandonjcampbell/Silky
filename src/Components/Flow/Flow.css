@@ -34,7 +34,7 @@ html.focus .workspace .editor ~ .editor, html.focus .workspaceHeader__tools, htm
 html.focus .editorFooter, html.focus .storageBar { display: none !important; }
 html.focus .middle-pane { flex: 1 1 100% !important; }
 html.focus .workspace .editor { max-width: 72ch; margin: 0 auto; padding-top: 4vh; }
-html.focus .contentBlock--scene .page { font-size: 1.1em; min-height: 70vh; }
+html.focus .contentBlock--scene .page { font-size: calc(var(--prose-size, 18px) * 1.1); min-height: 70vh; }
 html.focus .workspaceHeader { opacity: 0.35; transition: opacity 200ms; }
 html.focus .workspaceHeader:hover { opacity: 1; }
 .focusExit { position: fixed; top: 10px; right: 14px; z-index: 61; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 12px; color: var(--ink-muted); background: var(--bg-raised); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; opacity: 0.6; }
