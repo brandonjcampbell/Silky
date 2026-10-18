@@ -1,4 +1,4 @@
-.when { margin: 4px 24px 6px; max-width: 72ch; font-size: 13px; }
+.when { margin: 12px 24px 6px; max-width: var(--page-width, 72ch); font-size: 13px; }
 .when__toggle { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 12px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 10px; cursor: pointer; }
 .when__toggle:hover, .when.is-open .when__toggle { color: var(--ink); border-color: var(--accent); }
 .when__body { margin-top: 8px; padding: 12px; background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 10px; }
