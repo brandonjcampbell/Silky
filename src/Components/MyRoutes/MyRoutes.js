@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import "./index.css";
 import { store } from "../../NewContext";
 import App from "../App";
 import Shell from "../Shell";
-import FlowPage from "../FlowPage";
 
 const MyRoutes = () => {
   const globalState = useContext(store);
@@ -21,7 +20,7 @@ const MyRoutes = () => {
       <Route path="/spinner" element={inProject ? <Shell /> : <App />} />
       <Route path="/spinner/settings" element={inProject ? <Shell /> : <App />} />
       <Route path="/map/:mapId" element={inProject ? <Shell /> : <App />} />
-      <Route path="/write" element={<FlowPage />} />
+      <Route path="/write" element={<Navigate to="/" replace />} />
       <Route path="*" element={<App />} />
     </Routes>
   );

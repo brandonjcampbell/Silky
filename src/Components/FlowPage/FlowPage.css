@@ -48,3 +48,13 @@
   .flowPage__doc { padding: 0 12px 30vh; }
   .flowPage.has-side .flowPage__side { position: fixed; right: 0; top: 0; bottom: 0; width: min(85vw, 320px); z-index: 50; box-shadow: -10px 0 30px rgba(0,0,0,.4); }
 }
+.flowPage--embedded { width: 100%; height: 100%; }
+.flowPage--embedded .flowPage__head { padding: 6px 16px; }
+.flowSide__doors { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+.flowSide__doors button { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 7px 10px; cursor: pointer; text-align: left; }
+.flowSide__doors button:hover { border-color: var(--accent); }
+.flowSide__doors button svg { color: var(--accent); }
+.flowSide__primer { margin: 10px 0 0; font-size: 12px; line-height: 1.45; }
+.flowSide__primer div { margin-bottom: 6px; }
+.flowSide__primer dt { font-weight: 600; }
+.flowSide__primer dd { margin: 0; color: var(--ink-muted); }

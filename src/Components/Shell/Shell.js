@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { store } from "../../NewContext";
-import { loadDir } from "../../utils/";
 import { useLocation, useParams } from "react-router-dom";
 import { ReflexContainer, ReflexSplitter, ReflexElement } from "react-reflex";
 import "react-reflex/styles.css";
@@ -11,7 +10,7 @@ import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
 import MapView from "../MapView";
-import Welcome from "../Welcome";
+import FlowPage from "../FlowPage";
 import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
 import "./Shell.css";
@@ -26,9 +25,8 @@ const Shell = () => {
   const doRefresh = (v) => setRefresh(v);
   const mobile = useMobile();
   const { state } = useContext(store);
-  const emptyProject = !loadDir(state.dir).some((f) => f.includes(".element."));
-  // an empty project opens on the welcome panel, even on a phone
-  const hasContent = !!(file || id || mapId || isWiki || isSpinner) || emptyProject;
+  // nothing open means the writing page, so there is always content — even on a phone
+  const hasContent = true;
   // on a phone the list shows when nothing is open, and as a drawer otherwise
   const [drawer, setDrawer] = useState(false);
   useEffect(() => { setDrawer(false); }, [pathname]);
@@ -53,7 +51,7 @@ const Shell = () => {
       ) : file ? (
         <div className="Workspace"><Workspace setRefresh={doRefresh} /></div>
       ) : (
-        <div className="editorPane__empty"><Welcome setRefresh={doRefresh} /></div>
+        <div className="Workspace"><FlowPage embedded setRefresh={doRefresh} /></div>
       )}
     </div>
   );

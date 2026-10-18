@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaExternalLinkAlt, FaFileImport, FaBookOpen } from "react-icons/fa";
+import { KINDS } from "../../kinds";
+import ImportManuscript from "../ImportManuscript";
 import { store } from "../../NewContext";
 import { loadDir, loadFile, saveFile, makeDir, renameDir } from "../../utils/";
 import { flushNow } from "../../storage";
@@ -14,7 +16,7 @@ import { isPlaceholderScene, isPlaceholderProject } from "../../llm/naming";
 import logo from "../../images/logo.svg";
 import "./FlowPage.css";
 
-const stamp = () => {
+export const stamp = () => {
   const d = new Date();
   return `Writing — ${d.toLocaleDateString(undefined, { month: "short", day: "numeric" })} ${d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`;
 };
@@ -26,10 +28,11 @@ const words = (html) => (String(html || "").replace(/<[^>]+>/g, " ").match(/\S+/
  * names the scenes, notices the people and facts, suggests a title.
  * Ctrl/Cmd+Enter (or a line of ***) ends a scene and begins the next.
  */
-const FlowPage = () => {
+const FlowPage = ({ embedded = false, setRefresh }) => {
   const { state, dispatch } = useContext(store);
   const navigate = useNavigate();
   const [tick, setTick] = useState(0);
+  const [importing, setImporting] = useState(false);
   const [side, setSide] = useState(() => { try { return localStorage.getItem("silky:flow-side") !== "0"; } catch (e) { return true; } });
   const [book, setBook] = useState(suggestedBook);
   const [level, setLvl] = useState(getLevel());
@@ -76,6 +79,7 @@ const FlowPage = () => {
   const loose = actors.filter((a) => a.type === "snippet" && !manuscript.sequences.includes(a.file)).sort((a, b) => a.order - b.order);
   if (loose.length) { manuscript.sequences.push(...loose.map((a) => a.file)); saveFile(dir + manuscript.file, manuscript); scenes = [...scenes, ...loose]; }
 
+  const bump = () => { setTick((t) => t + 1); setRefresh && setRefresh(Date.now()); };
   const newScene = () => {
     const uuid = "scene-" + Date.now().toString(36);
     const n = scenes.length + 1;
@@ -84,7 +88,7 @@ const FlowPage = () => {
     manuscript.sequences.push(s.file);
     saveFile(dir + manuscript.file, manuscript);
     focusFile.current = s.file;
-    setTick((t) => t + 1);
+    bump();
     return s;
   };
   // the first scene exists before the first keystroke
@@ -143,13 +147,14 @@ const FlowPage = () => {
   const elements = emerged.filter((a) => a.type === "element");
   const facts = emerged.filter((a) => a.type === "fact");
   const cur = LEVELS.find((l) => l.id === level) || LEVELS[0];
+  const nothingYet = emerged.length === 0 && total === 0;
 
   if (!dir) return null;
   return (
-    <div className={"flowPage" + (side ? " has-side" : "")}>
-      <FlowToasts dir={dir} project={state.project} />
+    <div className={"flowPage" + (side ? " has-side" : "") + (embedded ? " flowPage--embedded" : "")}>
+      {!embedded && <FlowToasts dir={dir} project={state.project} />}
       <header className="flowPage__head">
-        <Link to="/" className="flowPage__home" title="Projects" onClick={() => dispatch({ action: "setProject", payload: { name: "" } })}><img src={logo} alt="Silky" /></Link>
+        {!embedded && <Link to="/" className="flowPage__home" title="Projects" onClick={() => dispatch({ action: "setProject", payload: { name: "" } })}><img src={logo} alt="Silky" /></Link>}
         <div
           className="flowPage__title"
           contentEditable
@@ -168,7 +173,7 @@ const FlowPage = () => {
           </select>
         </label>
         {!isConfigured() && <Link className="flowPage__connect" to="/spinner/settings">Connect Spinner to let the bible emerge →</Link>}
-        <Link className="flowPage__open" to="/elements" title="Open this in the full Silky view"><FaExternalLinkAlt /> Open in Silky</Link>
+        {!embedded && <Link className="flowPage__open" to="/elements" title="Open this in the full Silky view"><FaExternalLinkAlt /> Open in Silky</Link>}
         <button type="button" className="flowPage__sideBtn" onClick={() => { setSide((s) => { try { localStorage.setItem("silky:flow-side", s ? "0" : "1"); } catch (e) { /* */ } return !s; }); }} title={side ? "Hide what has emerged" : "Show what has emerged"}>{side ? <FaChevronRight /> : <FaChevronLeft />}</button>
       </header>
 
@@ -204,6 +209,16 @@ const FlowPage = () => {
                 <button type="button" onClick={() => { clearSuggestedBook(); setBook(""); }}>No</button>
               </div>
             )}
+            {nothingYet && (
+              <div className="flowSide__doors">
+                <p className="muted">Just start typing on the left. Or:</p>
+                <button type="button" onClick={() => setImporting(true)}><FaFileImport /> Import a manuscript</button>
+                <button type="button" onClick={() => { dispatch({ action: "setProject", payload: { name: "" } }); navigate("/"); }}><FaBookOpen /> Open an example</button>
+                <dl className="flowSide__primer">
+                  {KINDS.map((k) => <div key={k.id}><dt>{k.glyph} {k.label}</dt><dd>{k.blurb}</dd></div>)}
+                </dl>
+              </div>
+            )}
             <p className="flowSide__counts">{scenes.length} scene{scenes.length === 1 ? "" : "s"} · {elements.length} element{elements.length === 1 ? "" : "s"} · {facts.length} fact{facts.length === 1 ? "" : "s"}</p>
             {emerged.length === 0 && <p className="muted">{isConfigured() ? (level === "off" ? "Turn Spinner on (top right) and the people, places and facts in your writing will appear here." : "Keep writing. When you pause, Spinner reads what's new and the bible fills in here.") : "Connect Spinner and the people, places and facts in your writing will appear here as you write."}</p>}
             <ul className="flowSide__list">
@@ -211,8 +226,17 @@ const FlowPage = () => {
                 <li key={a.file}><Link to={"/elements/" + a.file}><span>{a.icon}</span> {a.name}</Link>{a.type === "fact" && (a.involves || []).length > 0 && <small>{a.involves.map((f) => (byFile.get(f) || {}).name).filter(Boolean).join(", ")}</small>}</li>
               ))}
             </ul>
-            <p className="flowSide__foot">Everything here is a normal Silky project — <Link to="/elements">open it</Link> for threads, webs, analyses and the wiki.</p>
+            {!embedded && <p className="flowSide__foot">Everything here is a normal Silky project — <Link to="/elements">open it</Link> for threads, webs, analyses and the wiki.</p>}
+            {embedded && <p className="flowSide__foot">Everything Spinner makes is in the lists on the left; click anything to open it in a tab. The logo brings you back here.</p>}
           </aside>
+        )}
+        {importing && (
+          <ImportManuscript
+            into={state.project}
+            onClose={() => setImporting(false)}
+            onOpenSettings={() => { setImporting(false); navigate("/spinner/settings"); }}
+            onDone={() => { setImporting(false); bump(); }}
+          />
         )}
       </div>
     </div>

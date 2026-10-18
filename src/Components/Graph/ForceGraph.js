@@ -38,7 +38,8 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const ls = links.map((l) => ({ ...l, a: byId.get(l.source), b: byId.get(l.target) })).filter((l) => l.a && l.b && l.a !== l.b);
     ls.forEach((l) => { l.a.deg += 1; l.b.deg += 1; });
     s.nodes = list; s.links = ls; s.byId = byId; s.alpha = 1;
-    if (!s.fitted) { fit(); s.fitted = true; }
+    // fit once the canvas has a size (a couple of frames in)
+    s.fitAt = (s.frame || 0) + 2;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, links]);
 
@@ -71,6 +72,8 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
     const ctx = c.getContext("2d");
     const step = () => {
       const s = sim.current;
+      s.frame = (s.frame || 0) + 1;
+      if (s.fitAt != null && s.frame >= s.fitAt && c.clientWidth > 0) { fit(); s.fitAt = null; }
       const N = s.nodes;
       const n = N.length;
       if (n) {
@@ -166,7 +169,7 @@ const ForceGraph = forwardRef(({ nodes, links, selected, onSelect, onOpen, showN
         g.stroke();
         if (nt || isHot || isHover || z > 1.4) {
           g.font = `${(isSel ? 13 : 12) / z}px sans-serif`; g.textAlign = "center"; g.textBaseline = "top";
-          const label = (d.icon ? d.icon + " " : "") + d.name;
+          const label = (d.icon ? d.icon + " " : "") + (d.name.length > 44 && !isSel ? d.name.slice(0, 42).replace(/\s+\S*$/, "") + "…" : d.name);
           g.lineWidth = 3 / z; g.strokeStyle = P.bg; g.strokeText(label, d.x, d.y + r + 3 / z);
           g.fillStyle = isSel ? P.ink : P.inkSoft; g.fillText(label, d.x, d.y + r + 3 / z);
         }

@@ -154,16 +154,8 @@ const ActorList = ({ setRefresh }) => {
   return (
     <div className="ActorList">
       <div className="project">
-        <Link to="/">
-          <img
-            className="logo"
-            src={logo}
-            alt="silky"
-            onClick={() => {
-              dispatch({ action: "setProject", payload: { name: "" } });
-
-            }}
-          />
+        <Link to="/" title="Write — the blank page where the story bible builds itself">
+          <img className="logo" src={logo} alt="silky" />
         </Link>
 
         <div
@@ -178,6 +170,12 @@ const ActorList = ({ setRefresh }) => {
           {globalState.state.project}
         </div>
         <ThemePicker compact />
+        <button
+          type="button"
+          className="closeProject"
+          title="Close this project and go back to the project list"
+          onClick={() => { dispatch({ action: "setProject", payload: { name: "" } }); navigate("/"); }}
+        >×</button>
       </div>
       <nav className="activityBar" aria-label="Kinds">
         {[

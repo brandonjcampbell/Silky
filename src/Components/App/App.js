@@ -11,7 +11,7 @@ import ThemePicker from "../ThemePicker";
 import LlmSettings from "../LlmSettings";
 import ImportManuscript from "../ImportManuscript";
 import { FaFileImport, FaPlug, FaPen } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { stamp } from "../FlowPage/FlowPage";
 import { isConfigured } from "../../llm/config";
 import "./App.css";
 
@@ -68,9 +68,9 @@ const App = () => {
           <button type="button" onClick={newDir}>+ New project</button>
         </div>
         <div className="projectTray__tools">
-          <Link className="trayBtn trayBtn--write" to="/write" title="A blank page. Write; the story bible builds itself behind you." onClick={() => dispatch({ action: "setProject", payload: { name: "" } })}>
+          <button type="button" className="trayBtn trayBtn--write" title="A blank page. Write; the story bible builds itself behind you." onClick={() => { const name = stamp(); makeDir(name); dispatch({ action: "setProject", payload: { name } }); }}>
             <FaPen /> <span>Just write</span>
-          </Link>
+          </button>
           <button type="button" className="trayBtn" title="Import a manuscript" onClick={() => setPanel("import")}>
             <FaFileImport /> <span>Import manuscript</span>
           </button>
