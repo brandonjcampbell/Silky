@@ -86,10 +86,14 @@ export const hrefFor = (dir, name) => {
   if (n === "preferences" || n === "settings") return { href: "/preferences", label: "Preferences" };
   if (n === "spinner" || n === "talk") return { href: "/spinner", label: "Spinner" };
   if (ANALYSIS_NAMES[n]) return { href: "/analysis/" + ANALYSIS_NAMES[n], label: name };
-  const m = loadMaps(dir).maps.find((x) => norm(x.name) === n || norm(x.name).includes(n));
+  const maps = loadMaps(dir).maps, tls = loadTimelines(dir).timelines;
+  const m = maps.find((x) => norm(x.name) === n || norm(x.name).includes(n));
   if (m) return { href: "/map/" + m.id, label: m.name };
-  const t = loadTimelines(dir).timelines.find((x) => norm(x.name) === n || norm(x.name).includes(n));
+  const t = tls.find((x) => norm(x.name) === n || norm(x.name).includes(n));
   if (t) return { href: "/timeline/" + t.id, label: t.name };
+  // "the map" / "the timeline": the most recent one, if any
+  if (/^(the )?maps?$/.test(n) && maps.length) { const last = [...maps].sort((a, b) => (b.updated || 0) - (a.updated || 0))[0]; return { href: "/map/" + last.id, label: last.name }; }
+  if (/^(the )?timelines?$/.test(n) && tls.length) { const last = [...tls].sort((a, b) => (b.updated || 0) - (a.updated || 0))[0]; return { href: "/timeline/" + last.id, label: last.name }; }
   const x = find(actorsOf(dir), name);
   if (x) return { href: "/elements/" + x.file, label: `${x.icon || ""} ${x.name}`.trim(), key: x.file };
   return null;
@@ -456,10 +460,14 @@ export const applyAction = (dir, a, ctx = {}) => {
         return done(`Month ${idx + 1} is now ${months[idx].name} (${months[idx].days} days)`);
       }
       case "open": {
-        const h = hrefFor(dir, a.name);
+        let h = hrefFor(dir, a.name);
+        const n = norm(a.name);
+        // "open the timeline" with none yet: make one, like the + button would
+        if (!h && /^(the |a |new )?timelines?$/.test(n)) { const manu = actors.find((x) => x.type === "thread" && x.name === "Manuscript"); const t = newTimeline(dir, "Timeline 1", manu ? [manu.file] : []); undos.push(() => deleteTimeline(dir, t.id)); h = { href: "/timeline/" + t.id, label: `a new timeline, “${t.name}”` }; }
+        if (!h && /^(the |a |new )?maps?$/.test(n)) { const m = newMap(dir, "Map 1"); undos.push(() => deleteMap(dir, m.id)); h = { href: "/map/" + m.id, label: `a new map, “${m.name}”` }; }
         if (!h) throw new Error(`Can't find anything called “${a.name}”`);
         if (ctx.navigate) ctx.navigate(h.href);
-        return { ok: true, message: `Opened ${h.label}`, undo: null };
+        return done(`Opened ${h.label}`);
       }
       case "close": {
         const project = ctx.project || "";
