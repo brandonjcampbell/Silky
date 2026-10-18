@@ -76,7 +76,7 @@ Projects are saved in the browser's IndexedDB and listed on the tray; **Export**
 
 ## Neo4j, and the desktop build
 
-Projects live as JSON, so nothing needs a database. `silkyToCypher.js` exports a project into Neo4j as `Element`, `Fact`, `Scene` (stored as `snippet` in the project files, for history's sake), and `Thread` nodes with the edges above, for Cypher over your own narrative. An Electron build of the same app is available for those who want it on the desktop; the browser version is the main one.
+Projects live as JSON, so nothing needs a database. `silkyToCypher.js` exports a project into Neo4j as `Element`, `Fact`, `Scene`, and `Thread` nodes with the edges above, for Cypher over your own narrative. An Electron build of the same app is available for those who want it on the desktop; the browser version is the main one.
 
 ## Development
 

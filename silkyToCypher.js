@@ -55,7 +55,7 @@ silkyJson.actors.forEach((actor) => {
 
   if (actor.type === "snippet") {
     actors.push(
-      `CREATE (:Snippet {name:"${actor.name}", uuid:"${actor.uuid}"})`
+      `CREATE (:Scene {name:"${actor.name}", uuid:"${actor.uuid}"})`
     );
     actor.elements.forEach((element) => {
       axioms.push(
