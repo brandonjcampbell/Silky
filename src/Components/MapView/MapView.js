@@ -260,7 +260,7 @@ const MapView = () => {
           <g transform={`translate(${view.x} ${view.y}) scale(${view.z})`}>
             {map.image ? <image href={map.image} x={0} y={0} width={map.w} height={map.h} /> : <rect x={0} y={0} width={map.w} height={map.h} className="mapSheet" />}
             {!map.image && <rect x={0} y={0} width={map.w} height={map.h} fill="url(#mapGrid)" />}
-            {map.lines.filter((l) => l.closed).map((l) => {
+            {[...map.lines.filter((l) => l.closed)].sort((a, b) => polyArea(b.points) - polyArea(a.points)).map((l) => {
               const on = selLine && selLine.id === l.id;
               const c = l.color || textureOf(l.texture).color;
               const cx = l.points.reduce((n, p) => n + p.x, 0) / l.points.length;
