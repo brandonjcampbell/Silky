@@ -97,9 +97,12 @@ const FlowPage = () => {
     if (el) { el.focus(); focusFile.current = null; }
   });
 
+  // keep the rendered object current too, or a re-render would hand the
+  // editor its stale content and wipe what was just typed
   const saveScene = (snip) => (html) => {
     const cur = loadFile(dir + snip.file) || snip;
     cur.content = html;
+    snip.content = html;
     saveFile(dir + cur.file, cur);
   };
 
