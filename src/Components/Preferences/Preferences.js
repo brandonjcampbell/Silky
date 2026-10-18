@@ -7,6 +7,7 @@ import { isConfigured } from "../../llm/config";
 import LlmSettings from "../LlmSettings";
 import SpinnerIcon from "../SpinnerIcon";
 import CalendarEditor from "../CalendarEditor";
+import BrowserStorageBar from "../BrowserStorageBar";
 import "./Preferences.css";
 
 /** Theme, type, Spinner — everything about how Silky looks and behaves, in one place. */
@@ -56,6 +57,11 @@ const Preferences = () => {
           <p>The fog came pouring in at every chink and keyhole, and was so dense without, that although the court was of the narrowest, the houses opposite were mere phantoms.</p>
         </div>
         <button type="button" className="prefs__reset" onClick={() => setP(savePrefs({ ...DEFAULT_PREFS }))}>Reset type</button>
+      </section>
+
+      <section className="prefs__section">
+        <h3>Storage</h3>
+        <BrowserStorageBar inline />
       </section>
 
       <section className="prefs__section">

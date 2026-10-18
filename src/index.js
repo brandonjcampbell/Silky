@@ -6,8 +6,7 @@ import "react-pro-sidebar/dist/css/styles.css";
 import "./index.css";
 import { MyRoutes } from "./Components/";
 import { StateProvider } from "./NewContext";
-import { ready, isElectron } from "./storage";
-import BrowserStorageBar from "./Components/BrowserStorageBar";
+import { ready } from "./storage";
 import { applyTheme } from "./theme";
 import { applyPrefs } from "./prefs";
 import ModelStatus from "./Components/ModelStatus";
@@ -29,7 +28,6 @@ ready().then(() => {
           <div className="App">
             <div className="Sidebar"></div>
             <div>
-              {!isElectron && <BrowserStorageBar />}
               <MyRoutes />
             </div>
             <ModelStatus />

@@ -19,7 +19,6 @@ import { WIKI_INDEX } from "../Wiki";
 import "../Wiki/Wiki.css";
 import { isConfigured } from "../../llm/config";
 import logo from "../../images/logo.svg";
-import ThemePicker from "../ThemePicker";
 import { emojis } from "../TitleBar/emojis.json";
 import { kindOf } from "../../kinds";
 
@@ -172,7 +171,6 @@ const ActorList = ({ setRefresh }) => {
         >
           {globalState.state.project}
         </div>
-        <ThemePicker compact />
         <button
           type="button"
           className="closeProject"

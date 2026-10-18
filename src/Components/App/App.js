@@ -7,7 +7,7 @@ import { FaDownload } from "react-icons/fa";
 import Examples from "../Examples";
 import { exportProject } from "../../storage/projectIO";
 import FormDialog from "../FormDialog/FormDialog";
-import ThemePicker from "../ThemePicker";
+import BrowserStorageBar from "../BrowserStorageBar";
 import LlmSettings from "../LlmSettings";
 import ImportManuscript from "../ImportManuscript";
 import { FaFileImport, FaPlug, FaPen } from "react-icons/fa";
@@ -82,7 +82,6 @@ const App = () => {
           >
             <FaPlug /> <span>Spinner</span>
           </button>
-          <ThemePicker />
         </div>
       </div>
 
@@ -125,6 +124,7 @@ const App = () => {
       })}
 
       <Examples existing={dirs} onLoaded={(name) => dispatch({ action: "setProject", payload: { name } })} />
+      <div className="projectTray__storage"><BrowserStorageBar inline /></div>
     </div>
   );
 };

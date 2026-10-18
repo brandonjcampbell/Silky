@@ -8,7 +8,7 @@ import "./BrowserStorageBar.css";
  * saved in this browser's IndexedDB; this bar lets the user also mirror them
  * to a real folder (Chromium) or move them around as a JSON export.
  */
-const BrowserStorageBar = () => {
+const BrowserStorageBar = ({ inline = false }) => {
   const [folder, setFolder] = useState(browser.connectedDirectoryName());
   const [note, setNote] = useState("");
   const fileInput = useRef();
@@ -39,11 +39,11 @@ const BrowserStorageBar = () => {
   };
 
   return (
-    <div className="storageBar">
+    <div className={inline ? "storageBar storageBar--inline" : "storageBar"}>
       <span className="storageBar__status">
         {folder
-          ? `Saving in this browser and to folder “${folder}”`
-          : "Saving in this browser only (IndexedDB)"}
+          ? `Projects save in this browser and to the folder “${folder}”.`
+          : "Projects save in this browser (IndexedDB). Connect a folder to keep plain files on disk as well, or export a backup."}
       </span>
       <span className="storageBar__actions">
         {browser.canPickDirectory() && (
