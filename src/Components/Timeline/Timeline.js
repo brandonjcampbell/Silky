@@ -29,10 +29,10 @@ const tickLabel = (ms, step) => {
 const W = 1000, ROW = 22, LANE_PAD = 10, TOP = 30;
 
 /** Pack items into rows so nothing overlaps (x-extent plus an estimated label width). */
-const packRows = (items, x) => {
+const packRows = (items, x, extra = 0) => {
   const rows = [];
   return items.map((it) => {
-    const x0 = x(it.start), x1 = Math.max(x(it.end), x0 + 2) + Math.min(220, 8 + it.scene.name.length * 6.2);
+    const x0 = x(it.start), x1 = Math.max(x(it.end), x0 + 2) + Math.min(220, 8 + it.scene.name.length * 6.2) + extra;
     let r = rows.findIndex((end) => end < x0 - 6);
     if (r < 0) { r = rows.length; rows.push(x1); } else rows[r] = x1;
     return { ...it, row: r };
@@ -106,7 +106,7 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
   // lane geometry
   let y = TOP;
   const laneGeo = placedLanes.map((l) => {
-    const items = packRows(l.placed.filter((p) => !p.unplaced), x);
+    const items = packRows(l.placed.filter((p) => !p.unplaced), x, lens === "none" ? 0 : 80);
     const rows = items.length ? items[0].rows : 1;
     const g = { lane: l, items, y0: y, h: rows * ROW + LANE_PAD };
     y += g.h;
@@ -175,7 +175,7 @@ const Timeline = ({ scenes, lanes: lanesProp, title }) => {
               <div><dt>Sentence</dt><dd>{fmt(st.avgSentence, 1)} ± {fmt(st.sdSentence, 1)}</dd></div>
               <div><dt>Grade</dt><dd>{fmt(st.grade, 1)}</dd></div>
               <div><dt>Adverbs</dt><dd>{fmt(st.adverbsPer1k, 1)}‰</dd></div>
-              <div><dt>Read</dt><dd>{fmt(st.readingMinutes, 0)} min</dd></div>
+              <div><dt>Read</dt><dd>{st.readingMinutes < 1 ? "under a minute" : `${fmt(st.readingMinutes, 0)} min`}</dd></div>
             </dl>
             {notes.map(({ reader, note }) => (
               <div key={reader.id} className="sceneCard__note">
