@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaMousePointer, FaMapPin, FaRoute, FaRulerCombined, FaRulerHorizontal, FaImage, FaSearchPlus, FaSearchMinus, FaExpand, FaTrash, FaTimes } from "react-icons/fa";
 import { store } from "../../NewContext";
 import { loadDir, loadFile } from "../../utils/";
-import { mapById, updateMap, deleteMap, UNITS, dist, pathLength, fmtDist, newPin, newLine } from "../../maps";
+import { mapById, updateMap, deleteMap, UNITS, dist, pathLength, fmtDist, newPin, newLine, newRegion, polyArea, fmtArea, TEXTURES, textureOf } from "../../maps";
 import { isLocation } from "../../role";
 import SortRoles from "../RolePicker/SortRoles";
 import "./MapView.css";
@@ -11,10 +11,27 @@ import "./MapView.css";
 const TOOLS = [
   { id: "select", name: "Select / pan", icon: FaMousePointer, hint: "Drag the map to pan, scroll to zoom. Click a pin or route to select it; drag a pin to move it. Delete removes the selection." },
   { id: "pin", name: "Pin", icon: FaMapPin, hint: "Click to drop a pin, then pick which location it is." },
-  { id: "line", name: "Route", icon: FaRoute, hint: "Click to add points; double-click or Enter to finish; Esc to cancel. The route's length appears beside it." },
+  { id: "line", name: "Route / region", icon: FaRoute, hint: "Click to add points. Double-click or Enter finishes a route; click back on the first point (or press C) to close it into a region — water, grass, rock — with its own texture and colour. Esc cancels." },
   { id: "scale", name: "Set scale", icon: FaRulerCombined, hint: "Click two points you know the distance between, then say how far apart they are. Every other distance follows." },
   { id: "measure", name: "Measure", icon: FaRulerHorizontal, hint: "Click two points to read the distance between them. Each reading is kept in the list on the right." },
 ];
+
+const SNAP_PX = 12; // screen px within which a click lands on the first point
+
+/** One 40×40 tile of a texture, in `c`. */
+const Tile = ({ tex, c }) => {
+  switch (tex) {
+    case "water": return <><rect width="40" height="40" fill={c} opacity="0.35" /><path d="M0 12 q5 -4 10 0 t10 0 t10 0 t10 0 M0 32 q5 -4 10 0 t10 0 t10 0 t10 0" fill="none" stroke={c} strokeWidth="1.4" opacity="0.9" /></>;
+    case "grass": return <><rect width="40" height="40" fill={c} opacity="0.28" /><path d="M6 30 l2 -7 M9 30 l1 -5 M24 16 l2 -7 M27 16 l1 -5 M14 38 l2 -6 M32 34 l2 -6 M35 34 l1 -4" fill="none" stroke={c} strokeWidth="1.3" strokeLinecap="round" /></>;
+    case "forest": return <><rect width="40" height="40" fill={c} opacity="0.3" /><path d="M10 26 l5 -9 l5 9 z M27 14 l5 -9 l5 9 z M30 34 l4 -7 l4 7 z" fill={c} opacity="0.85" /><path d="M15 26 v4 M32 14 v4 M34 34 v3" stroke={c} strokeWidth="1.2" /></>;
+    case "rock": return <><rect width="40" height="40" fill={c} opacity="0.28" /><path d="M4 30 l6 -8 l7 5 l-4 6 z M22 12 l7 -6 l6 7 l-8 4 z M26 30 l5 -4 l6 5 l-5 4 z" fill="none" stroke={c} strokeWidth="1.2" strokeLinejoin="round" opacity="0.9" /></>;
+    case "sand": return <><rect width="40" height="40" fill={c} opacity="0.3" /><g fill={c} opacity="0.8"><circle cx="6" cy="8" r="1" /><circle cx="18" cy="14" r="1" /><circle cx="30" cy="6" r="1" /><circle cx="12" cy="28" r="1" /><circle cx="26" cy="24" r="1" /><circle cx="34" cy="34" r="1" /><circle cx="4" cy="36" r="1" /></g></>;
+    case "marsh": return <><rect width="40" height="40" fill={c} opacity="0.25" /><path d="M2 14 h10 M22 8 h10 M8 30 h10 M26 28 h10" stroke={c} strokeWidth="1.2" opacity="0.8" /><path d="M7 14 v-6 M27 8 v-5 M13 30 v-6 M31 28 v-6" stroke={c} strokeWidth="1.2" opacity="0.8" /></>;
+    case "snow": return <><rect width="40" height="40" fill="#fff" opacity="0.55" /><path d="M10 10 l0 8 M6 14 l8 0 M7 11 l6 6 M13 11 l-6 6 M28 26 l0 8 M24 30 l8 0" stroke={c} strokeWidth="1" opacity="0.8" /></>;
+    case "town": return <><rect width="40" height="40" fill={c} opacity="0.22" /><g fill={c} opacity="0.8"><rect x="4" y="6" width="8" height="8" /><rect x="22" y="4" width="10" height="6" /><rect x="8" y="24" width="6" height="10" /><rect x="24" y="22" width="9" height="9" /></g></>;
+    default: return <rect width="40" height="40" fill={c} opacity="0.5" />;
+  }
+};
 
 /** A map of the story's places: image or blank sheet, scale, pins, routes, distances. */
 const MapView = () => {
@@ -110,6 +127,7 @@ const MapView = () => {
       setSel({ kind: "pin", id: p.id });
       if (pinFor) { setPinFor(null); setTool("select"); } else setAskPin(p.id);
     } else if (tool === "line") {
+      if (draft && draft.kind === "line" && draft.points.length >= 3 && dist(draft.points[0], m) * view.z < SNAP_PX) { closeRegion(); return; }
       setDraft((dft) => (dft && dft.kind === "line" ? { ...dft, points: [...dft.points, m] } : { kind: "line", points: [m] }));
     } else if (tool === "scale" || tool === "measure") {
       if (!draft || draft.kind !== tool) setDraft({ kind: tool, a: m });
@@ -146,11 +164,21 @@ const MapView = () => {
     }
     setDraft(null);
   };
+  const closeRegion = () => {
+    if (draft && draft.kind === "line" && draft.points.length >= 3) {
+      const r = newRegion(draft.points);
+      save({ ...map, lines: [...map.lines, r] });
+      setSel({ kind: "line", id: r.id });
+    }
+    setDraft(null);
+  };
+  const patchLine = (id, patch) => save({ ...map, lines: map.lines.map((x) => (x.id === id ? { ...x, ...patch } : x)) });
   useEffect(() => {
     const onKey = (e) => {
       if (e.target.closest && e.target.closest("input, textarea, select, [contenteditable]")) return;
       if (e.key === "Escape") { setDraft(null); setPinFor(null); setAskPin(null); if (tool !== "select") setTool("select"); else setSel(null); }
       else if (e.key === "Enter" && tool === "line") finishLine();
+      else if ((e.key === "c" || e.key === "C") && draft && draft.kind === "line") closeRegion();
       else if ((e.key === "Delete" || e.key === "Backspace") && sel) { removeSel(); }
       else if (e.key === "v") setTool("select");
       else if (e.key === "p") setTool("pin");
@@ -232,7 +260,21 @@ const MapView = () => {
           <g transform={`translate(${view.x} ${view.y}) scale(${view.z})`}>
             {map.image ? <image href={map.image} x={0} y={0} width={map.w} height={map.h} /> : <rect x={0} y={0} width={map.w} height={map.h} className="mapSheet" />}
             {!map.image && <rect x={0} y={0} width={map.w} height={map.h} fill="url(#mapGrid)" />}
-            {map.lines.map((l) => {
+            {map.lines.filter((l) => l.closed).map((l) => {
+              const on = selLine && selLine.id === l.id;
+              const c = l.color || textureOf(l.texture).color;
+              const cx = l.points.reduce((n, p) => n + p.x, 0) / l.points.length;
+              const cy = l.points.reduce((n, p) => n + p.y, 0) / l.points.length;
+              const pts = l.points.map((p) => `${p.x},${p.y}`).join(" ");
+              return (
+                <g key={l.id} data-line={l.id} className={"mapRegion" + (on ? " is-selected" : "")}>
+                  <pattern id={"tex-" + l.id} width={40} height={40} patternUnits="userSpaceOnUse"><Tile tex={l.texture} c={c} /></pattern>
+                  <polygon points={pts} fill={`url(#tex-${l.id})`} stroke={c} strokeWidth={px(on ? 3 : 1.5)} />
+                  {l.name && <text x={cx} y={cy} fontSize={px(13)} textAnchor="middle" className="mapLabel mapLabel--big">{l.name}</text>}
+                </g>
+              );
+            })}
+            {map.lines.filter((l) => !l.closed).map((l) => {
               const mid = l.points[Math.floor(l.points.length / 2)];
               const on = selLine && selLine.id === l.id;
               return (
@@ -246,7 +288,7 @@ const MapView = () => {
             {draft && draft.kind === "line" && (
               <g className="mapLine is-draft">
                 <polyline points={[...draft.points, ...(cursor ? [cursor] : [])].map((p) => `${p.x},${p.y}`).join(" ")} strokeWidth={px(2)} />
-                {draft.points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={px(3)} />)}
+                {draft.points.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r={px(i === 0 && draft.points.length >= 3 ? 6 : 3)} className={i === 0 && draft.points.length >= 3 ? "mapLine__close" : ""} />)}
                 {cursor && draft.points.length > 0 && <text x={cursor.x + px(10)} y={cursor.y - px(10)} fontSize={px(12)} className="mapLabel">{fmtDist(map, pathLength([...draft.points, cursor]))}</text>}
               </g>
             )}
@@ -278,9 +320,11 @@ const MapView = () => {
               const on = selPin && selPin.id === p.id;
               return (
                 <g key={p.id} data-pin={p.id} className={"mapPin" + (on ? " is-selected" : "")} transform={`translate(${p.x} ${p.y})`}>
-                  <circle r={px(on ? 9 : 7)} />
-                  <circle r={px(2.5)} className="mapPin__dot" />
-                  <text x={px(11)} y={px(4)} fontSize={px(12)} className="mapLabel">{pinName(p)}</text>
+                  <g transform={`scale(${px(on ? 1.2 : 1)})`}>
+                    <path className="mapPin__mark" d="M0 0 C-5 -7 -9 -11 -9 -16 A9 9 0 1 1 9 -16 C9 -11 5 -7 0 0 Z" />
+                    <circle cy={-16} r={3.2} className="mapPin__dot" />
+                  </g>
+                  <text x={px(12)} y={px(-10)} fontSize={px(12)} className="mapLabel">{pinName(p)}</text>
                 </g>
               );
             })}
@@ -323,13 +367,36 @@ const MapView = () => {
               <div className="mapPanel__row"><button type="button" onClick={removeSel}><FaTrash /> Remove</button></div>
             </div>
           )}
-          {selLine && (
+          {selLine && !selLine.closed && (
             <div className="mapPanel">
               <h5>Route</h5>
-              <input placeholder="Name this route" value={selLine.name} onChange={(e) => save({ ...map, lines: map.lines.map((x) => (x.id === selLine.id ? { ...x, name: e.target.value } : x)) })} />
+              <input placeholder="Name this route" value={selLine.name} onChange={(e) => patchLine(selLine.id, { name: e.target.value })} />
               <p className="mapPanel__title">{fmtDist(map, pathLength(selLine.points))} · {selLine.points.length} points</p>
-              <label className="mapPanel__color">Colour <input type="color" value={selLine.color || "#e0245e"} onChange={(e) => save({ ...map, lines: map.lines.map((x) => (x.id === selLine.id ? { ...x, color: e.target.value } : x)) })} /></label>
-              <div className="mapPanel__row"><button type="button" onClick={removeSel}><FaTrash /> Remove</button></div>
+              <label className="mapPanel__color">Colour <input type="color" value={selLine.color || "#e0245e"} onChange={(e) => patchLine(selLine.id, { color: e.target.value })} /></label>
+              <div className="mapPanel__row">
+                {selLine.points.length >= 3 && <button type="button" onClick={() => patchLine(selLine.id, { closed: true, texture: "solid", color: "" })}>Close into a region</button>}
+                <button type="button" onClick={removeSel}><FaTrash /> Remove</button>
+              </div>
+            </div>
+          )}
+          {selLine && selLine.closed && (
+            <div className="mapPanel">
+              <h5>Region</h5>
+              <input placeholder="Name this region" value={selLine.name} onChange={(e) => patchLine(selLine.id, { name: e.target.value })} />
+              <p className="mapPanel__title">{fmtArea(map, polyArea(selLine.points))} · {fmtDist(map, pathLength([...selLine.points, selLine.points[0]]))} around</p>
+              <div className="mapTextures" role="radiogroup" aria-label="Texture">
+                {TEXTURES.map((t) => (
+                  <button key={t.id} type="button" className={"mapTexture" + (selLine.texture === t.id ? " is-on" : "")} title={t.name} onClick={() => patchLine(selLine.id, { texture: t.id })}>
+                    <svg viewBox="0 0 40 40" width="28" height="28"><Tile tex={t.id} c={selLine.color || t.color} /></svg>
+                    <span>{t.name}</span>
+                  </button>
+                ))}
+              </div>
+              <label className="mapPanel__color">Colour <input type="color" value={selLine.color || textureOf(selLine.texture).color} onChange={(e) => patchLine(selLine.id, { color: e.target.value })} />{selLine.color && <button type="button" className="mapPanel__link" onClick={() => patchLine(selLine.id, { color: "" })}>default</button>}</label>
+              <div className="mapPanel__row">
+                <button type="button" onClick={() => patchLine(selLine.id, { closed: false })}>Open into a route</button>
+                <button type="button" onClick={removeSel}><FaTrash /> Remove</button>
+              </div>
             </div>
           )}
 
@@ -359,11 +426,19 @@ const MapView = () => {
           </ul>
           {map.pins.some((p) => !p.element) && <p className="muted">{map.pins.filter((p) => !p.element).length} pin{map.pins.filter((p) => !p.element).length === 1 ? "" : "s"} not tied to a location.</p>}
 
-          {map.lines.length > 0 && (
+          {map.lines.some((l) => !l.closed) && (
             <>
               <h5>Routes</h5>
               <ul className="mapList">
-                {map.lines.map((l) => <li key={l.id}><span>{l.name || "Unnamed route"}</span><b>{fmtDist(map, pathLength(l.points))}</b></li>)}
+                {map.lines.filter((l) => !l.closed).map((l) => <li key={l.id} className={selLine && selLine.id === l.id ? "is-on" : ""}><span>{l.name || "Unnamed route"}</span><b>{fmtDist(map, pathLength(l.points))}</b><button type="button" onClick={() => setSel({ kind: "line", id: l.id })}>show</button></li>)}
+              </ul>
+            </>
+          )}
+          {map.lines.some((l) => l.closed) && (
+            <>
+              <h5>Regions</h5>
+              <ul className="mapList">
+                {map.lines.filter((l) => l.closed).map((l) => <li key={l.id} className={selLine && selLine.id === l.id ? "is-on" : ""}><span>{l.name || textureOf(l.texture).name}</span><b>{fmtArea(map, polyArea(l.points))}</b><button type="button" onClick={() => setSel({ kind: "line", id: l.id })}>show</button></li>)}
               </ul>
             </>
           )}

@@ -16,9 +16,9 @@
 .mapGrid__line { fill: none; stroke: var(--line); stroke-width: 1; opacity: 0.6; }
 .mapLabel { fill: var(--ink); paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; font-family: var(--font-ui, inherit); pointer-events: none; }
 .mapLabel--big { font-weight: 600; }
-.mapPin circle { fill: var(--accent); stroke: #fff; stroke-width: 1.5; cursor: pointer; }
+.mapPin .mapPin__mark { fill: var(--accent); stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; cursor: pointer; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.35)); }
 .mapPin .mapPin__dot { fill: #fff; stroke: none; pointer-events: none; }
-.mapPin.is-selected circle { stroke: var(--ink); stroke-width: 2; }
+.mapPin.is-selected .mapPin__mark { stroke: var(--ink); stroke-width: 2; }
 .mapLine polyline { fill: none; stroke: var(--accent); stroke-linejoin: round; stroke-linecap: round; opacity: 0.9; }
 .mapLine .mapLine__hit { stroke: transparent; cursor: pointer; opacity: 1; }
 .mapLine.is-selected polyline:not(.mapLine__hit) { stroke: var(--ink); }
@@ -66,3 +66,12 @@
 .mapList--readings .mapList__pick:hover { color: var(--accent); }
 .mapList--readings li.is-on .mapList__pick { color: var(--accent); }
 .mapPanel__title small { font-weight: 400; }
+
+.mapRegion polygon { cursor: pointer; }
+.mapRegion.is-selected polygon { stroke: var(--ink); stroke-dasharray: none; }
+.mapLine .mapLine__close { fill: var(--bg-raised); stroke: var(--accent); stroke-width: 2; }
+.mapTextures { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+.mapTexture { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 52px; padding: 4px 2px; font: inherit; font-size: 10px; color: var(--ink-muted); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); cursor: pointer; }
+.mapTexture svg { border-radius: 3px; background: var(--bg-raised); }
+.mapTexture.is-on { border-color: var(--accent); color: var(--ink); background: var(--accent-soft); }
+.mapPanel__link { font: inherit; font-size: 11px; color: var(--ink-muted); background: none; border: none; text-decoration: underline; cursor: pointer; margin-left: 6px; }

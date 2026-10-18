@@ -55,3 +55,31 @@ export const fmtDist = (map, px) => {
 };
 export const newPin = (x, y, extra = {}) => ({ id: uid(), x, y, element: null, label: "", ...extra });
 export const newLine = (points, extra = {}) => ({ id: uid(), points, name: "", color: "", ...extra });
+/** A closed polyline is a region: it has a fill texture and an area. */
+export const newRegion = (points, extra = {}) => ({ id: uid(), points, name: "", color: "", closed: true, texture: "solid", ...extra });
+
+/** Signed shoelace area in map px² */
+export const polyArea = (pts) => Math.abs(pts.reduce((n, p, i) => { const q = pts[(i + 1) % pts.length]; return n + p.x * q.y - q.x * p.y; }, 0)) / 2;
+export const fmtArea = (map, px2) => {
+  if (!map.scale || !map.scale.length) return `${Math.round(px2 / 1000)}k px²`;
+  const spx = dist(map.scale.a, map.scale.b);
+  if (!spx) return "";
+  const u = px2 * (map.scale.length / spx) ** 2;
+  const n = u >= 100 ? Math.round(u) : u >= 10 ? Math.round(u * 10) / 10 : Math.round(u * 100) / 100;
+  return `${n.toLocaleString()} sq ${map.unit}`;
+};
+
+/** Fill textures for regions. Each draws in a 40×40 tile in the region's colour. */
+export const TEXTURES = [
+  { id: "solid", name: "Solid", color: "#c8b89a" },
+  { id: "water", name: "Water", color: "#5b9bd5" },
+  { id: "grass", name: "Grass", color: "#6aa84f" },
+  { id: "forest", name: "Forest", color: "#38761d" },
+  { id: "rock", name: "Rock", color: "#8d8d8d" },
+  { id: "sand", name: "Sand", color: "#d9b36c" },
+  { id: "marsh", name: "Marsh", color: "#7a9a5a" },
+  { id: "snow", name: "Snow", color: "#9fb7c9" },
+  { id: "town", name: "Built up", color: "#b06a4a" },
+];
+export const textureOf = (id) => TEXTURES.find((t) => t.id === id) || TEXTURES[0];
+
