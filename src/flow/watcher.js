@@ -10,6 +10,8 @@ import { scanSnippet } from "../analysis/links";
 import { similarity } from "../provenance";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { linkFact, createElement, createFact } from "./apply";
+import { suggestTitles, isPlaceholderScene, isPlaceholderProject } from "../llm/naming";
+import { saveFile } from "../utils/";
 
 export const LEVELS = [
   { id: "off", name: "Off", blurb: "Spinner waits to be asked." },
@@ -35,16 +37,19 @@ const dismissed = (dir, key) => !!memo(dir).dismissed[key];
 
 /* a single watcher per page */
 let dir = null;
+let projectName = "";
 let timer = null;
 let busy = false;
 let seen = new Map(); // sceneFile -> word count at last read
 let listeners = new Set();
 let toasts = [];
 let status = "idle"; // idle | waiting | reading
+export let suggestedBook = "";
+export const clearSuggestedBook = () => { suggestedBook = ""; };
 
 const emit = () => listeners.forEach((l) => l({ toasts: [...toasts], status, level: getLevel() }));
 export const subscribe = (fn) => { listeners.add(fn); fn({ toasts: [...toasts], status, level: getLevel() }); return () => listeners.delete(fn); };
-export const setDir = (d) => { if (d !== dir) { dir = d; seen = new Map(); toasts = []; emit(); } };
+export const setDir = (d, name = "") => { projectName = name; if (d !== dir) { dir = d; seen = new Map(); toasts = []; suggestedBook = ""; emit(); } };
 
 let nextId = 1;
 const push = (t) => { toasts = [...toasts.filter((x) => !(x.key && x.key === t.key)), { id: nextId++, at: Date.now(), ...t }]; if (toasts.length > 4) toasts = toasts.slice(-4); emit(); };
@@ -130,7 +135,23 @@ const read = async (sceneFile) => {
         push({ kind: "ask", key, text: `New fact: 💡 ${f.statement}${who}. Add it and reveal it in this scene?`, primary: "Add", secondary: "Skip", onPrimary: () => createFact(dir, s.file, f, { createMissing: true }), onSecondary: () => remember(dir, key) });
       }
     });
-    if (level !== "ask") window.dispatchEvent(new CustomEvent("silky-flow-changed"));
+    // 4. a scene that was never named gets a title; a placeholder book gets a suggestion
+    try {
+      const cur = loadFile(dir + s.file);
+      if (cur && isPlaceholderScene(cur.name) && words(cur.content).length >= 60) {
+        const others = actors.filter((a) => a.type === "snippet" && a.file !== s.file && !isPlaceholderScene(a.name)).map((a) => a.name).slice(0, 12).join("; ");
+        const t = await suggestTitles({ sceneText: cur.content, bookSoFar: others });
+        if (t.scene) {
+          const again = loadFile(dir + s.file);
+          if (again && isPlaceholderScene(again.name)) { again.name = t.scene; saveFile(dir + again.file, again); info(`Named the scene “${t.scene}”`, null, `title:${s.file}`); }
+        }
+        if (t.book && isPlaceholderProject(projectName)) {
+          suggestedBook = t.book;
+          window.dispatchEvent(new CustomEvent("silky-flow-book", { detail: t.book }));
+        }
+      }
+    } catch (e) { /* naming is a nicety */ }
+    window.dispatchEvent(new CustomEvent("silky-flow-changed"));
   } catch (e) {
     if (!e || e.name !== "AbortError") push({ kind: "info", text: "Spinner couldn't read the scene: " + (e.message || e), ttl: 8000 });
   } finally {

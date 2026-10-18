@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPen, FaFileImport, FaBookOpen } from "react-icons/fa";
 import { store } from "../../NewContext";
-import { loadDir, saveFile } from "../../utils/";
+import { loadDir } from "../../utils/";
 import { isConfigured } from "../../llm/config";
 import { KINDS } from "../../kinds";
 import ImportManuscript from "../ImportManuscript";
@@ -22,13 +22,6 @@ const Welcome = ({ setRefresh }) => {
   const count = loadDir(state.dir).filter((f) => f.includes(".element.")).length;
   const empty = count === 0;
 
-  const firstScene = () => {
-    const uuid = Date.now();
-    const el = { name: "First scene", file: uuid + ".element.json", type: "snippet", icon: "📜", order: 0, uuid, content: "", reveals: [], sequenced_in: [], captured_in: [] };
-    saveFile(state.dir + el.file, el);
-    setRefresh && setRefresh(Date.now());
-    navigate("/elements/" + el.file);
-  };
   const toExamples = () => { dispatch({ action: "setProject", payload: { name: "" } }); navigate("/"); };
 
   return (
@@ -38,10 +31,10 @@ const Welcome = ({ setRefresh }) => {
         <>
           <h2>“{state.project}” is empty. Three ways in:</h2>
           <div className="welcome__doors">
-            <button type="button" className="door" onClick={firstScene}>
+            <button type="button" className="door" onClick={() => navigate("/write")}>
               <FaPen />
-              <strong>Write a scene</strong>
-              <span>Start with prose. Link people and facts as they appear, or let Spinner find them.</span>
+              <strong>Just write</strong>
+              <span>A blank page. Start with prose; Spinner names the scenes and notices the people and facts as you go.</span>
             </button>
             <button type="button" className="door" onClick={() => setImporting(true)}>
               <FaFileImport />

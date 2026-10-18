@@ -101,3 +101,5 @@
 .folderTools svg:first-child { font-size: 15px; }
 .projectcard:hover .folderTools { opacity: 1; }
 .folderTools svg:hover { color: var(--accent); }
+.projectTray .trayBtn--write { text-decoration: none; color: #fff; background: var(--accent); border-color: var(--accent); }
+.projectTray .trayBtn--write:hover { filter: brightness(1.1); }

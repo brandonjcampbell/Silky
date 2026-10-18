@@ -7,12 +7,12 @@ import { isFocus, setFocus } from "../../focus";
 import "./Flow.css";
 
 /** Spinner's toasts (Flow mode), plus the exit control for blank-page mode. */
-const FlowToasts = ({ dir }) => {
+const FlowToasts = ({ dir, project }) => {
   const [st, setSt] = useState({ toasts: [], status: "idle", level: "off" });
   const [focus, setF] = useState(isFocus());
   const { pathname } = useLocation();
   useEffect(() => { start(); return subscribe(setSt); }, []);
-  useEffect(() => { setDir(dir); }, [dir]);
+  useEffect(() => { setDir(dir, project); }, [dir, project]);
   useEffect(() => {
     const on = (e) => setF(!!e.detail);
     const key = (e) => { if (e.key === "Escape" && isFocus()) setFocus(false); };

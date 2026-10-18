@@ -58,7 +58,7 @@ const Shell = () => {
   if (mobile) {
     return (
       <div className="View View--mobile">
-        <FlowToasts dir={state.dir} />
+        <FlowToasts dir={state.dir} project={state.project} />
         {!hasContent || drawer ? (
           <div
             className={"left-pane mobileList" + (drawer ? " is-drawer" : "")}
@@ -79,7 +79,7 @@ const Shell = () => {
 
   return (
     <div className="View">
-      <FlowToasts dir={state.dir} />
+      <FlowToasts dir={state.dir} project={state.project} />
       <ReflexContainer orientation="vertical">
         <ReflexElement className="left-pane" flex={0.2} minSize={200}>
           <div className="List"><ActorList setRefresh={doRefresh} /></div>

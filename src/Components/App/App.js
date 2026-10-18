@@ -10,7 +10,8 @@ import FormDialog from "../FormDialog/FormDialog";
 import ThemePicker from "../ThemePicker";
 import LlmSettings from "../LlmSettings";
 import ImportManuscript from "../ImportManuscript";
-import { FaFileImport, FaPlug } from "react-icons/fa";
+import { FaFileImport, FaPlug, FaPen } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { isConfigured } from "../../llm/config";
 import "./App.css";
 
@@ -67,6 +68,9 @@ const App = () => {
           <button type="button" onClick={newDir}>+ New project</button>
         </div>
         <div className="projectTray__tools">
+          <Link className="trayBtn trayBtn--write" to="/write" title="A blank page. Write; the story bible builds itself behind you." onClick={() => dispatch({ action: "setProject", payload: { name: "" } })}>
+            <FaPen /> <span>Just write</span>
+          </Link>
           <button type="button" className="trayBtn" title="Import a manuscript" onClick={() => setPanel("import")}>
             <FaFileImport /> <span>Import manuscript</span>
           </button>
