@@ -13,6 +13,8 @@ import { parseHtml, sceneText, weave } from "../../revise";
 import Revision from "../Revision";
 import { isCharacter, roleOf } from "../../role";
 import SortRoles from "../RolePicker/SortRoles";
+import { extractActions, describeAction, applyAction } from "../../llm/actions";
+import { FaCheck, FaUndo, FaMagic } from "react-icons/fa";
 import "./Talk.css";
 
 const TYPE_GLYPH = { snippet: "📜", element: "🧩", fact: "💡", thread: "🧵", web: "🕸️" };
@@ -130,7 +132,8 @@ const Talk = () => {
         c = { ...c, messages: [...c.messages, { role: "assistant", lines, content: lines.map((l) => `${(byFile.get(l.speaker) || {}).name}: ${l.text}`).join("\n"), at: Date.now(), model: cfg.model }] };
       } else {
         const reply = await talk({ project, actors, conversation: c, signal: ctrl.signal });
-        c = { ...c, messages: [...c.messages, { role: "assistant", content: reply, at: Date.now(), model: cfg.model }] };
+        const { text: shown, actions } = extractActions(reply);
+        c = { ...c, messages: [...c.messages, { role: "assistant", content: reply, shown: actions.length ? shown : undefined, actions: actions.length ? actions.map((a) => ({ a, state: "proposed" })) : undefined, at: Date.now(), model: cfg.model }] };
       }
       updateConversation(dir, c);
       refresh(c.id);
@@ -188,6 +191,30 @@ const Talk = () => {
     window.alert(`Woven into “${s.name}” — ${weaving.result.added} new word${weaving.result.added === 1 ? "" : "s"} marked as Spinner’s.`);
   };
 
+  /** Apply one of Spinner's proposed actions (or undo it). */
+  const undoRef = useRef(new Map());
+  const runAction = (mi, ai) => {
+    if (!conv) return;
+    const m = conv.messages[mi];
+    const item = m.actions[ai];
+    const r = applyAction(dir, item.a);
+    if (r.ok && r.undo) undoRef.current.set(`${conv.id}:${mi}:${ai}`, r.undo);
+    const actions = m.actions.map((x, k) => (k === ai ? { ...x, state: r.ok ? "done" : "failed", result: r.message } : x));
+    const c = { ...conv, messages: conv.messages.map((x, k) => (k === mi ? { ...x, actions } : x)) };
+    updateConversation(dir, c); refresh(c.id);
+    window.dispatchEvent(new CustomEvent("silky-flow-changed"));
+  };
+  const undoAction = (mi, ai) => {
+    const u = undoRef.current.get(`${conv.id}:${mi}:${ai}`);
+    if (u) { try { u(); } catch (e) { /* */ } undoRef.current.delete(`${conv.id}:${mi}:${ai}`); }
+    const m = conv.messages[mi];
+    const actions = m.actions.map((x, k) => (k === ai ? { ...x, state: "proposed", result: undefined } : x));
+    const c = { ...conv, messages: conv.messages.map((x, k) => (k === mi ? { ...x, actions } : x)) };
+    updateConversation(dir, c); refresh(c.id);
+    window.dispatchEvent(new CustomEvent("silky-flow-changed"));
+  };
+  const runAll = (mi) => { conv.messages[mi].actions.forEach((x, ai) => { if (x.state === "proposed") runAction(mi, ai); }); };
+
   const isCast = !!(conv && conv.kind === "cast");
   const participants = conv ? (conv.participants || []).map((f) => byFile.get(f)).filter(Boolean) : [];
   const elementsAll = useMemo(() => [...actors].filter((a) => a.type === "element").sort((a, b) => (b.involved_in || []).length - (a.involved_in || []).length), [actors]);
@@ -203,7 +230,7 @@ const Talk = () => {
   return (
     <div className="talk">
       <aside className="talk__side">
-        <button type="button" className="talk__new" onClick={start}><FaComments /> Talk to Spinner</button>
+        <button type="button" className="talk__new" onClick={start} title="Talk about the book — or ask Spinner to make, link, rename, split, merge, move or date things; it proposes the changes and you apply them"><FaComments /> Talk to Spinner</button>
         <button type="button" className="talk__new" onClick={() => setCastPick(new Set())}><FaUserFriends /> Talk to characters</button>
         {castPick && (
           <div className="castPick">
@@ -311,7 +338,23 @@ const Talk = () => {
             ) : (
             <article key={i} className={"msg msg--" + m.role}>
               <div className="msg__who">{m.role === "assistant" ? <><SpinnerIcon /> Spinner</> : "You"}</div>
-              <div className="msg__body">{m.content.split(/\n{2,}/).map((p, j) => <p key={j}>{p}</p>)}</div>
+              <div className="msg__body">{(m.shown != null ? m.shown : m.content).split(/\n{2,}/).filter((p) => p.trim()).map((p, j) => <p key={j}>{p}</p>)}</div>
+              {m.actions && m.actions.length > 0 && (
+                <div className="actions">
+                  <div className="actions__head"><FaMagic /> Spinner proposes {m.actions.length} change{m.actions.length === 1 ? "" : "s"}{m.actions.some((x) => x.state === "proposed") && m.actions.length > 1 && <button type="button" className="primary" onClick={() => runAll(i)}>Apply all</button>}</div>
+                  <ul>
+                    {m.actions.map((x, ai) => (
+                      <li key={ai} className={"actions__item is-" + x.state}>
+                        <span className="actions__desc">{describeAction(dir, x.a)}{x.result && <small>{x.result}</small>}</span>
+                        {x.state === "proposed" && <button type="button" className="primary" onClick={() => runAction(i, ai)}><FaCheck /> Apply</button>}
+                        {x.state === "done" && undoRef.current.has(`${conv.id}:${i}:${ai}`) && <button type="button" onClick={() => undoAction(i, ai)}><FaUndo /> Undo</button>}
+                        {x.state === "done" && !undoRef.current.has(`${conv.id}:${i}:${ai}`) && <span className="actions__done">done</span>}
+                        {x.state === "failed" && <button type="button" onClick={() => runAction(i, ai)}>Retry</button>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {m.role === "assistant" && (
                 <div className="msg__actions">
                   <button type="button" onClick={() => copy(m.content)} title="Copy"><FaCopy /></button>

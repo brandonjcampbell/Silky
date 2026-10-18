@@ -93,3 +93,16 @@
 .castPick__list label.is-thing { opacity: 0.8; }
 .castPick__list label.is-thing small { color: var(--ink-muted); font-size: 10px; margin-left: 4px; }
 .castPick__hint { margin: 6px 0 0; font-size: 11px; color: var(--ink-muted); }
+.actions { margin-top: 6px; background: var(--bg-raised); border: 1px solid var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: 13px; max-width: 68ch; }
+.actions__head { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 6px; }
+.actions__head svg { color: var(--accent); }
+.actions__head button { margin-left: auto; }
+.actions ul { list-style: none; margin: 0; padding: 0; }
+.actions__item { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); }
+.actions__desc { flex: 1; color: var(--ink); line-height: 1.4; }
+.actions__desc small { display: block; color: var(--ink-muted); font-size: 11px; }
+.actions__item.is-done .actions__desc { color: var(--ink-muted); }
+.actions__item.is-failed .actions__desc small { color: var(--accent); }
+.actions button, .actions__head button { display: inline-flex; align-items: center; gap: 5px; font: inherit; font-size: 11px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 3px 9px; cursor: pointer; white-space: nowrap; }
+.actions button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+.actions__done { font-size: 11px; color: var(--ink-muted); }

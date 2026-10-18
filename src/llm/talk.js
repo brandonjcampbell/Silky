@@ -4,6 +4,7 @@
 import { chat, complete, parseJson } from "./client";
 import { getConfig } from "./config";
 import { isCharacter } from "../role";
+import { ACTION_DOCS } from "./actions";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -44,6 +45,7 @@ export const OPENERS = [
   { label: "Interrogate my villain", text: "Interview my antagonist. Ask them five questions a good detective would, and answer in their voice from what the project knows." },
   { label: "What's the reader feeling?", text: "At this point in the manuscript, what is a first-time reader feeling, expecting, and dreading? Where am I spending their patience?" },
   { label: "Argue with me", text: "I think the next scene should be [fill this in]. Argue against it, honestly, using the facts in the project." },
+  { label: "Make a change", text: "Add a character called [name] — [a line about who they are] — and link them to [a scene or fact]." },
   { label: "Smallest next step", text: "I don't need the whole scene. What is the smallest next thing that could happen — one gesture, one line, one decision — that would let me write the next paragraph?" },
 ];
 
@@ -71,6 +73,9 @@ export const projectDigest = (project, actors) => {
   const other = threads.filter((t) => t !== manu);
   if (other.length) lines.push("Plot threads: " + other.map((t) => `${t.name} (${t.sequences.length} scenes${plain(t.content).trim() ? ": " + plain(t.content).trim().slice(0, 140) : ""})`).join(" | "));
   if (elements.length) lines.push("Principal elements: " + elements.slice(0, 25).map((e) => `${e.name}${plain(e.content).trim() ? " — " + plain(e.content).trim().slice(0, 100) : ""}`).join(" | "));
+  if (elements.length > 25 && elements.length <= 400) lines.push("All element names: " + elements.map((e) => e.name).join("; "));
+  if (threads.length) lines.push("All threads: " + threads.map((t) => t.name).join("; "));
+  if (actors.filter((a) => a.type === "web").length) lines.push("Webs: " + actors.filter((a) => a.type === "web").map((w) => w.name).join("; "));
   return lines.join("\n");
 };
 
@@ -105,6 +110,7 @@ export const talk = async ({ project, actors, conversation, signal }) => {
   const focus = (conversation.focus || []).map((f) => actors.find((a) => a.file === f)).filter(Boolean);
   const system = [
     SYSTEM,
+    "\n\n" + ACTION_DOCS,
     "\n\nPROJECT DIGEST\n" + projectDigest(project, actors),
     focus.length ? "\n\nBROUGHT INTO THE CONVERSATION\n" + focus.map((a) => focusText(a, actors)).join("\n\n") : "",
   ].join("");
