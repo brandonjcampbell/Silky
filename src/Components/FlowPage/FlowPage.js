@@ -43,7 +43,7 @@ const FlowPage = () => {
       makeDir(name);
       dispatch({ action: "setProject", payload: { name } });
     }
-    if (getLevel() === "off" && isConfigured()) setLevel("auto");
+    if (getLevel() === "off" && isConfigured()) { setLevel("auto"); setLvl("auto"); }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const onLevel = (e) => setLvl(e.detail);
@@ -110,9 +110,14 @@ const FlowPage = () => {
   const onInput = (e) => {
     const page = e.target.closest && e.target.closest(".page");
     if (!page) return;
-    const last = page.lastElementChild;
+    // the break line, ignoring the empty paragraph Enter just made after it
+    let last = page.lastElementChild;
+    const empties = [];
+    while (last && !(last.textContent || "").replace(/[\s\u200b\u00a0]/g, "")) { empties.push(last); last = last.previousElementSibling; }
     if (last && /^\s*(\*\s*){3,}\s*$/.test(last.textContent || "")) {
       last.remove();
+      empties.forEach((e) => e.remove());
+      if (!page.childElementCount) page.innerHTML = "<p><br></p>";
       page.dispatchEvent(new Event("input", { bubbles: true }));
       setTimeout(() => { commitAll(); newScene(); }, 0);
     }
