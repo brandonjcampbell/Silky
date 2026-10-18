@@ -24,13 +24,14 @@ const FlowToasts = ({ dir, project }) => {
   useEffect(() => { if (!/^\/elements\//.test(pathname) && isFocus()) setFocus(false); }, [pathname]);
 
   const level = LEVELS.find((l) => l.id === st.level);
+  const lifted = useLocation().pathname.startsWith("/spinner"); // clear of the composer
   return (
     <>
       {focus && (
         <button type="button" className="focusExit" title="Back to the full view (Esc)" onClick={() => setFocus(false)}><FaCompress /> <span>Exit blank page</span></button>
       )}
       {(st.level !== "off" || st.toasts.length > 0) && (
-        <div className="flowToasts" aria-live="polite">
+        <div className={"flowToasts" + (lifted ? " flowToasts--lifted" : "")} aria-live="polite">
           {st.toasts.map((t) => (
             <div key={t.id} className={"toast toast--" + t.kind}>
               <span className="toast__icon"><SpinnerIcon /></span>
