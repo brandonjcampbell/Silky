@@ -4,7 +4,7 @@
    and undoable. */
 import { loadDir, loadFile, saveFile, moveFile } from "../utils/";
 import { roleFromKind, ROLES } from "../role";
-import { EMPTY_WHEN } from "../time";
+import { EMPTY_WHEN, parseDate, toMs, dateInput } from "../time";
 import { loadMaps } from "../maps";
 import { loadTimelines } from "../timelines";
 import { loadTabs, saveTabs } from "../tabs";
@@ -393,12 +393,16 @@ export const applyAction = (dir, a, ctx = {}) => {
         const scenes = t.sequences.map((f) => loadFile(dir + f)).filter((x) => x && x.type === "snippet");
         if (!scenes.length) throw new Error(`${t.name} has no scenes.`);
         const befores = scenes.map((x) => [x.file, x.when]);
+        const startMs = parseDate(String(a.start));
         let n = 0;
         scenes.forEach((x, i) => {
           const has = x.when && (x.when.date || x.when.relValue);
           if (has && !a.overwrite) return;
           const w = { ...EMPTY_WHEN, ...(x.when || {}) };
-          if (i === 0) { w.date = String(a.start); w.relValue = ""; }
+          // every scene gets its own date, so it sits at that moment in any thread or timeline
+          const ms = startMs != null ? startMs + i * toMs(a.every != null ? a.every : 1, a.unit || "days") : null;
+          if (ms != null) { w.date = dateInput(ms); w.relValue = ""; }
+          else if (i === 0) { w.date = String(a.start); w.relValue = ""; }
           else { w.date = ""; w.relValue = String(a.every != null ? a.every : 1); w.relUnit = a.unit || "days"; }
           x.when = w; save(dir, x); n += 1;
         });

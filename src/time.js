@@ -4,7 +4,7 @@
    time what the map is for space. Dates are plain calendar dates; years may
    be anything a Date can hold, so historical and far-future stories work. */
 
-import { activeCalendar, isCustom, dayMs, monthDays, yearDays, parseCustom, fmtCustom, yearOf } from "./calendar";
+import { activeCalendar, isCustom, dayMs, monthDays, yearDays, parseCustom, fmtCustom, yearOf, customInput } from "./calendar";
 
 export const DURATION_UNITS = [
   { id: "minutes", name: "minutes", ms: 60e3 },
@@ -64,6 +64,15 @@ export const fmtDate = (ms, { time = false, year = true } = {}) => {
   const yStr = y < 0 ? `${-y} BC` : String(y);
   const base = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}${year ? " " + yStr : ""}`;
   return time && (d.getUTCHours() || d.getUTCMinutes()) ? `${base}, ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}` : base;
+};
+/** ms → a date string parseDate reads back, in the active calendar. */
+export const dateInput = (ms) => {
+  if (!Number.isFinite(ms)) return "";
+  if (isCustom(activeCalendar())) return customInput(ms);
+  const d = new Date(ms);
+  const y = d.getUTCFullYear();
+  const base = `${y < 0 ? "-" : ""}${String(Math.abs(y)).padStart(4, "0")}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  return d.getUTCHours() || d.getUTCMinutes() ? `${base} ${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}` : base;
 };
 export const fmtDuration = (ms) => {
   if (!ms) return "";

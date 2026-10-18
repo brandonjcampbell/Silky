@@ -77,4 +77,17 @@ export const fmtCustom = (ms, { time = false, year = true } = {}, cal = active) 
   const base = `${d} ${cal.months[mo].name}${year ? ` ${y}${cal.era ? " " + cal.era : ""}` : ""}`;
   return time && (hh || mm) ? `${base}, ${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}` : base;
 };
+/** ms → "Y-M-D HH:MM" in the custom calendar, which parseCustom reads back. */
+export const customInput = (ms, cal = active) => {
+  const dms = dayMs(cal);
+  const days = Math.floor(ms / dms);
+  const rem = ms - days * dms;
+  const yd = yearDays(cal);
+  const y = Math.floor(days / yd);
+  let doy = days - y * yd;
+  let mo = 0;
+  while (mo < cal.months.length - 1 && doy >= Number(cal.months[mo].days || 0)) { doy -= Number(cal.months[mo].days || 0); mo += 1; }
+  const hh = Math.floor(rem / 3600e3), mm = Math.floor((rem % 3600e3) / 60e3);
+  return `${y}-${mo + 1}-${doy + 1}${hh || mm ? ` ${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}` : ""}`;
+};
 export const yearOf = (ms, cal = active) => Math.floor(ms / (yearDays(cal) * dayMs(cal)));
