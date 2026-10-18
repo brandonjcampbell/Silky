@@ -10,10 +10,11 @@ export const loadTabs = (project) => {
   }
 };
 
-export const saveTabs = (project, tabs) => {
+export const saveTabs = (project, tabs, announce = false) => {
   try {
     localStorage.setItem(key(project), JSON.stringify(tabs));
   } catch (e) {
     /* per-browser convenience only */
   }
+  if (announce) window.dispatchEvent(new CustomEvent("silky-tabs", { detail: tabs }));
 };

@@ -132,7 +132,7 @@ In the room: ${names} — their full text is in your instructions.` : ""})
 ${last.content}`,
     };
   }
-  return chat({ system, messages, maxTokens: 900, signal });
+  return chat({ system, messages, maxTokens: 3000, signal });
 };
 
 /** A short title for a conversation from its first message. */

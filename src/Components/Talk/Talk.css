@@ -106,3 +106,5 @@
 .actions button, .actions__head button { display: inline-flex; align-items: center; gap: 5px; font: inherit; font-size: 11px; color: var(--ink-soft); background: transparent; border: 1px solid var(--line); border-radius: var(--radius); padding: 3px 9px; cursor: pointer; white-space: nowrap; }
 .actions button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
 .actions__done { font-size: 11px; color: var(--ink-muted); }
+.actions__cut { font-style: normal; font-size: 11px; color: var(--accent); text-transform: none; letter-spacing: 0; margin-left: 4px; }
+p.actions__cut { margin: 4px 0 0; }

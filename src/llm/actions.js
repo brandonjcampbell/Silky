@@ -5,6 +5,9 @@
 import { loadDir, loadFile, saveFile, moveFile } from "../utils/";
 import { roleFromKind, ROLES } from "../role";
 import { EMPTY_WHEN } from "../time";
+import { loadMaps } from "../maps";
+import { loadTimelines } from "../timelines";
+import { loadTabs, saveTabs } from "../tabs";
 
 export const ACTION_DOCS = `When the author asks you to change the project — make, link, rename, split, merge, move, date or remove things — do it by ending your reply with one fenced block tagged silky-actions holding a JSON array of actions. Say in a sentence what you are doing; keep the block last. Refer to things by their names as the project knows them. Only act when asked, and never remove anything unless the author plainly asks.
 
@@ -24,6 +27,8 @@ Actions (fields in brackets are optional):
 - {"action":"merge_scenes","first":"scene name","second":"scene name"}
 - {"action":"move_scene","scene":"…","thread":"…",["after":"scene name"|"position":1]}
 - {"action":"remove","name":"…"}   (goes to the project's rubbish; only when asked)
+- {"action":"open","name":"…"}   (opens a thing in a tab and shows it; also "wiki", "preferences", "progress", "word count", "pacing", "style", "reader", "ai influence", a map's or timeline's name, or "write" for the blank page)
+- {"action":"close","name":"…"|"all"|"others"}   (closes that tab, every tab, or every tab but the current one)
 
 Example:
 I'll add him and tie him to the Hall.
@@ -33,13 +38,61 @@ I'll add him and tie him to the Hall.
 \`\`\``;
 
 /* ── parsing ── */
+const parseActionsJson = (raw) => {
+  const s = String(raw || "").trim();
+  const asList = (v) => (Array.isArray(v) ? v : v && Array.isArray(v.actions) ? v.actions : v ? [v] : []);
+  try { return { actions: asList(JSON.parse(s)), truncated: false }; } catch (e) { /* fall through */ }
+  // the reply was cut off mid-block: keep every complete object we can find
+  const out = [];
+  let depth = 0, start = -1, inStr = false, esc = false;
+  for (let i = 0; i < s.length; i += 1) {
+    const ch = s[i];
+    if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === "{") { if (depth === 0) start = i; depth += 1; }
+    else if (ch === "}") { depth -= 1; if (depth === 0 && start >= 0) { try { out.push(JSON.parse(s.slice(start, i + 1))); } catch (e) { /* skip */ } start = -1; } }
+  }
+  return { actions: out, truncated: true };
+};
+
+/** Pull the actions block out of a reply; a block the reply was cut off inside is salvaged. */
 export const extractActions = (reply) => {
   const text = String(reply || "");
-  const m = text.match(/```silky-actions\s*([\s\S]*?)```/i);
-  if (!m) return { text, actions: [] };
-  let actions = [];
-  try { const v = JSON.parse(m[1].trim()); actions = Array.isArray(v) ? v : v && Array.isArray(v.actions) ? v.actions : [v]; } catch (e) { actions = []; }
-  return { text: text.replace(m[0], "").trim(), actions: actions.filter((a) => a && typeof a === "object" && a.action) };
+  const m = text.match(/```silky-actions\s*([\s\S]*?)(```|$)/i);
+  if (!m) return { text, actions: [], truncated: false };
+  const { actions, truncated } = parseActionsJson(m[1]);
+  const cut = truncated || !m[2];
+  return { text: text.replace(m[0], "").trim(), actions: actions.filter((a) => a && typeof a === "object" && a.action), truncated: cut };
+};
+
+/* ── opening and closing tabs (needs the router) ── */
+const ANALYSIS_NAMES = { progress: "progress", "word count": "wordcount", wordcount: "wordcount", words: "wordcount", pacing: "pacing", style: "style", reader: "reader", readers: "reader", "ai influence": "influence", influence: "influence" };
+export const hrefFor = (dir, name) => {
+  const n = norm(name);
+  if (!n || n === "write" || n === "writing page" || n === "blank page" || n === "home") return { href: "/", label: "the writing page" };
+  if (n === "wiki") return { href: "/wiki/home", label: "the wiki" };
+  if (n === "preferences" || n === "settings") return { href: "/preferences", label: "Preferences" };
+  if (n === "spinner" || n === "talk") return { href: "/spinner", label: "Spinner" };
+  if (ANALYSIS_NAMES[n]) return { href: "/analysis/" + ANALYSIS_NAMES[n], label: name };
+  const m = loadMaps(dir).maps.find((x) => norm(x.name) === n || norm(x.name).includes(n));
+  if (m) return { href: "/map/" + m.id, label: m.name };
+  const t = loadTimelines(dir).timelines.find((x) => norm(x.name) === n || norm(x.name).includes(n));
+  if (t) return { href: "/timeline/" + t.id, label: t.name };
+  const x = find(actorsOf(dir), name);
+  if (x) return { href: "/elements/" + x.file, label: `${x.icon || ""} ${x.name}`.trim(), key: x.file };
+  return null;
+};
+const tabKeyFor = (dir, name) => {
+  const h = hrefFor(dir, name);
+  if (!h) return null;
+  if (h.key) return h.key;
+  if (h.href === "/wiki/home") return "wiki";
+  if (h.href === "/spinner") return "spinner";
+  if (h.href === "/preferences") return "preferences";
+  if (h.href.startsWith("/analysis/")) return "analysis:" + h.href.slice(10);
+  if (h.href.startsWith("/map/")) return "map:" + h.href.slice(5);
+  if (h.href.startsWith("/timeline/")) return "timeline:" + h.href.slice(10);
+  return null;
 };
 
 /* ── resolution ── */
@@ -95,6 +148,8 @@ export const describeAction = (dir, a) => {
     case "merge_scenes": return `Merge ${nameOf(a.second, ["snippet"])} into ${nameOf(a.first, ["snippet"])}`;
     case "move_scene": return `Move ${nameOf(a.scene, ["snippet"])} in ${nameOf(a.thread, ["thread"])}${a.after ? ` to after ${nameOf(a.after, ["snippet"])}` : a.position != null ? ` to position ${a.position}` : " to the end"}`;
     case "remove": return `Remove ${nameOf(a.name)} (to the rubbish)`;
+    case "open": { const h = hrefFor(dir, a.name); return h ? `Open ${h.label}` : `Open ${miss(a.name)}`; }
+    case "close": return norm(a.name) === "all" ? "Close every tab" : norm(a.name) === "others" ? "Close the other tabs" : `Close the tab for ${nameOf(a.name)}`;
     default: return `Unknown action “${a.action}”`;
   }
 };
@@ -141,7 +196,7 @@ const toRubbish = (dir, x) => {
 /**
  * Apply one action. Returns { ok, message, undo } — undo reverses it.
  */
-export const applyAction = (dir, a) => {
+export const applyAction = (dir, a, ctx = {}) => {
   const actors = actorsOf(dir);
   const need = (n, types, what) => { const x = find(actors, n, types); if (!x) throw new Error(`Can't find ${what || "that"}: “${n}”`); return x; };
   const undos = [];
@@ -278,6 +333,25 @@ export const applyAction = (dir, a) => {
         const x = need(a.name);
         undos.push(toRubbish(dir, x));
         return done(`Removed ${x.name} (it's in the rubbish)`);
+      }
+      case "open": {
+        const h = hrefFor(dir, a.name);
+        if (!h) throw new Error(`Can't find anything called “${a.name}”`);
+        if (ctx.navigate) ctx.navigate(h.href);
+        return { ok: true, message: `Opened ${h.label}`, undo: null };
+      }
+      case "close": {
+        const project = ctx.project || "";
+        const tabs = loadTabs(project);
+        const cur = ctx.currentTab || null;
+        const n = norm(a.name);
+        let next;
+        if (n === "all") next = [];
+        else if (n === "others") next = cur ? [cur] : [];
+        else { const k = tabKeyFor(dir, a.name); if (!k) throw new Error(`No tab for “${a.name}”`); next = tabs.filter((t) => t !== k); if (next.length === tabs.length) throw new Error(`“${a.name}” isn't open`); }
+        saveTabs(project, next, true);
+        if (ctx.navigate && (n === "all" || (n !== "others" && cur && !next.includes(cur)))) ctx.navigate("/");
+        return { ok: true, message: n === "all" ? "Closed every tab" : n === "others" ? "Closed the other tabs" : `Closed ${a.name}`, undo: () => saveTabs(project, tabs, true) };
       }
       default: throw new Error(`Unknown action “${a.action}”`);
     }

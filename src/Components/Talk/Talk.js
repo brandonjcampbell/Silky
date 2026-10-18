@@ -132,8 +132,8 @@ const Talk = () => {
         c = { ...c, messages: [...c.messages, { role: "assistant", lines, content: lines.map((l) => `${(byFile.get(l.speaker) || {}).name}: ${l.text}`).join("\n"), at: Date.now(), model: cfg.model }] };
       } else {
         const reply = await talk({ project, actors, conversation: c, signal: ctrl.signal });
-        const { text: shown, actions } = extractActions(reply);
-        c = { ...c, messages: [...c.messages, { role: "assistant", content: reply, shown: actions.length ? shown : undefined, actions: actions.length ? actions.map((a) => ({ a, state: "proposed" })) : undefined, at: Date.now(), model: cfg.model }] };
+        const { text: shown, actions, truncated } = extractActions(reply);
+        c = { ...c, messages: [...c.messages, { role: "assistant", content: reply, shown: actions.length || truncated ? shown : undefined, actions: actions.length ? actions.map((a) => ({ a, state: "proposed" })) : undefined, truncated: truncated || undefined, at: Date.now(), model: cfg.model }] };
       }
       updateConversation(dir, c);
       refresh(c.id);
@@ -198,7 +198,7 @@ const Talk = () => {
     const m = conv.messages[mi];
     const results = new Map();
     indices.forEach((ai) => {
-      const r = applyAction(dir, m.actions[ai].a);
+      const r = applyAction(dir, m.actions[ai].a, { navigate, project, currentTab: "spinner" });
       if (r.ok && r.undo) undoRef.current.set(`${conv.id}:${mi}:${ai}`, r.undo);
       results.set(ai, r);
     });
@@ -343,9 +343,10 @@ const Talk = () => {
             <article key={i} className={"msg msg--" + m.role}>
               <div className="msg__who">{m.role === "assistant" ? <><SpinnerIcon /> Spinner</> : "You"}</div>
               <div className="msg__body">{(m.shown != null ? m.shown : m.content).split(/\n{2,}/).filter((p) => p.trim()).map((p, j) => <p key={j}>{p}</p>)}</div>
+              {m.truncated && !(m.actions && m.actions.length) && <p className="actions__cut">Spinner's reply was cut off before its changes were complete. Ask again, or ask for fewer at once.</p>}
               {m.actions && m.actions.length > 0 && (
                 <div className="actions">
-                  <div className="actions__head"><FaMagic /> Spinner proposes {m.actions.length} change{m.actions.length === 1 ? "" : "s"}{m.actions.some((x) => x.state === "proposed") && m.actions.length > 1 && <button type="button" className="primary" onClick={() => runAll(i)}>Apply all</button>}</div>
+                  <div className="actions__head"><FaMagic /> Spinner proposes {m.actions.length} change{m.actions.length === 1 ? "" : "s"}{m.truncated && <em className="actions__cut">reply was cut off — these are the complete ones</em>}{m.actions.some((x) => x.state === "proposed") && m.actions.length > 1 && <button type="button" className="primary" onClick={() => runAll(i)}>Apply all</button>}</div>
                   <ul>
                     {m.actions.map((x, ai) => (
                       <li key={ai} className={"actions__item is-" + x.state}>

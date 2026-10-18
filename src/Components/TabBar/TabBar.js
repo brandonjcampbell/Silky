@@ -42,9 +42,12 @@ const TabBar = ({ onMenu }) => {
   const project = state.project;
   const [tabs, setTabs] = useState(() => loadTabs(project));
 
-  // Reload the set when the project changes.
+  // Reload the set when the project changes, or when something else (Spinner) edits the tabs.
   useEffect(() => {
     setTabs(loadTabs(project));
+    const on = () => setTabs(loadTabs(project));
+    window.addEventListener("silky-tabs", on);
+    return () => window.removeEventListener("silky-tabs", on);
   }, [project]);
 
   // The routed file is always an open tab; a routed file that has gone to
