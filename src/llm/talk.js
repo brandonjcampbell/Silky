@@ -78,6 +78,7 @@ export const projectDigest = (project, actors) => {
   if (other.length) lines.push("Plot threads: " + other.map((t) => `${t.name} (${t.sequences.length} scenes${plain(t.content).trim() ? ": " + plain(t.content).trim().slice(0, 140) : ""})`).join(" | "));
   if (elements.length) lines.push("Principal elements: " + elements.slice(0, 25).map((e) => `${e.name}${plain(e.content).trim() ? " — " + plain(e.content).trim().slice(0, 100) : ""}`).join(" | "));
   if (elements.length > 25 && elements.length <= 400) lines.push("All element names: " + elements.map((e) => e.name).join("; "));
+  if (elements.length <= 400) lines.push("Current icons: " + [...elements, ...scenes].map((a) => `${a.icon || "·"} ${a.name}`).join("; "));
   const facts = actors.filter((a) => a.type === "fact");
   if (facts.length && facts.length <= 150) lines.push("All facts: " + facts.map((f) => f.name).join(" | "));
   const dir = projectDir(project);

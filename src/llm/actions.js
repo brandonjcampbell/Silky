@@ -17,6 +17,8 @@ export const ACTION_DOCS = `When the author asks you to change the project — m
 
 Creating something that already exists by that name reuses it rather than making a duplicate, so it is safe to name things you aren't sure about. Maps, timelines, the calendar and tabs are yours to make and change as well.
 
+Asked for better icons, give each thing a single fitting emoji with set_icon — a person's trade, a place's kind, a fact's subject, a scene's setting — one action per thing, as many as asked for.
+
 "Set the timeline" or "date the scenes" means giving scenes times: one set_when per scene (dates you infer from the text, offsets like "3 days after the previous"), or date_thread to space a whole thread evenly; the Timeline view then draws them. "open" only shows something — it sets nothing.
 
 Actions (fields in brackets are optional):
@@ -27,6 +29,7 @@ Actions (fields in brackets are optional):
 - {"action":"create_web","name":"…",["items":["name",…]]}
 - {"action":"link","from":"name","relation":"reveals|involves|causes|sequences|captures","to":"name"}   (scene reveals fact; fact involves element; fact causes fact; thread sequences scene; web captures anything)
 - {"action":"unlink","from":"name","relation":"…","to":"name"}
+- {"action":"set_icon","name":"…","icon":"🦋"}   (one emoji; any element, fact, scene, thread or web)
 - {"action":"rename","name":"…","to":"…"}
 - {"action":"set_role","name":"…","role":"character|location|thing"}
 - {"action":"set_description","name":"…","text":"…"}
@@ -128,6 +131,14 @@ const find = (actors, name, types) => {
     || null;
 };
 const uid = (t) => `${t}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+/** The first emoji (grapheme) in a string, so "🧑‍🌾 farmer" becomes 🧑‍🌾. */
+const firstGlyph = (s) => {
+  const str = String(s || "").trim();
+  if (!str) return "";
+  try { const seg = new Intl.Segmenter(undefined, { granularity: "grapheme" }); for (const g of seg.segment(str)) { if (/\p{Extended_Pictographic}/u.test(g.segment)) return g.segment; } } catch (e) { /* no Segmenter */ }
+  const m = str.match(/\p{Extended_Pictographic}[\u{FE0F}\u{200D}\p{Extended_Pictographic}]*/u);
+  return m ? m[0] : str.slice(0, 2);
+};
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const toHtml = (t) => String(t || "").replace(/\r\n?/g, "\n").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean).map((p) => `<p>${esc(p).replace(/\n/g, "<br>")}</p>`).join("");
 const ROLE_ICON = { character: "🧍", location: "📍", thing: "🔹" };
@@ -160,6 +171,7 @@ export const describeAction = (dir, a) => {
     case "create_web": return `Create web 🕸️ ${a.name}${a.items && a.items.length ? ` capturing ${a.items.map((n) => nameOf(n)).join(", ")}` : ""}`;
     case "link": return `Link: ${nameOf(a.from)} ${a.relation || "→"} ${nameOf(a.to)}`;
     case "unlink": return `Unlink: ${nameOf(a.from)} ${a.relation || "→"} ${nameOf(a.to)}`;
+    case "set_icon": return `Icon for ${nameOf(a.name)} → ${a.icon}`;
     case "rename": return `Rename ${nameOf(a.name)} to “${a.to}”`;
     case "set_role": return `Make ${nameOf(a.name, ["element"])} a ${a.role}`;
     case "set_description": return `Describe ${nameOf(a.name)}: “${String(a.text || "").slice(0, 80)}${String(a.text || "").length > 80 ? "…" : ""}”`;
@@ -311,6 +323,14 @@ export const applyAction = (dir, a, ctx = {}) => {
         if (rel === REL.captures) { if (a.action === "link") undos.push(captureIn(dir, from, to)); else throw new Error("Remove from a web on the web's page."); }
         else undos.push((a.action === "link" ? linkPair : unlinkPair)(dir, from, rel, to));
         return done(`${a.action === "link" ? "Linked" : "Unlinked"} ${from.name} ${rel.fwd} ${to.name}`);
+      }
+      case "set_icon": {
+        const x = need(a.name);
+        const glyph = firstGlyph(a.icon);
+        if (!glyph) throw new Error("No emoji given.");
+        const was = x.icon; x.icon = glyph; save(dir, x);
+        undos.push(() => { const y = loadFile(dir + x.file); if (y) { y.icon = was; save(dir, y); } });
+        return done(`${x.name} is now ${glyph}`);
       }
       case "rename": {
         const x = need(a.name); const was = x.name; x.name = String(a.to).trim(); save(dir, x);
