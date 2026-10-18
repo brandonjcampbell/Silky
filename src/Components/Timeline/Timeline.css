@@ -31,3 +31,11 @@
 .timeline__legend i.is-relative { opacity: 0.6; }
 .timeline__legend i.is-inferred { background: transparent; border: 1.5px solid var(--accent); box-sizing: border-box; }
 @media (max-width: 820px) { .timeline__list li { grid-template-columns: 1fr; gap: 2px; } .timeline__note { grid-column: 1; } }
+.timeline__lane { --lane: var(--accent); }
+.timeline__lane .timeline__bar, .timeline__lane .timeline__dot { fill: var(--lane); }
+.timeline__lane .timeline__scene.is-inferred .timeline__bar { fill: none; stroke: var(--lane); }
+.timeline__lane .timeline__scene.is-inferred .timeline__dot { fill: var(--bg-raised); stroke: var(--lane); }
+.timeline__band { fill: transparent; }
+.timeline__band.is-alt { fill: var(--bg-hover); opacity: 0.5; }
+.timeline__laneName { fill: var(--ink-muted); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.timeline__laneList h5 { margin: 14px 0 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }

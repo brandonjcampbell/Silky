@@ -10,6 +10,7 @@ import Analysis from "../Analysis";
 import Wiki from "../Wiki";
 import Spinner from "../Spinner";
 import MapView from "../MapView";
+import TimelineView from "../TimelineView";
 import FlowPage from "../FlowPage";
 import FlowToasts from "../Flow";
 import { useMobile } from "../../useMobile";
@@ -17,7 +18,7 @@ import "./Shell.css";
 
 /** Sidebar + editor pane. On narrow screens the sidebar is a drawer. */
 const Shell = () => {
-  const { file, id, mapId } = useParams();
+  const { file, id, mapId, tlId } = useParams();
   const pathname = useLocation().pathname;
   const isWiki = pathname.startsWith("/wiki");
   const isSpinner = pathname.startsWith("/spinner");
@@ -46,6 +47,8 @@ const Shell = () => {
         <div className="Workspace"><Wiki /></div>
       ) : mapId ? (
         <div className="Workspace"><MapView /></div>
+      ) : tlId ? (
+        <div className="Workspace"><TimelineView /></div>
       ) : id ? (
         <div className="Workspace"><Analysis /></div>
       ) : file ? (

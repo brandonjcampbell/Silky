@@ -13,7 +13,8 @@ import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { analysisById } from "../Analysis";
 import { mapById } from "../../maps";
-import { FaMapMarkedAlt } from "react-icons/fa";
+import { timelineById } from "../../timelines";
+import { FaMapMarkedAlt, FaStream } from "react-icons/fa";
 import "./TabBar.css";
 
 const TYPE_ICON = {
@@ -35,7 +36,7 @@ const TabBar = ({ onMenu }) => {
   const isWiki = pathname.startsWith("/wiki");
   const isSpinner = pathname.startsWith("/spinner");
   // a tab key is an actor file, "analysis:<id>", "wiki" or "spinner"
-  const file = isSpinner ? "spinner" : isWiki ? "wiki" : params.mapId ? "map:" + params.mapId : params.id ? "analysis:" + params.id : params.file;
+  const file = isSpinner ? "spinner" : isWiki ? "wiki" : params.mapId ? "map:" + params.mapId : params.tlId ? "timeline:" + params.tlId : params.id ? "analysis:" + params.id : params.file;
   const navigate = useNavigate();
   const project = state.project;
   const [tabs, setTabs] = useState(() => loadTabs(project));
@@ -67,8 +68,8 @@ const TabBar = ({ onMenu }) => {
     saveTabs(project, next);
   }, [file, tabs, project, state.dir, navigate]);
 
-  const isLive = (f) => (f === "wiki" || f === "spinner" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : f.startsWith("map:") ? !!mapById(state.dir, f.slice(4)) : existsSync(state.dir + f));
-  const hrefOf = (f) => (f === "spinner" ? "/spinner" : f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : f.startsWith("map:") ? "/map/" + f.slice(4) : "/elements/" + f);
+  const isLive = (f) => (f === "wiki" || f === "spinner" ? true : f.startsWith("analysis:") ? !!analysisById(f.slice(9)) : f.startsWith("map:") ? !!mapById(state.dir, f.slice(4)) : f.startsWith("timeline:") ? !!timelineById(state.dir, f.slice(9)) : existsSync(state.dir + f));
+  const hrefOf = (f) => (f === "spinner" ? "/spinner" : f === "wiki" ? "/wiki/home" : f.startsWith("analysis:") ? "/analysis/" + f.slice(9) : f.startsWith("map:") ? "/map/" + f.slice(4) : f.startsWith("timeline:") ? "/timeline/" + f.slice(9) : "/elements/" + f);
   const live = useMemo(
     () => tabs.filter(isLive),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -118,6 +119,9 @@ const TabBar = ({ onMenu }) => {
         } else if (f.startsWith("map:")) {
           const m = mapById(state.dir, f.slice(4));
           a = m ? { name: m.name, icon: <FaMapMarkedAlt />, type: "analysis" } : null;
+        } else if (f.startsWith("timeline:")) {
+          const t = timelineById(state.dir, f.slice(9));
+          a = t ? { name: t.name, icon: <FaStream />, type: "analysis" } : null;
         } else {
           a = loadFile(state.dir + f);
         }

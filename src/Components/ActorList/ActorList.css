@@ -150,3 +150,5 @@
 .ActorList .wikiList--inList .wikiItem svg { opacity: 0.7; font-size: 12px; }
 .project .closeProject { flex: none; width: 26px; height: 26px; font: inherit; font-size: 16px; line-height: 1; color: var(--ink-muted); background: transparent; border: 1px solid transparent; border-radius: var(--radius); cursor: pointer; }
 .project .closeProject:hover { color: var(--ink); border-color: var(--line); background: var(--bg-hover); }
+.ActorList .toolsHead { margin: 10px 10px 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); }
+.ActorList .mapsList > button { margin-bottom: 8px; }

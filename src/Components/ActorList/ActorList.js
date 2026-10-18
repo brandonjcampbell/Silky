@@ -10,7 +10,8 @@ import {GiSpiderWeb, GiSewingString, GiLightBulb} from "react-icons/gi";
 import { HiPuzzle } from "react-icons/hi";
 import { HiOutlineGlobeAlt } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FaChartLine, FaBook, FaMapMarkedAlt } from "react-icons/fa";
+import { FaChartLine, FaBook, FaMapMarkedAlt, FaTools, FaStream } from "react-icons/fa";
+import { loadTimelines, newTimeline } from "../../timelines";
 import { loadMaps, newMap } from "../../maps";
 import { ANALYSES } from "../Analysis";
 import { WIKI_INDEX } from "../Wiki";
@@ -33,7 +34,8 @@ const ActorList = ({ setRefresh }) => {
   useEffect(() => {
     const on = () => setMapTick((t) => t + 1);
     window.addEventListener("silky-maps", on);
-    return () => window.removeEventListener("silky-maps", on);
+    window.addEventListener("silky-timelines", on);
+    return () => { window.removeEventListener("silky-maps", on); window.removeEventListener("silky-timelines", on); };
   }, []);
 
   // the Spinner glyph's dot follows the connection
@@ -186,7 +188,7 @@ const ActorList = ({ setRefresh }) => {
           ["thread", GiSewingString, "Threads — " + kindOf("thread").blurb],
           ["web", GiSpiderWeb, "Webs — " + kindOf("web").blurb],
           ["analysis", FaChartLine, "Analyses — pacing, style, word count, a reader's notes"],
-          ["map", FaMapMarkedAlt, "Maps — pin your locations, draw routes, set a scale and measure distances"],
+          ["map", FaTools, "Tools — maps (space) and timelines (time)"],
         ].map(([id, Icon, title]) => (
           <button
             key={id}
@@ -228,6 +230,7 @@ const ActorList = ({ setRefresh }) => {
       )}
       {type === "map" && (
         <div className="content mapsList">
+          <h4 className="toolsHead">Maps</h4>
           {loadMaps(globalState.state.dir).maps.map((m) => (
             <NavLink key={m.id} to={"/map/" + m.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
               <span className="analysisItem__icon"><FaMapMarkedAlt /></span>
@@ -239,6 +242,18 @@ const ActorList = ({ setRefresh }) => {
           ))}
           {loadMaps(globalState.state.dir).maps.length === 0 && <p className="listEmpty">No maps yet. A map is an image (or a blank sheet) with your locations pinned on it, routes drawn, and a scale so Silky can tell you how far things are apart.</p>}
           <button type="button" onClick={() => { const m = newMap(globalState.state.dir, "Map " + (loadMaps(globalState.state.dir).maps.length + 1)); navigate("/map/" + m.id); }}>+ map</button>
+          <h4 className="toolsHead">Timelines</h4>
+          {loadTimelines(globalState.state.dir).timelines.map((t) => (
+            <NavLink key={t.id} to={"/timeline/" + t.id} className={({ isActive }) => "analysisItem" + (isActive ? " is-active" : "")}>
+              <span className="analysisItem__icon"><FaStream /></span>
+              <span className="analysisItem__text">
+                <span className="analysisItem__name">{t.name}</span>
+                <span className="analysisItem__blurb">{t.threads.length} thread{t.threads.length === 1 ? "" : "s"} as lanes</span>
+              </span>
+            </NavLink>
+          ))}
+          {loadTimelines(globalState.state.dir).timelines.length === 0 && <p className="listEmpty">No timelines yet. A timeline lays one or more threads on a shared time axis — what the map is for space. Set when each scene happens on its page.</p>}
+          <button type="button" onClick={() => { const all = loadDir(globalState.state.dir).filter((f) => f.includes(".element.")).map((f) => loadFile(globalState.state.dir + f)).filter((a) => a && a.type === "thread"); const manu = all.find((t) => t.name === "Manuscript"); const t = newTimeline(globalState.state.dir, "Timeline " + (loadTimelines(globalState.state.dir).timelines.length + 1), manu ? [manu.file] : []); navigate("/timeline/" + t.id); }}>+ timeline</button>
         </div>
       )}
       {type !== "analysis" && type !== "map" && (
