@@ -267,6 +267,9 @@ const Talk = () => {
             <option value="">+ bring in a scene, person, fact or thread…</option>
             {options.map((a) => <option key={a.file} value={a.file}>{TYPE_GLYPH[a.type]} {a.name}</option>)}
           </select>
+          <span className="talk__knows" title="Spinner always has a digest of the project: the scene list, plot threads, principal elements and counts. Bring something in to give it the full text.">
+            Spinner knows the digest — {actors.filter((a) => a.type === "snippet").length} scenes, {actors.filter((a) => a.type === "element").length} elements, {actors.filter((a) => a.type === "fact").length} facts{focusActors.length ? "" : "; bring something in for its full text"}.
+          </span>
         </div>
         )}
 

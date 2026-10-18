@@ -88,3 +88,4 @@
 .talk__compose button + button { margin-left: 0; }
 .talk__weaving { margin: 0; font-size: 12px; color: var(--ink-muted); display: inline-flex; align-items: center; gap: 6px; }
 .msg .revision { max-width: 68ch; }
+.talk__knows { font-size: 11px; color: var(--ink-muted); margin-left: 6px; }

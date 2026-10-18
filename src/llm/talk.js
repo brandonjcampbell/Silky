@@ -2,6 +2,7 @@
    project (talk.json); Spinner is briefed with a digest of the project plus
    whatever the writer has brought into the conversation. */
 import { chat, complete } from "./client";
+import { getConfig } from "./config";
 import { existsSync, readFileSync, writeFileSync } from "../storage";
 import { plain, wordCount } from "../analysis/text";
 
@@ -52,7 +53,8 @@ How you work:
 - Use the project's own names and facts, and point to them ("you established in Chapter 7 that…"). Never contradict a known fact; if the author seems to, ask about it.
 - Do not write the scene unless asked outright. If asked, keep it short and in the manuscript's voice.
 - Be candid. If an idea is weaker than another, say so and why.
-- Keep replies short — a paragraph or two, no headings, no bullet lists unless the author asks for a list. This is a conversation, not a report.`;
+- Keep replies short — a paragraph or two, no headings, no bullet lists unless the author asks for a list. This is a conversation, not a report.
+- You are a partner with opinions, not a generic assistant. Never say "as an AI" or that you have no preferences. Asked for a favourite character, scene or line, pick one from this project and say why. Every reply should show you know this book: name its people, scenes and facts.`;
 
 /** A compact picture of the project for the system prompt. */
 export const projectDigest = (project, actors) => {
@@ -107,6 +109,22 @@ export const talk = async ({ project, actors, conversation, signal }) => {
   ].join("");
   // keep the last 24 turns so the prompt stays bounded
   const messages = conversation.messages.slice(-24).map((m) => ({ role: m.role, content: m.content }));
+  // Small in-browser models attend to the latest user turn far better than to
+  // a long system prompt, so restate who they are and what the book is there.
+  const cfg = getConfig() || {};
+  if (cfg.provider === "webllm" && messages.length) {
+    const last = messages[messages.length - 1];
+    const digest = projectDigest(project, actors).slice(0, 1800);
+    const names = focus.map((a) => `${a.type} "${a.name}"`).join(", ");
+    messages[messages.length - 1] = {
+      ...last,
+      content: `(You are Spinner, writing partner for the novel "${project}". Answer as Spinner, from this book only — name its people, scenes and facts.
+${digest}${names ? `
+In the room: ${names} — their full text is in your instructions.` : ""})
+
+${last.content}`,
+    };
+  }
   return chat({ system, messages, maxTokens: 900, signal });
 };
 
@@ -168,7 +186,9 @@ export const castTalk = async ({ project, actors, conversation, nudge = false, s
       ? { role: "user", content: m.content }
       : { role: "assistant", content: (m.lines || []).map((l) => `${(byFile.get(l.speaker) || {}).name || "?"}: ${l.text}`).join("\n") }
   );
-  const user = nudge ? "(The author says nothing. Carry on among yourselves — react to what was just said.)" : history.pop().content;
+  let user = nudge ? "(The author says nothing. Carry on among yourselves — react to what was just said.)" : history.pop().content;
+  const cfg = getConfig() || {};
+  if (cfg.provider === "webllm") user = `(Stay in character as ${names.join(" and ")} from the novel "${project}", speaking only from your dossiers. Answer as JSON lines.)\n\n${user}`;
   const out = await complete({ system, user, history, json: true, maxTokens: 900, signal });
   const lines = (Array.isArray(out.lines) ? out.lines : [])
     .map((l) => {

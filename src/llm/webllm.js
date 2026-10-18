@@ -58,9 +58,11 @@ export const getEngine = async (modelId) => {
       try { await engine.unload(); } catch (e) { /* ignore */ }
       engine = null;
     }
+    // the prebuilt configs default to a 4k window; a scene brought into a
+    // conversation needs more, and these models support it
     const e = await lib.CreateMLCEngine(modelId, {
       initProgressCallback: (r) => emit({ phase: "loading", text: r.text, progress: r.progress, model: modelId }),
-    });
+    }, { context_window_size: 8192, sliding_window_size: -1 });
     engine = e;
     emit({ phase: "ready", text: "Model ready", progress: 1, model: modelId });
     return e;
