@@ -110,34 +110,50 @@ export const fitMessages = (messages, maxTokens) => {
 
 export const isEngineReady = (modelId) => !!engine && engineModel === modelId;
 
+/** Forget the engine so the next call rebuilds it (after a disposed module or a lost GPU context). */
+export const resetEngine = () => { engine = null; engineModel = null; enginePromise = null; };
+const looksDisposed = (err) => /disposed|device.?lost|GPUDevice|destroyed|context lost/i.test(String(err && err.message || err));
+
+// One generation at a time: the engine isn't re-entrant, and two callers
+// (a Flow scan and a chat, say) racing it is how modules get disposed under
+// each other.
+let queue = Promise.resolve();
+let current = null; // the request now generating, so an abort interrupts only its own generation
+
 /** OpenAI-shaped completion against the local engine. */
-export const webllmComplete = async (c, { messages, json, maxTokens, signal }) => {
+export const webllmComplete = (c, args) => {
+  const run = queue.then(() => generate(c, args, 1));
+  queue = run.catch(() => {});
+  return run;
+};
+
+const generate = async (c, { messages, json, maxTokens, signal }, retries) => {
+  if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
   const e = await getEngine(c.model);
   if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
   const max = Math.min(maxTokens, 2048);
   const req = { messages: fitMessages(messages, max), temperature: 0.2, max_tokens: max };
   if (json) req.response_format = { type: "json_object" };
+  const me = {};
+  current = me;
   // WebLLM has no AbortSignal on create(); interrupt the generation instead.
-  const onAbort = () => { try { e.interruptGenerate(); } catch (err) { /* ignore */ } };
+  const onAbort = () => { if (current === me) { try { e.interruptGenerate(); } catch (err) { /* ignore */ } } };
   if (signal) signal.addEventListener("abort", onAbort, { once: true });
   try {
     const out = await e.chat.completions.create(req);
     if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
     const ch = out.choices && out.choices[0];
     return { text: (ch && ch.message && ch.message.content) || "", cut: !!(ch && ch.finish_reason === "length") };
+  } catch (err) {
+    if (looksDisposed(err) && retries > 0 && !(signal && signal.aborted)) {
+      // the module under the engine is gone; build a fresh one and try once more
+      emit({ phase: "loading", text: "Model runtime was reset; reloading…", progress: 0, model: c.model });
+      resetEngine();
+      return generate(c, { messages, json, maxTokens, signal }, retries - 1);
+    }
+    throw err;
   } finally {
+    if (current === me) current = null;
     if (signal) signal.removeEventListener("abort", onAbort);
   }
-};
-
-/** Remove a model's cached weights from this browser. */
-export const deleteModelCache = async (modelId) => {
-  const lib = await loadLib();
-  if (engine && engineModel === modelId) {
-    try { await engine.unload(); } catch (e) { /* ignore */ }
-    engine = null;
-    engineModel = null;
-    enginePromise = null;
-  }
-  if (lib.deleteModelAllInfoInCache) await lib.deleteModelAllInfoInCache(modelId);
 };
