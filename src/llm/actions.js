@@ -58,6 +58,16 @@ I'll add him and tie him to the Hall.
  {"action":"create_fact","statement":"Perkins drives Sir Henry from the station.","involves":["Perkins","Sir Henry Baskerville"],"revealed_by":["Chapter 6 · Baskerville Hall"]}]
 \`\`\``;
 
+/** The same protocol in a quarter of the space, for small in-browser models. */
+export const ACTION_DOCS_SHORT = `When the author asks you to change the project, end your reply with a fenced block tagged silky-actions holding a JSON array; each object has "action" and the fields shown. The app applies them with Undo; do not say you can't.
+create_element{name,role?,description?} create_fact{statement,involves[],revealed_by[]?} create_scene{name,thread?,content?} create_thread{name,scenes[]?} create_web{name,captures[]?}
+link{from,to} unlink{from,to} rename{name,to} set_role{name,role} set_icon{name,icon} set_description{name,description} set_when{scene,date?,time?,duration?,unit?} date_thread{thread,start,every?,unit?}
+split_scene{scene,at,newName?} merge_scenes{first,second} move_scene{scene,thread,after?} merge_elements{keep,remove} remove{name} open{name} close{name|all|others}
+set_calendar{mode,era?,hoursPerDay?,months[]?} rename_month{month,to,days?} create_map{name,unit?,pins[]?} pin{map,location,x?,y?} move_pin{map,location,x,y} draw_region{map,name,texture,points[]|around[]} draw_route{map,name,through[]} create_timeline{name,threads[]?}
+Example: \`\`\`silky-actions
+[{"action":"create_element","name":"Perkins","role":"character"}]
+\`\`\``;
+
 /* ── parsing ── */
 const parseActionsJson = (raw) => {
   const s = String(raw || "").trim();

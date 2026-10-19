@@ -4,7 +4,7 @@
 import { chat, complete, parseJson } from "./client";
 import { getConfig } from "./config";
 import { isCharacter } from "../role";
-import { ACTION_DOCS } from "./actions";
+import { ACTION_DOCS, ACTION_DOCS_SHORT } from "./actions";
 import { activeCalendar, isCustom } from "../calendar";
 import { loadMaps } from "../maps";
 import { loadTimelines } from "../timelines";
@@ -127,20 +127,21 @@ export const focusText = (actor, actors) => {
 /** Ask Spinner the next turn. Returns the reply text. */
 export const talk = async ({ project, actors, conversation, signal }) => {
   const focus = (conversation.focus || []).map((f) => actors.find((a) => a.file === f)).filter(Boolean);
+  const cfg = getConfig() || {};
+  const small = cfg.provider === "webllm"; // a 16k window: compact docs, a shorter digest, fewer turns
   const system = [
     SYSTEM,
-    "\n\n" + ACTION_DOCS,
-    "\n\nPROJECT DIGEST\n" + projectDigest(project, actors),
+    "\n\n" + (small ? ACTION_DOCS_SHORT : ACTION_DOCS),
+    "\n\nPROJECT DIGEST\n" + (small ? projectDigest(project, actors).slice(0, 2400) : projectDigest(project, actors)),
     focus.length ? "\n\nBROUGHT INTO THE CONVERSATION\n" + focus.map((a) => focusText(a, actors)).join("\n\n") : "",
   ].join("");
   // keep the last 24 turns so the prompt stays bounded
-  const messages = conversation.messages.slice(-24).map((m) => ({ role: m.role, content: m.content }));
+  const messages = conversation.messages.slice(small ? -8 : -24).map((m) => ({ role: m.role, content: m.content }));
   // Small in-browser models attend to the latest user turn far better than to
   // a long system prompt, so restate who they are and what the book is there.
-  const cfg = getConfig() || {};
-  if (cfg.provider === "webllm" && messages.length) {
+  if (small && messages.length) {
     const last = messages[messages.length - 1];
-    const digest = projectDigest(project, actors).slice(0, 1800);
+    const digest = projectDigest(project, actors).slice(0, 1200);
     const names = focus.map((a) => `${a.type} "${a.name}"`).join(", ");
     messages[messages.length - 1] = {
       ...last,

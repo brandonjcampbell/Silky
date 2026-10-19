@@ -62,7 +62,7 @@ export const getEngine = async (modelId) => {
     // conversation needs more, and these models support it
     const e = await lib.CreateMLCEngine(modelId, {
       initProgressCallback: (r) => emit({ phase: "loading", text: r.text, progress: r.progress, model: modelId }),
-    }, { context_window_size: 8192, sliding_window_size: -1 });
+    }, { context_window_size: WINDOW, sliding_window_size: -1 });
     engine = e;
     emit({ phase: "ready", text: "Model ready", progress: 1, model: modelId });
     return e;
@@ -77,13 +77,45 @@ export const getEngine = async (modelId) => {
   }
 };
 
+/** Context window we ask the engine for; prompts are trimmed to fit it. */
+export const WINDOW = 16384;
+const tokensOf = (text) => Math.ceil(String(text || "").length / 3.5); // generous estimate for English + markup
+const trimTo = (text, tokens) => { const chars = Math.max(0, tokens) * 3.5; return text.length <= chars ? text : text.slice(0, Math.max(0, chars - 40)) + "\n…(trimmed to fit the model's context)"; };
+
+/** Drop old turns, then shorten the system prompt, until the request fits. */
+export const fitMessages = (messages, maxTokens) => {
+  const budget = WINDOW - maxTokens - 256;
+  let msgs = messages.map((m) => ({ ...m }));
+  const total = () => msgs.reduce((n, m) => n + tokensOf(m.content) + 8, 0);
+  // oldest non-system turns go first, but keep the final user turn
+  while (total() > budget && msgs.length > 2) {
+    const i = msgs.findIndex((m, k) => m.role !== "system" && k < msgs.length - 1);
+    if (i < 0) break;
+    msgs.splice(i, 1);
+  }
+  if (total() > budget) {
+    const sys = msgs.findIndex((m) => m.role === "system");
+    if (sys >= 0) {
+      const others = total() - tokensOf(msgs[sys].content);
+      msgs[sys].content = trimTo(msgs[sys].content, budget - others);
+    }
+  }
+  if (total() > budget) {
+    const last = msgs[msgs.length - 1];
+    const others = total() - tokensOf(last.content);
+    last.content = trimTo(last.content, budget - others);
+  }
+  return msgs;
+};
+
 export const isEngineReady = (modelId) => !!engine && engineModel === modelId;
 
 /** OpenAI-shaped completion against the local engine. */
 export const webllmComplete = async (c, { messages, json, maxTokens, signal }) => {
   const e = await getEngine(c.model);
   if (signal && signal.aborted) throw new DOMException("Aborted", "AbortError");
-  const req = { messages, temperature: 0.2, max_tokens: Math.min(maxTokens, 2048) };
+  const max = Math.min(maxTokens, 2048);
+  const req = { messages: fitMessages(messages, max), temperature: 0.2, max_tokens: max };
   if (json) req.response_format = { type: "json_object" };
   // WebLLM has no AbortSignal on create(); interrupt the generation instead.
   const onAbort = () => { try { e.interruptGenerate(); } catch (err) { /* ignore */ } };
