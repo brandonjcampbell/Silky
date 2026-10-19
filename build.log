@@ -1,0 +1,19 @@
+
+> silky@1.0.0 prebuild
+> node scripts/examples-index.js
+
+examples: indexed 3 file(s)
+
+> silky@1.0.0 build
+> cross-env NODE_OPTIONS=--openssl-legacy-provider REACT_APP_VERSION=$npm_package_version react-scripts build
+
+Creating an optimized production build...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+Failed to compile.
+
+./src/Components/LlmSettings/LlmSettings.js
+Attempted import error: 'deleteModelCache' is not exported from '../../llm/webllm'.
+
+
