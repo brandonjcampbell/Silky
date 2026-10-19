@@ -138,3 +138,21 @@
 .tag--verbatim { border-color: var(--accent); color: var(--accent); }
 .tag--edited { border-color: #ffc857; color: #ffc857; }
 .tag--removed, .tag--unmarked { color: var(--ink-muted); }
+
+/* authorship */
+.analysis__row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-bottom: 14px; }
+.analysis__row .analysis__pick { margin-bottom: 0; }
+.analysis__spacer { flex: 1; }
+.analysis__input { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg-raised); border: 1px solid var(--line); border-radius: var(--radius); padding: 4px 8px; min-width: 200px; }
+.verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; border: 1.5px solid; border-radius: var(--radius); padding: 10px 16px; margin: 6px 0 14px; }
+.verdict b { font-size: 17px; }
+.verdict span { font-size: 12px; color: var(--ink-muted); }
+.verdict.is-clean { border-color: #2e8b57; color: #2e8b57; }
+.verdict.is-mixed { border-color: #e69138; color: #e69138; }
+.analysis__para { font-size: 14px; line-height: 1.55; max-width: 76ch; margin: 0 0 8px; color: var(--ink-soft); }
+.analysis__fine { font-size: 12px; line-height: 1.5; max-width: 80ch; margin-top: 18px; }
+.hist { display: flex; gap: 6px; align-items: flex-end; height: 100px; max-width: 560px; }
+.hist__bar { flex: 1; text-align: center; font-size: 10px; color: var(--ink-muted); }
+.hist__bar i { display: block; background: var(--accent); opacity: 0.8; border-radius: 3px 3px 0 0; margin: 0 3px 4px; min-height: 1px; }
+.hist__bar b { font-weight: 400; }
+.analysis__table tr.is-ai td:first-child { border-left: 2px solid #e69138; }

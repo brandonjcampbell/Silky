@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint, FaFire } from "react-icons/fa";
+import { FaChartBar, FaTachometerAlt, FaFeatherAlt, FaBookReader, FaFingerprint, FaFire, FaCertificate } from "react-icons/fa";
+import { buildRecord, statement, certificateHtml } from "../../authorship";
+import { BUCKET_LABELS, fmtMs } from "../../keystrokes";
+import { printHtml, downloadHtml } from "../../print";
 import Progress from "./Progress";
 import { loadProvenance, insertionStatus, aiWords, removeFromHtml, unmarkInHtml, getShowAi, setShowAi } from "../../provenance";
 import { saveFile } from "../../utils/";
@@ -18,6 +21,7 @@ export const ANALYSES = [
   { id: "style", name: "Style", icon: FaFeatherAlt, blurb: "Sentence length, dialogue, adverbs, filter words, vocabulary." },
   { id: "reader", name: "Reader", icon: FaBookReader, blurb: "A model reads it cold and tells you how it landed." },
   { id: "influence", name: "AI influence", icon: FaFingerprint, blurb: "Every passage Spinner wrote, where it is now, and how to take it out." },
+  { id: "authorship", name: "Authorship", icon: FaCertificate, blurb: "The keystroke record and a printable certificate of who wrote what." },
 ];
 
 export const analysisById = (id) => ANALYSES.find((a) => a.id === id);
@@ -738,9 +742,92 @@ const Influence = () => {
   );
 };
 
+/* ── authorship ──────────────────────────────────────────────────────── */
+
+const Authorship = () => {
+  const { state } = useContext(store);
+  const [tick, setTick] = useState(0);
+  const { dir, threads, snippets, byFile } = useProject(tick);
+  const [scope, setScope] = useState("all");
+  const [author, setAuthor] = useState(() => { try { return localStorage.getItem("silky:author") || ""; } catch (e) { return ""; } });
+  const [rec, setRec] = useState(null);
+  useEffect(() => {
+    const on = () => setTick((t) => t + 1);
+    window.addEventListener("silky-keystrokes", on); window.addEventListener("silky-saved", on);
+    return () => { window.removeEventListener("silky-keystrokes", on); window.removeEventListener("silky-saved", on); };
+  }, []);
+  const scenes = scope === "all" ? snippets : ((byFile.get(scope) || { sequences: [] }).sequences || []).map((f) => byFile.get(f)).filter((s) => s && s.type === "snippet");
+  const scopeName = scope === "all" ? "the whole project" : `the thread “${(byFile.get(scope) || {}).name}”`;
+  useEffect(() => {
+    let alive = true;
+    buildRecord(dir, state.project, scenes, { scope: scopeName }).then((r) => { if (alive) setRec(r); });
+    return () => { alive = false; };
+  }, [dir, scope, tick, scenes.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  const setAuthorKeep = (v) => { setAuthor(v); try { localStorage.setItem("silky:author", v); } catch (e) { /* */ } };
+  if (!rec) return <div className="analysis"><p className="muted">Reading the record…</p></div>;
+  const t = rec.totals;
+  const maxH = Math.max(1, ...rec.hist);
+  const slug = (state.project || "silky").replace(/[^\w-]+/g, "-");
+  return (
+    <div className="analysis">
+      <div className="analysis__row">
+        <label className="analysis__pick">Scope
+          <select value={scope} onChange={(e) => setScope(e.target.value)}>
+            <option value="all">Whole project</option>
+            {threads.map((th) => <option key={th.file} value={th.file}>{th.icon} {th.name}</option>)}
+          </select>
+        </label>
+        <label className="analysis__pick">Author <input className="analysis__input" value={author} placeholder="your name, for the certificate" onChange={(e) => setAuthorKeep(e.target.value)} /></label>
+        <span className="analysis__spacer" />
+        <button type="button" className="primary" onClick={() => printHtml(certificateHtml(rec, { author }))}>Print certificate</button>
+        <button type="button" onClick={() => downloadHtml(certificateHtml(rec, { author }), `${slug}-certificate.html`)}>Save certificate</button>
+        <button type="button" onClick={() => { const blob = new Blob([JSON.stringify(rec, null, 2)], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${slug}-authorship-record.json`; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }}>Export record</button>
+      </div>
+
+      <div className={"verdict " + (rec.noAi ? "is-clean" : "is-mixed")}>
+        <b>{rec.noAi ? "No AI-written text" : `${pct(t.aiWords / Math.max(1, t.words))} of words trace to Spinner`}</b>
+        <span>{rec.chain.ok ? "record chain verified" : "record chain broken"} · {rec.chain.sessions} session{rec.chain.sessions === 1 ? "" : "s"}</span>
+      </div>
+      {statement(rec).map((p, i) => <p key={i} className="analysis__para">{p}</p>)}
+
+      <h3>Totals</h3>
+      <div className="stats">
+        <div className="stat"><b>{fmt(t.words)}</b><span>words in {t.scenes} scene{t.scenes === 1 ? "" : "s"}</span></div>
+        <div className="stat"><b>{fmt(t.keys)}</b><span>keystrokes</span><small>{fmtMs(t.ms)} of active typing</small></div>
+        <div className="stat"><b>{fmt(t.typed)}</b><span>characters typed</span><small>{fmt(t.deleted)} deleted</small></div>
+        <div className="stat"><b>{fmt(t.pasted)}</b><span>characters pasted</span><small>{pct(rec.shares.pasted)} of the text now</small></div>
+        <div className="stat"><b>{fmt(t.aiWords)}</b><span>words from Spinner</span><small>{t.aiInsertions} surviving insertion{t.aiInsertions === 1 ? "" : "s"}</small></div>
+        <div className="stat"><b>{fmt(t.baselineWords)}</b><span>words before the record</span><small>{t.imported ? `${fmt(t.imported)} imported` : "nothing imported"}</small></div>
+      </div>
+
+      <h3>Typing rhythm <small>time between keystrokes — a person spreads across these; pasted or scripted text barely registers</small></h3>
+      <div className="hist">
+        {rec.hist.map((n, i) => <div key={i} className="hist__bar" title={`${fmt(n)} intervals`}><i style={{ height: `${Math.round((n / maxH) * 70)}px` }} /><b>{BUCKET_LABELS[i]}</b></div>)}
+      </div>
+
+      <h3>Scene by scene</h3>
+      <table className="analysis__table compact">
+        <thead><tr><th>Scene</th><th className="num">Words</th><th className="num">Spinner</th><th className="num">Typed</th><th className="num">Pasted</th><th className="num">Deleted</th><th className="num">Keys</th><th className="num">Time</th><th className="num">Pre-record</th><th>Last typed</th></tr></thead>
+        <tbody>
+          {rec.scenes.map((s) => (
+            <tr key={s.file} className={s.aiWords ? "is-ai" : ""}>
+              <td><Link to={"/elements/" + s.file}>{s.icon} {s.name}</Link>{/import/.test(s.origin) && <small className="muted"> · imported</small>}</td>
+              <td className="num">{fmt(s.words)}</td><td className="num">{s.aiWords ? fmt(s.aiWords) : "—"}</td>
+              <td className="num">{fmt(s.typed)}</td><td className="num">{s.pasted ? fmt(s.pasted) : "—"}</td><td className="num">{fmt(s.deleted)}</td>
+              <td className="num">{fmt(s.keys)}</td><td className="num">{s.ms ? fmtMs(s.ms) : "—"}</td><td className="num">{s.baseline ? fmt(s.baseline) : "—"}</td>
+              <td className="muted">{s.last ? new Date(s.last).toLocaleDateString() : ""}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="muted analysis__fine">Silky counts input events in the scene editor — keystrokes, pastes, deletions and the gaps between them — never the characters themselves. Each writing session is hashed with the one before it, so the record can't be quietly edited later. It is evidence, not proof: it shows what happened inside Silky and can't see where pasted text came from. Text present before the record began is reported as such.</p>
+    </div>
+  );
+};
+
 /* ── shell ────────────────────────────────────────────────────────────── */
 
-const VIEWS = { progress: Progress, wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence };
+const VIEWS = { progress: Progress, wordcount: WordCount, pacing: Pacing, style: Style, reader: Reader, influence: Influence, authorship: Authorship };
 
 const Analysis = () => {
   const { id } = useParams();

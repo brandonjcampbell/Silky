@@ -39,7 +39,7 @@ Actions (fields in brackets are optional):
 - {"action":"merge_scenes","first":"scene name","second":"scene name"}
 - {"action":"move_scene","scene":"…","thread":"…",["after":"scene name"|"position":1]}
 - {"action":"remove","name":"…"}   (goes to the project's rubbish; only when asked)
-- {"action":"open","name":"…"}   (opens a thing in a tab and shows it; also "wiki", "preferences", "progress", "word count", "pacing", "style", "reader", "ai influence", a map's or timeline's name, or "write" for the blank page)
+- {"action":"open","name":"…"}   (opens a thing in a tab and shows it; also "wiki", "preferences", "progress", "word count", "pacing", "style", "reader", "ai influence", "authorship" (the certificate), a map's or timeline's name, or "write" for the blank page)
 - {"action":"close","name":"…"|"all"|"others"}   (closes that tab, every tab, or every tab but the current one)
 - {"action":"merge_elements","keep":"name","remove":"name"}   (fold a duplicate into the one to keep: its facts, scenes, webs and maps move over; the duplicate goes to the rubbish)
 - {"action":"create_map","name":"…",["unit":"miles"],["pins":["location name",…]]}   (a blank map in Tools; pins land in a row to be dragged into place)
@@ -87,7 +87,7 @@ export const extractActions = (reply) => {
 };
 
 /* ── opening and closing tabs (needs the router) ── */
-const ANALYSIS_NAMES = { progress: "progress", "word count": "wordcount", wordcount: "wordcount", words: "wordcount", pacing: "pacing", style: "style", reader: "reader", readers: "reader", "ai influence": "influence", influence: "influence" };
+const ANALYSIS_NAMES = { progress: "progress", "word count": "wordcount", wordcount: "wordcount", words: "wordcount", pacing: "pacing", style: "style", reader: "reader", readers: "reader", "ai influence": "influence", influence: "influence", authorship: "authorship", certificate: "authorship", "certificate of authorship": "authorship", keystrokes: "authorship" };
 export const hrefFor = (dir, name) => {
   const n = norm(name);
   if (!n || n === "write" || n === "writing page" || n === "blank page" || n === "home") return { href: "/", label: "the writing page" };

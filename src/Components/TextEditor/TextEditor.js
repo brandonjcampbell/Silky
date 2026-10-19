@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { recordInput, flushKeystrokes } from "../../keystrokes";
+import { store } from "../../NewContext";
+import React, { useContext, useState, useEffect, useRef, useCallback } from "react";
 import EditorToolbar, { SCENE_TOOLS, NOTES_TOOLS } from "./EditorToolbar";
 import "./TextEditor.css";
 
@@ -151,6 +153,8 @@ const TextEditor = ({
   onStatus,
 }) => {
   const isScene = variant === "scene";
+  const { state: appState } = useContext(store);
+  const recDir = isScene ? appState.dir : null; // scenes keep a keystroke record
   const tools = isScene ? SCENE_TOOLS : NOTES_TOOLS;
   const hint = placeholder || (isScene ? "Write the scene." : "Notes.");
 
@@ -211,10 +215,22 @@ const TextEditor = ({
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
-    const h = (e) => keepTypingHuman(e, el);
+    const h = (e) => {
+      if (recDir) {
+        const t = e.inputType || "";
+        const selLen = () => { const sel = window.getSelection(); return sel && sel.rangeCount ? sel.toString().length : 0; };
+        const baseline = countWords(el);
+        if (t === "insertText" || t === "insertCompositionText") recordInput(recDir, actorUuid, "typed", (e.data || "").length || 1, baseline);
+        else if (t === "insertParagraph" || t === "insertLineBreak") recordInput(recDir, actorUuid, "break", 1, baseline);
+        else if (t.startsWith("insertFrom")) recordInput(recDir, actorUuid, "paste", (e.data || (e.dataTransfer && e.dataTransfer.getData("text/plain")) || "").length || 1, baseline);
+        else if (t.startsWith("delete")) recordInput(recDir, actorUuid, "delete", Math.max(1, selLen()), baseline);
+        else if (t.startsWith("format") || t.startsWith("history")) recordInput(recDir, actorUuid, "break", 0, baseline);
+      }
+      keepTypingHuman(e, el);
+    };
     el.addEventListener("beforeinput", h);
-    return () => el.removeEventListener("beforeinput", h);
-  }, []);
+    return () => { el.removeEventListener("beforeinput", h); if (recDir) flushKeystrokes(recDir, actorUuid); };
+  }, [recDir, actorUuid]);
 
   // Flush a pending save when leaving the editor.
   useEffect(() => () => {
@@ -240,6 +256,7 @@ const TextEditor = ({
     e.preventDefault();
     const text = e.clipboardData.getData("text/plain");
     if (!text) return;
+    if (recDir) recordInput(recDir, actorUuid, "paste", text.length, countWords(ref.current));
     const html = text
       .replace(/\r\n?/g, "\n")
       .split(/\n{2,}/)
