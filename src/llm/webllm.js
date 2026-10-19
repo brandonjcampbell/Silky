@@ -157,3 +157,13 @@ const generate = async (c, { messages, json, maxTokens, signal }, retries) => {
     if (signal) signal.removeEventListener("abort", onAbort);
   }
 };
+export const deleteModelCache = async (modelId) => {
+  const lib = await loadLib();
+  if (engine && engineModel === modelId) {
+    try { await engine.unload(); } catch (e) { /* ignore */ }
+    engine = null;
+    engineModel = null;
+    enginePromise = null;
+  }
+  if (lib.deleteModelAllInfoInCache) await lib.deleteModelAllInfoInCache(modelId);
+};
