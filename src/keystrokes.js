@@ -123,6 +123,7 @@ export const verifyChain = async (d) => {
 
 export const hashText = sha256;
 export const fmtMs = (ms) => {
+  if (ms < 60e3) return `${Math.max(1, Math.round(ms / 1000))} s`;
   const m = Math.round(ms / 60e3);
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60);

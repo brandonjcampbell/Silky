@@ -91,6 +91,8 @@ A **lens** on any timeline shows something else about each scene besides when it
 
 ![A timeline with the dialogue lens on, and a scene's card showing its statistics](docs/silky-lens.png)
 
+**Authorship.** Scene editors keep a keystroke record — typed, pasted and deleted characters, keystrokes and the rhythm between them, never the characters themselves — in sessions hashed into a chain. The **Authorship** analysis reads it with the provenance log and states how the text got there: typed in Silky, pasted from outside, present before the record, imported, or Spinner's. When no word traces to Spinner it says so as a **certificate of no AI**, printable or saved as HTML with the text's SHA-256, scene-by-scene figures and a typing-rhythm histogram; the raw record exports as JSON. It is evidence, not proof — it sees what happened inside Silky.
+
 **Analyses.** Word count (totals, every scene and thread measured), pacing (scene lengths, dialogue share, sentence rhythm), style (sentence variance, filter words, adverbs, passives, reading grade, vocabulary), the reader notes above, AI influence, and **Progress**: words per day against a goal, streaks, a sixteen-week heatmap, what you made each week, and — with a target and a deadline — the pace you need and when you'll finish at the pace you have.
 
 ![Progress: today's words, streaks, the last thirty days, a heatmap](docs/silky-progress.png)
