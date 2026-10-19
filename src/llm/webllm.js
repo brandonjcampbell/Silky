@@ -54,15 +54,20 @@ export const getEngine = async (modelId) => {
   enginePromise = (async () => {
     const lib = await loadLib();
     emit({ phase: "loading", text: "Loading model…", progress: 0, model: modelId });
-    if (engine) {
-      try { await engine.unload(); } catch (e) { /* ignore */ }
-      engine = null;
-    }
     // the prebuilt configs default to a 4k window; a scene brought into a
     // conversation needs more, and these models support it
-    const e = await lib.CreateMLCEngine(modelId, {
-      initProgressCallback: (r) => emit({ phase: "loading", text: r.text, progress: r.progress, model: modelId }),
-    }, { context_window_size: WINDOW, sliding_window_size: -1 });
+    const chatOpts = { context_window_size: getWindow(), sliding_window_size: -1 };
+    const progress = (r) => emit({ phase: "loading", text: r.text, progress: r.progress, model: modelId });
+    let e;
+    if (engine) {
+      // switch models on the one engine: a fresh MLCEngine beside a disposed
+      // one is how WebGPU ends up with references to a destroyed device
+      e = engine;
+      e.setInitProgressCallback(progress);
+      await e.reload(modelId, chatOpts);
+    } else {
+      e = await lib.CreateMLCEngine(modelId, { initProgressCallback: progress }, chatOpts);
+    }
     engine = e;
     emit({ phase: "ready", text: "Model ready", progress: 1, model: modelId });
     return e;
@@ -72,19 +77,25 @@ export const getEngine = async (modelId) => {
   } catch (err) {
     enginePromise = null;
     engineModel = null;
+    engine = null;
+    if (looksDisposed(err)) shrinkWindow();
     emit({ phase: "error", text: err.message, progress: 0, model: modelId });
     throw err;
   }
 };
 
-/** Context window we ask the engine for; prompts are trimmed to fit it. */
-export const WINDOW = 16384;
+/** Context window we ask the engine for; prompts are trimmed to fit it. A
+    device that can't hold the KV cache for 16k loses its GPU context, so the
+    window halves on such an error and the choice is remembered. */
+const WINDOW_KEY = "silky:webllm-window";
+export const getWindow = () => { try { const n = Number(localStorage.getItem(WINDOW_KEY)); return n >= 4096 ? n : 16384; } catch (e) { return 16384; } };
+const shrinkWindow = () => { const w = Math.max(4096, getWindow() / 2); try { localStorage.setItem(WINDOW_KEY, String(w)); } catch (e) { /* */ } return w; };
 const tokensOf = (text) => Math.ceil(String(text || "").length / 3.5); // generous estimate for English + markup
 const trimTo = (text, tokens) => { const chars = Math.max(0, tokens) * 3.5; return text.length <= chars ? text : text.slice(0, Math.max(0, chars - 40)) + "\n…(trimmed to fit the model's context)"; };
 
 /** Drop old turns, then shorten the system prompt, until the request fits. */
 export const fitMessages = (messages, maxTokens) => {
-  const budget = WINDOW - maxTokens - 256;
+  const budget = getWindow() - maxTokens - 256;
   let msgs = messages.map((m) => ({ ...m }));
   const total = () => msgs.reduce((n, m) => n + tokensOf(m.content) + 8, 0);
   // oldest non-system turns go first, but keep the final user turn
@@ -112,7 +123,12 @@ export const isEngineReady = (modelId) => !!engine && engineModel === modelId;
 
 /** Forget the engine so the next call rebuilds it (after a disposed module or a lost GPU context). */
 export const resetEngine = () => { engine = null; engineModel = null; enginePromise = null; };
-const looksDisposed = (err) => /disposed|device.?lost|GPUDevice|destroyed|context lost/i.test(String(err && err.message || err));
+const looksDisposed = (err) => /disposed|device.?lost|GPUDevice|destroyed|context lost|Instance reference|no longer exists|out of memory|OOM/i.test(String(err && err.message || err));
+const hardReset = async () => {
+  const e = engine;
+  resetEngine();
+  if (e) { try { await e.unload(); } catch (err) { /* already gone */ } }
+};
 
 // One generation at a time: the engine isn't re-entrant, and two callers
 // (a Flow scan and a chat, say) racing it is how modules get disposed under
@@ -147,8 +163,9 @@ const generate = async (c, { messages, json, maxTokens, signal }, retries) => {
   } catch (err) {
     if (looksDisposed(err) && retries > 0 && !(signal && signal.aborted)) {
       // the module under the engine is gone; build a fresh one and try once more
-      emit({ phase: "loading", text: "Model runtime was reset; reloading…", progress: 0, model: c.model });
-      resetEngine();
+      const w = shrinkWindow();
+      emit({ phase: "loading", text: `The GPU dropped the model; reloading with a ${Math.round(w / 1024)}k context…`, progress: 0, model: c.model });
+      await hardReset();
       return generate(c, { messages, json, maxTokens, signal }, retries - 1);
     }
     throw err;
