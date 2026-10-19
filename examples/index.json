@@ -1,0 +1,41 @@
+[
+  {
+    "file": "carol.json",
+    "name": "A Christmas Carol",
+    "blurb": "Dickens's ghost story in five staves, modelled scene by scene: one night, three spirits, and a man remade. Scenes hold synopses; fetch the text with Import → Gutenberg 46.",
+    "counts": {
+      "element": 30,
+      "fact": 56,
+      "snippet": 15,
+      "thread": 7,
+      "web": 8
+    },
+    "size": 109627
+  },
+  {
+    "file": "dracula.json",
+    "name": "Dracula",
+    "blurb": "Bram Stoker's novel, imported as a manuscript and modelled by a language model, with seven plot threads traced through it. Every fact and link is a first draft.",
+    "counts": {
+      "element": 180,
+      "fact": 1143,
+      "snippet": 113,
+      "thread": 8,
+      "web": 8
+    },
+    "size": 1995775
+  },
+  {
+    "file": "hound.json",
+    "name": "The Hound of the Baskervilles",
+    "blurb": "Conan Doyle's Dartmoor mystery, modelled chapter by chapter: every clue is a fact, every deduction a cause. Scenes hold synopses; fetch the text with Import → Gutenberg 2852.",
+    "counts": {
+      "element": 37,
+      "fact": 70,
+      "snippet": 15,
+      "thread": 7,
+      "web": 8
+    },
+    "size": 148204
+  }
+]
